@@ -1,0 +1,131 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block page-title %}<title>{{ operon.name }} operon from {{ operon.genome.name }} genome</title>{% endblock %}
+
+{% block title %}<div class="logo"><h2>Operon</h2></div>{% endblock %}
+
+{% block content %}
+    <section id="one" class="wrapper style3">
+	    <div class="inner">
+		<header class="align-center">
+		<h2>{{ operon.name }} 
+		{%if operon.genome.strain %}
+			[<a href="{% url 'straindetails' strain_id=operon.genome.strain.strain_id %}">{{ operon.genome.strain.full_name }}</a>]
+		{% else %}
+			[<a href="{% url 'sampledetails' sample_id=operon.genome.sample.sample_id %}">{{ operon.genome.sample.full_name }}</a>]
+		{% endif %}
+		</h2>
+		</header>
+		<div class="row">
+		    <div class="4u align-center">
+			<a class="align-center" href="#genes">Genes</a>
+		    </div>
+		    <div class="4u align-center">
+			<a class="align-center" href="#sites">Sites</a>
+		    </div>
+		    <div class="4u align-center">
+			<a class="align-center" href="#viewer">Genome viewer</a>
+		    </div>
+		</div>
+		<hr>
+		<div class="grid-style">
+		    <div class="content">
+			<header class="align-center">
+			    <p class="align-center">Operon information</p>
+			</header>
+			<span>Genome</span>
+			<h5><a href="{% url 'genomedetails' name=operon.genome.name %}">{{ operon.genome.name }}</a> 
+			{%if operon.genome.strain %}
+				[{{ operon.genome.strain.full_name }}]</h5>
+			{% else %}
+				[{{ operon.genome.sample.full_name }}]</h5>
+			{% endif %}
+			<span>Position</span>
+		    {% if operon.strand == "-1" %}
+			<h5>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</h5>
+		    {% else %}
+			<h5>{{ operon.contig.contig_id }}: {{ operon.start }}..{{ operon.end }}</h5>
+		    {% endif %}
+		    </div>
+		</div>
+
+    {% if genes %}
+		<h2 id="genes" class="align-center">Genes</h2>
+		<div class="table-wrapper">
+			<table>
+				<thead>
+					<tr>
+						<th>Gene</th>
+						<th>Name</th>
+						<th>Position</th>
+						<th>Function</th>
+					</tr>
+				</thead>
+				<tbody>
+		{% for gene in genes %}
+					<tr>
+					    <td><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a></td>
+					    <td>{{ gene.name }}</td>
+					    {% if gene.strand == "-1" %}
+						<td>{{ gene.contig.contig_id }}: complement({{ gene.start }}..{{ gene.end }})</td>
+					    {% else %}
+						<td>{{ gene.contig.contig_id }}: {{ gene.start }}..{{ gene.end }}</td>
+					    {% endif %}
+					    <td>{{ gene.function }}</td>
+					</tr>
+		{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% endif %}
+
+    {% if sites %}
+		<h2 id="sites" class="align-center">Sites</h2>
+		<div class="table-wrapper">
+			<table>
+				<thead>
+					<tr>
+						<th>Site</th>
+						<th>Type</th>
+						<th>Position</th>
+						<th>Sequence</th>
+					</tr>
+				</thead>
+				<tbody>
+		{% for site in sites %}
+					<tr>
+						<td><a href="{% url 'sitedetails' genome=site.genome.name name=site.name %}">{{ site.name }}</a></td>
+						<td>{{ site.type }}</td>
+						<td>{{ site.contig.contig_id }}:{{ site.start }}..{{ site.end }} </td>
+						<td>{{ site.sequence }}</td>
+					</tr>
+		{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% endif %}
+	    </div>
+    </section>
+
+    <section id="three" >
+	<div id="viewer" class="wrapper style3">
+	    <div class="inner">
+		<h2 class="align-center">Genome viewer</h2>
+	    </div>
+	</div>
+	    <div class="inner">
+			<div style="width: 100%; height: 350px; margin: 10 auto;">
+				<iframe
+				src="{% static 'jbrowse/index.html' %}?data={{ operon.genome.json_url }}&tracklist=0&nav=1&overview=1&tracks=DNA%2CCDSs%2COperons%2CPseudogenes%2CtRNAs%2CrRNAs&loc={{ operon.contig.contig_id }}:{{ viewer_start }}..{{ viewer_end }}&highlight={{ operon.contig.contig_id }}:{{ highlight_start }}..{{ highlight_end }}"
+				style="border: 1px solid black"
+				width="100%"
+				height="100%"
+				>
+				</iframe>
+			</div>
+	    </div>
+    </section>
+
+
+{% endblock %}

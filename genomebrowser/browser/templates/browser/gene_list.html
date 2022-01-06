@@ -1,0 +1,89 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% load my_tags %}
+
+{% block script-header %}
+{% endblock %}
+
+{% block title %}<div class="logo"><h2>Genes</h2></div>{% endblock %}
+{% block content %}
+			<section id="two" class="wrapper style3">
+				<div class="inner">
+					<header class="align-center">
+				{% if searchcontext %}
+				    <h4>{{ searchcontext }}</h4>
+				{% else %}
+				    <form action="{% url 'searchgene' %}" method="get">
+				      <input name="query" type="text" placeholder="Quick search by gene name or locus tag...">
+				    </form>
+				{% endif %}
+				{% if external %}
+				    <p><a href="{{ external }}">External link</a></p>
+				{% endif %}
+				
+					</header>
+
+			<div class="table-wrapper">
+				<table>
+					<thead>
+						<tr>
+							<th>Gene ID</th>
+							<th>Name</th>
+							<th>Source</th>
+							<th>Function</th>
+						</tr>
+					</thead>
+					<tbody>
+    {% for gene in genelist %}
+					    <tr>
+						    <td><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a></td>
+						    <td>{{ gene.name }}</td>
+						{%if gene.genome.strain %}
+							<td>{{ gene.genome.strain.full_name }}</td>
+						{% else %}
+							<td>{{ gene.genome.name }}: {{ gene.genome.sample.full_name }}</td>
+						{% endif %}
+						    <td>{{ gene.function }}</td>
+					    </tr>
+    {% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+    {% if is_paginated %}
+        <div>
+	    <span>
+		{% if page_obj.has_previous %}
+		  <a class="button small" href="?{% param_replace page=1 %}">First</a>
+		  {% if page_obj.previous_page_number != 1 %}
+		    <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+		  {% endif %}
+		{% endif %}
+
+		Page {{ page_obj.number }} of {{ paginator.num_pages }}
+		{% if page_obj.has_next %}
+		  {% if page_obj.next_page_number != paginator.num_pages %}
+		    <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+		  {% endif %}
+		  <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
+		{% endif %}
+
+		<span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
+	    </span>
+        </div>
+    {% endif %}
+
+
+    {% if searchcontext %}
+	<div class="align-center">
+	    <p><a href="{% url 'export' %}?{{ request.META.QUERY_STRING }}">Export gene list as tab-separated text file</a></p></p>
+	</div>
+    {% endif %}
+
+
+  
+			    </div>
+			</section>
+
+{% endblock %}
+

@@ -1,0 +1,56 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block title %} <div class="logo">ENIGMA genome browser welcomes you</div>{% endblock %}
+
+{% block content %}
+		<!-- Banner -->
+			<section class="banner full">
+				<article>
+					<img src="{% static 'images/slide02.jpg' %}" alt="" />
+					<div class="inner">
+						<header>
+							<p>Here you can find</p>
+							<h3><a href="{% url 'strain_list' %}">{{ num_strains }} strains</a></h2>
+						</header>
+					</div>
+				</article>
+				<article>
+					<img src="{% static 'images/slide04.jpg' %}"  alt="" />
+					<div class="inner">
+						<header>
+							<p>Here you can find</p>
+							<h3><a href="{% url 'genome_list' %}">{{ num_genomes }} genomes</a></h3>
+						</header>
+					</div>
+				</article>
+				<article>
+					<img src="{% static 'images/slide03.jpg' %}"  alt="" />
+					<div class="inner">
+						<header>
+							<p>Here you can</p>
+							<h3><a href="{% url 'textsearch' %}"> search in gene annotations</a></h2>
+						</header>
+					</div>
+				</article>
+				<article>
+					<img src="{% static 'images/slide01.jpg' %}"  alt="" />
+					<div class="inner">
+						<header>
+							<p>Have a sequence?</p>
+							<h3><a href="{% url 'proteinsearch' %}">Try <u>protein</u> or</a> <a href="{% url 'nucleotidesearch' %}"><u>nucleotide</u> search</a></h3>
+						</header>
+					</div>
+				</article>
+				<article>
+					<img src="{% static 'images/slide02.jpg' %}" alt="" />
+					<div class="inner">
+						<header>
+							<p>Still confused?</p>
+							<h3><a href="{% url 'help' %}">There is a <u>help page</u> for you</a></h3>
+						</header>
+					</div>
+				</article>
+			</section>
+
+{% endblock %}

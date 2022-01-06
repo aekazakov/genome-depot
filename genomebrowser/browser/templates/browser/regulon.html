@@ -1,0 +1,162 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block page-title %}<title>{{ regulon.name }} regulon from {{ regulon.genome.name }} genome</title>{% endblock %}
+
+{% block title %}<div class="logo"><h2>Regulon</h2></div>{% endblock %}
+
+{% block content %}
+    <section id="one" class="wrapper style3">
+	    <div class="inner">
+		<header class="align-center">
+		<h2>{{ regulon.name }} 
+		{%if regulon.genome.strain %}
+			[<a href="{% url 'straindetails' strain_id=regulon.genome.strain.id %}">{{ regulon.genome.strain.full_name }}</a>]
+		{% else %}
+			[<a href="{% url 'sampledetails' sample_id=regulon.genome.sample.id %}">{{ regulon.genome.sample.full_name }}</a>]
+		{% endif %}
+		</h2>
+		</header>
+		<div class="row">
+		    <div class="4u align-center">
+			<a class="align-center" href="#sites">Sites</a>
+		    </div>
+		    <div class="4u align-center">
+			<a class="align-center" href="#genes">Genes</a>
+		    </div>
+		    <div class="4u align-center">
+			<a class="align-center" href="#operons">Operons</a>
+		    </div>
+		</div>
+		<hr>
+		<div class="grid-style">
+		    <div class="content">
+			<header class="align-center">
+			    <p class="align-center">Regulon information</p>
+			</header>
+			<span>Genome</span>
+			<h5><a href="{% url 'genomedetails' name=regulon.genome.name %}">{{ regulon.genome.name }}</a> 
+			{%if regulon.genome.strain %}
+				[{{ regulon.genome.strain.full_name }}]</h5>
+			{% else %}
+				[{{ regulon.genome.sample.full_name }}]</h5>
+			{% endif %}
+			<span>Description</span>
+			<h5>{{ regulon.description }}</a> 
+		    </div>
+		    {% if regulon.regulators %}
+		    <div class="content">
+			<header class="align-center">
+			    <p class="align-center">Regulators</p>
+			</header>
+			    {% for gene in regulon.regulators.all %}
+				<h5><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a>: {{ gene.function }}</h5>
+			    {% endfor %}
+		    </div>
+		    {% endif %}
+		</div>
+
+	{% if sites %}
+		<h2 id="sites" class="align-center">Sites</h2>
+		<div class="table-wrapper">
+			<table>
+				<thead>
+					<tr>
+						<th>Site</th>
+						<th>Position</th>
+						<th>Sequence</th>
+						<th>Type</th>
+						<th>Target genes and operons</th>
+					</tr>
+				</thead>
+				<tbody>
+		{% for site in sites.all %}
+					<tr>
+						<td><a href="{% url 'sitedetails' genome=regulon.genome.name name=site.name %}">{{ site.name }}</a></td>
+						{% if site.strand == "-1" %}
+						    <td>{{ site.contig.contig_id }}: complement({{ site.start }}..{{ site.end }})</td>
+						{% else %}
+						    <td>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</td>
+						{% endif %}
+						<td>{{ site.sequence }}</td>
+						<td>{{ site.type }}</td>
+						<td>
+						    {%for gene in site.genes.all %}
+							<a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a><br>
+						    {% endfor %}
+						    {%for operon in site.operons.all %}
+							<a href="{% url 'operondetails' name=operon.name %}">{{ operon.name }}</a><br>
+						    {% endfor %}
+						</td>
+					</tr>
+		{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<h2 id="genes" class="align-center">Genes</h2>
+		<div class="table-wrapper">
+			<table>
+				<thead>
+					<tr>
+						<th>Gene</th>
+						<th>Name</th>
+						<th>Position</th>
+						<th>Function</th>
+					</tr>
+				</thead>
+				<tbody>
+		{% for site in sites.all %}
+			{%for gene in site.genes.all %}
+				    <tr>
+					    <td><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a></td>
+					    <td>{{ gene.name }}</td>
+					    {% if gene.strand == "-1" %}
+						<td>{{ gene.contig.contig_id }}: complement({{ gene.start }}..{{ gene.end }})</td>
+					    {% else %}
+						<td>{{ gene.contig.contig_id }}: {{ gene.start }}..{{ gene.end }}</td>
+					    {% endif %}
+					    <td>{{ gene.function }}</td>
+				    </tr>
+			{% endfor %}
+		{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<h2 id="operons" class="align-center">Operons</h2>
+		<div class="table-wrapper">
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Position</th>
+						<th>Genes</th>
+					</tr>
+				</thead>
+				<tbody>
+		{% for site in sites.all %}
+			{%for operon in site.operons.all %}
+				    <tr>
+					    <td><a href="{% url 'operondetails' name=operon.name %}">{{ operon.name }}</a></td>
+					    {% if operon.strand == "-1" %}
+						<td>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</td>
+					    {% else %}
+						<td>{{ operon.contig.contig_id }}: {{ operon.start }}..{{ operon.end }}</td>
+					    {% endif %}
+					    <td>
+						{%for gene in operon.gene_set.all %}
+						    <a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a>: {{ gene.function }}<br>
+						{% endfor %}
+					    </td>
+				    </tr>
+			{% endfor %}
+		{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+	{% endif %}
+
+		</div>
+    </section>
+
+{% endblock %}

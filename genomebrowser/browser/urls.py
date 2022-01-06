@@ -1,0 +1,46 @@
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path('', views.landing, name='index'),
+    path('textsearch/', views.textsearch, name='textsearch'),
+#    path('genome/<int:genome_id>/', views.genome_detail, name='genomedetails'),
+    path('genome/<str:name>', views.genome_detail, name='genomedetails'),
+#    path('sample/<int:sample_id>/', views.sample_detail, name='sampledetails'),
+    path('sample/<str:sample_id>', views.sample_detail, name='sampledetails'),
+#    path('strain/<int:strain_id>/', views.strain_detail, name='straindetails'),
+    path('strain/<str:strain_id>/', views.strain_detail, name='straindetails'),
+#    path('gene/<int:gene_id>/', views.gene_detail, name='genedetails'),
+    path('gene/<str:genome>/<str:locus_tag>/', views.gene_detail, name='genedetails'),
+    path('operon/<str:genome>/<str:name>/', views.operon_detail, name='operondetails'),
+    path('operon/<str:name>/', views.operon_detail, name='operondetails'),
+    path('site/<str:genome>/<str:name>/', views.site_detail, name='sitedetails'),
+    path('regulon/<str:genome>/<str:name>/', views.regulon_detail, name='regulondetails'),
+    path('getgene/', views.gene_byname, name='genebyname'),
+    path('strains/', views.StrainListView.as_view(), name='strain_list'),
+    path('samples/', views.SampleListView.as_view(), name='sample_list'),
+    path('genomes/', views.GenomeListView.as_view(), name='genome_list'),
+    path('genes/', views.GeneListView.as_view(), name='gene_list'),
+    path('searchgene/', views.GeneSearchResultsView.as_view(), name='searchgene'),
+    path('searchannotation/', views.AnnotationSearchResultsView.as_view(), name='searchannotation'),
+    path('export/', views.export_csv, name='export'),
+    path('searchgenome/', views.GenomeSearchResultsView.as_view(), name='searchgenome'),
+    path('searchstrain/', views.StrainSearchResultsView.as_view(), name='searchstrain'),
+    path('searchsample/', views.StrainSearchResultsView.as_view(), name='searchsample'),
+    path('protsearch/', views.protein_search, name='proteinsearch'),
+    path('seqsearch', views.protein_search_external, name='proteinsearchexternal'),
+    path('nuclsearch/', views.nucleotide_search, name='nucleotidesearch'),
+    path('gos/', views.GoSearchResultsView.as_view(), name='gos'),
+    path('kos/', views.KoSearchResultsView.as_view(), name='kos'),
+    path('pathways/', views.KpSearchResultsView.as_view(), name='kps'),
+    path('reactions/', views.KrSearchResultsView.as_view(), name='krs'),
+    path('enzymes/', views.EcSearchResultsView.as_view(), name='enzymes'),
+    path('transporters/', views.TcSearchResultsView.as_view(), name='transporters'),
+    path('cazy/', views.CazySearchResultsView.as_view(), name='cazy'),
+    path('cogs/', views.CogSearchResultsView.as_view(), name='cogs'),
+    path('comparative/', views.comparative_view, name='comparative'),
+    path('help/', views.show_help, name='help'),
+
+]
+handler404 = views.handler404

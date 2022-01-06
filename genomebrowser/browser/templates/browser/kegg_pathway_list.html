@@ -1,0 +1,74 @@
+{% extends "base_generic.html" %}
+{% load my_tags %}
+{% load static %}
+
+{% block script-header %}
+{% endblock %}
+
+{% block title %}<div class="logo"><h2>KEGG Pathways</h2></div>{% endblock %}
+
+{% block content %}
+			<section id="two" class="wrapper style3">
+				<div class="inner">
+					<header class="align-center">
+					    <form action="{% url 'kps' %}" method="get">
+					      <input name="query" type="text" placeholder="Search KEGG pathways by name or KEGG ID...">
+					    </form>
+					    {% if searchcontext %}
+						<h4>{{ searchcontext }}</h4>
+					    {% endif %}
+					</header>
+
+{% if annotationlist %}
+			<div class="table-wrapper">
+				<table>
+					<thead>
+						<tr>
+							<th>KEGG ID</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+    {% for item in annotationlist %}
+					    <tr>
+						    <td><a href="{% url 'searchgene' %}?kp={{ item.kegg_id }}">{{ item.kegg_id }}</a></td>
+						    <td>{{ item.description }}</td>
+					    </tr>
+    {% endfor %}
+					</tbody>
+				</table>
+			</div>
+{% else %}
+    <div class="align-center">
+	<header><p>No pathways found.</p></header>
+    </div>
+{% endif %}
+
+  
+    {% if is_paginated %}
+        <div>
+	    <span>
+		{% if page_obj.has_previous %}
+		  <a class="button small" href="?{% param_replace page=1 %}">First</a>
+		  {% if page_obj.previous_page_number != 1 %}
+		    <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+		  {% endif %}
+		{% endif %}
+
+		Page {{ page_obj.number }} of {{ paginator.num_pages }}
+		{% if page_obj.has_next %}
+		  {% if page_obj.next_page_number != paginator.num_pages %}
+		    <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+		  {% endif %}
+		  <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
+		{% endif %}
+
+		<span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
+	    </span>
+        </div>
+    {% endif %}
+			    </div>
+			</section>
+
+{% endblock %}
+
