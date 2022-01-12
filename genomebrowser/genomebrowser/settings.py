@@ -41,7 +41,7 @@ def get_secret(setting, secrets=secrets):
 SECRET_KEY = get_secret('SECRET_KEY')#'5#vdrf30)5j=p+l!ozt*hx+^*n)i-hrui%qh9xqzje)dxlxc#g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [get_secret('HOSTNAME'), '127.0.0.1']
 INTERNAL_IPS = ['127.0.0.1',]

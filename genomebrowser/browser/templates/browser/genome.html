@@ -44,6 +44,7 @@
 			<h5>Size: {{ genome.size }} bp</h5>
 			<h5>Contigs: {{ genome.contigs }}</h5>
 			<h5>Genes: <a href="{% url 'searchgene' %}?genome={{ genome.name }}">{{ genome.genes }} (click to open list)</a></h5>
+			<h5><a href="{% static 'genomes/gbff/' %}{{ genome.name }}.genome.gbff.gz">Download genome</a></h5>
 		    </div>
 		</div>
 		<div class="content">

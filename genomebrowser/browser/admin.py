@@ -1,6 +1,6 @@
 from django.contrib import admin
 # Import your models here
-from .models import Strain, Sample, Genome, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog
+from .models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog
 
 # Register your models here.
 admin.site.register(Strain)
@@ -26,4 +26,5 @@ admin.site.register(Operon)
 admin.site.register(Site)
 admin.site.register(Regulon)
 admin.site.register(Config)
+admin.site.register(Contig)
 admin.site.register(ChangeLog)

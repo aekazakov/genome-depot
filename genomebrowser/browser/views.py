@@ -27,7 +27,7 @@ class AnnotationSearchResultsView(generic.ListView):
         genome = self.request.GET.get('genome')
         if genome:
             object_list = Annotation.objects.filter(
-                (Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)) & Q(gene_id__genome__id=genome)
+                (Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)) & Q(gene_id__genome__name=genome)
             ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__strain')
         else:
             object_list = Annotation.objects.filter(

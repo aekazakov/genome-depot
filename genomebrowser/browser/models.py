@@ -243,7 +243,7 @@ class Regulon(models.Model):
     description = models.TextField()
     
     def __str__(self):
-        return self.name
+        return self.name + '(' + self.genome.name + ')'
 
 
 class Site(models.Model):

@@ -73,7 +73,7 @@
 		{% for site in sites.all %}
 					<tr>
 						<td><a href="{% url 'sitedetails' genome=regulon.genome.name name=site.name %}">{{ site.name }}</a></td>
-						{% if site.strand == "-1" %}
+						{% if site.strand == -1 %}
 						    <td>{{ site.contig.contig_id }}: complement({{ site.start }}..{{ site.end }})</td>
 						{% else %}
 						    <td>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</td>

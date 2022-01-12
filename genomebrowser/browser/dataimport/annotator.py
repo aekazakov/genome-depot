@@ -371,28 +371,33 @@ class Annotator(object):
             # Create regulons
             existing_regulons = {item.name:item for item in Regulon.objects.filter(genome__name = genome_name)}
             for regulon_name in regulon_data[genome_name]:
+                print(regulon_name, genome_name)
                 if regulon_name not in existing_regulons:
                     regulator_id = regulon_data[genome_name][regulon_name][0][0]
                     regulon = Regulon(name=regulon_name, genome=genome)
                     regulon.save()
+                    existing_regulons[regulon_name] = regulon
                     print(str(regulon))
                     regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
                 else:
                     regulon = existing_regulons[regulon_name]
                     existing_regulators = [item.locus_tag for item in regulon.regulators.all()]
-                    regulator_id = regulon_data[genome_name][regulon_name][0][0]
-                    if regulator_id not in existing_regulators:
-                        regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
+                    for regulon_ind in regulon_data[genome_name][regulon_name]:
+                        regulator_id = regulon_ind[0]
+                        print (regulator_id)
+                        if regulator_id not in existing_regulators:
+                            regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
+                            existing_regulators.append(regulator_id)
             # Create sites
             existing_regulons = {item.name:item for item in Regulon.objects.filter(genome__name = genome_name)}
             existing_sites = {item.name:item for item in Site.objects.filter(genome__name = genome_name)}
             for regulon_name in regulon_data[genome_name]:
                 for site_data in regulon_data[genome_name][regulon_name]:
-                    site_name = regulon_name + ' site at ' + site_data[1]
+                    site_name = regulon_name + '_site_at_' + site_data[1]
                     if site_name in existing_sites:
                         site_index = 2
                         while True:
-                            site_name = regulon_name + ' site ' + str(site_index) + ' at ' + site_data[1]
+                            site_name = regulon_name + '_site_' + str(site_index) + '_at_' + site_data[1]
                             if site_name not in existing_sites:
                                 break
                             site_index += 1
@@ -400,8 +405,10 @@ class Annotator(object):
                     target_operon = target_gene.operon
                     same_sites = Site.objects.filter(genome__name = genome_name, contig__contig_id = site_data[2], start = int(site_data[3]), end = int(site_data[4]), strand = int(site_data[5]))
                     if not same_sites:
-                        site = Site(name = site_name, type = 'TFBS', start = int(site_data[3]), end = int(site_data[4]), strand = int(site_data[5]), contig = Contig.objects.get(genome__name = genome_name, contig_id = site_data[2]), genome = genome, sequence = site_data[6])
+                        print(site_data)
+                        site = Site(name = site_name, type = 'TFBS', start = int(site_data[3]), end = int(site_data[4]), strand = int(site_data[5]), contig = Contig.objects.get(genome__name = genome_name, contig_id = site_data[2]), genome = genome, sequence = site_data[6], regulon = existing_regulons[regulon_name])
                         site.save()
+                        existing_sites[site_name] = site
                         if target_operon:
                             site.operons.add(target_operon)
                         else:

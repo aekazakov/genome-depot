@@ -42,7 +42,7 @@
 				[{{ site.genome.sample.full_name }}]</h5>
 			{% endif %}
 			<span>Position</span>
-		    {% if site.strand == "-1" %}
+		    {% if site.strand == -1 %}
 			<h5>{{ site.contig.contig_id }}: complement({{ site.start }}..{{ site.end }})</h5>
 		    {% else %}
 			<h5>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</h5>

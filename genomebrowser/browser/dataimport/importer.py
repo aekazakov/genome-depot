@@ -73,6 +73,7 @@ class Importer(object):
         """
         Path(self.config['cgcms.temp_dir']).mkdir(parents=True, exist_ok=True)
         Path(self.config['cgcms.static_dir']).mkdir(parents=True, exist_ok=True)
+        Path(self.config['cgcms.static_dir'] + '/gbff').mkdir(parents=True, exist_ok=True)
         Path(self.config['cgcms.json_dir']).mkdir(parents=True, exist_ok=True)
         Path(self.config['cgcms.search_db_dir']).mkdir(parents=True, exist_ok=True)
         
