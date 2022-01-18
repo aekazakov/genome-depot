@@ -32,13 +32,11 @@ def get_secret(setting, secrets=secrets):
         raise ImproperlyConfigured(error_msg)
 
 
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_secret('SECRET_KEY')#'5#vdrf30)5j=p+l!ozt*hx+^*n)i-hrui%qh9xqzje)dxlxc#g'
+SECRET_KEY = get_secret('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -104,9 +102,9 @@ WSGI_APPLICATION = 'genomebrowser.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': get_secret('DB_NAME'), #'genomesenigma',
-        'USER': get_secret('DB_USER'),#djangodev
-        'PASSWORD': get_secret('DB_PASSWORD'),#'1475django',
+        'NAME': get_secret('DB_NAME'),
+        'USER': get_secret('DB_USER'),
+        'PASSWORD': get_secret('DB_PASSWORD'),
         'CONN_MAX_AGE': 3600,
         'TEST': {
             'NAME':'test_genomesdev'
@@ -155,9 +153,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = 'https://iseq.lbl.gov/static/dev/'
+STATIC_URL = get_secret('STATIC_URL')
 STATICFILES_DIRS = [
-    get_secret('STATICFILES_DIR') #'/mnt/data2/www/genomes/static/enigma'
+    get_secret('STATICFILES_DIR')
 ]
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
