@@ -989,9 +989,12 @@ def export_csv(request):
     else:
         object_list = Gene.objects.none()
 
-    writer.writerow(['Locus tag', 'Name', 'Organism', 'Contig', 'Start', 'End', 'Strand', 'Type', 'Function', search_context[0]])
+    writer.writerow(['Locus tag', 'Name', 'Organism', 'Genome', 'Contig', 'Start', 'End', 'Strand', 'Type', 'Function', search_context[0]])
     for gene in object_list:
-        writer.writerow([gene.locus_tag, gene.name, gene.genome.strain.full_name, gene.contig.contig_id, str(gene.start), str(gene.end), str(gene.strand), gene.type, gene.function, search_context[1]])
+        if gene.genome.strain is None:
+            writer.writerow([gene.locus_tag, gene.name, gene.genome.sample.full_name, gene.genome.name, gene.contig.contig_id, str(gene.start), str(gene.end), str(gene.strand), gene.type, gene.function, search_context[1]])
+        else:
+            writer.writerow([gene.locus_tag, gene.name, gene.genome.strain.full_name, gene.genome.name, gene.contig.contig_id, str(gene.start), str(gene.end), str(gene.strand), gene.type, gene.function, search_context[1]])
 
     return response
 
