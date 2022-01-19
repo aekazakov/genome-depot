@@ -7,7 +7,8 @@ from Bio.Seq import Seq
 #from Bio import SeqIO
 from subprocess import Popen, PIPE, CalledProcessError, STDOUT
 from genomebrowser.settings import STATICFILES_DIRS
-log_file = os.path.join(STATICFILES_DIRS[0], 'genomes', 'tmp', 'search.log')
+from browser.models import Config
+#log_file = os.path.join(STATICFILES_DIRS[0], 'genomes', 'tmp', 'search.log')
 
 
 def _verify_alphabet(sequence, alphabet):
@@ -22,8 +23,10 @@ def _verify_alphabet(sequence, alphabet):
 
 
 def run_protein_search(query):
+    search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
-    blast_db = os.path.join(STATICFILES_DIRS[0], 'genomes', 'search', 'blast_prot')
+    log_file = os.path.join(search_dir, 'search.log')
+    blast_db = os.path.join(search_dir, 'blast_prot')# os.path.join(STATICFILES_DIRS[0], 'genomes', 'search', 'blast_prot')
     result = []
     searchcontext = ''
     with open(log_file, 'a') as log:
@@ -83,8 +86,10 @@ def run_protein_search(query):
 
 
 def run_nucleotide_search(query):
+    search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     DNA_ALPHABET = 'GATCRYWSMKHBVDN'
-    blast_db = os.path.join(STATICFILES_DIRS[0], 'genomes', 'search', 'blast_nucl')
+    log_file = os.path.join(search_dir, 'search.log')
+    blast_db = os.path.join(search_dir, 'blast_nucl') #os.path.join(STATICFILES_DIRS[0], 'genomes', 'search', 'blast_nucl')
     result = []
     searchcontext = ''
 

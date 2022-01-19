@@ -1178,6 +1178,8 @@ class Importer(object):
     def cleanup(self):
         os.remove(os.path.join(self.config['cgcms.temp_dir'], os.path.basename(self.config['cgcms.search_db_nucl'])))
         os.remove(os.path.join(self.config['cgcms.temp_dir'], os.path.basename(self.config['cgcms.search_db_prot'])))
+        os.remove(self.config['cgcms.search_db_nucl'])
+        os.remove(self.config['cgcms.search_db_prot'])
         
     def import_genomes(self, in_file):
         '''
@@ -1303,6 +1305,8 @@ class Importer(object):
         nucl_db_file = self.config['cgcms.search_db_nucl']
         with open(os.path.join(self.config['cgcms.temp_dir'], os.path.basename(nucl_db_file)), 'w') as outfile:
             for item in Genome.objects.values('name', 'gbk_filepath'):
+                if item['name'] in self.inputgenomes:
+                    continue
                 gbk_handle = gzip.open(item['gbk_filepath'], 'rt')
                 parser = GenBank.parse(gbk_handle)
                 for gbk_record in parser:
@@ -1443,5 +1447,5 @@ class Importer(object):
         self.export_jbrowse_data()
         self.copy_static_files()
         self.create_search_databases()
-        self.cleanup()
+        #self.cleanup()
         
