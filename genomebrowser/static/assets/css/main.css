@@ -4618,5 +4618,13 @@
 	}
 
 	.toyplot-behaviour {
-	display: none;
+		display: none;
+	}
+
+	.metadata {
+		table-layout: fixed;
+	}
+
+	.tdbreak {
+		word-break: break-all;
 	}

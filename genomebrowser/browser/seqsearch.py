@@ -23,7 +23,7 @@ def _verify_alphabet(sequence, alphabet):
 
 def run_protein_search(query):
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
-    blast_db = os.path.join(STATICFILES_DIRS[0], 'genomes', 'mmseqs', 'blast_prot')
+    blast_db = os.path.join(STATICFILES_DIRS[0], 'genomes', 'search', 'blast_prot')
     result = []
     searchcontext = ''
     with open(log_file, 'a') as log:
@@ -84,7 +84,7 @@ def run_protein_search(query):
 
 def run_nucleotide_search(query):
     DNA_ALPHABET = 'GATCRYWSMKHBVDN'
-    blast_db = os.path.join(STATICFILES_DIRS[0], 'genomes', 'mmseqs', 'blast_nucl')
+    blast_db = os.path.join(STATICFILES_DIRS[0], 'genomes', 'search', 'blast_nucl')
     result = []
     searchcontext = ''
 
