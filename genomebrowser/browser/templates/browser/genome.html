@@ -38,6 +38,7 @@
 		    <div class="content">
 			<h5>Sample: <a href="{% url 'sampledetails' sample_id=genome.sample.sample_id %}">{{ genome.sample.sample_id }}</a></h5>
 			<h5>Sample name: {{ genome.sample.full_name }}</h5>
+			<h5>Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a></h5>
 		    </div>
 		{% endif %}
 		    <div class="content">
