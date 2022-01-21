@@ -828,7 +828,8 @@ class Importer(object):
                 pub_date=genome_data['pub_date'],
                 external_url=genome_data['external_url'],
                 external_id=genome_data['external_id'],
-                gbk_filepath = genome_data['gbk_filepath']
+                gbk_filepath = genome_data['gbk_filepath'],
+                taxon=genome_data['taxon']
                 ))
         Genome.objects.bulk_create(genome_instances, batch_size=1000)
         print('Genomes imported')
@@ -1314,7 +1315,9 @@ class Importer(object):
         
         print('Predict operons')
         # Export contigs and proteins and run POEM_py3
-        self.predict_operons()
+        operons_data = self.predict_operons()
+        # Write operons to the database
+        self.create_operons(operons_data)
         
         #export JBrowse data
         print('Creating Jbrowser files')
@@ -1454,33 +1457,89 @@ class Importer(object):
             raise CalledProcessError(proc.returncode, proc.args)
         
         poem_outfile = os.path.join(working_dir, 'input.fsa.adjacency')
+        operons_data = defaultdict(list)
+        with open (poem_outfile, 'r') as infile:
+            operon_index = Operon.objects.count() + 1
+            operon = []
+            for line in infile:
+                j = line[:-1].split('\t')
+                if len(j) != 11:
+                    continue
+                if j[-1] != 'True' and j[-1] != 'False':
+                    continue
+                qid, strand, sid, label = j[0], j[2], j[5], j[-1]
+                if label == 'False':
+                    continue
+                contig_id, genome_id = j[1].split('|')
+                if operon and operon[-1][1] == qid and operon[-1][2] == strand:
+                    operon.append([qid, sid, strand])
+                else:
+                    if operon:
+                        operon_index += 1
+                        operon_id = genome_id + '_operon_' + str(operon_index)
+                        operon_start = int(operon[0][0].split('|')[4])
+                        operon_end = operon[-1][1].split('|')[5]
+                        operon_end = int(operon_end.split('$$')[0])
+                        if operon[0][2] == '+':
+                            operon_strand = 1
+                        elif operon[0][2] == '-':
+                            operon_strand = -1
+                        operon_members = []
+                        for gene_data in [elem[0] for elem in operon] + [operon[-1][1]]:
+                            operon_members.append(genes[gene_data[5:].split('|')[0]])
+                        operons_data[operon[0][4]].append([operon_id, operon_start, operon_end, operon_strand, operon[0][3], operon_members])
+                        #outfile.write(self.create_operon(operon, operon_index, genes))
+                    operon = [[qid, sid, strand, contig_id, genome_id]]
+            if operon:
+                operon_index += 1
+                operon_id = genome_id + '_operon_' + str(operon_index)
+                operon_start = int(operon[0][0].split('|')[4])
+                operon_end = operon[-1][1].split('|')[5]
+                operon_end = int(operon_end.split('$$')[0])
+                if operon[0][2] == '+':
+                    operon_strand = 1
+                elif operon[0][2] == '-':
+                    operon_strand = -1
+                operon_members = []
+                for gene_data in [elem[0] for elem in operon] + [operon[-1][1]]:
+                    operon_members.append(genes[gene_data[5:].split('|')[0]])
+                operons_data[operon[0][4]].append([operon_id, operon_start, operon_end, operon_strand, operon[0][3], operon_members])
+                #outfile.write(self.create_operon(operon, operon_index, genes))
         with open(os.path.join(working_dir, 'poem_output.txt'), 'w') as outfile:
-            with open (poem_outfile, 'r') as infile:
-                operon_index = Operon.objects.count() + 1
-                operon = []
-                for line in infile:
-                    j = line[:-1].split('\t')
-                    if len(j) == 11 and j[-1] in ['True', 'False']:
-                        pass
-                    else:
-                        continue
-                    qid, strand, sid, label = j[0], j[2], j[5], j[-1]
-                    if label == 'False':
-                        continue
-                    if operon and operon[-1][1] == qid and operon[-1][2] == strand:
-                        operon.append([qid, sid, strand])
-                    else:
-                        if operon:
-                            operon_index += 1
-                            outfile.write(self.create_operon(operon, operon_index, genes))
-                        operon = [[qid, sid, strand]]
-                if operon:
-                    operon_index += 1
-                    outfile.write(self.create_operon(operon, operon_index, genes))
-       
-        return poem_outfile
+            for genome_id in operons_data:
+                for item in operons_data[genome_id]:
+                    outfile.write(genome_id + '\t' + '\t'.join([str(x) for x in item]) + '\n')
+        return operons_data
 
-        
+    def create_operons(self, operons_data):
+        operon_instances = []
+        for genome_id in operons_data:
+            genome = Genome.objects.get(name = genome_id)
+            contigs = {item.contig_id:item for item in Contig.objects.filter(genome__name=genome_id)}
+            print('Contigs:')
+            print(contigs.keys())
+            for operon in operons_data[genome_id]:
+                operon_instance = Operon(name = operon[0],
+                                         start = operon[1],
+                                         end = operon[2],
+                                         strand = operon[3],
+                                         genome = genome,
+                                         contig = contigs[operon[4]])
+                operon_instances.append(operon_instance)
+        Operon.objects.bulk_create(operon_instances, batch_size=1000)
+
+        changed_genes = []
+        for genome_id in operons_data:
+            genes = {item.locus_tag:item for item in Gene.objects.filter(genome__name = genome_id)}
+            operons = {item.name:item for item in Operon.objects.filter(genome__name = genome_id)}
+            for operon in operons_data[genome_id]:
+                operon_name = operon[0]
+                for locus_tag in operon[5]:
+                    gene = genes[locus_tag]
+                    gene.operon = operons[operon_name]
+                    changed_genes.append(gene)
+        Gene.objects.bulk_update(changed_genes, ['operon'], batch_size=1000)
+    
     def load_genome_data(self):
         """Populate self.inputgenomes with taxon data"""
         for genome in Genome.objects.all():
