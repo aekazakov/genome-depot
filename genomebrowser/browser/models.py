@@ -84,6 +84,7 @@ class Genome(models.Model):
     external_url = models.CharField(max_length=200)
     external_id = models.CharField(max_length=40)
     gbk_filepath = models.CharField(max_length=200)
+    taxon = models.ForeignKey(Taxon, on_delete=models.CASCADE, blank = False, null = False)
 
     def __str__(self):
         return self.name

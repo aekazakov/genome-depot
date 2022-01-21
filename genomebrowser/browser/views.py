@@ -63,6 +63,17 @@ class GenomeListView(generic.ListView):
         return Genome.objects.order_by('name').select_related('strain')
 
 
+class OperonListView(generic.ListView):
+    model = Operon
+    template_name = 'operon_list.html'
+    context_object_name = 'operonlist'
+    paginate_by = 50
+
+    def get_queryset(self):
+        genome = self.kwargs['genome']
+        return Operon.objects.filter(genome__name=genome).order_by('name').select_related('genome', 'contig')
+
+        
 class GeneListView(generic.ListView):
     model = Gene
     template_name = 'gene_list.html'

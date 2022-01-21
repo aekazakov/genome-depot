@@ -1,0 +1,75 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% load my_tags %}
+
+{% block script-header %}
+{% endblock %}
+
+{% block title %}<div class="logo"><h2>Operons</h2></div>{% endblock %}
+{% block content %}
+			<section id="two" class="wrapper style3">
+				<div class="inner">
+					<header class="align-center">
+				
+					</header>
+
+			<div class="table-wrapper">
+				<table>
+					<thead>
+						<tr>
+							<th>Operon ID</th>
+							<th>Location</th>
+						</tr>
+					</thead>
+					<tbody>
+    {% for operon in operonlist %}
+					    <tr>
+						    <td><a href="{% url 'operondetails' name=operon.name %}">{{ operon.name }}</a></td>
+						{% if operon.strand == "-1" %}
+							<td>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</td>
+						{% else %}
+							<td>{{ operon.contig.contig_id }}: {{ operon.start }}..{{ operon.end }}</td>
+						{% endif %}
+					    </tr>
+    {% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+    {% if is_paginated %}
+        <div>
+	    <span>
+		{% if page_obj.has_previous %}
+		  <a class="button small" href="?{% param_replace page=1 %}">First</a>
+		  {% if page_obj.previous_page_number != 1 %}
+		    <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+		  {% endif %}
+		{% endif %}
+
+		Page {{ page_obj.number }} of {{ paginator.num_pages }}
+		{% if page_obj.has_next %}
+		  {% if page_obj.next_page_number != paginator.num_pages %}
+		    <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+		  {% endif %}
+		  <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
+		{% endif %}
+
+		<span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
+	    </span>
+        </div>
+    {% endif %}
+
+
+    {% if searchcontext %}
+	<div class="align-center">
+	    <p><a href="{% url 'export' %}?{{ request.META.QUERY_STRING }}">Export gene list as tab-separated text file</a></p></p>
+	</div>
+    {% endif %}
+
+
+  
+			    </div>
+			</section>
+
+{% endblock %}
+

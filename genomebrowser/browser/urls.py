@@ -15,6 +15,7 @@ urlpatterns = [
     path('gene/<str:genome>/<str:locus_tag>/', views.gene_detail, name='genedetails'),
     path('operon/<str:genome>/<str:name>/', views.operon_detail, name='operondetails'),
     path('operon/<str:name>/', views.operon_detail, name='operondetails'),
+    path('operons/<str:genome>/', views.OperonListView.as_view(), name='operonlist'),
     path('site/<str:genome>/<str:name>/', views.site_detail, name='sitedetails'),
     path('regulon/<str:genome>/<str:name>/', views.regulon_detail, name='regulondetails'),
     path('getgene/', views.gene_byname, name='genebyname'),

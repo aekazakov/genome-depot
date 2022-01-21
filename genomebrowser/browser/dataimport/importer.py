@@ -147,7 +147,7 @@ class Importer(object):
         return result
 
     def get_gbk_organism(self, gbk_file):
-        organism_data = {}
+        organism_data = {'tax_id': '0', 'organism':'Unknown'}
         if gbk_file.endswith('.gz'):
             gbk_handle = gzip.open(gbk_file, 'rt')
         else:
@@ -160,8 +160,8 @@ class Importer(object):
                         if qualifier.key == '/organism=':
                             if 'organism' not in organism_data:
                                 organism_data['organism'] = qualifier.value[1:-1]
-                            elif organism_data['organism'] != qualifier.value[1:-1]:
-                                raise ValueError('Inconsistent organism names ' + ' ' + organism_data['organism'] + ' ' + qualifier.value[1:-1])
+#                            elif organism_data['organism'] != qualifier.value[1:-1]:
+#                                raise ValueError('Inconsistent organism names ' + ' ' + organism_data['organism'] + ' ' + qualifier.value[1:-1])
                             else:
                                 break
                         elif qualifier.key == '/db_xref=':
@@ -440,6 +440,18 @@ class Importer(object):
         for genome_id in self.inputgenomes:
             gbk_file = self.inputgenomes[genome_id]['gbk']
             gbk_copy = os.path.join(gbff_dir, genome_id + '.genome.gbff.gz')
+            organism_data = self.get_gbk_organism(gbk_file)
+            try:
+                taxon = Taxon.objects.get(taxonomy_id = organism_data['tax_id'])
+            except Taxon.DoesNotExist:
+                taxon = Taxon(taxonomy_id=organism_data['tax_id'],
+                    eggnog_taxid=self.taxonomy[organism_data['tax_id']]['eggnog_taxid'],
+                    name=self.taxonomy[organism_data['tax_id']]['name'],
+                    rank=self.taxonomy[organism_data['tax_id']]['rank'],
+                    parent_id=self.taxonomy[organism_data['tax_id']]['parent']
+                    )
+                taxon.save()
+
             if gbk_file.endswith('.gz'):
                 shutil.copy(gbk_file, gbk_copy)
                 gbk_handle = gzip.open(gbk_file, 'rt')
@@ -490,7 +502,8 @@ class Importer(object):
                 'pub_date': timezone.now(),
                 'external_url':self.inputgenomes[genome_id]['url'],
                 'external_id':self.inputgenomes[genome_id]['external_id'],
-                'gbk_filepath':gbk_copy
+                'gbk_filepath':gbk_copy,
+                'taxon':taxon
                 }
             if self.inputgenomes[genome_id]['strain'] == '':
                 self.genome_data[genome_id]['strain'] = None
@@ -507,17 +520,53 @@ class Importer(object):
         """
         Runs eggnog-mapper for eggnog_mapper_input.faa file in temp directory.
         """
+        chunk_size = '200000'
         result = os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_output.emapper.annotations')
-        orthologs_file = os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_output.emapper.seed_orthologs')
+        work_dir = self.config['cgcms.eggnog_outdir']
+        Path(work_dir).mkdir(parents=True, exist_ok=True)
+        orthologs_file = os.path.join(work_dir, 'input_file.emapper.seed_orthologs')
         if os.path.exists(result):
             os.remove(result)
         if os.path.exists(orthologs_file):
             os.remove(orthologs_file)
+        eggnog_mapper_script = os.path.join(self.config['cgcms.temp_dir'], 'run_emapper.sh')
+        with open(eggnog_mapper_script, 'w') as outfile:
+            outfile.write('cd ' + work_dir + '\n')
+            outfile.write('split -l ' + chunk_size + ' -a 3 -d ' +
+                          os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_input.faa') +
+                          ' input_file.chunk_ \n')
+            outfile.write('for f in input_file.chunk_*; do\n')
+            outfile.write(self.config['cgcms.eggnog_command'] + ' -m diamond --no_annot --no_file_comments --cpu 10 -i $f -o $f;\n')
+            outfile.write('done\n')
+            outfile.write('cat input_file.chunk_*.emapper.seed_orthologs >> ' + orthologs_file + '\n')
+            outfile.write(self.config['cgcms.eggnog_command'] + 
+                          ' --annotate_hits_table ' +
+                          orthologs_file +
+                          ' --no_file_comments -o ' +
+                          os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_output') +
+                          ' --cpu 10\n')
+            outfile.write('\n')
+        '''
+        # split input file into chunks
+        split -l 200000 -a 3 -d eggnog_mapper_input.faa input_file.chunk_
+        # generate orhtologs for each chunk
+        for f in input_file.chunk_*; do
+        ./emapper.py -m diamond --no_annot --no_file_comments --cpu 10 -i $f -o $f; 
+        done
+        # join orthologs files
+        cat input_file.chunk_*.emapper.seed_orthologs >> input_file.emapper.seed_orthologs
+        # generate annotations
+        ./emapper.py --annotate_hits_table input.emapper.seed_orthologs --no_file_comments -o eggnog_mapper_output --cpu 10        
+        '''
+        '''
+        Old command calling emapper.py
         cmd = [self.config['cgcms.eggnog_command'],
               '-m', 'diamond', '--no_file_comments', '--cpu', '12',
               '-i', os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_input.faa'),
               '-o', os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_output')
               ]
+        '''
+        cmd = ['/bin/bash', eggnog_mapper_script]
         with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
             for line in proc.stdout:
                 print(line, end='')
@@ -1180,6 +1229,8 @@ class Importer(object):
         os.remove(os.path.join(self.config['cgcms.temp_dir'], os.path.basename(self.config['cgcms.search_db_prot'])))
         os.remove(self.config['cgcms.search_db_nucl'])
         os.remove(self.config['cgcms.search_db_prot'])
+        for filename in os.listdir(self.config['cgcms.eggnog_outdir']):
+            os.remove(os.path.join(self.config['cgcms.eggnog_outdir'], filename))
         
     def import_genomes(self, in_file):
         '''
@@ -1447,5 +1498,5 @@ class Importer(object):
         self.export_jbrowse_data()
         self.copy_static_files()
         self.create_search_databases()
-        #self.cleanup()
+        self.cleanup()
         

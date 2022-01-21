@@ -3,30 +3,19 @@ import uuid
 from datetime import datetime
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
-#from Bio import Alphabet
-#from Bio import SeqIO
 from subprocess import Popen, PIPE, CalledProcessError, STDOUT
-from genomebrowser.settings import STATICFILES_DIRS
 from browser.models import Config
-#log_file = os.path.join(STATICFILES_DIRS[0], 'genomes', 'tmp', 'search.log')
 
 
 def _verify_alphabet(sequence, alphabet):
     alphabet = set(alphabet) 
     return all(letter in alphabet for letter in sequence)
     
-#def validate_nucl(query):
-#    query_lines = query.split('\n')
-#    seq_record = SeqRecord(Seq(''.join([x.rstrip('\n\r') for x in query_lines[1:]])), id=query_lines[0][1:].rstrip('\r\n'))
-#    _verify_alphabet(seq_record.seq)
-#    return str(seq_record.seq), str(seq_record.id)
-
-
 def run_protein_search(query):
     search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
     log_file = os.path.join(search_dir, 'search.log')
-    blast_db = os.path.join(search_dir, 'blast_prot')# os.path.join(STATICFILES_DIRS[0], 'genomes', 'search', 'blast_prot')
+    blast_db = os.path.join(search_dir, 'blast_prot')
     result = []
     searchcontext = ''
     with open(log_file, 'a') as log:
@@ -89,7 +78,7 @@ def run_nucleotide_search(query):
     search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     DNA_ALPHABET = 'GATCRYWSMKHBVDN'
     log_file = os.path.join(search_dir, 'search.log')
-    blast_db = os.path.join(search_dir, 'blast_nucl') #os.path.join(STATICFILES_DIRS[0], 'genomes', 'search', 'blast_nucl')
+    blast_db = os.path.join(search_dir, 'blast_nucl')
     result = []
     searchcontext = ''
 
