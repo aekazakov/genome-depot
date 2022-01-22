@@ -53,7 +53,7 @@ class Strain_metadata(models.Model):
     strain = models.ForeignKey(Strain, on_delete=models.CASCADE)
     source = models.CharField(max_length=30)
     url = models.CharField(max_length=250)
-    key = models.CharField(max_length=100)
+    key = models.CharField(max_length=250)
     value = models.TextField()
 
     def __str__(self):
@@ -64,7 +64,7 @@ class Sample_metadata(models.Model):
     sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
     source = models.CharField(max_length=30)
     url = models.CharField(max_length=250)
-    key = models.CharField(max_length=100)
+    key = models.CharField(max_length=250)
     value = models.TextField()
 
     def __str__(self):

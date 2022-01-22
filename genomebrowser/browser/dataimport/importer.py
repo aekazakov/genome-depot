@@ -230,13 +230,13 @@ class Importer(object):
                 row = line.rstrip('\n\r').split('\t')
                 saved_metadata[row[0]][row[3]] = [row[1], row[2], row[4]]
             
-        saved_strains = {strain_data['strain_id']:strain_data['taxon'] for strain_data in Strain.objects.values('strain_id', 'taxon')}
+        saved_strains = {strain_data['strain_id']:strain_data['taxon__taxonomy_id'] for strain_data in Strain.objects.values('strain_id', 'taxon__taxonomy_id')}
         for genome_id in self.inputgenomes:
             strain_id = self.inputgenomes[genome_id]['strain']
             if strain_id == '':
                 continue
             if strain_id in saved_strains:
-                if saved_strains[strain_id].taxonomy_id == '0':
+                if saved_strains[strain_id] == '0':
                     # try to update strain taxonomy from GBK file
                     organism_data = self.get_gbk_organism(self.inputgenomes[genome_id]['gbk'])
                     if 'tax_id' in organism_data and organism_data['tax_id'] != '0':
@@ -743,7 +743,7 @@ class Importer(object):
                         rank=self.taxonomy[taxonomy_id]['rank'],
                         parent_id=self.taxonomy[taxonomy_id]['parent']
                         )
-                self.mappings['og'][orthogroup_id] = (eggnog_id, taxonomy_id)
+                self.mappings['og'][eggnog_id + '@' + taxonomy_id] = (eggnog_id, taxonomy_id)
                 self.relations['og'].add((protein_hash, eggnog_id, taxonomy_id))
         for protein_hash in self.protein_data:
             if 'eggnog.taxonomic_group' not in self.protein_data[protein_hash]:
@@ -790,7 +790,8 @@ class Importer(object):
         strain_metadata_instances = []
         for strain_id, metadata_entries in self.strain_metadata.items():
             for metadata_entry in metadata_entries:
-                strain_metadata_instances.append(Strain_metadata(strain=strain_instances[strain_id],
+                strain_metadata_instances.append(Strain_metadata(
+                    strain=strain_instances[strain_id],
                     source=metadata_entry['source'],
                     url=metadata_entry['url'],
                     key=metadata_entry['key'],
@@ -1426,16 +1427,17 @@ class Importer(object):
         genes = {}
         with open(os.path.join(working_dir, 'input.fsa_prod_aa.fsa'), 'w') as outfile:
             gene_index = 0
-            for gene in Gene.objects.select_related('protein'):
-                if gene.protein is not None:
-                    gene_index += 1
-                    genes['%08d'%int(gene_index)] = gene.locus_tag
-                    outfile.write('>' + ' # '.join([gene.contig.contig_id + '|' + gene.genome.name + '_' + str(gene_index),
-                                                    str(gene.start),
-                                                    str(gene.end),
-                                                    str(gene.strand),
-                                                    'ID=' + gene.locus_tag]) + '\n')
-                    outfile.write(gene.protein.sequence + '\n')
+            for genome_id in self.inputgenomes:
+                for gene in Gene.objects.filter(genome__name = genome_id).select_related('protein', 'genome', 'contig'):
+                    if gene.protein is not None:
+                        gene_index += 1
+                        genes['%08d'%int(gene_index)] = gene.locus_tag
+                        outfile.write('>' + ' # '.join([gene.contig.contig_id + '|' + gene.genome.name + '_' + str(gene_index),
+                                                        str(gene.start),
+                                                        str(gene.end),
+                                                        str(gene.strand),
+                                                        'ID=' + gene.locus_tag]) + '\n')
+                        outfile.write(gene.protein.sequence + '\n')
         poem_script = os.path.join(working_dir, 'run_poem.sh')
         with open(poem_script, 'w') as outfile:
             outfile.write('#!/bin/bash\n')

@@ -24,7 +24,6 @@ ref.pfam_hmm_lib = Databases/PFAM/Pfam-A.hmm
 ref.pfam_hmm_list = Databases/PFAM/ref_pfam.txt
 ref.tigrfam_hmm_list = Databases/TIGRFAMs/ref_tigrfam.txt
 ref.tigrfam_hmm_lib = Databases/TIGRFAMs/TIGRFAM.HMM
-ref.fitbrowser_orgs_file = CGCMS/ref_data/ref_fitbrowser.txt
 ref.taxonomy = CGCMS/ref_data/ref_taxonomy.txt
 plugins.fama.fama_dir = famapath/fama/py
 plugins.fama.fama_config = famapath/fama/py/config_test.ini
