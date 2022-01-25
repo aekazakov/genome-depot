@@ -25,6 +25,7 @@
 					<thead>
 						<tr>
 							<th>Name</th>
+							<th>Taxonomy</th>
 							<th>Source</th>
 							<th>Size</th>
 							<th>Contigs</th>
@@ -35,6 +36,7 @@
     {% for genome in genomelist %}
 					    <tr>
 						    <td><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a></td>
+							<td>{{ genome.taxon.name }}</td>
 							{%if genome.strain %}
 								<td>{{ genome.strain.full_name }}</td>
 							{% else %}

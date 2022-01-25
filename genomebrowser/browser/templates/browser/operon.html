@@ -10,11 +10,7 @@
 	    <div class="inner">
 		<header class="align-center">
 		<h2>{{ operon.name }} 
-		{%if operon.genome.strain %}
-			[<a href="{% url 'straindetails' strain_id=operon.genome.strain.strain_id %}">{{ operon.genome.strain.full_name }}</a>]
-		{% else %}
-			[<a href="{% url 'sampledetails' sample_id=operon.genome.sample.sample_id %}">{{ operon.genome.sample.full_name }}</a>]
-		{% endif %}
+			[<a href="{% url 'genomedetails' name=operon.genome.name %}">{{ operon.genome.taxon.name }}</a>]
 		</h2>
 		</header>
 		<div class="row">
@@ -35,12 +31,7 @@
 			    <p class="align-center">Operon information</p>
 			</header>
 			<span>Genome</span>
-			<h5><a href="{% url 'genomedetails' name=operon.genome.name %}">{{ operon.genome.name }}</a> 
-			{%if operon.genome.strain %}
-				[{{ operon.genome.strain.full_name }}]</h5>
-			{% else %}
-				[{{ operon.genome.sample.full_name }}]</h5>
-			{% endif %}
+			<h5><a href="{% url 'genomedetails' name=operon.genome.name %}">{{ operon.genome.name }} [{{ operon.genome.taxon.name }}]</a></h5>
 			<span>Position</span>
 		    {% if operon.strand == "-1" %}
 			<h5>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</h5>

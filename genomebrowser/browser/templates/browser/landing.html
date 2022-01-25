@@ -7,20 +7,20 @@
 		<!-- Banner -->
 			<section class="banner full">
 				<article>
-					<img src="{% static 'images/slide02.jpg' %}" alt="" />
-					<div class="inner">
-						<header>
-							<p>Here you can find</p>
-							<h3><a href="{% url 'strain_list' %}">{{ num_strains }} strains</a></h2>
-						</header>
-					</div>
-				</article>
-				<article>
 					<img src="{% static 'images/slide04.jpg' %}"  alt="" />
 					<div class="inner">
 						<header>
 							<p>Here you can find</p>
 							<h3><a href="{% url 'genome_list' %}">{{ num_genomes }} genomes</a></h3>
+						</header>
+					</div>
+				</article>
+				<article>
+					<img src="{% static 'images/slide02.jpg' %}" alt="" />
+					<div class="inner">
+						<header>
+							<p>Here you can find</p>
+							<h3><a href="{% url 'strain_list' %}">{{ num_strains }} strains</a></h2>
 						</header>
 					</div>
 				</article>

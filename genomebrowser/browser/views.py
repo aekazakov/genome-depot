@@ -60,7 +60,7 @@ class GenomeListView(generic.ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        return Genome.objects.order_by('name').select_related('strain')
+        return Genome.objects.order_by('name').select_related('strain', 'taxon')
 
 
 class OperonListView(generic.ListView):
@@ -300,7 +300,7 @@ class GenomeSearchResultsView(generic.ListView):
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         if query:
-            object_list = Genome.objects.filter(name__icontains=query).order_by('name').select_related('strain')
+            object_list = Genome.objects.filter(name__icontains=query).order_by('name').select_related('strain', 'taxon')
         else:
             object_list = Genome.objects.none()
         return object_list
@@ -609,7 +609,7 @@ def sample_detail(request, sample_id):
 def gene_detail(request, genome, locus_tag):
     try:
         gene = Gene.objects.select_related(
-            'genome', 'genome__strain', 'protein', 'operon'
+            'genome', 'genome__taxon', 'protein', 'operon'
             ).prefetch_related(
             'protein__ortholog_groups__taxon', 'protein__kegg_orthologs', 'protein__kegg_pathways', 'protein__kegg_reactions', 'protein__ec_numbers', 'protein__go_terms', 'protein__tc_families', 'protein__cog_classes'
             ).get(genome__name=genome, locus_tag = locus_tag)

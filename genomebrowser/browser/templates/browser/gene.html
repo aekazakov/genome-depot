@@ -19,11 +19,7 @@
 	    <div class="inner">
 		<header class="align-center">
 		<h2>{{ gene.locus_tag }} 
-		{%if gene.genome.strain %}
-			[<a href="{% url 'straindetails' strain_id=gene.genome.strain.strain_id %}">{{ gene.genome.strain.full_name }}</a>]
-		{% else %}
-			[<a href="{% url 'sampledetails' sample_id=gene.genome.sample.sample_id %}">{{ gene.genome.sample.full_name }}</a>]
-		{% endif %}
+			[<a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.taxon.name }}</a>]
 		</h2>
 		</header>
 		<div class="row">
@@ -44,12 +40,7 @@
 			    <p class="align-center">Gene information</p>
 			</header>
 			<span>Genome</span>
-			<h5><a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.name }}</a> 
-			{%if gene.genome.strain %}
-				[{{ gene.genome.strain.full_name }}]</h5>
-			{% else %}
-				[{{ gene.genome.sample.full_name }}]</h5>
-			{% endif %}
+			<h5><a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]</a></h5>
 			<span>Position</span>
 		    {% if gene.strand == "-1" %}
 			<h5>{{ gene.contig.contig_id }}: complement({{ gene.start }}..{{ gene.end }})</h5>

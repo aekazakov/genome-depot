@@ -29,17 +29,17 @@
 		<div class="grid-style">
 		{%if genome.strain %}
 		    <div class="content">
-			<h5>Strain: <a href="{% url 'straindetails' strain_id=genome.strain.strain_id %}">{{ genome.strain.full_name }}</a></h5>
 			<h5>Taxonomy: {{ genome.taxon.name }}</h5>
+			<h5>Strain: <a href="{% url 'straindetails' strain_id=genome.strain.strain_id %}">{{ genome.strain.full_name }}</a></h5>
 			<h5>Order: {{ genome.strain.order }}</h5>
 			<h5>Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a></h5>
 		    </div>
 		{% endif %}
 		{%if genome.sample %}
 		    <div class="content">
+			<h5>Taxonomy: {{ genome.taxon.name }}</h5>
 			<h5>Sample: <a href="{% url 'sampledetails' sample_id=genome.sample.sample_id %}">{{ genome.sample.sample_id }}</a></h5>
 			<h5>Sample name: {{ genome.sample.full_name }}</h5>
-			<h5>Taxonomy: {{ genome.taxon.name }}</h5>
 			<h5>Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a></h5>
 		    </div>
 		{% endif %}

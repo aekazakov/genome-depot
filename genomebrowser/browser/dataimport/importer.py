@@ -147,13 +147,15 @@ class Importer(object):
         return result
 
     def get_gbk_organism(self, gbk_file):
-        organism_data = {'tax_id': '0', 'organism':'Unknown'}
+        organism_data = {}
         if gbk_file.endswith('.gz'):
             gbk_handle = gzip.open(gbk_file, 'rt')
         else:
             gbk_handle = open(gbk_file, 'r')
         parser = GenBank.parse(gbk_handle)
+        organism = ''
         for gbk_record in parser:
+            organism = str(gbk_record.organism)
             for feature in gbk_record.features:
                 if feature.key == 'source':
                     for qualifier in feature.qualifiers:
@@ -163,18 +165,32 @@ class Importer(object):
 #                            elif organism_data['organism'] != qualifier.value[1:-1]:
 #                                raise ValueError('Inconsistent organism names ' + ' ' + organism_data['organism'] + ' ' + qualifier.value[1:-1])
                             else:
-                                break
+                                if 'tax_id' in organism_data:
+                                    break  # Only the first occurrence of the 'source' feature is considered
                         elif qualifier.key == '/db_xref=':
                             qualifier_value = qualifier.value[1:-1]
                             if qualifier_value.startswith('taxon:'):
                                 taxonomy_id = qualifier_value.split(':')[1]
+                                if taxonomy_id == '6666666':  # Fix for fake taxonomy ID of SEED genomes
+                                    taxonomy_id = '0'  # 
                                 if taxonomy_id not in self.taxonomy:
                                     raise KeyError(gbk_file + ' parsing error. ' + taxonomy_id + ' not found in taxonomy reference file. Stop now and update taxonomy reference data.')
                                 organism_data['tax_id'] = taxonomy_id
-                    break
+                    break  # Only the first occurrence of the 'source' feature is considered
+            if 'organism' in organism_data and 'tax_id' in organism_data:
+                break  # Only the first sequence record with the 'source' feature is considered
         gbk_handle.close()
+        # Fill in missing values
+        if 'organism' not in organism_data:
+            if organism != '':
+                organism_data['organism'] = organism  # if 'source' feature is missing in the entire file, let's try organism attribute of sequence records
+            else:
+                print('Organism name not found in', gbk_file)
+                organism_data['organism'] = 'Unknown'
+        if 'tax_id' not in organism_data:
+            print('Taxonomy ID not found in', gbk_file)
+            organism_data['tax_id'] = '0'
         return organism_data
-    
     
     def generate_strain_data(self, gbk_file, strain_id, order):
         """
@@ -186,7 +202,10 @@ class Importer(object):
         organism_data = self.get_gbk_organism(gbk_file)
 
         if 'organism' not in organism_data:
-            organism_data['organism'] = 'Environmental isolate ' + strain_id
+            if strain_id == '':
+                organism_data['organism'] = 'Unknown organism'
+            else:
+                organism_data['organism'] = 'Environmental isolate ' + strain_id
 
         if 'tax_id' not in organism_data:
             organism_data['tax_id'] = '0'
@@ -1290,9 +1309,9 @@ class Importer(object):
         # Close MySQL connection before starting eggnog-mapper because it may run for days resulting in "MySQL server has gone away" error
         connection.close()
         # run eggnog-mapper for all proteins
-        eggnog_outfile = self.run_eggnog_mapper()
+        # eggnog_outfile = self.run_eggnog_mapper()
         # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
-        # eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_output.emapper.annotations')
+        eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_output.emapper.annotations')
         
         print('Reading eggnog-mapper output')
         # separate eggnog-mapper output by genome?
