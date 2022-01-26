@@ -43,13 +43,14 @@ class Annotator(object):
     def export_proteins(self, genome_ids):
         """Populates proteins dictionary and creates FASTA file"""
         if genome_ids is None:
-            for item in Protein.objects.values('protein_hash', 'sequence'):
-                self.proteins[item['protein_hash']] = item['sequence']
+            for item in Protein.objects.all():
+                self.proteins[item['protein_hash']] = item
         else:
-            protein_mappings = Gene.objects.filter(genome__id__in = genome_ids).values('protein__protein_hash', 'protein__sequence')
-            for protein_data in protein_mappings:
-                if protein_data['protein__protein_hash'] is not None:
-                    self.proteins[protein_data['protein__protein_hash']] = protein_data['protein__sequence']
+            target_genes = Gene.objects.filter(genome__id__in = genome_ids).select_related('protein')
+            protein_mappings = {}
+            for gene in target_genes:
+                if gene.protein is not None:
+                    self.proteins[gene.protein.protein_hash] = gene.protein
             
         with open(self.hmmsearch_input_file, 'w') as outfile:
             for protein_hash, protein in self.proteins.items():
