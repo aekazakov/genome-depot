@@ -10,7 +10,14 @@
 			<section id="two" class="wrapper style3">
 				<div class="inner">
 					<header class="align-center">
-						<h2>Sites in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }} [{{ genome.taxon.name }}]</a></h2>
+				{% if searchcontext %}
+				    <h4>{{ searchcontext }}</h4>
+				{% else %}
+				    <h4>Operons in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }} [{{ genome.taxon.name }}]</a></h4>
+				    <form action="{% url 'operonlist' genome=genome.name %}" method="get">
+				      <input name="query" type="text" placeholder="Quick search in operons by gene name or locus tag...">
+				    </form>
+				{% endif %}
 					</header>
 
 			<div class="table-wrapper">
@@ -61,12 +68,6 @@
         </div>
     {% endif %}
 
-
-    {% if searchcontext %}
-	<div class="align-center">
-	    <p><a href="{% url 'export' %}?{{ request.META.QUERY_STRING }}">Export gene list as tab-separated text file</a></p></p>
-	</div>
-    {% endif %}
 
 
   

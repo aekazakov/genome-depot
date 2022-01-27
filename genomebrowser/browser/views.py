@@ -71,14 +71,22 @@ class OperonListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        genome_name = self.kwargs['genome']
-        genome = Genome.objects.get(name = genome_name)
+        genome = Genome.objects.get(name = self.kwargs['genome'])
         context['genome'] = genome
+        if self.request.GET.get('query'):
+            context['searchcontext'] = 'Search results for "' + self.request.GET.get('query') + '" in ' + genome.name + ' operons'
         return context
 
     def get_queryset(self):
         genome = self.kwargs['genome']
-        return Operon.objects.filter(genome__name=genome).order_by('name').select_related('genome', 'contig').prefetch_related('genes')
+        if self.request.GET.get('query'):
+            query = self.request.GET.get('query')
+            object_list = Operon.objects.filter(genome__name=genome).filter(
+                Q(genes__name__icontains=query) | Q(genes__locus_tag__icontains=query)
+            ).order_by('name').select_related('genome', 'contig').prefetch_related('genes')
+        else:
+            object_list = Operon.objects.filter(genome__name=genome).order_by('name').select_related('genome', 'contig').prefetch_related('genes')
+        return object_list
 
         
 class SiteListView(generic.ListView):
@@ -92,11 +100,20 @@ class SiteListView(generic.ListView):
         genome_name = self.kwargs['genome']
         genome = Genome.objects.get(name = genome_name)
         context['genome'] = genome
+        if self.request.GET.get('query'):
+            context['searchcontext'] = 'Search results for "' + self.request.GET.get('query') + '" in ' + genome.name + ' sites'
         return context
 
     def get_queryset(self):
         genome = self.kwargs['genome']
-        return Site.objects.filter(genome__name=genome).order_by('name').select_related('genome', 'contig')
+        if self.request.GET.get('query'):
+            query = self.request.GET.get('query')
+            object_list = Site.objects.filter(genome__name=genome).filter(
+                Q(name__icontains=query) | Q(regulon__name__icontains=query)
+            ).order_by('name').select_related('genome', 'contig')
+        else:
+            object_list = Site.objects.filter(genome__name=genome).order_by('name').select_related('genome', 'contig')
+        return object_list
 
 
 class RegulonListView(generic.ListView):
@@ -110,11 +127,20 @@ class RegulonListView(generic.ListView):
         genome_name = self.kwargs['genome']
         genome = Genome.objects.get(name = genome_name)
         context['genome'] = genome
+        if self.request.GET.get('query'):
+            context['searchcontext'] = 'Search results for "' + self.request.GET.get('query') + '" in ' + genome.name + ' regulons'
         return context
 
     def get_queryset(self):
         genome = self.kwargs['genome']
-        return Regulon.objects.filter(genome__name=genome).order_by('name').select_related('genome')
+        if self.request.GET.get('query'):
+            query = self.request.GET.get('query')
+            object_list = Regulon.objects.filter(genome__name=genome).filter(
+                Q(name__icontains=query) | Q(description__icontains=query) | Q(regulators__locus_tag__icontains=query) | Q(regulators__name__icontains=query)
+            ).order_by('name').select_related('genome')
+        else:
+            object_list = Regulon.objects.filter(genome__name=genome).order_by('name').select_related('genome')
+        return object_list
 
 
 class GeneListView(generic.ListView):
@@ -214,116 +240,116 @@ class GeneSearchResultsView(generic.ListView):
             if genome:
                 object_list = Gene.objects.filter(genome__name=genome).filter(
                     Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
-                ).order_by('locus_tag').select_related('genome', 'genome__strain')
+                ).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
                 object_list = Gene.objects.filter(
                     Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
-                ).order_by('locus_tag').select_related('genome', 'genome__strain')
+                ).order_by('locus_tag').select_related('genome', 'genome__taxon')
         elif og:
             proteins = [item['protein_hash'] for item in Protein.objects.filter(ortholog_groups__id=og).values('protein_hash')]
             if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
         elif ko:
             proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_orthologs__kegg_id=ko).values('protein_hash')]
             if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
         elif kp:
             proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_pathways__kegg_id=kp).values('protein_hash')]
             if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
         elif kr:
             proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_reactions__kegg_id=kr).values('protein_hash')]
             if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
         elif ec:
             proteins = [item['protein_hash'] for item in Protein.objects.filter(ec_numbers__ec_number=ec).values('protein_hash')]
             if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
         elif tc:
             proteins = [item['protein_hash'] for item in Protein.objects.filter(tc_families__tc_id=tc).values('protein_hash')]
             if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
         elif cazy:
             proteins = [item['protein_hash'] for item in Protein.objects.filter(cazy_families__cazy_id=cazy).values('protein_hash')]
             if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
         elif cog:
             proteins = [item['protein_hash'] for item in Protein.objects.filter(cog_classes__cog_id=cog).values('protein_hash')]
             if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
         elif go:
             proteins = [item['protein_hash'] for item in Protein.objects.filter(go_terms__go_id=go).values('protein_hash')]
             if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
         elif genome:
             if ko_query:
                 ko_ids = Kegg_ortholog.objects.filter(
                     Q(kegg_id__icontains=ko_query) | Q(description__icontains=ko_query)
                 ).values('kegg_id')
                 proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_orthologs__kegg_id__in=ko_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             elif kp_query:
                 kp_ids = Kegg_pathway.objects.filter(
                     Q(kegg_id__icontains=kp_query) | Q(description__icontains=kp_query)
                 ).values('kegg_id')
                 proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_pathways__kegg_id__in=kp_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             elif kr_query:
                 kr_ids = Kegg_reaction.objects.filter(
                     Q(kegg_id__icontains=kr_query) | Q(description__icontains=kr_query)
                 ).values('kegg_id')
                 proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_reactions__kegg_id__in=kr_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             elif ec_query:
                 ec_ids = Ec_number.objects.filter(
                     Q(ec_number__icontains=ec_query) | Q(description__icontains=ec_query)
                 ).values('ec_number')
                 proteins = [item['protein_hash'] for item in Protein.objects.filter(ec_numbers__ec_number__in=ec_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             elif tc_query:
                 tc_ids = Tc_family.objects.filter(
                     Q(tc_id__icontains=tc_query) | Q(description__icontains=tc_query)
                 ).values('tc_id')
                 proteins = [item['protein_hash'] for item in Protein.objects.filter(tc_families__tc_id__in=tc_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             elif cazy_query:
                 cazy_ids = Cazy_family.objects.filter(
                     Q(cazy_id__icontains=cazy_query) | Q(description__icontains=cazy_query)
                 ).values('cazy_id')
                 proteins = [item['protein_hash'] for item in Protein.objects.filter(cazy_families__cazy_id__in=cazy_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             elif cog_query:
                 cog_ids = Cog_class.objects.filter(
                     Q(cog_id__icontains=cog_query) | Q(description__icontains=cog_query)
                 ).values('cog_id')
                 proteins = [item['protein_hash'] for item in Protein.objects.filter(cog_classes__cog_id__in=cog_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             elif go_query:
                 go_ids = Go_term.objects.filter(
                     Q(go_id__icontains=go_query) | Q(description__icontains=go_query)
                 ).values('go_id')
                 proteins = [item['protein_hash'] for item in Protein.objects.filter(go_terms__go_id__in=go_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
-                object_list = Gene.objects.filter(genome__name=genome).order_by('locus_tag').select_related('genome', 'genome__strain')
+                object_list = Gene.objects.filter(genome__name=genome).order_by('locus_tag').select_related('genome', 'genome__taxon')
         else:
             object_list = Gene.objects.none()
         return object_list
@@ -343,7 +369,7 @@ class GenomeSearchResultsView(generic.ListView):
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         if query:
-            object_list = Genome.objects.filter(name__icontains=query).order_by('name').select_related('strain', 'taxon')
+            object_list = Genome.objects.filter(name__icontains=query).order_by('name').select_related('strain', 'sample', 'taxon')
         else:
             object_list = Genome.objects.none()
         return object_list
@@ -601,10 +627,6 @@ def genome_detail(request, name):
 
 
 def strain_detail(request, strain_id):
-#    if request.GET.get('name'):
-#        strain_name = request.GET.get('name')
-#    else:
-#        raise Http404('No strain name or ID provided')
     try:
         strain = Strain.objects.get(strain_id = strain_id)
         genomes = Genome.objects.filter(strain=strain).order_by('name')
@@ -627,10 +649,6 @@ def strain_detail(request, strain_id):
 
 
 def sample_detail(request, sample_id):
-#    if request.GET.get('name'):
-#        strain_name = request.GET.get('name')
-#    else:
-#        raise Http404('No sample name or ID provided')
     try:
         sample = Sample.objects.get(sample_id = sample_id)
         genomes = Genome.objects.filter(sample=sample).order_by('name')

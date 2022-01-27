@@ -33,6 +33,7 @@
 			<h5>Strain: <a href="{% url 'straindetails' strain_id=genome.strain.strain_id %}">{{ genome.strain.full_name }}</a></h5>
 			<h5>Order: {{ genome.strain.order }}</h5>
 			<h5>Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a></h5>
+			<h5><a href="{% static 'genomes/gbff/' %}{{ genome.name }}.genome.gbff.gz">Download genome</a></h5>
 		    </div>
 		{% endif %}
 		{%if genome.sample %}
