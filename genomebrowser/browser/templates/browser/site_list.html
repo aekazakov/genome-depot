@@ -5,7 +5,7 @@
 {% block script-header %}
 {% endblock %}
 
-{% block title %}<div class="logo"><h2>Operons</h2></div>{% endblock %}
+{% block title %}<div class="logo"><h2>Sites</h2></div>{% endblock %}
 {% block content %}
 			<section id="two" class="wrapper style3">
 				<div class="inner">
@@ -17,21 +17,25 @@
 				<table>
 					<thead>
 						<tr>
-							<th>Operon ID</th>
+							<th>Site</th>
+							<th>Regulon</th>
 							<th>Location</th>
-							<th>Genes</th>
 						</tr>
 					</thead>
 					<tbody>
-    {% for operon in operonlist %}
+    {% for site in sitelist %}
 					    <tr>
-						    <td><a href="{% url 'operondetails' name=operon.name %}">{{ operon.name }}</a></td>
-						{% if operon.strand == -1 %}
-							<td>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</td>
+						    <td><a href="{% url 'sitedetails' genome=site.genome.name name=site.name %}">{{ site.name }}</a></td>
+						{% if site.regulon %}
+						    <td><a href="{% url 'regulondetails' genome=site.genome.name name=site.regulon.name %}">{{ site.regulon.name }}</a></td>
 						{% else %}
-							<td>{{ operon.contig.contig_id }}: {{ operon.start }}..{{ operon.end }}</td>
+						    <td>&nbsp;</td>
 						{% endif %}
-						    <td>{{ operon.genes.count }}</td>
+						{% if site.strand == -1 %}
+							<td>{{ site.contig.contig_id }}: complement({{ site.start }}..{{ site.end }})</td>
+						{% else %}
+							<td>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</td>
+						{% endif %}
 					    </tr>
     {% endfor %}
 					</tbody>

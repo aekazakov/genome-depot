@@ -28,11 +28,11 @@ class AnnotationSearchResultsView(generic.ListView):
         if genome:
             object_list = Annotation.objects.filter(
                 (Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)) & Q(gene_id__genome__name=genome)
-            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__strain')
+            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon')
         else:
             object_list = Annotation.objects.filter(
                 Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)
-            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__strain')
+            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon')
         return object_list
 
 
@@ -69,11 +69,54 @@ class OperonListView(generic.ListView):
     context_object_name = 'operonlist'
     paginate_by = 50
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        genome_name = self.kwargs['genome']
+        genome = Genome.objects.get(name = genome_name)
+        context['genome'] = genome
+        return context
+
     def get_queryset(self):
         genome = self.kwargs['genome']
-        return Operon.objects.filter(genome__name=genome).order_by('name').select_related('genome', 'contig')
+        return Operon.objects.filter(genome__name=genome).order_by('name').select_related('genome', 'contig').prefetch_related('genes')
 
         
+class SiteListView(generic.ListView):
+    model = Site
+    template_name = 'site_list.html'
+    context_object_name = 'sitelist'
+    paginate_by = 50
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        genome_name = self.kwargs['genome']
+        genome = Genome.objects.get(name = genome_name)
+        context['genome'] = genome
+        return context
+
+    def get_queryset(self):
+        genome = self.kwargs['genome']
+        return Site.objects.filter(genome__name=genome).order_by('name').select_related('genome', 'contig')
+
+
+class RegulonListView(generic.ListView):
+    model = Regulon
+    template_name = 'regulon_list.html'
+    context_object_name = 'regulonlist'
+    paginate_by = 50
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        genome_name = self.kwargs['genome']
+        genome = Genome.objects.get(name = genome_name)
+        context['genome'] = genome
+        return context
+
+    def get_queryset(self):
+        genome = self.kwargs['genome']
+        return Regulon.objects.filter(genome__name=genome).order_by('name').select_related('genome')
+
+
 class GeneListView(generic.ListView):
     model = Gene
     template_name = 'gene_list.html'
@@ -537,6 +580,9 @@ def genome_detail(request, name):
     except Genome.DoesNotExist:
         raise Http404('Genome not found: ' + name)
     context = {'genome': genome}
+    context['operons'] = Operon.objects.filter(genome=genome).count()
+    context['sites'] = Site.objects.filter(genome=genome).count()
+    context['regulons'] = Regulon.objects.filter(genome=genome).count()
     if request.GET.get('contig'):
         context['highlight_start'] = request.GET.get('start')
         context['highlight_end'] = request.GET.get('end')

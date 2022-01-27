@@ -5,33 +5,37 @@
 {% block script-header %}
 {% endblock %}
 
-{% block title %}<div class="logo"><h2>Operons</h2></div>{% endblock %}
+{% block title %}<div class="logo"><h2>Regulons</h2></div>{% endblock %}
 {% block content %}
 			<section id="two" class="wrapper style3">
 				<div class="inner">
 					<header class="align-center">
-						<h2>Sites in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }} [{{ genome.taxon.name }}]</a></h2>
+						<h2>Regulons in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }} [{{ genome.taxon.name }}]</a></h2>
 					</header>
 
 			<div class="table-wrapper">
 				<table>
 					<thead>
 						<tr>
-							<th>Operon ID</th>
-							<th>Location</th>
-							<th>Genes</th>
+							<th>Regulon</th>
+							<th>Regulators</th>
+							<th>Description</th>
 						</tr>
 					</thead>
 					<tbody>
-    {% for operon in operonlist %}
+    {% for regulon in regulonlist %}
 					    <tr>
-						    <td><a href="{% url 'operondetails' name=operon.name %}">{{ operon.name }}</a></td>
-						{% if operon.strand == -1 %}
-							<td>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</td>
-						{% else %}
-							<td>{{ operon.contig.contig_id }}: {{ operon.start }}..{{ operon.end }}</td>
-						{% endif %}
-						    <td>{{ operon.genes.count }}</td>
+						<td><a href="{% url 'regulondetails' genome=regulon.genome.name name=regulon.name %}">{{ regulon.name }}</a></td>
+					    {% if regulon.regulators %}
+						<td>
+						{% for gene in regulon.regulators.all %}
+						    <a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a><br\>
+						{% endfor %}
+						</td>
+					    {% else %}
+						<td>&nbsp;</td>
+					    {% endif %}
+						<td>{{ regulon.description }}</td>
 					    </tr>
     {% endfor %}
 					</tbody>

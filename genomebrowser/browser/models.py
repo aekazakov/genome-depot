@@ -231,7 +231,7 @@ class Gene(models.Model):
     genome = models.ForeignKey(Genome, on_delete=models.CASCADE)
     function = models.CharField(max_length=250, db_index=True) # prokka function
     protein = models.ForeignKey(Protein, on_delete=models.SET_NULL, blank = True, null = True)
-    operon = models.ForeignKey(Operon, on_delete=models.SET_NULL, blank = True, null = True)
+    operon = models.ForeignKey(Operon, on_delete=models.SET_NULL, blank = True, null = True, related_name='genes')
     
     def __str__(self):
         return self.locus_tag
