@@ -813,15 +813,11 @@ def protein_search(request):
             row=row.split('\t')
             if row[0] not in result:
                 result[row[0]] = []
-            genes = Gene.objects.select_related('protein', 'genome', 'genome__strain').filter(protein__protein_hash = row[1])
+            genes = Gene.objects.select_related('protein', 'genome', 'genome__taxon').filter(protein__protein_hash = row[1])
             # Generate hit description
             for target in genes:
-                if target.genome.strain:
-                    hit = [target.genome.name, target.locus_tag, target.genome.strain.full_name,
-                           target.function, '{:.1f}'.format(float(row[2])), row[3], row[10], row[11]]
-                else:
-                    hit = [target.genome.name, target.locus_tag, target.genome.name + ' MAG: ' + target.genome.sample.full_name,
-                           target.function, '{:.1f}'.format(float(row[2])), row[3], row[10], row[11]]
+                hit = [target.genome.name, target.locus_tag, target.genome.taxon.name,
+                       target.function, '{:.1f}'.format(float(row[2])), row[3], row[10], row[11]]
                 result[row[0]].append(hit)
         context['searchresult'] = result
     return render(request, 'browser/proteinsearch.html', context)
@@ -842,10 +838,10 @@ def protein_search_external(request):
                 result[row[0]] = []
             #protein = Protein.objects.get(protein_hash = row[1])
             #genes = protein.gene_set.all()
-            genes = Gene.objects.select_related('protein', 'genome', 'genome__strain').filter(protein__protein_hash = row[1])
+            genes = Gene.objects.select_related('protein', 'genome', 'genome__taxon').filter(protein__protein_hash = row[1])
             for target in genes:
-                hit = [target.id, target.locus_tag, target.genome.strain.full_name,
-                       target.function, row[2], row[3], row[10], row[11]]
+                hit = [target.genome.name, target.locus_tag, target.genome.taxon.name,
+                       target.function, '{:.1f}'.format(float(row[2])), row[3], row[10], row[11]]
                 result[row[0]].append(hit)
         context['searchresult'] = result
     else:
@@ -868,8 +864,7 @@ def nucleotide_search(request):
             contig_name, genome_name = row[1].split('|')
             genome_name = genome_name.split('[')[0]
             print('Search for contig', contig_name, 'in genome', genome_name)
-            target = Contig.objects.select_related('genome').get(contig_id = contig_name, genome__name = genome_name)
-            #genome = Genome.objects.get(name=genome_name)
+            target = Contig.objects.select_related('genome', 'genome__taxon').get(contig_id = contig_name, genome__name = genome_name)
             ani = float(row[2])
             # MMseqs2 hit
             strand = '+'

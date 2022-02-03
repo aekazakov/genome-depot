@@ -26,7 +26,7 @@
 					<thead>
 						<tr>
 							<th>Gene ID</th>
-							<th>Organism</th>
+							<th>Genome</th>
 							<th>Source</th>
 							<th>Annotation</th>
 						</tr>
@@ -35,7 +35,7 @@
     {% for item in annotationlist %}
 					    <tr>
 						    <td><a href="{% url 'genedetails' genome=item.gene_id.genome.name locus_tag=item.gene_id.locus_tag %}">{{ item.gene_id.locus_tag }}</a></td>
-						    <td>{{ item.gene_id.genome.taxon.name }}</td>
+						    <td>{{ item.gene_id.genome.name }} [{{ item.gene_id.genome.taxon.name }}]</td>
 						    <td>{{ item.source }}</td>
 						    <td>{{ item.value }}</td>
 					    </tr>

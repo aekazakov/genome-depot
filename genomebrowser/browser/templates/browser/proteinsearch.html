@@ -20,6 +20,7 @@
 					<thead>
 						<tr>
 							<th>Target gene</th>
+							<th>Genome</th>
 							<th>%identity</th>
 							<th>Alignment length</th>
 							<th>E-value</th>
@@ -29,7 +30,8 @@
 					<tbody>
 			    {% for item in hits %}
 				<tr>
-					<td align="left"><a href="{% url 'genedetails' genome=item.0 locus_tag=item.1 %}">{{ item.1 }}</a> [{{ item.2 }}] {{ item.3 }}</td>
+					<td align="left"><a href="{% url 'genedetails' genome=item.0 locus_tag=item.1 %}">{{ item.1 }}</a> [{{ item.3 }}]</td>
+					<td align="left">{{ item.0 }} [{{ item.2 }}]</td>
 					<td>{{ item.4 }}</td>
 					<td>{{ item.5 }}</td>
 					<td>{{ item.6 }}</td>

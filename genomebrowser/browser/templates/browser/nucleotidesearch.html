@@ -31,13 +31,7 @@
 			    {% for item in hits %}
 				<tr>
 					<td align="left"><a href="{% url 'genomedetails' name=item.1.genome.name %}?contig={{ item.1.contig_id }}&start={{ item.6 }}&end={{ item.7 }}">{{ item.0 }}</a></td>
-					<td align="left">{{ item.1.genome.name }} 
-					{%if item.1.genome.strain %}
-						[{{ item.1.genome.strain.full_name }}] 
-					{% else %}
-						[{{ item.1.genome.sample.full_name }}] 
-					{% endif %}
-					</td>
+					<td align="left">{{ item.1.genome.name }} [{{ item.1.genome.taxon.name }}]</td>
 					<td>{{ item.2 }}</td>
 					<td>{{ item.3 }}</td>
 					<td>{{ item.4 }}</td>

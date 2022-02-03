@@ -29,7 +29,7 @@
 						<tr>
 							<th>Gene ID</th>
 							<th>Name</th>
-							<th>Organism</th>
+							<th>Genome</th>
 							<th>Function</th>
 						</tr>
 					</thead>
@@ -38,7 +38,7 @@
 					    <tr>
 						    <td><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a></td>
 						    <td>{{ gene.name }}</td>
-						    <td>{{ gene.genome.taxon.name }}</td>
+						    <td>{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]</td>
 						    <td>{{ gene.function }}</td>
 					    </tr>
     {% endfor %}
