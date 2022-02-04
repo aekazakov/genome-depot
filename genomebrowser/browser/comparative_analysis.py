@@ -178,9 +178,10 @@ def make_protein_tree(proteins):
         gene_labels[protein[2]] = protein[0]
         infasta.append(protein[1])
     args = ['clustalo', '-i', '-']
+    print('Running clustalo')
     with Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
-        #p.stdin.write('\n'.join(infasta))
         outfasta, err = p.communicate('\n'.join(infasta))
+    print('clustalo finished')
     if p.returncode != 0:
         with open(log_file, 'a') as log:
             log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Clustal omega finished with error:\n'+ ' '.join(err) + '\n')
@@ -195,14 +196,14 @@ def make_protein_tree(proteins):
     # Construct the phlyogenetic tree using NJ algorithm
     NJTree = constructor.nj(distMatrix)
     NJTree.root_with_outgroup(proteins[0][2])
-    nodes = [gene_labels[term.name] for term in NJTree.get_terminals()]
+    nodes = [gene_labels[term.name] for term in NJTree.get_terminals(order='level')]
     # Draw the phlyogenetic tree using terminal
     Phylo.draw_ascii(NJTree)
     newick = io.StringIO()
     Phylo.write(NJTree, newick, 'newick')
     tree = toytree.mtree(newick.getvalue(), tree_format=1)
-    node_ids = [term.name for term in NJTree.get_terminals()]
-    nodes.reverse()
+    node_ids = [term.name for term in NJTree.get_terminals(order='level')]
+    node_ids.reverse()
     print('Reversed node IDs', node_ids)
     canvas, axes, marks = tree.draw(width=200, height=10 + 56 * len(nodes), fixed_order=node_ids)
     canvas.style['background-color'] = 'white'
@@ -351,10 +352,10 @@ def get_scribl(start_gene, eggnog_og, request):
     scribl = []
     eggnog2color = {eggnog_og.eggnog_id:RED, '':DARK_GREY}
     #ordered_orthologs = get_orthologs(eggnog_og, start_gene)
-    ordered_orthologs, og_gene_count, tree_canvas, tree_newick = get_sorted_orthologs(eggnog_og, start_gene)
+    ordered_orthologs, og_gene_count, tree_canvas, tree_newick = get_sorted_orthologs(eggnog_og, start_gene, genelist_size)
     plot_gene_count = len(ordered_orthologs)
-    if len(ordered_orthologs) > genelist_size:
-        ordered_orthologs = ordered_orthologs[:genelist_size]
+    #if len(ordered_orthologs) > genelist_size:
+    #    ordered_orthologs = ordered_orthologs[:genelist_size]
 
     scribl.append('\t\tcanvas.width = parent.offsetWidth - 201;')
     scribl.append('\t\tcanvas.height = ' + str(50 + 56 * len(ordered_orthologs)) + ';')

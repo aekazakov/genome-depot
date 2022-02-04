@@ -537,7 +537,7 @@ class Importer(object):
     
     def run_eggnog_mapper(self):
         """
-        Runs eggnog-mapper for eggnog_mapper_input.faa file in temp directory.
+        Runs eggnog-mapper for eggnog_mapper_input.faa file in the temp directory.
         """
         chunk_size = '200000'
         result = os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_output.emapper.annotations')
