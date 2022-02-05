@@ -613,7 +613,7 @@ def genome_detail(request, name):
         context['highlight_start'] = request.GET.get('start')
         context['highlight_end'] = request.GET.get('end')
         display_offset = 5000
-        contig = Contig.objects.get(contig_id = request.GET.get('contig'))
+        contig = Contig.objects.get(contig_id = request.GET.get('contig'), genome=genome)
         context['contig'] = contig.contig_id
         display_start = int(request.GET.get('start')) - display_offset
         if display_start < 0:
