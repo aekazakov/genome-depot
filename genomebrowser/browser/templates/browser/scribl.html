@@ -41,13 +41,14 @@
 
 {% endblock %}
 {% block body-tag %}
+    {% if scribl %}
 	<body onload="draw('canvas')">
+    {% endif %}
 {% endblock %}
 
 {% block title %}<div class="logo"><h2>Comparative analysis</h2></div>{% endblock %}
 
 {% block content %}
-    {% if scribl %}
 	<section id="two" class="wrapper style3">
 		<div class="inner">
 		    <header class="align-center">
@@ -87,6 +88,7 @@
 			{% endif %}
 		    </div>
 		</div>
+		{% if scribl %}
 		<div class="inner">
 			<header class="align-center">
 				<p class="align-center">Genomic neighborhood of {{ plot_gene_count|add:-1 }} genes most similar to {{ gene.locus_tag }}</p>
@@ -107,8 +109,14 @@
 				</div>
 			</div>
 		</div>
+		{% else %}
+		<div class="inner">
+			<header class="align-center">
+				<div class="error box">Insufficient data for compararive plot generation</div>
+			</header>
+		</div>
+		{% endif %}
 	</section>
     
-    {% endif %}
 {% endblock %}
 

@@ -183,8 +183,8 @@ def make_protein_tree(proteins):
         outfasta, err = p.communicate('\n'.join(infasta))
     print('clustalo finished')
     if p.returncode != 0:
-        with open(log_file, 'a') as log:
-            log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Clustal omega finished with error:\n'+ ' '.join(err) + '\n')
+        print('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Clustal omega finished with error:\n'+ ' '.join(err) + '\n')
+        return [proteins[0][2]], '', ''
     align = AlignIO.read(io.StringIO(outfasta), 'fasta')
 
     # Calculate the distance matrix
@@ -230,7 +230,10 @@ def sort_proteins(proteins, query_hash):
 
 def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
     ''' Returns list of genes sorted by protein siilarityto the pivot genee'''
+    ret_genes = [pivot_gene]
     genes = {item.id:item for item in Gene.objects.filter(protein__ortholog_groups__id=eggnog_og.id).select_related('protein', 'genome', 'genome__strain', 'genome__sample', 'contig')}
+    if len(genes) == 1:
+        return ret_genes, len(genes), '', ''
     proteins = {gene.protein.protein_hash:gene.protein.sequence for gene in genes.values()}
     sorted_proteins = sort_proteins(proteins, pivot_gene.protein.protein_hash)
     gene2protein = defaultdict(list)
@@ -255,7 +258,6 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
         print('First gene is ', pivot_gene.locus_tag)
     else:
         print('First gene is ', genes[tree_nodes[0]], 'instead of', pivot_gene.locus_tag)
-    ret_genes = [pivot_gene]
     for gene_id in tree_nodes:
         if gene_id == pivot_gene.id:
             continue
@@ -353,6 +355,8 @@ def get_scribl(start_gene, eggnog_og, request):
     eggnog2color = {eggnog_og.eggnog_id:RED, '':DARK_GREY}
     #ordered_orthologs = get_orthologs(eggnog_og, start_gene)
     ordered_orthologs, og_gene_count, tree_canvas, tree_newick = get_sorted_orthologs(eggnog_og, start_gene, genelist_size)
+    if og_gene_count == 1:
+        return '', '', '', og_gene_count, 1
     plot_gene_count = len(ordered_orthologs)
     #if len(ordered_orthologs) > genelist_size:
     #    ordered_orthologs = ordered_orthologs[:genelist_size]

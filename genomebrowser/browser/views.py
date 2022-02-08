@@ -892,7 +892,10 @@ def comparative_view(request):
     except Ortholog_group.DoesNotExist:
         raise Http404('Ortholog group not found')
     scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count = get_scribl(gene, og, request)
-    context = {'gene': gene, 'ortholog_group':og, 'scribl':scribl, 'tree_canvas':tree_canvas, 'tree_newick':tree_newick, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count}
+    if og_gene_count == 1:
+        context = {'gene': gene, 'ortholog_group':og, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count}
+    else:
+        context = {'gene': gene, 'ortholog_group':og, 'scribl':scribl, 'tree_canvas':tree_canvas, 'tree_newick':tree_newick, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count}
 
     return render(request, 'browser/scribl.html', context)
 
