@@ -24,6 +24,7 @@ urlpatterns = [
     path('searchgene/', views.GeneSearchResultsView.as_view(), name='searchgene'),
     path('searchannotation/', views.AnnotationSearchResultsView.as_view(), name='searchannotation'),
     path('export/', views.export_csv, name='export'),
+    path('exportfasta/', views.export_fasta, name='exportfasta'),
     path('searchgenome/', views.GenomeSearchResultsView.as_view(), name='searchgenome'),
     path('searchstrain/', views.StrainSearchResultsView.as_view(), name='searchstrain'),
     path('searchsample/', views.StrainSearchResultsView.as_view(), name='searchsample'),

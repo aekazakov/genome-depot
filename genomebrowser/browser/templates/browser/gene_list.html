@@ -74,6 +74,9 @@
 	<div class="align-center">
 	    <p><a href="{% url 'export' %}?{{ request.META.QUERY_STRING }}">Export gene list as tab-separated text file</a></p></p>
 	</div>
+	<div class="align-center">
+	    <p><a href="{% url 'exportfasta' %}?{{ request.META.QUERY_STRING }}">Export protein sequences as FASTA file</a></p></p>
+	</div>
     {% endif %}
 
 
