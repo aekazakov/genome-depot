@@ -555,7 +555,7 @@ class Importer(object):
                           os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_input.faa') +
                           ' input_file.chunk_ \n')
             outfile.write('for f in input_file.chunk_*; do\n')
-            outfile.write(self.config['cgcms.eggnog_command'] + ' -m diamond --no_annot --no_file_comments --cpu 10 -i $f -o $f;\n')
+            outfile.write(self.config['cgcms.eggnog_command'] + ' -m diamond --no_annot --no_file_comments --cpu ' + self.config['cgcms.threads'] + ' -i $f -o $f;\n')
             outfile.write('done\n')
             outfile.write('cat input_file.chunk_*.emapper.seed_orthologs >> ' + orthologs_file + '\n')
             outfile.write(self.config['cgcms.eggnog_command'] + 

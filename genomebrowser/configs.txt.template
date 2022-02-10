@@ -1,4 +1,5 @@
 cgcms.temp_dir = 
+cgcms.threads = 8
 cgcms.eggnog_command = eggnog-mapper-path/eggnog-mapper/emapper.py
 cgcms.eggnog_outdir = 
 cgcms.eggnog_taxonomy = CGCMS/ref_data/eggnog_taxonomy_rules.txt

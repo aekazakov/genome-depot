@@ -84,7 +84,7 @@
 			<a onclick="Toggle()">Click to show protein sequence</a>
 		    </header>
 		    <div id="proteinsequence">
-			<textarea id="protein" name="protein" rows="4" cols="50">>{{ gene.locus_tag }}
+			<textarea id="protein" name="protein" rows="4" cols="50">>{{ gene.locus_tag }}|{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]
 {{ protein.sequence }}</textarea>
 		    </div>
 		</div>

@@ -65,7 +65,7 @@ class Annotator(object):
         connection.close()
         cmd = [self.config['cgcms.hmmsearch_command'],
               '--domtblout', outfile, '-o', '/dev/null',
-              '--cut_tc', '--cpu', '14', '--noali', '--notextw',
+              '--cut_tc', '--cpu', self.config['cgcms.threads'], '--noali', '--notextw',
               lib_path,
               self.hmmsearch_input_file
               ]
