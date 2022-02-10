@@ -354,21 +354,34 @@ class Importer(object):
         if location.startswith('complement('):
             strand = -1
             location = location[11:-1]
-        if location.startswith('join('):
-            location = location[5:-1]
         location = location.replace('>','')
         location = location.replace('<','')
-        location_coords = location.split('..')
-        try:
-            start = int(location_coords[0])
-            end = int(location_coords[-1])
-        except ValueError:
-            print('Location', location)
-            raise
-        if start > end:
-            # Feature that starts at the end of circular genome and ends at the beginning
-            end = start
-            start = 1
+        if location.startswith('join('):
+            location = location[5:-1]
+            segments = location.split(',')
+            location_coords = []
+            for segment in segments:
+                try:
+                    location_coords += [int(coord.strip()) for coord in segment.split('..')]
+                except ValueError:
+                    print('Location parsing error', location)
+                    raise
+            location_coords.sort()
+        else:
+            try:
+                location_coords = [int(coord.strip()) for coord in location.split('..')]
+            except ValueError:
+                print('Location parsing error', location)
+                raise
+        start = location_coords[0]
+        end = location_coords[-1]
+        if start == 1 and end > 500000:
+            # Feature size is too big. This is probably a gene that starts at the end of circular genome and ends at the beginning
+            # Either the beginning or the end of the gene will be shown on the web site, depending on the size of the parts.
+            if location_coords[1] - location_coords[0] > location_coords[-1] - location_coords[-2]:
+                end = location_coords[1]
+            else:
+                start = location_coords[-2]
         return start, end, strand
         
     def process_feature(self, feature, genome_id, contig_id, locus_tags):

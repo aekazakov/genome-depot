@@ -126,7 +126,10 @@ def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group,
     else:
         result.append('\t\tgene' + str(gene_uid) + '.name = "' + gene.name + '";')
     if group == '':
-        result.append('\t\tgene' + str(gene_uid) + '.onMouseover = "' + gene.locus_tag + ': ' + gene.function + '";')
+        if gene.type == 'CDS':
+            result.append('\t\tgene' + str(gene_uid) + '.onMouseover = "' + gene.locus_tag + ': ' + gene.function + '";')
+        else:
+            result.append('\t\tgene' + str(gene_uid) + '.onMouseover = "' + gene.locus_tag + ': ' + gene.function + ' [' + gene.type + ']";')
     else:
         result.append('\t\tgene' + str(gene_uid) + '.onMouseover = "' + gene.locus_tag + ': ' + gene.function + ' [' + group + ']";')
     gene_url = request.build_absolute_uri(reverse('genedetails', args=[gene.genome.name, gene.locus_tag]))
@@ -231,7 +234,8 @@ def sort_proteins(proteins, query_hash):
 def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
     ''' Returns list of genes sorted by protein siilarityto the pivot genee'''
     ret_genes = [pivot_gene]
-    genes = {item.id:item for item in Gene.objects.filter(protein__ortholog_groups__id=eggnog_og.id).select_related('protein', 'genome', 'genome__strain', 'genome__sample', 'contig')}
+#    genes = {item.id:item for item in Gene.objects.filter(protein__ortholog_groups__id=eggnog_og.id).select_related('protein', 'genome', 'genome__strain', 'genome__sample', 'contig')}
+    genes = {item.id:item for item in Gene.objects.filter(protein__ortholog_groups__id=eggnog_og.id).select_related('protein', 'genome', 'genome__taxon', 'contig')}
     if len(genes) == 1:
         return ret_genes, len(genes), '', ''
     proteins = {gene.protein.protein_hash:gene.protein.sequence for gene in genes.values()}
@@ -402,12 +406,14 @@ def get_scribl(start_gene, eggnog_og, request):
             display_end = offset
             if display_end > gene.contig.size:
                 display_end = gene.contig.size
-            if gene.genome.strain is not None:
-                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.strain.full_name + '] ' +
-                    gene.contig.contig_id + ': complement(' + str(display_start) + '..' + str(display_end) + ')\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
-            else:
-                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.sample.full_name + '] ' +
-                    gene.contig.contig_id + ': complement(' + str(display_start) + '..' + str(display_end) + ')\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
+            scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' [' + gene.genome.taxon.name + '] ' +
+                gene.contig.contig_id + ': complement(' + str(display_start) + '..' + str(display_end) + ')\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
+#            if gene.genome.strain is not None:
+#                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.strain.full_name + '] ' +
+#                    gene.contig.contig_id + ': complement(' + str(display_start) + '..' + str(display_end) + ')\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
+#            else:
+#                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.sample.full_name + '] ' +
+#                    gene.contig.contig_id + ': complement(' + str(display_start) + '..' + str(display_end) + ')\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
         else:
             display_start = offset
             if display_start < 1:
@@ -415,12 +421,14 @@ def get_scribl(start_gene, eggnog_og, request):
             display_end = offset + locus_size
             if display_end > gene.contig.size:
                 display_end = gene.contig.size
-            if gene.genome.strain is not None:
-                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.strain.full_name + '] ' +
-                    gene.contig.contig_id + ': ' + str(display_start) + '..' + str(display_end) + '\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
-            else:
-                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.sample.full_name + '] ' +
-                    gene.contig.contig_id + ': ' + str(display_start) + '..' + str(display_end) + '\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
+            scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' [' + gene.genome.taxon.name + '] ' +
+                gene.contig.contig_id + ': ' + str(display_start) + '..' + str(display_end) + '\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
+#            if gene.genome.strain is not None:
+#                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.strain.full_name + '] ' +
+#                    gene.contig.contig_id + ': ' + str(display_start) + '..' + str(display_end) + '\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
+#            else:
+#                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.sample.full_name + '] ' +
+#                    gene.contig.contig_id + ': ' + str(display_start) + '..' + str(display_end) + '\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
         # Crete track for gene glyphs
         #track_uid += 1
         middle_point = (gene.end + gene.start) / 2
