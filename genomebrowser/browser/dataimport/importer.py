@@ -1134,92 +1134,95 @@ class Importer(object):
         
     def export_jbrowse_data(self):
         for genome in self.inputgenomes:
-            gff3_file = self.export_gff(genome)
-            genome_fasta = os.path.join(self.config['cgcms.temp_dir'], genome + '.contigs.fasta')
-            temp_dir = os.path.join(self.config['cgcms.temp_dir'], genome)
-            if os.path.exists(temp_dir):
-                shutil.rmtree(temp_dir)
-            os.mkdir(temp_dir)
-            cmd = [self.config['cgcms.prepare_refseqs_command'], '--fasta', genome_fasta, '--out', temp_dir]
-            print(' '.join(cmd))
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-                for line in proc.stdout:
-                    print(line, end='')
-            if proc.returncode != 0:
-                # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-                # pylint: disable=no-member
-                raise CalledProcessError(proc.returncode, proc.args)
-            
-            cmd = [self.config['cgcms.flatfile_to_json_command'], '--gff', gff3_file, '--out', temp_dir, '--trackLabel', 'CDSs', '--type', 'CDS', '--classname', 'exon' ]
-            print(' '.join(cmd))
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-                for line in proc.stdout:
-                    print(line, end='')
-            if proc.returncode != 0:
-                # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-                # pylint: disable=no-member
-                raise CalledProcessError(proc.returncode, proc.args)
+            self.export_jbrowse_genome_data(genome)
 
-            cmd = [self.config['cgcms.flatfile_to_json_command'], '--gff', gff3_file, '--out', temp_dir, '--trackLabel',
-                   'Pseudogenes', '--type', 'pseudogene', '--classname', 'feature4' ]
-            print(' '.join(cmd))
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-                for line in proc.stdout:
-                    print(line, end='')
-            if proc.returncode != 0:
-                # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-                # pylint: disable=no-member
-                raise CalledProcessError(proc.returncode, proc.args)
-
-            cmd = [self.config['cgcms.flatfile_to_json_command'], '--gff', gff3_file, '--out', temp_dir, '--trackLabel',
-                   'tRNAs', '--type', 'tRNA', '--classname', 'transcript-UTR' ]
-            print(' '.join(cmd))
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-                for line in proc.stdout:
-                    print(line, end='')
-            if proc.returncode != 0:
-                # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-                # pylint: disable=no-member
-                raise CalledProcessError(proc.returncode, proc.args)
-
-            cmd = [self.config['cgcms.flatfile_to_json_command'], '--gff', gff3_file, '--out', temp_dir, '--trackLabel',
-                   'rRNAs', '--type', 'rRNA', '--classname', 'feature3' ]
-            print(' '.join(cmd))
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-                for line in proc.stdout:
-                    print(line, end='')
-            if proc.returncode != 0:
-                # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-                # pylint: disable=no-member
-                raise CalledProcessError(proc.returncode, proc.args)
-
-            cmd = [self.config['cgcms.flatfile_to_json_command'], '--gff', gff3_file, '--out', temp_dir, '--trackLabel',
-                   'Operons', '--type', 'operon', '--classname', 'feature4' ]
-            print(' '.join(cmd))
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-                for line in proc.stdout:
-                    print(line, end='')
-            if proc.returncode != 0:
-                # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-                # pylint: disable=no-member
-                raise CalledProcessError(proc.returncode, proc.args)
-
-            cmd = [self.config['cgcms.generate_names_command'], '--verbose', '--out', temp_dir]
-            print(' '.join(cmd))
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-                for line in proc.stdout:
-                    print(line, end='')
-            if proc.returncode != 0:
-                # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-                # pylint: disable=no-member
-                raise CalledProcessError(proc.returncode, proc.args)
-            dest_dir = os.path.join(self.config['cgcms.json_dir'], genome)
-            if os.path.exists(dest_dir):
-                shutil.rmtree(dest_dir)
-            shutil.copytree(temp_dir, dest_dir)
-            if os.path.exists(os.path.join(self.config['cgcms.temp_dir'], 'trackList.json')):
-                shutil.copyfile(os.path.join(self.config['cgcms.temp_dir'], 'trackList.json'), os.path.join(self.config['cgcms.json_dir'], genome, 'trackList.json'))
+    def export_jbrowse_genome_data(self, genome):
+        gff3_file = self.export_gff(genome)
+        genome_fasta = os.path.join(self.config['cgcms.temp_dir'], genome + '.contigs.fasta')
+        temp_dir = os.path.join(self.config['cgcms.temp_dir'], genome)
+        if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir)
+        os.mkdir(temp_dir)
+        cmd = [self.config['cgcms.prepare_refseqs_command'], '--fasta', genome_fasta, '--out', temp_dir]
+        print(' '.join(cmd))
+        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
+            for line in proc.stdout:
+                print(line, end='')
+        if proc.returncode != 0:
+            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+            # pylint: disable=no-member
+            raise CalledProcessError(proc.returncode, proc.args)
+        
+        cmd = [self.config['cgcms.flatfile_to_json_command'], '--gff', gff3_file, '--out', temp_dir, '--trackLabel', 'CDSs', '--type', 'CDS', '--classname', 'exon' ]
+        print(' '.join(cmd))
+        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
+            for line in proc.stdout:
+                print(line, end='')
+        if proc.returncode != 0:
+            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+            # pylint: disable=no-member
+            raise CalledProcessError(proc.returncode, proc.args)
+
+        cmd = [self.config['cgcms.flatfile_to_json_command'], '--gff', gff3_file, '--out', temp_dir, '--trackLabel',
+               'Pseudogenes', '--type', 'pseudogene', '--classname', 'feature4' ]
+        print(' '.join(cmd))
+        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
+            for line in proc.stdout:
+                print(line, end='')
+        if proc.returncode != 0:
+            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+            # pylint: disable=no-member
+            raise CalledProcessError(proc.returncode, proc.args)
+
+        cmd = [self.config['cgcms.flatfile_to_json_command'], '--gff', gff3_file, '--out', temp_dir, '--trackLabel',
+               'tRNAs', '--type', 'tRNA', '--classname', 'transcript-UTR' ]
+        print(' '.join(cmd))
+        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
+            for line in proc.stdout:
+                print(line, end='')
+        if proc.returncode != 0:
+            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+            # pylint: disable=no-member
+            raise CalledProcessError(proc.returncode, proc.args)
+
+        cmd = [self.config['cgcms.flatfile_to_json_command'], '--gff', gff3_file, '--out', temp_dir, '--trackLabel',
+               'rRNAs', '--type', 'rRNA', '--classname', 'feature3' ]
+        print(' '.join(cmd))
+        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
+            for line in proc.stdout:
+                print(line, end='')
+        if proc.returncode != 0:
+            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+            # pylint: disable=no-member
+            raise CalledProcessError(proc.returncode, proc.args)
+
+        cmd = [self.config['cgcms.flatfile_to_json_command'], '--gff', gff3_file, '--out', temp_dir, '--trackLabel',
+               'Operons', '--type', 'operon', '--classname', 'feature4' ]
+        print(' '.join(cmd))
+        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
+            for line in proc.stdout:
+                print(line, end='')
+        if proc.returncode != 0:
+            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+            # pylint: disable=no-member
+            raise CalledProcessError(proc.returncode, proc.args)
+
+        cmd = [self.config['cgcms.generate_names_command'], '--verbose', '--out', temp_dir]
+        print(' '.join(cmd))
+        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
+            for line in proc.stdout:
+                print(line, end='')
+        if proc.returncode != 0:
+            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+            # pylint: disable=no-member
+            raise CalledProcessError(proc.returncode, proc.args)
+        dest_dir = os.path.join(self.config['cgcms.json_dir'], genome)
+        if os.path.exists(dest_dir):
+            shutil.rmtree(dest_dir)
+        shutil.copytree(temp_dir, dest_dir)
+        if os.path.exists(os.path.join(self.config['cgcms.temp_dir'], 'trackList.json')):
+            shutil.copyfile(os.path.join(self.config['cgcms.temp_dir'], 'trackList.json'), os.path.join(self.config['cgcms.json_dir'], genome, 'trackList.json'))
+        shutil.rmtree(temp_dir)
 
     def copy_static_files(self):
         for directory in self.staticfiles:
