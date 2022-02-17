@@ -1,11 +1,13 @@
 import io
 import os
+import sys
 import parasail
 from datetime import datetime
 from collections import defaultdict, OrderedDict
 from subprocess import Popen, PIPE, CalledProcessError, STDOUT
 # Importing necessary libraries from BioPython
 from Bio import Phylo, AlignIO
+from Bio.Align.Applications import MuscleCommandline
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 import toytree
 import toyplot.html
@@ -168,7 +170,37 @@ def make_taxonomy_tree(taxonomy_ids, start_taxon, top_taxon):
     print('Tree created')
     return tree
 
+
+def make_clustal_alignment(infasta):
+    result = ''
+    args = ['clustalo', '-i', '-']
+    print('Running clustalo')
+    with Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
+        outfasta, err = p.communicate(infasta)
+    print('clustalo finished')
+    if p.returncode != 0:
+        print('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Clustal omega finished with error:\n'+ ' '.join(err) + '\n')
+        return result
+    result = outfasta
+    return result
+
+
+def make_muscle_alignment(infasta):
+    result = None
+    muscle_cline = MuscleCommandline()
+    print(muscle_cline)
     
+    print('Running MUSCLE')
+    with Popen(str(muscle_cline), stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
+        outfasta, err = p.communicate(infasta)
+    print('MUSCLE finished')
+    if p.returncode != 0:
+        print('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] MUSCLE finished with error:\n'+ ' '.join(err) + '\n')
+        return result
+    result = outfasta
+    return result
+
+
 def make_protein_tree(proteins):
     """
         Input:
@@ -180,13 +212,9 @@ def make_protein_tree(proteins):
         infasta.append('>' + str(protein[2]))
         gene_labels[protein[2]] = protein[0]
         infasta.append(protein[1])
-    args = ['clustalo', '-i', '-']
-    print('Running clustalo')
-    with Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
-        outfasta, err = p.communicate('\n'.join(infasta))
-    print('clustalo finished')
-    if p.returncode != 0:
-        print('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Clustal omega finished with error:\n'+ ' '.join(err) + '\n')
+    #outfasta = make_clustal_alignment('\n'.join(infasta))
+    outfasta = make_muscle_alignment('\n'.join(infasta))
+    if outfasta is None:
         return [proteins[0][2]], '', ''
     align = AlignIO.read(io.StringIO(outfasta), 'fasta')
 
