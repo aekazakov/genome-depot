@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 {% load static %}
 
-{% block title %} <div class="logo">Comparative genomic content management system</div>{% endblock %}
+{% block title %} <div class="logo">CGCMS Home</div>{% endblock %}
 
 {% block content %}
 		<!-- Banner -->
@@ -10,8 +10,8 @@
 					<img src="{% static 'images/slide04.jpg' %}"  alt="" />
 					<div class="inner">
 						<header>
-							<p>Here you can find</p>
-							<h3><a href="{% url 'genome_list' %}">{{ num_genomes }} genomes</a></h3>
+							<p>Welcome to comparative genomic content management system</p>
+							<h3><a href="{% url 'genome_list' %}">Click here for a list of <span style="text-decoration:underline;">all {{ num_genomes }} genomes</span></a></h3>
 						</header>
 					</div>
 				</article>
@@ -19,8 +19,8 @@
 					<img src="{% static 'images/slide02.jpg' %}" alt="" />
 					<div class="inner">
 						<header>
-							<p>Here you can find</p>
-							<h3><a href="{% url 'strain_list' %}">{{ num_strains }} strains</a></h2>
+							<p>Or click to open</p>
+							<h3><a href="{% url 'strain_list' %}" style="text-decoration:underline;">list of strains</a> or <a href="{% url 'sample_list' %}" style="text-decoration:underline;">list of samples</a></h2>
 						</header>
 					</div>
 				</article>
@@ -38,7 +38,7 @@
 					<div class="inner">
 						<header>
 							<p>Have a sequence?</p>
-							<h3><a href="{% url 'proteinsearch' %}">Try <u>protein</u> or</a> <a href="{% url 'nucleotidesearch' %}"><u>nucleotide</u> search</a></h3>
+							<h3><a href="{% url 'proteinsearch' %}">Try <span style="text-decoration:underline;">protein</span></a> or <a href="{% url 'nucleotidesearch' %}"><span style="text-decoration:underline;">nucleotide</span> search</a></h3>
 						</header>
 					</div>
 				</article>
@@ -47,7 +47,7 @@
 					<div class="inner">
 						<header>
 							<p>Still confused?</p>
-							<h3><a href="{% url 'help' %}">There is a <u>help page</u> for you</a></h3>
+							<h3><a href="{% url 'help' %}">Click here to open <span style="text-decoration:underline;">help page</span></a></h3>
 						</header>
 					</div>
 				</article>

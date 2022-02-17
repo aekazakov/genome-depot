@@ -583,10 +583,11 @@ def textsearch(request):
 
 def landing(request):
     template = loader.get_template('browser/landing.html')
-    num_strains = Strain.objects.all().count()
+#    num_strains = Strain.objects.all().count()
     num_genomes = Genome.objects.all().count()
-    num_samples = Sample.objects.all().count()
-    context = {'num_strains':num_strains, 'num_genomes':num_genomes, 'num_samples':num_samples}
+#    num_samples = Sample.objects.all().count()
+#    context = {'num_strains':num_strains, 'num_genomes':num_genomes, 'num_samples':num_samples}
+    context = {'num_genomes':num_genomes}
     return HttpResponse(template.render(context, request))
 
 
