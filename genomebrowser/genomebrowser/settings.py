@@ -154,6 +154,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = get_secret('STATIC_URL')
+STATIC_ROOT = get_secret('STATIC_ROOT')
 STATICFILES_DIRS = [
     get_secret('STATICFILES_DIR')
 ]
