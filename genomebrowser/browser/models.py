@@ -27,7 +27,11 @@ class Taxon(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.taxonomy_id + ':' + self.name
+        return self.name + ' (' + self.taxonomy_id + ')'
+        
+    @property
+    def admin_name(self):
+        return self.name + ' (' + self.taxonomy_id + '): ' + self.rank
 
 
 class Strain(models.Model):
