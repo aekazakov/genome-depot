@@ -236,7 +236,7 @@ def make_protein_tree(proteins):
     node_ids = [term.name for term in NJTree.get_terminals(order='level')]
     node_ids.reverse()
     print('Reversed node IDs', node_ids)
-    canvas, axes, marks = tree.draw(width=200, height=10 + 56 * len(nodes), fixed_order=node_ids)
+    canvas, axes, marks = tree.draw(width=200, height=10 + 56 * len(nodes), fixed_order=node_ids, scalebar=True)
     canvas.style['background-color'] = 'white'
     tree_canvas = toyplot.html.tostring(canvas)
 
