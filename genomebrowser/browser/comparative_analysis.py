@@ -201,6 +201,16 @@ def make_muscle_alignment(infasta):
     return result
 
 
+def sort_nodes(tree, target):
+    result = [target]
+    path = [tree.root] + tree.get_path(target)
+    for node in reversed(path):
+        for leaf in node.get_terminals(order='level'):
+            if leaf.name not in result:
+                result.append(leaf.name)
+    return result
+
+
 def make_protein_tree(proteins):
     """
         Input:
@@ -221,25 +231,24 @@ def make_protein_tree(proteins):
     # Calculate the distance matrix
     calculator = DistanceCalculator('identity')
     distMatrix = calculator.get_distance(align)
-    print(distMatrix)
+    #print(distMatrix)
     # Create a DistanceTreeConstructor object
     constructor = DistanceTreeConstructor()
     # Construct the phlyogenetic tree using NJ algorithm
     NJTree = constructor.nj(distMatrix)
-    NJTree.root_with_outgroup(proteins[0][2])
-    nodes = [gene_labels[term.name] for term in NJTree.get_terminals(order='level')]
+    NJTree.root_at_midpoint()
+    node_ids = sort_nodes(NJTree, proteins[0][2])
+    nodes = [gene_labels[item] for item in node_ids]
     # Draw the phlyogenetic tree using terminal
-    Phylo.draw_ascii(NJTree)
+    #Phylo.draw_ascii(NJTree)
     newick = io.StringIO()
     Phylo.write(NJTree, newick, 'newick')
     tree = toytree.mtree(newick.getvalue(), tree_format=1)
-    node_ids = [term.name for term in NJTree.get_terminals(order='level')]
     node_ids.reverse()
     print('Reversed node IDs', node_ids)
     canvas, axes, marks = tree.draw(width=200, height=10 + 56 * len(nodes), fixed_order=node_ids, scalebar=True)
     canvas.style['background-color'] = 'white'
     tree_canvas = toyplot.html.tostring(canvas)
-
     return nodes, tree_canvas, newick.getvalue()
 
 
@@ -284,8 +293,8 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
             if gene_count >= genelist_size:
                 break
     tree_nodes, tree_svg, tree_newick = make_protein_tree(tree_proteins)
-    print(tree_svg)
-    print(tree_newick)
+    #print(tree_svg)
+    #print(tree_newick)
     if tree_nodes[0] == pivot_gene.id:
         print('First gene is ', pivot_gene.locus_tag)
     else:
