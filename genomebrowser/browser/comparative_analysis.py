@@ -10,7 +10,7 @@ from Bio import Phylo, AlignIO
 from Bio.Align.Applications import MuscleCommandline
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 import toytree
-import toyplot.html
+import toyplot  #.html
 
 from django.db.models import Q
 from .models import *
@@ -243,11 +243,16 @@ def make_protein_tree(proteins):
     #Phylo.draw_ascii(NJTree)
     newick = io.StringIO()
     Phylo.write(NJTree, newick, 'newick')
-    tree = toytree.mtree(newick.getvalue(), tree_format=1)
+    tree = toytree.tree(newick.getvalue(), tree_format=1)
     node_ids.reverse()
     print('Reversed node IDs', node_ids)
-    canvas, axes, marks = tree.draw(width=200, height=10 + 56 * len(nodes), fixed_order=node_ids, scalebar=True)
+    height = 70 + 56 * len(nodes)
+    width = 200
+    canvas = toyplot.Canvas(width=width, height=height)
     canvas.style['background-color'] = 'white'
+    axes = canvas.cartesian(bounds=(10, width - 20, 82, height - 24), padding=0)  #, ymin=0, ymax=20)
+    axes.x.spine.position = 'high'
+    tree.draw(axes=axes, width=width + 10, height=height, fixed_order=node_ids, scalebar=True, shrink=10)
     tree_canvas = toyplot.html.tostring(canvas)
     return nodes, tree_canvas, newick.getvalue()
 

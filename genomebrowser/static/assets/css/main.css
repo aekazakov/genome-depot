@@ -4614,7 +4614,7 @@
 
 	.toyplot {
 		float: left;
-		padding-top: 60px;
+		padding-top: 0px;
 	}
 
 	.toyplot-behaviour {
