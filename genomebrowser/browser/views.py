@@ -928,6 +928,7 @@ def export_csv(request):
     cazy_query = request.GET.get('cazy_query')
     cog_query = request.GET.get('cog_query')
     go_query = request.GET.get('go_query')
+    annotation_query = request.GET.get('annotation_query')
     if query:
         search_context = ('Query', query)
         if genome:
@@ -1001,6 +1002,16 @@ def export_csv(request):
             object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag')
         else:
             object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag')
+    elif annotation_query:
+        search_context = ('Gene annotation query', annotation_query)
+        if genome:
+            object_list = Annotation.objects.filter(
+                (Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)) & Q(gene_id__genome__name=genome)
+            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon')
+        else:
+            object_list = Annotation.objects.filter(
+                Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)
+            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon')
     elif genome:
         if ko_query:
             search_context = ('KEGG ortholog query', ko_query)
@@ -1063,12 +1074,14 @@ def export_csv(request):
     else:
         object_list = Gene.objects.none()
 
-    writer.writerow(['Locus tag', 'Name', 'Organism', 'Genome', 'Contig', 'Start', 'End', 'Strand', 'Type', 'Function', search_context[0]])
-    for gene in object_list:
-        if gene.genome.strain is None:
-            writer.writerow([gene.locus_tag, gene.name, gene.genome.sample.full_name, gene.genome.name, gene.contig.contig_id, str(gene.start), str(gene.end), str(gene.strand), gene.type, gene.function, search_context[1]])
-        else:
-            writer.writerow([gene.locus_tag, gene.name, gene.genome.strain.full_name, gene.genome.name, gene.contig.contig_id, str(gene.start), str(gene.end), str(gene.strand), gene.type, gene.function, search_context[1]])
+    if annotation_query:
+        writer.writerow(['Locus tag', 'Name', 'Organism', 'Genome', 'Contig', 'Start', 'End', 'Strand', 'Type', 'Function', 'Annotation_source', 'Annotation_type', 'Annotation_note'])
+        for obj in object_list:
+            writer.writerow([obj.gene_id.locus_tag, obj.gene_id.name, obj.gene_id.genome.taxon.name, obj.gene_id.genome.name, obj.gene_id.contig.contig_id, str(obj.gene_id.start), str(obj.gene_id.end), str(obj.gene_id.strand), obj.gene_id.type, obj.gene_id.function, obj.source, obj.key, obj.value, obj.note])
+    else:
+        writer.writerow(['Locus tag', 'Name', 'Organism', 'Genome', 'Contig', 'Start', 'End', 'Strand', 'Type', 'Function', search_context[0]])
+        for gene in object_list:
+            writer.writerow([gene.locus_tag, gene.name, gene.genome.taxon.name, gene.genome.name, gene.contig.contig_id, str(gene.start), str(gene.end), str(gene.strand), gene.type, gene.function, search_context[1]])
 
     return response
 
@@ -1098,6 +1111,7 @@ def export_fasta(request):
     cazy_query = request.GET.get('cazy_query')
     cog_query = request.GET.get('cog_query')
     go_query = request.GET.get('go_query')
+    annotation_query = request.GET.get('annotation_query')
     if query:
         search_context = ('Query', query)
         if genome:
@@ -1171,6 +1185,16 @@ def export_fasta(request):
             object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag')
         else:
             object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag')
+    elif annotation_query:
+        search_context = ('Gene annotation query', annotation_query)
+        if genome:
+            object_list = Annotation.objects.filter(
+                (Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)) & Q(gene_id__genome__name=genome)
+            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon', 'gene_id__protein')
+        else:
+            object_list = Annotation.objects.filter(
+                Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)
+            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon', 'gene_id__protein')
     elif genome:
         if ko_query:
             search_context = ('KEGG ortholog query', ko_query)
@@ -1233,8 +1257,13 @@ def export_fasta(request):
     else:
         object_list = Gene.objects.none()
 
-    for gene in object_list:
-        response.write('>' + gene.locus_tag + '|' + gene.genome.name + ' [' + gene.genome.taxon.name + ']\n' + gene.protein.sequence + '\n')
+    if annotation_query:
+        for obj in object_list:
+            if obj.gene_id.protein:
+                response.write('>' + obj.gene_id.locus_tag + '|' + obj.gene_id.genome.name + ' [' + obj.gene_id.genome.taxon.name + ']\n' + obj.gene_id.protein.sequence + '\n')
+    else:
+        for gene in object_list:
+            response.write('>' + gene.locus_tag + '|' + gene.genome.name + ' [' + gene.genome.taxon.name + ']\n' + gene.protein.sequence + '\n')
 
     return response
 
