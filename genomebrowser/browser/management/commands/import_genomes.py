@@ -13,6 +13,12 @@ class Command(BaseCommand):
         if os.path.exists(options['i']):
             importer = Importer()
             print('Using genomes file', options['i'])
-            importer.import_genomes(options['i'])
+            lines = []
+            with open(options['i'], 'r') as infile:
+                print('Reading file of genomes', in_file)
+                for line in infile:
+                    lines.append(line)
+            result = importer.import_genomes(lines)
+            print(result)
         else:
             raise CommandError('Genomes file ' + options['i'] + ' not found.')

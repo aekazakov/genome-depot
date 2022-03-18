@@ -1,28 +1,15 @@
 import os
+import csv
 import shutil
+from django import forms
 from django.contrib import admin
+from django.urls import path
+from django.shortcuts import render
+from django.shortcuts import redirect
 # Import your models here
 from browser.models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog
 from browser.dataimport.importer import Importer
-
-def delete_genome(modeladmin, request, queryset):
-    importer = Importer()
-    genome_names = [genome.name for genome in queryset]
-    queryset.delete()
-    Protein.objects.filter(gene=None).delete()
-    Strain.objects.filter(genome=None).delete()
-    Sample.objects.filter(genome=None).delete()
-    importer.export_proteins()
-    importer.export_contigs()
-    importer.delete_search_databases()
-    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_nucl'])), importer.config['cgcms.search_db_nucl'])
-    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_prot'])), importer.config['cgcms.search_db_prot'])
-    importer.create_search_databases()
-    for genome in genome_names:
-        shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'], genome))
-    os.remove(importer.config['cgcms.search_db_nucl'])
-    os.remove(importer.config['cgcms.search_db_prot'])
-delete_genome.short_description = 'Delete genome and static content'
+from cgcmsadmin.async_tasks import test_async_task, async_import_genomes
 
 
 class CgcmsAdminSite(admin.AdminSite):
@@ -33,9 +20,19 @@ class CgcmsAdminSite(admin.AdminSite):
 
 cgcms_admin_site = CgcmsAdminSite(name='cgcms_admin')
 
+class CsvImportForm(forms.Form):
+    csv_file = forms.FileField()
+
+@admin.action(description = 'Test sync action')
+def test_task(self, request, queryset):
+    test_async_task(request, queryset)
+    
+
 # Register your models here.
 class GenomeAdmin(admin.ModelAdmin):
+    change_list_template = 'admin/genome_change_list.html'
     #actions = [delete_genome]
+    actions = [test_task]
     list_display = ['name', 'taxon', 'strain', 'sample', 'size', 'contigs']
     list_filter = (('strain', admin.EmptyFieldListFilter), ('sample', admin.EmptyFieldListFilter))
     ordering = ['name']
@@ -49,6 +46,42 @@ class GenomeAdmin(admin.ModelAdmin):
         ('external_id', 'external_url'),
         'gbk_filepath'
     )
+    
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('import-genomes/', self.import_genomes),
+        ]
+        return my_urls + urls
+
+    def import_genomes(self, request):
+        if request.method == 'POST':
+            print(request.FILES)
+            csv_file = request.FILES["csv_file"]
+            lines = []
+            for line in csv_file:
+                line = line.decode()
+                print(line)
+#                if line.startswith('#'):
+#                    continue
+                lines.append(line)
+#            reader = csv.reader(open(csv_file, 'r'), delimiter='\t', quotechar='"')
+            task_name = async_import_genomes(lines)
+            # Do some staff
+            self.message_user(request, "Your genomes file has been submitted to the processing queue")
+            return redirect("..")
+        form = CsvImportForm()
+        payload = {"form": form}
+        return render(
+            request, "admin/csv_form.html", payload
+        )
+        
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+   
     
 cgcms_admin_site.register(Genome, GenomeAdmin)
 

@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
+    'django_q',
 ]
 
 if DEBUG:
@@ -160,6 +161,25 @@ STATICFILES_DIRS = [
 ]
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cgcms_cache_table',
+    }
+}
+
+Q_CLUSTER = {
+    'name': 'cgcmsWorker',
+    'workers': 1,
+    'timeout': 8640000,
+    'retry': 8640001,
+    'ack_failures': True,
+    'save_limit': 0,
+    'max_attempts': 1,
+    'attempt_count': 1,
+    'orm': 'default',
+}
 
 DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.versions.VersionsPanel',

@@ -102,6 +102,24 @@ class Importer(object):
                 self.inputgenomes[genome_id]['gbk'] = filepath
                 self.inputgenomes[genome_id]['url'] = url
                 self.inputgenomes[genome_id]['external_id'] = external_id
+
+    def read_genome_list(self, lines):
+        """
+            Reads genome paths, names and links from a list of strings.
+        """
+        for line in lines:
+            if line.startswith('#'):
+                continue
+            filepath, genome_id, strain_id, sample_id, url, external_id = line.rstrip('\n\r').split('\t')
+            # Sanity check
+            if sample_id == '' and strain_id == '':
+                raise ValueError('Either strain ID or sample ID required for genome ' + genome_id)
+
+            self.inputgenomes[genome_id]['strain'] = strain_id
+            self.inputgenomes[genome_id]['sample'] = sample_id
+            self.inputgenomes[genome_id]['gbk'] = filepath
+            self.inputgenomes[genome_id]['url'] = url
+            self.inputgenomes[genome_id]['external_id'] = external_id
     
     def check_genomes(self):
         result = {}
@@ -1269,14 +1287,14 @@ class Importer(object):
         for filename in os.listdir(self.config['cgcms.eggnog_outdir']):
             os.remove(os.path.join(self.config['cgcms.eggnog_outdir'], filename))
         
-    def import_genomes(self, in_file):
+    def import_genomes(self, lines):
         '''
             This function contains a workflow for genome import.
             
             Input parameters:
-              in_file(str): full path to the file with genome list
+              lines([str]): input list of lines 
               
-            Input file must contain five fields in each row:
+            Input list must contain five fields in each line:
                 1. path to gbk file
                 2. genome_id: unique genome identifier
                 3. strain_id: unique strain identifier or empty string. Either strain_id or sample_id can be empty, but not both of them.
@@ -1289,9 +1307,8 @@ class Importer(object):
         '''
         print('Trying to create directories for static files')
         self.make_dirs()
-        print('Reading file of genomes', in_file)
-        # read genome files list. Populate self.inputgenomes
-        self.load_genome_list(in_file)
+        # read input list. Populate self.inputgenomes
+        self.read_genome_list(lines)
         
         print('Checking genome names')
         # check if any genomes already exist in the database
@@ -1381,6 +1398,7 @@ class Importer(object):
         # delete temp files
         print('Removing temporary files')
         self.cleanup()
+        return 'Genomes successfully imported'
 
     def export_proteins(self):
         prot_db_file = self.config['cgcms.search_db_prot']
