@@ -1,0 +1,17 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+    <div>
+	<p>
+	Add sample descriptions.<br/>
+	Please provide tab-separated text file with three columns:<br/>
+	1. Sample name (as in the database).<br/>
+	2. Full name.<br/>
+	3. Description (text).<br/>
+	<form action="" method="POST" enctype="multipart/form-data">
+	    {{ form.as_p }}
+	    {% csrf_token %}
+	    <button type="submit">Upload sample descriptions (tab-separated) file</button>
+	</form>
+    </div>
+    <br />
+{% endblock %}

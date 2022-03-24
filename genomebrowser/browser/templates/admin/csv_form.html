@@ -1,6 +1,15 @@
 {% extends 'admin/base.html' %}
 {% block content %}
     <div>
+	<p>
+	Add genomes into the database from GenBank files.<br/>
+	Please provide tab-separated text file with six columns:<br/>
+	1. Path to GenBank file (can be gzipped).<br/>
+	2. Genome ID.<br/>
+	3. Strain ID. Can be blank if sample ID is not blank.<br/>
+	4. Sample ID. Can be blank if strain ID is not blank.<br/>
+	5. URL for the sequence (can be blank).<br/>
+	6. External ID to be used as a label (can be blank).</p>
 	<form action="" method="POST" enctype="multipart/form-data">
 	    {{ form.as_p }}
 	    {% csrf_token %}

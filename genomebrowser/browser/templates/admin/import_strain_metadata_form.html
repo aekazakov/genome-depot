@@ -1,0 +1,14 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+    <div>
+	<p>
+	Update strain metadata.<br/>
+	</p>
+	<form action="" method="POST" enctype="multipart/form-data">
+	    {{ form.as_p }}
+	    {% csrf_token %}
+	    <button type="submit">Upload Excel file metadata.</button>
+	</form>
+    </div>
+    <br />
+{% endblock %}

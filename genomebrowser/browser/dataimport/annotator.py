@@ -5,6 +5,7 @@ import hashlib
 import openpyxl
 import requests
 from pathlib import Path
+from io import BytesIO
 from collections import defaultdict, OrderedDict
 from Bio import SeqIO
 from subprocess import Popen, PIPE, CalledProcessError
@@ -382,12 +383,15 @@ class Annotator(object):
         Strain_metadata.objects.bulk_create(self.metadata, batch_size=10000)
         print(len(self.metadata), 'metadata entries written')
 
-    def update_strain_metadata(self, xlsx_file):
+    def update_strain_metadata(self, xlsx_path=None, xlsx_file=None):
         """ This function adds strain metadata from Excel file and from isolates.genomics.lbl.gov API"""
         print('Reading metadata from file', xlsx_file)
         metadata_imported = defaultdict(dict)
-        xlsx_path = Path(xlsx_file)
-        wb_obj = openpyxl.load_workbook(xlsx_file)
+        if xlsx_path is not None:
+            xlsx_path = Path(xlsx_path)
+            wb_obj = openpyxl.load_workbook(xlsx_path)
+        else:
+            wb_obj = openpyxl.load_workbook(filename=BytesIO(xlsx_file.read()))
         sheet = wb_obj.active
         xlsx_header = []
 
@@ -476,24 +480,22 @@ class Annotator(object):
                         )
                     new_metadata.save()
 
-    def add_sample_metadata(self, tsv_file):
+    def add_sample_metadata(self, lines):
         """ This function adds sample metadata from tab-separated file"""
-        print('Reading metadata from file')
         self.metadata = []
         samples = {item.sample_id:item for item in Sample.objects.all()}
-        with open(tsv_file, 'r') as infile:
-            for line in infile:
-                if line.startswith('#'):
-                    continue
-                sample, source, url, key, value = line.rstrip('\n\r').split('\t')
-                if sample in samples:
-                    self.metadata.append(Sample_metadata(sample=samples[sample],
-                        source=source,
-                        url=url,
-                        key=key,
-                        value=value
-                        ))
-                    print('Metadata added', sample, source, key, value)
+        for line in lines:
+            if line.startswith('#'):
+                continue
+            sample, source, url, key, value = line.rstrip('\n\r').split('\t')
+            if sample in samples:
+                self.metadata.append(Sample_metadata(sample=samples[sample],
+                    source=source,
+                    url=url,
+                    key=key,
+                    value=value
+                    ))
+                print('Metadata added', sample, source, key, value)
         # write metadata
         print('Writing metadata')
         Sample_metadata.objects.bulk_create(self.metadata, batch_size=10000)
@@ -513,20 +515,18 @@ class Annotator(object):
                     genomes[genome_name].save()
                     print('Genome description updated for', genome_name)
 
-    def update_sample_descriptions(self, tsv_file):
+    def update_sample_descriptions(self, lines):
         """ This function reads metagenomic sample descriptions from tab-separated file and updates Sample objects"""
-        print('Reading metadata from file')
         samples = {item.sample_id:item for item in Sample.objects.all()}
-        with open(tsv_file, 'r') as infile:
-            for line in infile:
-                if line.startswith('#'):
-                    continue
-                sample_name, full_name, description = line.rstrip('\n\r').split('\t')
-                if sample_name in samples:
-                    samples[sample_name].description = description
-                    samples[sample_name].full_name = full_name
-                    samples[sample_name].save()
-                    print('Sample description updated for', sample_name)
+        for line in lines:
+            if line.startswith('#'):
+                continue
+            sample_name, full_name, description = line.rstrip('\n\r').split('\t')
+            if sample_name in samples:
+                samples[sample_name].description = description
+                samples[sample_name].full_name = full_name
+                samples[sample_name].save()
+                print('Sample description updated for', sample_name)
 
 
 def autovivify(levels=1, final=dict):

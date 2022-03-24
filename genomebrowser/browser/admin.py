@@ -6,10 +6,11 @@ from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.contrib import messages
 # Import your models here
 from browser.models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog
 from browser.dataimport.importer import Importer
-from cgcmsadmin.async_tasks import test_async_task, async_import_genomes
+from cgcmsadmin.async_tasks import test_async_task, async_import_genomes, async_delete_genomes, async_import_sample_metadata, async_import_sample_descriptions, async_update_strain_metadata
 
 
 admin.site.site_header = "CGCMS admin"
@@ -20,16 +21,24 @@ admin.site.index_title = "Welcome to CGCMS administration interface"
 class CsvImportForm(forms.Form):
     csv_file = forms.FileField()
 
+class ExcelImportForm(forms.Form):
+    xlsx_file = forms.FileField()
+
 @admin.action(description = 'Test sync action')
 def test_task(self, request, queryset):
     test_async_task(request, queryset)
     
+@admin.action(description = 'Delete genomes')
+def delete_genomes(self, request, queryset):
+    task_id = async_delete_genomes(request, queryset)
+    messages.info(request, "Selected genomes are being deleted. Check queued task list for progress.")
 
 # Register your models here.
 class GenomeAdmin(admin.ModelAdmin):
     change_list_template = 'admin/genome_change_list.html'
     #actions = [delete_genome]
-    actions = [test_task]
+    actions = [test_task,
+               delete_genomes]
     list_display = ['name', 'taxon', 'strain', 'sample', 'size', 'contigs']
     list_filter = (('strain', admin.EmptyFieldListFilter), ('sample', admin.EmptyFieldListFilter))
     ordering = ['name']
@@ -47,7 +56,8 @@ class GenomeAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         my_urls = [
-            path('import-genomes/', self.import_genomes),
+            path('add/', self.import_genomes),
+            path('delete-genomes/', self.delete_genomes),
         ]
         return my_urls + urls
 
@@ -70,6 +80,10 @@ class GenomeAdmin(admin.ModelAdmin):
             request, "admin/csv_form.html", payload
         )
         
+    def delete_genomes(self, request, queryset):
+        self.message_user(request, "You asked for removal of " + str(len(queryset)) + " genomes")
+        return redirect("..")
+
     def get_actions(self, request):
         actions = super().get_actions(request)
         if 'delete_selected' in actions:
@@ -109,6 +123,32 @@ class SampleAdmin(admin.ModelAdmin):
     list_display = ['sample_id', 'full_name']
     ordering = ['sample_id']
     search_fields = ['sample_id', 'full_name']
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('import-descriptions/', self.import_sample_descriptions),
+        ]
+        return my_urls + urls
+
+    def import_sample_descriptions(self, request):
+        if request.method == 'POST':
+            print(request.FILES)
+            csv_file = request.FILES["csv_file"]
+            lines = []
+            for line in csv_file:
+                line = line.decode()
+                print(line)
+                lines.append(line)
+            task_name = async_import_sample_descriptions(lines)
+            # Do some staff
+            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            return redirect("..")
+        form = CsvImportForm()
+        payload = {"form": form}
+        return render(
+            request, "admin/import_sample_descriptions_form.html", payload
+        )
 
 admin.site.register(Sample, SampleAdmin)
 
@@ -198,6 +238,27 @@ class StrainMetadataAdmin(admin.ModelAdmin):
     ordering = ['strain', 'key']
     search_fields = ['strain', 'key', 'source']
 
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('add/', self.update_strain_metadata),
+        ]
+        return my_urls + urls
+
+    def update_strain_metadata(self, request):
+        if request.method == 'POST':
+            print(request.FILES)
+            xlsx_file = request.FILES["xlsx_file"]
+            task_name = async_update_strain_metadata(xlsx_file)
+            # Do some staff
+            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            return redirect("..")
+        form = ExcelImportForm()
+        payload = {"form": form}
+        return render(
+            request, "admin/import_strain_metadata_form.html", payload
+        )
+
 admin.site.register(Strain_metadata, StrainMetadataAdmin)
 
 
@@ -205,6 +266,32 @@ class SampleMetadataAdmin(admin.ModelAdmin):
     list_display = ['sample', 'key', 'source']
     ordering = ['sample', 'key']
     search_fields = ['sample', 'key', 'source']
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('add/', self.import_sample_metadata),
+        ]
+        return my_urls + urls
+
+    def import_sample_metadata(self, request):
+        if request.method == 'POST':
+            print(request.FILES)
+            csv_file = request.FILES["csv_file"]
+            lines = []
+            for line in csv_file:
+                line = line.decode()
+                print(line)
+                lines.append(line)
+            task_name = async_import_sample_metadata(lines)
+            # Do some staff
+            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            return redirect("..")
+        form = CsvImportForm()
+        payload = {"form": form}
+        return render(
+            request, "admin/import_sample_metadata_form.html", payload
+        )
 
 admin.site.register(Sample_metadata, SampleMetadataAdmin)
 

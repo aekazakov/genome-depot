@@ -49,14 +49,15 @@ INTERNAL_IPS = ['127.0.0.1',]
 
 INSTALLED_APPS = [
     'browser.apps.BrowserConfig',
+    'admin_shortcuts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'debug_toolbar',
     'django_q',
+    'debug_toolbar',
 ]
 
 if DEBUG:
@@ -194,4 +195,64 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.signals.SignalsPanel',
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
+]
+
+ADMIN_SHORTCUTS = [
+    {
+        'title': 'Authentication',
+        'shortcuts': [
+            {
+                'title': 'Groups',
+                'url_name': 'admin:auth_group_changelist',
+                'count': 'example.utils.count_groups',
+            },
+            {
+                'title': 'Add user',
+                'url_name': 'admin:auth_user_add',
+                'has_perms': 'example.utils.has_perms_to_users',
+            },
+        ]
+    },
+    {
+        'title': 'CGCMS content',
+        'shortcuts': [
+            {
+                'title': 'Genomes',
+                'url_name': 'admin:browser_genome_changelist',
+            },
+            {
+                'title': 'Import genomes',
+                'url_name': 'admin:browser_genome_add',
+            },
+            {
+                'title': 'Strains',
+                'url_name': 'admin:browser_strain_changelist',
+            },
+            {
+                'title': 'Samples',
+                'url_name': 'admin:browser_sample_changelist',
+            },
+            {
+                'title': 'Import sample descriptions',
+                'url_name': 'admin:browser_sample_add',
+                'url': 'browser/sample/import-descriptions'
+            },
+            {
+                'title': 'Sample metadata',
+                'url_name': 'admin:browser_sample_metadata_changelist',
+            },
+            {
+                'title': 'Import sample metadata',
+                'url_name': 'admin:browser_sample_metadata_add',
+            },
+            {
+                'title': 'Strain metadata',
+                'url_name': 'admin:browser_strain_metadata_changelist',
+            },
+            {
+                'title': 'Update strain metadata',
+                'url_name': 'admin:browser_strain_metadata_add',
+            },
+        ]
+    },
 ]

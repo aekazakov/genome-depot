@@ -18,7 +18,7 @@ from browser.dataimport.annotator import Annotator
 from browser.dataimport.taxonomy import load_taxonomy
 
 """ Imports genomes into database from GenBank files.
-Input file must have five columns:
+Input file must have six columns:
 1. Path to GenBank file (gzipped or not)
 2. Genome ID.
 3. Strain ID. Can be blank if sample ID is not blank
