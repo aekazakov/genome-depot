@@ -10,7 +10,8 @@ from django.contrib import messages
 # Import your models here
 from browser.models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog
 from browser.dataimport.importer import Importer
-from cgcmsadmin.async_tasks import test_async_task, async_import_genomes, async_delete_genomes, async_import_sample_metadata, async_import_sample_descriptions, async_update_strain_metadata
+from cgcmsadmin.async_tasks import test_async_task, async_import_genomes, async_delete_genomes, async_import_sample_metadata, async_import_sample_descriptions, async_update_strain_metadata, async_import_annotations, async_import_regulon
+from django_q.models import OrmQ
 
 
 admin.site.site_header = "CGCMS admin"
@@ -32,6 +33,9 @@ def test_task(self, request, queryset):
 def delete_genomes(self, request, queryset):
     task_id = async_delete_genomes(request, queryset)
     messages.info(request, "Selected genomes are being deleted. Check queued task list for progress.")
+
+def count_tasks(request):
+    return str(OrmQ.objects.all().count())
 
 # Register your models here.
 class GenomeAdmin(admin.ModelAdmin):
@@ -75,7 +79,9 @@ class GenomeAdmin(admin.ModelAdmin):
             self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
             return redirect("..")
         form = CsvImportForm()
-        payload = {"form": form}
+        payload = {'form': form}
+        active_tasks = OrmQ.objects.all().count()
+        payload['active_tasks'] = str(active_tasks)
         return render(
             request, "admin/csv_form.html", payload
         )
@@ -146,6 +152,8 @@ class SampleAdmin(admin.ModelAdmin):
             return redirect("..")
         form = CsvImportForm()
         payload = {"form": form}
+        active_tasks = OrmQ.objects.all().count()
+        payload['active_tasks'] = str(active_tasks)
         return render(
             request, "admin/import_sample_descriptions_form.html", payload
         )
@@ -255,6 +263,8 @@ class StrainMetadataAdmin(admin.ModelAdmin):
             return redirect("..")
         form = ExcelImportForm()
         payload = {"form": form}
+        active_tasks = OrmQ.objects.all().count()
+        payload['active_tasks'] = str(active_tasks)
         return render(
             request, "admin/import_strain_metadata_form.html", payload
         )
@@ -289,6 +299,8 @@ class SampleMetadataAdmin(admin.ModelAdmin):
             return redirect("..")
         form = CsvImportForm()
         payload = {"form": form}
+        active_tasks = OrmQ.objects.all().count()
+        payload['active_tasks'] = str(active_tasks)
         return render(
             request, "admin/import_sample_metadata_form.html", payload
         )
@@ -308,6 +320,34 @@ class AnnotationAdmin(admin.ModelAdmin):
     list_display = ['gene_id', 'key', 'value', 'source']
     ordering = ['gene_id', 'key']
     search_fields = ['gene_id__locus_tag', 'key', 'value', 'source']
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('import-annotations/', self.import_annotations),
+        ]
+        return my_urls + urls
+    
+    def import_annotations(self, request):
+        if request.method == 'POST':
+            print(request.FILES)
+            csv_file = request.FILES["csv_file"]
+            lines = []
+            for line in csv_file:
+                line = line.decode()
+                print(line)
+                lines.append(line)
+            task_name = async_import_annotations(lines)
+            # Do some staff
+            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            return redirect("..")
+        form = CsvImportForm()
+        payload = {"form": form}
+        active_tasks = OrmQ.objects.all().count()
+        payload['active_tasks'] = str(active_tasks)
+        return render(
+            request, "admin/import_annotations_form.html", payload
+        )
 
 admin.site.register(Annotation, AnnotationAdmin)
 
@@ -332,6 +372,34 @@ class RegulonAdmin(admin.ModelAdmin):
     list_display = ['name', 'genome']
     ordering = ['genome', 'name']
     search_fields = ['name', 'genome']
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('import-regulons/', self.import_regulons),
+        ]
+        return my_urls + urls
+
+    def import_regulons(self, request):
+        if request.method == 'POST':
+            print(request.FILES)
+            csv_file = request.FILES["csv_file"]
+            lines = []
+            for line in csv_file:
+                line = line.decode()
+                print(line)
+                lines.append(line)
+            task_name = async_import_regulon(lines)
+            # Do some staff
+            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            return redirect("..")
+        form = CsvImportForm()
+        payload = {"form": form}
+        active_tasks = OrmQ.objects.all().count()
+        payload['active_tasks'] = str(active_tasks)
+        return render(
+            request, "admin/import_regulons_form.html", payload
+        )
 
 admin.site.register(Regulon, RegulonAdmin)
 

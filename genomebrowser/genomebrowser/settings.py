@@ -199,59 +199,109 @@ DEBUG_TOOLBAR_PANELS = [
 
 ADMIN_SHORTCUTS = [
     {
-        'title': 'Authentication',
-        'shortcuts': [
-            {
-                'title': 'Groups',
-                'url_name': 'admin:auth_group_changelist',
-                'count': 'example.utils.count_groups',
-            },
-            {
-                'title': 'Add user',
-                'url_name': 'admin:auth_user_add',
-                'has_perms': 'example.utils.has_perms_to_users',
-            },
-        ]
-    },
-    {
-        'title': 'CGCMS content',
+        'title': 'Genomes and annotations',
         'shortcuts': [
             {
                 'title': 'Genomes',
+                'icon': 'folder',
                 'url_name': 'admin:browser_genome_changelist',
             },
             {
                 'title': 'Import genomes',
                 'url_name': 'admin:browser_genome_add',
+                'count': 'from genbank files',
             },
             {
+                'title': 'Annotations',
+                'icon': 'folder',
+                'url_name': 'admin:browser_annotation_changelist',
+            },
+            {
+                'title': 'Import annotations',
+                'url_name': 'admin:browser_annotation_add',
+                'url': 'browser/annotation/import-annotations',
+                'count': 'from tab-separated file',
+            },
+            {
+                'title': 'Regulons',
+                'icon': 'folder',
+                'url_name': 'admin:browser_regulon_changelist',
+            },
+            {
+                'title': 'Import regulons',
+                'url_name': 'admin:browser_regulon_add',
+                'url': 'browser/regulon/import-regulons',
+                'count': 'from tab-separated file',
+            },
+        ]
+    },
+    {
+        'title': 'Strains and samples',
+        'shortcuts': [
+            {
                 'title': 'Strains',
+                'icon': 'folder',
                 'url_name': 'admin:browser_strain_changelist',
             },
             {
-                'title': 'Samples',
-                'url_name': 'admin:browser_sample_changelist',
-            },
-            {
-                'title': 'Import sample descriptions',
-                'url_name': 'admin:browser_sample_add',
-                'url': 'browser/sample/import-descriptions'
-            },
-            {
-                'title': 'Sample metadata',
-                'url_name': 'admin:browser_sample_metadata_changelist',
-            },
-            {
-                'title': 'Import sample metadata',
-                'url_name': 'admin:browser_sample_metadata_add',
-            },
-            {
                 'title': 'Strain metadata',
+                'icon': 'folder',
                 'url_name': 'admin:browser_strain_metadata_changelist',
             },
             {
                 'title': 'Update strain metadata',
                 'url_name': 'admin:browser_strain_metadata_add',
+                'count': 'from Excel file',
+            },
+            {
+                'title': 'Samples',
+                'icon': 'folder',
+                'url_name': 'admin:browser_sample_changelist',
+            },
+            {
+                'title': 'Import sample descriptions',
+                'url_name': 'admin:browser_sample_add',
+                'url': 'browser/sample/import-descriptions',
+                'count': 'from tab-separated file',
+            },
+            {
+                'title': 'Sample metadata',
+                'icon': 'folder',
+                'url_name': 'admin:browser_sample_metadata_changelist',
+            },
+            {
+                'title': 'Import sample metadata',
+                'url_name': 'admin:browser_sample_metadata_add',
+                'count': 'from tab-separated file',
+            },
+        ]
+    },
+    {
+        'title': 'Tools',
+        'shortcuts': [
+            {
+                'title': 'Tasks',
+                'icon': 'truck',
+                'url_name': 'admin:django_q_ormq_changelist',
+                'count_new': 'browser.admin.count_tasks',
+                'count': 'Check queue',
+            },
+            {
+                'title': 'Configuration',
+                'icon': 'edit',
+                'url_name': 'admin:browser_config_changelist',
+                'count': 'Edit configs',
+            },
+            {
+                'title': 'Groups',
+                'url_name': 'admin:auth_group_changelist',
+                'icon': 'columns',
+                'count': 'View user groups',
+            },
+            {
+                'title': 'Add user',
+                'url_name': 'admin:auth_user_add',
+                'has_perms': 'example.utils.has_perms_to_users',
             },
         ]
     },

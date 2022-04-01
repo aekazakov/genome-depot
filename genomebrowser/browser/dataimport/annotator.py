@@ -14,14 +14,15 @@ from datetime import datetime
 from django.db import connection
 from browser.models import *
 from genomebrowser.settings import STATIC_URL
-""" Imports genomes into database from GenBank files.
-Input file must have five columns:
-1. Path to GenBank file (gzipped or not)
-2. Genome ID.
-3. Strain ID.
-4. URL for the sequence (can be blank)
-5. External ID to be used as a label (can be blank)
 
+# Register plugins here
+from browser.dataimport.plugins.fama import application as fama
+from browser.dataimport.plugins.amrfinder import application as amrfinder
+from browser.dataimport.plugins.antismash import application as antismash
+from browser.dataimport.plugins.phispy import application as phispy
+from browser.dataimport.plugins.ecis_screen import application as ecis_screen
+""" 
+    Various functions for generation and import of gene annotations.
 """
 
 class Annotator(object):
@@ -264,50 +265,57 @@ class Annotator(object):
         """ This function adds gene annotations from tab-separated file. 
         If such anotation already exists, the existing copy will be preserved (annotation is considered identical if, for the same gene, it has same source, key and value)"""
         print('Reading annotations from file')
+        lines = []
         with open(tsv_file, 'r') as infile:
             for line in infile:
                 if line.startswith('#'):
                     continue
-                locus_tag, genome_name, source, url, key, value, note = line.rstrip('\n\r').split('\t')
-                existing_annotations = Annotation.objects.filter(gene_id__locus_tag = locus_tag,
-                    gene_id__genome__name = genome_name,
-                    source=source,
-                    key=key,
-                    value=value)
-                if existing_annotations:
-                    print('Annotation exists', locus_tag, genome_name, source, key, value)
-                else:
-                    try:
-                        gene = Gene.objects.get(locus_tag=locus_tag, genome__name = genome_name)
-                        self.annotations.append(Annotation(gene_id=gene,
-                            source=source,
-                            url=url,
-                            key=key,
-                            value=value,
-                            note=note
-                            ))
-                        print('Annotation added', locus_tag, genome_name, source, key, value)
-                    except Gene.DoesNotExist:
-                        print('Gene not found', locus_tag, genome_name)
+                lines.append(line)
+        self.import_annotations(lines)
+        
+    def import_annotations(self, lines):
+        """ This function adds gene annotations from a list of lines. 
+        If an anotation already exists, the existing copy will be preserved (annotation is considered identical if, for the same gene, it has same source, key and value)"""
+        for line in lines:
+            if line.startswith('#'):
+                continue
+            locus_tag, genome_name, source, url, key, value, note = line.rstrip('\n\r').split('\t')
+            existing_annotations = Annotation.objects.filter(gene_id__locus_tag = locus_tag,
+                gene_id__genome__name = genome_name,
+                source=source,
+                key=key,
+                value=value)
+            if existing_annotations:
+                print('Annotation exists', locus_tag, genome_name, source, key, value)
+            else:
+                try:
+                    gene = Gene.objects.get(locus_tag=locus_tag, genome__name = genome_name)
+                    self.annotations.append(Annotation(gene_id=gene,
+                        source=source,
+                        url=url,
+                        key=key,
+                        value=value,
+                        note=note
+                        ))
+                    print('Annotation added', locus_tag, genome_name, source, key, value)
+                except Gene.DoesNotExist:
+                    print('Gene not found', locus_tag, genome_name)
         # write Annotations
         print('Writing annotations')
         Annotation.objects.bulk_create(self.annotations, batch_size=10000)
         print(len(self.annotations), 'annotations written')
         self.annotations = []
 
-    def add_regulons(self, tsv_file):
-        """ This function adds sites and regulons from tab-separated file. 
+    def add_regulons(self, lines):
+        """ This function adds sites and regulons from a list of tab-separated lines. 
         If such a site already exists, the existing copy will be preserved (site is considered identical if it has the same genome, contig. start, end and strand)
         """
         print('Reading regulons from file')
         regulon_data = autovivify(2, list)
         
-        with open(tsv_file, 'r') as infile:
-            for line in infile:
-                if line.startswith('#'):
-                    continue
-                regulon_name, genome_name, reg_gene_id, target_gene_id, contig, start, end, strand, sequence = line.rstrip('\n\r').split('\t')
-                regulon_data[genome_name][regulon_name].append((reg_gene_id, target_gene_id, contig, start, end, strand, sequence))
+        for line in lines:
+            regulon_name, genome_name, reg_gene_id, target_gene_id, contig, start, end, strand, sequence = line.rstrip('\n\r').split('\t')
+            regulon_data[genome_name][regulon_name].append((reg_gene_id, target_gene_id, contig, start, end, strand, sequence))
         print(regulon_data)
         
         for genome_name in regulon_data:
@@ -528,7 +536,46 @@ class Annotator(object):
                 samples[sample_name].save()
                 print('Sample description updated for', sample_name)
 
+    def run_external_tools(self, genomes):
+        plugins_available = set()
+        for param in self.config:
+            if param.startswith('plugins.') and self.config[param] != '':
+                plugin = param.split('.')[1]
+                plugins_available.add(plugin)
+                
+        print('Available plugins:', ','.join(list(plugins_available)))
 
+        # Run Fama
+        if 'fama' in plugins_available:
+            fama_annotations = fama(self, genomes)
+            print(fama_annotations, 'ready for upload')
+            self.add_custom_annotations(fama_annotations)
+
+        # Run amrfinder
+        if 'amrfinder' in plugins_available:
+            amrfinder_annotations = amrfinder(self, genomes)
+            print(amrfinder_annotations, 'ready for upload')
+            self.add_custom_annotations(amrfinder_annotations)
+
+        # Run antiSMASH
+        if 'antismash' in plugins_available:
+            antismash_annotations = antismash(self, genomes)
+            print(antismash_annotations, 'ready for upload')
+            self.add_custom_annotations(antismash_annotations)
+        
+        # Run PhiSpy
+        if 'phispy' in plugins_available:
+            phispy_annotations = phispy(self, genomes)
+            print(phispy_annotations, 'ready for upload')
+            self.add_custom_annotations(phispy_annotations)
+
+        # Run eCIS-screen
+        if 'ecis_screen' in plugins_available:
+            ecis_screen_annotations = ecis_screen(self, genomes)
+            print(ecis_screen_annotations, 'ready for upload')
+            self.add_custom_annotations(ecis_screen_annotations)
+    
+                
 def autovivify(levels=1, final=dict):
     return (defaultdict(final) if levels < 2 else
             defaultdict(lambda: autovivify(levels - 1, final)))

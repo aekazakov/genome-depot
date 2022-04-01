@@ -1388,17 +1388,21 @@ class Importer(object):
         self.create_search_databases()
 
 #        self.append_eggnog_stored_data(new_eggnog_data)
-
-        # TODO:
-        #new_genome_ids = [x['id'] for x in Genome.objects.filter(name__in = self.genome_data.keys()).values('id')]
-        # annotator = Annotator(self.config_path)
-        # annotator.update_pfam_domains(new_genome_ids)
-        # annotator.update_tigrfam_domains(new_genome_ids)
-
         # delete temp files
         print('Removing temporary files')
         self.cleanup()
-        return 'Genomes successfully imported'
+        print('Genomes successfully imported')
+
+        # Generate HMM-based mappings
+        annotator = Annotator()
+        new_genome_ids = [item['id'] for item in Genome.objects.filter(name__in = self.genome_data.keys()).values('id')]
+        annotator.update_pfam_domains(new_genome_ids)
+        annotator.update_tigrfam_domains(new_genome_ids)
+        
+        # Generate annotations with external tools
+        new_genome_files = {item['name']:item['gbk_filepath'] for item in Genome.objects.filter(name__in = self.genome_data.keys()).values('name','gbk_filepath')}
+        annotator.run_external_tools(new_genome_files)
+        return 'Done!'
 
     def export_proteins(self):
         prot_db_file = self.config['cgcms.search_db_prot']
@@ -1613,4 +1617,4 @@ class Importer(object):
         self.copy_static_files()
         self.create_search_databases()
         self.cleanup()
-        
+

@@ -1,7 +1,7 @@
 import time
 from django.utils import timezone
 from django_q.tasks import async_task, result
-from cgcmsadmin.tasks import test_task_impl, import_genomes_impl, delete_genomes_impl, import_sample_metadata_impl, import_sample_descriptions_impl, update_strain_metadata_impl
+from cgcmsadmin.tasks import test_task_impl, import_genomes_impl, delete_genomes_impl, import_sample_metadata_impl, import_sample_descriptions_impl, update_strain_metadata_impl, import_annotations_impl, import_regulon_impl
 
 def test_async_task(request, queryset):
     timeout = 60
@@ -58,3 +58,20 @@ def async_update_strain_metadata(xlsx_file):
     task_id = async_task(update_strain_metadata_impl, xlsx_file, task_name=task_name, sync=False)
     return task_name
     
+def async_import_annotations(lines):
+    print ('Starting asynchronous task for annotations list:')
+    timestamp = str(timezone.now())
+    task_name = 'annotation-import-' + timestamp.replace(' ', '_')
+    for item in lines:
+        print(item)
+    task_id = async_task(import_annotations_impl, lines, task_name=task_name, sync=False)
+    return task_id
+
+def async_import_regulon(lines):
+    print ('Starting asynchronous task for regulons list:')
+    timestamp = str(timezone.now())
+    task_name = 'regulon-import-' + timestamp.replace(' ', '_')
+    for item in lines:
+        print(item)
+    task_id = async_task(import_regulon_impl, lines, task_name=task_name, sync=False)
+    return task_id

@@ -51,3 +51,12 @@ def update_strain_metadata_impl(xlsx_file):
     annotator = Annotator()
     annotator.update_strain_metadata(xlsx_path=None, xlsx_file=xlsx_file)
     
+def import_annotations_impl(lines):
+    print ('Asynchronous task received. Starting import.')
+    annotator = Annotator()
+    annotator.import_annotations(lines)
+
+def import_regulon_impl(lines):
+    print ('Asynchronous task received. Starting import.')
+    annotator = Annotator()
+    annotator.add_regulons(lines)
