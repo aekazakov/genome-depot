@@ -314,8 +314,8 @@ class Annotator(object):
         regulon_data = autovivify(2, list)
         
         for line in lines:
-            regulon_name, genome_name, reg_gene_id, target_gene_id, contig, start, end, strand, sequence = line.rstrip('\n\r').split('\t')
-            regulon_data[genome_name][regulon_name].append((reg_gene_id, target_gene_id, contig, start, end, strand, sequence))
+            regulon_name, genome_name, reg_gene_ids, target_gene_id, contig, start, end, strand, sequence = line.rstrip('\n\r').split('\t')
+            regulon_data[genome_name][regulon_name].append((reg_gene_ids, target_gene_id, contig, start, end, strand, sequence))
         print(regulon_data)
         
         for genome_name in regulon_data:
@@ -325,21 +325,23 @@ class Annotator(object):
             for regulon_name in regulon_data[genome_name]:
                 print(regulon_name, genome_name)
                 if regulon_name not in existing_regulons:
-                    regulator_id = regulon_data[genome_name][regulon_name][0][0]
+                    regulator_ids = regulon_data[genome_name][regulon_name][0][0].split(',')
                     regulon = Regulon(name=regulon_name, genome=genome)
                     regulon.save()
                     existing_regulons[regulon_name] = regulon
                     print(str(regulon))
-                    regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
+                    for regulator_id in regulator_ids:
+                        regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
                 else:
                     regulon = existing_regulons[regulon_name]
                     existing_regulators = [item.locus_tag for item in regulon.regulators.all()]
                     for regulon_ind in regulon_data[genome_name][regulon_name]:
-                        regulator_id = regulon_ind[0]
-                        print (regulator_id)
-                        if regulator_id not in existing_regulators:
-                            regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
-                            existing_regulators.append(regulator_id)
+                        regulator_ids = regulon_ind[0].split(',')
+                        for regulator_id in regulator_ids:
+                            print (regulator_id)
+                            if regulator_id not in existing_regulators:
+                                regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
+                                existing_regulators.append(regulator_id)
             # Create sites
             existing_regulons = {item.name:item for item in Regulon.objects.filter(genome__name = genome_name)}
             existing_sites = {item.name:item for item in Site.objects.filter(genome__name = genome_name)}
