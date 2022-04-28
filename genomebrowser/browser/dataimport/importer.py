@@ -4,9 +4,11 @@ import gzip
 import shutil
 #import mmh3
 import hashlib
+import urllib
 from collections import defaultdict, OrderedDict
 from pathlib import Path
 from Bio import GenBank
+from Bio import Entrez
 from subprocess import Popen, PIPE, CalledProcessError
 
 from django.db import connection
@@ -31,11 +33,8 @@ Input file must have six columns:
 class Importer(object):
 
     def __init__(self):
-        #print('Config path:', config_path)
-        #self.config_path = config_path
         self.config = {}
         self.read_config() # configparser.ConfigParser()
-        #self.config.read(config_path)
         #print(self.config['Taxonomy']['names_file'])
         self.inputgenomes = defaultdict(dict)
         self.staticfiles = defaultdict(list)
@@ -123,38 +122,23 @@ class Importer(object):
     
     def check_genomes(self):
         result = {}
-        genomes_exist = []
+        problem_genomes = []
         saved_genomes = set([item['name'] for item in Genome.objects.values('name')])
         for genome_id in self.inputgenomes:
             if genome_id in saved_genomes:
-                genomes_exist.append(genome_id)
+                problem_genomes.append('Genome already exists in the database ' + genome_id)
             else:
                 result[genome_id] = self.inputgenomes[genome_id]
-        if genomes_exist:
-            print('CHECK LIST OF GENOMES. SOME GENOME NAMES ALREADY EXIST IN THE DATABASE:')
-            for genome in genomes_exist:
-                print(genome)
-            raise ValueError('Genome identifiers must be unique. Change genome ID or delete conflicting genome from DB.')
-        self.genomefiles = result
-        
-    def download_ncbi_assembly(self, ncbi_id):
-        return ''
-        
-    def download_genomes(self):
-        """
-            This function is a placeholder for real downloader.
-            Currently, it only checks if a genome file already exists.
-        """
-        for genome_id in self.inputgenomes:
             genome_file = self.inputgenomes[genome_id]['gbk']
             if not os.path.exists(genome_file):
-                #if self.inputgenomes[genome_id]['external_id'].startswith('NCBI:'):
-                #    self.inputgenomes[genome_id]['gbk'] = self.download_ncbi_assembly(self.inputgenomes[genome_id]['external_id'][5:])
-                #else:
-                print('File not found: ' + genome_file)
-                print('Please download genome from ' + self.inputgenomes[genome_id]['url'])
-                raise FileNotFoundError('File not found')
-
+                problem_genomes.append('Genome ' + genome_id + ' not found: ' + genome_file)
+        if problem_genomes:
+            print('CHECK LIST OF GENOMES. SOME GENOME NAMES ALREADY EXIST IN THE DATABASE:')
+            for genome in problem_genomes:
+                print(genome)
+            raise ValueError('Check and fix errors:\n' + '\n'.join(problem_genomes))
+        self.genomefiles = result
+        
     def get_taxonomic_order(self, taxonomy_id):
         result = 'Unknown'
         if taxonomy_id in self.taxonomy:
@@ -1292,6 +1276,19 @@ class Importer(object):
         os.remove(self.config['cgcms.search_db_prot'])
         for filename in os.listdir(self.config['cgcms.eggnog_outdir']):
             os.remove(os.path.join(self.config['cgcms.eggnog_outdir'], filename))
+        # delete all genome files in the temporary directory
+        for genome_id in self.inputgenomes:
+            genome_file = self.inputgenomes[genome_id]['gbk']
+            if genome_file.startswith(self.config['cgcms.temp_dir']):
+                os.remove(genome_file)
+        # delete all empty directories in the temporary directory
+        empty_dirs = []
+        for (dirpath, dirnames, filenames) in os.walk(self.config['cgcms.temp_dir']):
+            if len(dirnames) == 0 and len(filenames) == 0 :
+                empty_dirs.append(dirpath)
+        for directory in empty_dirs:
+            os.remove(directory)
+            
         
     def import_genomes(self, lines):
         '''
@@ -1319,10 +1316,6 @@ class Importer(object):
         print('Checking genome names')
         # check if any genomes already exist in the database
         self.check_genomes()
-        
-        print('Loading genomes')
-        # Check if genome files exist. Update self.genomefiles. TODO: download genomes, if needed. 
-        self.download_genomes()
         
         print('Preparing strain data')
         # make strain data for upload
@@ -1624,3 +1617,31 @@ class Importer(object):
         self.create_search_databases()
         self.cleanup()
 
+
+def download_ncbi_assembly(assembly_id, email, upload_dir):
+    """Download genbank assemblies for a given search term.
+    Args:
+        assembly_id: search term, usually assembly RefSeq of GenBank accession
+        email: email address, requierd for NCBI requests
+        upload_dir: folder to save to
+    """
+    if not os.path.exists(upload_dir):
+        os.mkdir(upload_dir)
+    Entrez.email = email
+    handle = Entrez.esearch(db="assembly", term=assembly_id, retmax='200')
+    record = Entrez.read(handle)
+    try:
+        record_id = record['IdList'][0]
+    except IndexError:
+        return ''
+    esummary_handle = Entrez.esummary(db="assembly", id=record_id, report="full")
+    summary = Entrez.read(esummary_handle)
+    url = summary['DocumentSummarySet']['DocumentSummary'][0]['FtpPath_RefSeq']
+    if url == '':
+        return ''
+    link = os.path.join(url, os.path.basename(url) + '_genomic.gbff.gz')
+    outfile = os.path.join(upload_dir, assembly_id + '_genomic.gbff.gz')
+    print ('Getting assembly from', link)
+    urllib.request.urlretrieve(link, filename=outfile)
+    return outfile
+    

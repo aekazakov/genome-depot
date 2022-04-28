@@ -20,13 +20,13 @@ def test_async_task(request, queryset):
     else:
         print('Time out! No result returned in 60 seconds.')
 
-def async_import_genomes(lines):
+def async_import_genomes(lines, email, zip_file):
     print ('Starting asynchronous task for genome list:')
     timestamp = str(timezone.now())
     task_name = 'genome-import-' + timestamp.replace(' ', '_')
     for item in lines:
         print(item)
-    task_id = async_task(import_genomes_impl, lines, task_name=task_name, sync=False)
+    task_id = async_task(import_genomes_impl, (lines, email, zip_file), task_name=task_name, sync=False)
 #    print(task_id + ' submitted')
     return task_id
 

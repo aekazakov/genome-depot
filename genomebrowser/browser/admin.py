@@ -1,8 +1,6 @@
 import os
 import csv
 import shutil
-import uuid
-import zipfile
 from django import forms
 from django.contrib import admin
 from django.urls import path
@@ -29,7 +27,8 @@ class ExcelImportForm(forms.Form):
 
 class GenomeImportForm(forms.Form):
     tsv_file = forms.FileField()
-    zip_file = forms.FileField()
+    zip_file = forms.FileField(required=False, label='Zip archive with genomes in GBFF format (optional)')
+    download_email = forms.EmailField(max_length=200, required=False, label='Email for NCBI genome downloads (optional)')
 
 @admin.action(description = 'Test sync action')
 def test_task(self, request, queryset):
@@ -43,21 +42,6 @@ def delete_genomes(self, request, queryset):
 def count_tasks(request):
     return str(OrmQ.objects.all().count())
     
-def handle_zip_upload(zipf):
-    result = {}
-    temp_dir = Config.objects.get(param='cgcms.temp_dir').value
-    upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
-    print(upload_dir)
-    os.mkdir(upload_dir)
-    with zipfile.ZipFile(zipf, "r", zipfile.ZIP_STORED) as openzip:
-        filelist = openzip.infolist()
-        for member in filelist:
-            if member.is_dir():
-                continue
-            openzip.extract(member.filename, path=upload_dir)
-            result[str(member.filename)] = os.path.join(upload_dir, member.filename)
-    return result
-
 
 # Register your models here.
 class GenomeAdmin(admin.ModelAdmin):
@@ -91,22 +75,28 @@ class GenomeAdmin(admin.ModelAdmin):
         if request.method == 'POST':
             print(request.FILES)
             tsv_file = request.FILES["tsv_file"]
-            zip_content = None
-            if request.FILES["zip_file"]:
-                zip_file = request.FILES["zip_file"]
-                zip_content = handle_zip_upload(zip_file)
+            zip_file = None
+#            zip_content = {}
+#            temp_dir = Config.objects.get(param='cgcms.temp_dir').value
+#            upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
+#            if 'zip_file' in request.FILES:
+#                print(upload_dir)
+#                zip_file = request.FILES["zip_file"]
+#                zip_content = handle_zip_upload(zip_file, upload_dir)
             lines = []
-            print('Zip archive', zip_content)
+#            print('Zip archive', {})
             for line in tsv_file:
                 line = line.decode()
-                print(line)
-                row = line.split('\t')
-                if row[0] in zip_content:
-                    row[0] = os.path.join(zip_content[row[0]])
-                else:
-                    print(row[0], 'not found')
-                lines.append('\t'.join(row))
-            task_name = async_import_genomes(lines)
+                lines.append(line)
+#                row = line.split('\t')
+#                if row[0] in zip_content:
+#                    row[0] = os.path.join(zip_content[row[0]])
+#                elif row[0] == '' and row[-1].startswith('NCBI:'):
+#                    row[0] = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'), request.POST['download_email'], upload_dir)
+#                elif not os.path.exists(row[0]):
+#                    print(row[0], 'not found')
+#                lines.append('\t'.join(row))
+            task_name = async_import_genomes(lines, request.POST['download_email'], zip_file)
             # Do some staff
             self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
             return redirect("..")
