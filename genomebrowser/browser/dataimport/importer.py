@@ -137,6 +137,9 @@ class Importer(object):
             raise ValueError('Genome identifiers must be unique. Change genome ID or delete conflicting genome from DB.')
         self.genomefiles = result
         
+    def download_ncbi_assembly(self, ncbi_id):
+        return ''
+        
     def download_genomes(self):
         """
             This function is a placeholder for real downloader.
@@ -145,6 +148,9 @@ class Importer(object):
         for genome_id in self.inputgenomes:
             genome_file = self.inputgenomes[genome_id]['gbk']
             if not os.path.exists(genome_file):
+                #if self.inputgenomes[genome_id]['external_id'].startswith('NCBI:'):
+                #    self.inputgenomes[genome_id]['gbk'] = self.download_ncbi_assembly(self.inputgenomes[genome_id]['external_id'][5:])
+                #else:
                 print('File not found: ' + genome_file)
                 print('Please download genome from ' + self.inputgenomes[genome_id]['url'])
                 raise FileNotFoundError('File not found')

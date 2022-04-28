@@ -1,6 +1,8 @@
 import os
 import csv
 import shutil
+import uuid
+import zipfile
 from django import forms
 from django.contrib import admin
 from django.urls import path
@@ -19,11 +21,15 @@ admin.site.site_title = "CGCMS Admin Portal"
 admin.site.index_title = "Welcome to CGCMS administration interface"
 
 
-class CsvImportForm(forms.Form):
-    csv_file = forms.FileField()
+class TsvImportForm(forms.Form):
+    tsv_file = forms.FileField()
 
 class ExcelImportForm(forms.Form):
     xlsx_file = forms.FileField()
+
+class GenomeImportForm(forms.Form):
+    tsv_file = forms.FileField()
+    zip_file = forms.FileField()
 
 @admin.action(description = 'Test sync action')
 def test_task(self, request, queryset):
@@ -36,6 +42,22 @@ def delete_genomes(self, request, queryset):
 
 def count_tasks(request):
     return str(OrmQ.objects.all().count())
+    
+def handle_zip_upload(zipf):
+    result = {}
+    temp_dir = Config.objects.get(param='cgcms.temp_dir').value
+    upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
+    print(upload_dir)
+    os.mkdir(upload_dir)
+    with zipfile.ZipFile(zipf, "r", zipfile.ZIP_STORED) as openzip:
+        filelist = openzip.infolist()
+        for member in filelist:
+            if member.is_dir():
+                continue
+            openzip.extract(member.filename, path=upload_dir)
+            result[str(member.filename)] = os.path.join(upload_dir, member.filename)
+    return result
+
 
 # Register your models here.
 class GenomeAdmin(admin.ModelAdmin):
@@ -68,22 +90,32 @@ class GenomeAdmin(admin.ModelAdmin):
     def import_genomes(self, request):
         if request.method == 'POST':
             print(request.FILES)
-            csv_file = request.FILES["csv_file"]
+            tsv_file = request.FILES["tsv_file"]
+            zip_content = None
+            if request.FILES["zip_file"]:
+                zip_file = request.FILES["zip_file"]
+                zip_content = handle_zip_upload(zip_file)
             lines = []
-            for line in csv_file:
+            print('Zip archive', zip_content)
+            for line in tsv_file:
                 line = line.decode()
                 print(line)
-                lines.append(line)
+                row = line.split('\t')
+                if row[0] in zip_content:
+                    row[0] = os.path.join(zip_content[row[0]])
+                else:
+                    print(row[0], 'not found')
+                lines.append('\t'.join(row))
             task_name = async_import_genomes(lines)
             # Do some staff
             self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
             return redirect("..")
-        form = CsvImportForm()
+        form = GenomeImportForm()
         payload = {'form': form}
         active_tasks = OrmQ.objects.all().count()
         payload['active_tasks'] = str(active_tasks)
         return render(
-            request, "admin/csv_form.html", payload
+            request, "admin/import_genomes.html", payload
         )
         
     def delete_genomes(self, request, queryset):
@@ -140,9 +172,9 @@ class SampleAdmin(admin.ModelAdmin):
     def import_sample_descriptions(self, request):
         if request.method == 'POST':
             print(request.FILES)
-            csv_file = request.FILES["csv_file"]
+            tsv_file = request.FILES["tsv_file"]
             lines = []
-            for line in csv_file:
+            for line in tsv_file:
                 line = line.decode()
                 print(line)
                 lines.append(line)
@@ -150,7 +182,7 @@ class SampleAdmin(admin.ModelAdmin):
             # Do some staff
             self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
             return redirect("..")
-        form = CsvImportForm()
+        form = TsvImportForm()
         payload = {"form": form}
         active_tasks = OrmQ.objects.all().count()
         payload['active_tasks'] = str(active_tasks)
@@ -287,9 +319,9 @@ class SampleMetadataAdmin(admin.ModelAdmin):
     def import_sample_metadata(self, request):
         if request.method == 'POST':
             print(request.FILES)
-            csv_file = request.FILES["csv_file"]
+            tsv_file = request.FILES["tsv_file"]
             lines = []
-            for line in csv_file:
+            for line in tsv_file:
                 line = line.decode()
                 print(line)
                 lines.append(line)
@@ -297,7 +329,7 @@ class SampleMetadataAdmin(admin.ModelAdmin):
             # Do some staff
             self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
             return redirect("..")
-        form = CsvImportForm()
+        form = TsvImportForm()
         payload = {"form": form}
         active_tasks = OrmQ.objects.all().count()
         payload['active_tasks'] = str(active_tasks)
@@ -331,9 +363,9 @@ class AnnotationAdmin(admin.ModelAdmin):
     def import_annotations(self, request):
         if request.method == 'POST':
             print(request.FILES)
-            csv_file = request.FILES["csv_file"]
+            tsv_file = request.FILES["csv_file"]
             lines = []
-            for line in csv_file:
+            for line in tsv_file:
                 line = line.decode()
                 print(line)
                 lines.append(line)
@@ -341,7 +373,7 @@ class AnnotationAdmin(admin.ModelAdmin):
             # Do some staff
             self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
             return redirect("..")
-        form = CsvImportForm()
+        form = TsvImportForm()
         payload = {"form": form}
         active_tasks = OrmQ.objects.all().count()
         payload['active_tasks'] = str(active_tasks)
@@ -383,7 +415,7 @@ class RegulonAdmin(admin.ModelAdmin):
     def import_regulons(self, request):
         if request.method == 'POST':
             print(request.FILES)
-            csv_file = request.FILES["csv_file"]
+            tsv_file = request.FILES["tsv_file"]
             lines = []
             for line in csv_file:
                 line = line.decode()
@@ -393,7 +425,7 @@ class RegulonAdmin(admin.ModelAdmin):
             # Do some staff
             self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
             return redirect("..")
-        form = CsvImportForm()
+        form = TsvImportForm()
         payload = {"form": form}
         active_tasks = OrmQ.objects.all().count()
         payload['active_tasks'] = str(active_tasks)
