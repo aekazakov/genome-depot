@@ -5,6 +5,7 @@ import hashlib
 import openpyxl
 import requests
 from pathlib import Path
+from io import BytesIO
 from collections import defaultdict, OrderedDict
 from Bio import SeqIO
 from subprocess import Popen, PIPE, CalledProcessError
@@ -13,14 +14,15 @@ from datetime import datetime
 from django.db import connection
 from browser.models import *
 from genomebrowser.settings import STATIC_URL
-""" Imports genomes into database from GenBank files.
-Input file must have five columns:
-1. Path to GenBank file (gzipped or not)
-2. Genome ID.
-3. Strain ID.
-4. URL for the sequence (can be blank)
-5. External ID to be used as a label (can be blank)
 
+# Register plugins here
+from browser.dataimport.plugins.fama import application as fama
+from browser.dataimport.plugins.amrfinder import application as amrfinder
+from browser.dataimport.plugins.antismash import application as antismash
+from browser.dataimport.plugins.phispy import application as phispy
+from browser.dataimport.plugins.ecis_screen import application as ecis_screen
+""" 
+    Various functions for generation and import of gene annotations.
 """
 
 class Annotator(object):
@@ -263,50 +265,57 @@ class Annotator(object):
         """ This function adds gene annotations from tab-separated file. 
         If such anotation already exists, the existing copy will be preserved (annotation is considered identical if, for the same gene, it has same source, key and value)"""
         print('Reading annotations from file')
+        lines = []
         with open(tsv_file, 'r') as infile:
             for line in infile:
                 if line.startswith('#'):
                     continue
-                locus_tag, genome_name, source, url, key, value, note = line.rstrip('\n\r').split('\t')
-                existing_annotations = Annotation.objects.filter(gene_id__locus_tag = locus_tag,
-                    gene_id__genome__name = genome_name,
-                    source=source,
-                    key=key,
-                    value=value)
-                if existing_annotations:
-                    print('Annotation exists', locus_tag, genome_name, source, key, value)
-                else:
-                    try:
-                        gene = Gene.objects.get(locus_tag=locus_tag, genome__name = genome_name)
-                        self.annotations.append(Annotation(gene_id=gene,
-                            source=source,
-                            url=url,
-                            key=key,
-                            value=value,
-                            note=note
-                            ))
-                        print('Annotation added', locus_tag, genome_name, source, key, value)
-                    except Gene.DoesNotExist:
-                        print('Gene not found', locus_tag, genome_name)
+                lines.append(line)
+        self.import_annotations(lines)
+        
+    def import_annotations(self, lines):
+        """ This function adds gene annotations from a list of lines. 
+        If an anotation already exists, the existing copy will be preserved (annotation is considered identical if, for the same gene, it has same source, key and value)"""
+        for line in lines:
+            if line.startswith('#'):
+                continue
+            locus_tag, genome_name, source, url, key, value, note = line.rstrip('\n\r').split('\t')
+            existing_annotations = Annotation.objects.filter(gene_id__locus_tag = locus_tag,
+                gene_id__genome__name = genome_name,
+                source=source,
+                key=key,
+                value=value)
+            if existing_annotations:
+                print('Annotation exists', locus_tag, genome_name, source, key, value)
+            else:
+                try:
+                    gene = Gene.objects.get(locus_tag=locus_tag, genome__name = genome_name)
+                    self.annotations.append(Annotation(gene_id=gene,
+                        source=source,
+                        url=url,
+                        key=key,
+                        value=value,
+                        note=note
+                        ))
+                    print('Annotation added', locus_tag, genome_name, source, key, value)
+                except Gene.DoesNotExist:
+                    print('Gene not found', locus_tag, genome_name)
         # write Annotations
         print('Writing annotations')
         Annotation.objects.bulk_create(self.annotations, batch_size=10000)
         print(len(self.annotations), 'annotations written')
         self.annotations = []
 
-    def add_regulons(self, tsv_file):
-        """ This function adds sites and regulons from tab-separated file. 
+    def add_regulons(self, lines):
+        """ This function adds sites and regulons from a list of tab-separated lines. 
         If such a site already exists, the existing copy will be preserved (site is considered identical if it has the same genome, contig. start, end and strand)
         """
         print('Reading regulons from file')
         regulon_data = autovivify(2, list)
         
-        with open(tsv_file, 'r') as infile:
-            for line in infile:
-                if line.startswith('#'):
-                    continue
-                regulon_name, genome_name, reg_gene_id, target_gene_id, contig, start, end, strand, sequence = line.rstrip('\n\r').split('\t')
-                regulon_data[genome_name][regulon_name].append((reg_gene_id, target_gene_id, contig, start, end, strand, sequence))
+        for line in lines:
+            regulon_name, genome_name, reg_gene_ids, target_gene_id, contig, start, end, strand, sequence = line.rstrip('\n\r').split('\t')
+            regulon_data[genome_name][regulon_name].append((reg_gene_ids, target_gene_id, contig, start, end, strand, sequence))
         print(regulon_data)
         
         for genome_name in regulon_data:
@@ -316,21 +325,23 @@ class Annotator(object):
             for regulon_name in regulon_data[genome_name]:
                 print(regulon_name, genome_name)
                 if regulon_name not in existing_regulons:
-                    regulator_id = regulon_data[genome_name][regulon_name][0][0]
+                    regulator_ids = regulon_data[genome_name][regulon_name][0][0].split(',')
                     regulon = Regulon(name=regulon_name, genome=genome)
                     regulon.save()
                     existing_regulons[regulon_name] = regulon
                     print(str(regulon))
-                    regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
+                    for regulator_id in regulator_ids:
+                        regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
                 else:
                     regulon = existing_regulons[regulon_name]
                     existing_regulators = [item.locus_tag for item in regulon.regulators.all()]
                     for regulon_ind in regulon_data[genome_name][regulon_name]:
-                        regulator_id = regulon_ind[0]
-                        print (regulator_id)
-                        if regulator_id not in existing_regulators:
-                            regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
-                            existing_regulators.append(regulator_id)
+                        regulator_ids = regulon_ind[0].split(',')
+                        for regulator_id in regulator_ids:
+                            print (regulator_id)
+                            if regulator_id not in existing_regulators:
+                                regulon.regulators.add(Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name))
+                                existing_regulators.append(regulator_id)
             # Create sites
             existing_regulons = {item.name:item for item in Regulon.objects.filter(genome__name = genome_name)}
             existing_sites = {item.name:item for item in Site.objects.filter(genome__name = genome_name)}
@@ -382,12 +393,15 @@ class Annotator(object):
         Strain_metadata.objects.bulk_create(self.metadata, batch_size=10000)
         print(len(self.metadata), 'metadata entries written')
 
-    def update_strain_metadata(self, xlsx_file):
+    def update_strain_metadata(self, xlsx_path=None, xlsx_file=None):
         """ This function adds strain metadata from Excel file and from isolates.genomics.lbl.gov API"""
         print('Reading metadata from file', xlsx_file)
         metadata_imported = defaultdict(dict)
-        xlsx_path = Path(xlsx_file)
-        wb_obj = openpyxl.load_workbook(xlsx_file)
+        if xlsx_path is not None:
+            xlsx_path = Path(xlsx_path)
+            wb_obj = openpyxl.load_workbook(xlsx_path)
+        else:
+            wb_obj = openpyxl.load_workbook(filename=BytesIO(xlsx_file.read()))
         sheet = wb_obj.active
         xlsx_header = []
 
@@ -476,24 +490,22 @@ class Annotator(object):
                         )
                     new_metadata.save()
 
-    def add_sample_metadata(self, tsv_file):
+    def add_sample_metadata(self, lines):
         """ This function adds sample metadata from tab-separated file"""
-        print('Reading metadata from file')
         self.metadata = []
         samples = {item.sample_id:item for item in Sample.objects.all()}
-        with open(tsv_file, 'r') as infile:
-            for line in infile:
-                if line.startswith('#'):
-                    continue
-                sample, source, url, key, value = line.rstrip('\n\r').split('\t')
-                if sample in samples:
-                    self.metadata.append(Sample_metadata(sample=samples[sample],
-                        source=source,
-                        url=url,
-                        key=key,
-                        value=value
-                        ))
-                    print('Metadata added', sample, source, key, value)
+        for line in lines:
+            if line.startswith('#'):
+                continue
+            sample, source, url, key, value = line.rstrip('\n\r').split('\t')
+            if sample in samples:
+                self.metadata.append(Sample_metadata(sample=samples[sample],
+                    source=source,
+                    url=url,
+                    key=key,
+                    value=value
+                    ))
+                print('Metadata added', sample, source, key, value)
         # write metadata
         print('Writing metadata')
         Sample_metadata.objects.bulk_create(self.metadata, batch_size=10000)
@@ -513,22 +525,59 @@ class Annotator(object):
                     genomes[genome_name].save()
                     print('Genome description updated for', genome_name)
 
-    def update_sample_descriptions(self, tsv_file):
+    def update_sample_descriptions(self, lines):
         """ This function reads metagenomic sample descriptions from tab-separated file and updates Sample objects"""
-        print('Reading metadata from file')
         samples = {item.sample_id:item for item in Sample.objects.all()}
-        with open(tsv_file, 'r') as infile:
-            for line in infile:
-                if line.startswith('#'):
-                    continue
-                sample_name, full_name, description = line.rstrip('\n\r').split('\t')
-                if sample_name in samples:
-                    samples[sample_name].description = description
-                    samples[sample_name].full_name = full_name
-                    samples[sample_name].save()
-                    print('Sample description updated for', sample_name)
+        for line in lines:
+            if line.startswith('#'):
+                continue
+            sample_name, full_name, description = line.rstrip('\n\r').split('\t')
+            if sample_name in samples:
+                samples[sample_name].description = description
+                samples[sample_name].full_name = full_name
+                samples[sample_name].save()
+                print('Sample description updated for', sample_name)
 
+    def run_external_tools(self, genomes):
+        plugins_available = set()
+        for param in self.config:
+            if param.startswith('plugins.') and self.config[param] != '':
+                plugin = param.split('.')[1]
+                plugins_available.add(plugin)
+                
+        print('Available plugins:', ','.join(list(plugins_available)))
 
+        # Run Fama
+        if 'fama' in plugins_available:
+            fama_annotations = fama(self, genomes)
+            print(fama_annotations, 'ready for upload')
+            self.add_custom_annotations(fama_annotations)
+
+        # Run amrfinder
+        if 'amrfinder' in plugins_available:
+            amrfinder_annotations = amrfinder(self, genomes)
+            print(amrfinder_annotations, 'ready for upload')
+            self.add_custom_annotations(amrfinder_annotations)
+
+        # Run antiSMASH
+        if 'antismash' in plugins_available:
+            antismash_annotations = antismash(self, genomes)
+            print(antismash_annotations, 'ready for upload')
+            self.add_custom_annotations(antismash_annotations)
+        
+        # Run PhiSpy
+        if 'phispy' in plugins_available:
+            phispy_annotations = phispy(self, genomes)
+            print(phispy_annotations, 'ready for upload')
+            self.add_custom_annotations(phispy_annotations)
+
+        # Run eCIS-screen
+        if 'ecis_screen' in plugins_available:
+            ecis_screen_annotations = ecis_screen(self, genomes)
+            print(ecis_screen_annotations, 'ready for upload')
+            self.add_custom_annotations(ecis_screen_annotations)
+    
+                
 def autovivify(levels=1, final=dict):
     return (defaultdict(final) if levels < 2 else
             defaultdict(lambda: autovivify(levels - 1, final)))

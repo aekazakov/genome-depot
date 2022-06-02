@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.core.files.storage import default_storage
 from browser.seqsearch import run_protein_search, run_nucleotide_search
 from browser.comparative_analysis import get_scribl
+from browser.conserved_regulon import build_conserved_regulon
 
 # Create your views here.
 
@@ -754,6 +755,11 @@ def regulon_detail(request, genome, name):
     sites = Site.objects.filter(regulon = regulon).select_related(
         'contig').prefetch_related('genes', 'operons')
     context['sites'] = sites
+    ortholog_groups = set()
+    for regulator in regulon.regulators.all():
+        for og in regulator.protein.ortholog_groups.all():
+            ortholog_groups.add(og.id)
+    context['ortholog_groups'] = Ortholog_group.objects.filter(id__in=list(ortholog_groups))
     print([x.name for x in sites])
     return render(request, 'browser/regulon.html', context)
 
@@ -880,6 +886,16 @@ def nucleotide_search(request):
     return render(request, 'browser/nucleotidesearch.html', context)
 
 
+def cregulon_view(request):
+    """
+    Conserved regulon view
+    """
+    og_id = request.GET.get('og')
+    #locus_tag = request.GET.get('locus_tag')
+    context = build_conserved_regulon(og_id)
+    return render(request, 'browser/cregulon.html', context)
+
+    
 def comparative_view(request):
     context = {}
     locus_tag = request.GET.get('locus_tag')

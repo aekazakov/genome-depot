@@ -21,4 +21,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         annotator = Annotator()
-        annotator.add_regulons(options['i'])
+        lines = []
+        with open(options['i'], 'r') as infile:
+            for line in infile:
+                if line.startswith('#'):
+                    continue
+                lines.append(line)
+        annotator.add_regulons(lines)

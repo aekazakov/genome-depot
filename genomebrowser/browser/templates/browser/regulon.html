@@ -52,6 +52,12 @@
 			    {% for gene in regulon.regulators.all %}
 				<h5><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a>: {{ gene.function }}</h5>
 			    {% endfor %}
+			<header class="align-center">
+			    <p class="align-center">Conserved regulons</p>
+			</header>
+				<h5>{% for og in ortholog_groups.all %}
+				<a href="{% url 'cregulon' %}?og={{ og.id }}">{{ og.eggnog_id }}[{{ og.taxon.name }}]</a> 
+			    {% endfor %}</h5>
 		    </div>
 		    {% endif %}
 		</div>

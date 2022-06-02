@@ -40,6 +40,7 @@ urlpatterns = [
     path('cazy/', views.CazySearchResultsView.as_view(), name='cazy'),
     path('cogs/', views.CogSearchResultsView.as_view(), name='cogs'),
     path('comparative/', views.comparative_view, name='comparative'),
+    path('cregulon/', views.cregulon_view, name='cregulon'),
     path('help/', views.show_help, name='help'),
 
 ]

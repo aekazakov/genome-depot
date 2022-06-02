@@ -14,4 +14,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         annotator = Annotator()
-        annotator.update_strain_metadata(options['i'])
+        annotator.update_strain_metadata(xlsx_path=options['i'], xlsx_file=None)

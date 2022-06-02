@@ -1,0 +1,34 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+    <div>
+	<h2>Import genomes into CGCMS from GenBank files</h2>
+	<p>
+	All genome files must be accessible by Django Q cluster. Currently, there is no support for file download from external sources.<br />
+	</p>
+	<p>
+	To start genome import, provide a list of genomes and click "Start import" button.<br />
+	</p>
+	<p>
+	The list must be in tab-separated text format with six columns:<br />
+	</p>
+	<ol>
+	<li>Path to GenBank file (can be gzipped). This file must be accessible from Django Q cluster.</li>
+	<li>Genome ID for CGCMS. Must be unique </li>
+	<li>Strain ID for CGCMS. Can be blank if sample ID is not blank.</li>
+	<li>Sample ID for CGCMS. Can be blank if strain ID is not blank.</li>
+	<li>URL for external reference of the genome sequence (can be blank).</li>
+	<li>External identifier to be used as a text label for external reference. A format "datasource:accession" is strongly encouraged (for example NCBI:GCF_000019425.1). Can be blank, if no URL is provided.</li>
+	</ol>
+	<p>There are {{active_tasks}} task(s) in the queue right now.</p>
+	{% if active_tasks == "0" %}
+	<form action="" method="POST" enctype="multipart/form-data">
+	    {{ form.as_p }}
+	    {% csrf_token %}
+	    <button type="submit">Start import</button>
+	</form>
+	{% else %}
+		<span style="color:red">You cannot start new tasks until there are active tasks in the queue. Please wait until all current tasks are finished or delete the tasks and restart Django Q cluster.</span>
+	{% endif %}
+    </div>
+    <br />
+{% endblock %}

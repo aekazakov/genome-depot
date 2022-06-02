@@ -17,6 +17,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if os.path.exists(options['i']):
             annotator = Annotator()
-            annotator.update_sample_descriptions(options['i'])
+            print('Reading descriptions from file')
+            with open(options['i'], 'r') as in_file:
+                for line in in_file:
+                    lines.append(line)
+            annotator.update_sample_descriptions(lines)
         else:
             raise FileNotFoundError('Input file not found.')
