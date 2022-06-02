@@ -227,17 +227,18 @@ def make_protein_tree(proteins):
     # Construct the phlyogenetic tree using NJ algorithm
     NJTree = constructor.nj(distMatrix)
     NJTree.root_with_outgroup(proteins[0][2])
-    nodes = [gene_labels[term.name] for term in NJTree.get_terminals(order='level')]
+    nodes = [gene_labels[term.name] for term in NJTree.get_terminals(order='postorder')]
+    node_ids = [term.name for term in NJTree.get_terminals(order='postorder')]
     # Draw the phlyogenetic tree using terminal
     Phylo.draw_ascii(NJTree)
     newick = io.StringIO()
     Phylo.write(NJTree, newick, 'newick')
     tree = toytree.mtree(newick.getvalue(), tree_format=1)
-    node_ids = [term.name for term in NJTree.get_terminals(order='level')]
-    node_ids.reverse()
+    nodes.reverse()
     print('Reversed node IDs', node_ids)
-    canvas, axes, marks = tree.draw(width=200, height=10 + 56 * len(nodes), fixed_order=node_ids)
+    canvas, axes, marks = tree.draw(width=200, height=70 + 56 * len(nodes), fixed_order=node_ids, scalebar=True)
     canvas.style['background-color'] = 'white'
+    canvas.style['padding-top'] = '60px'
     tree_canvas = toyplot.html.tostring(canvas)
 
     return nodes, tree_canvas, newick.getvalue()
@@ -284,7 +285,7 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
             if gene_count >= genelist_size:
                 break
     tree_nodes, tree_svg, tree_newick = make_protein_tree(tree_proteins)
-    print(tree_svg)
+    #print(tree_svg)
     print(tree_newick)
     if tree_nodes[0] == pivot_gene.id:
         print('First gene is ', pivot_gene.locus_tag)

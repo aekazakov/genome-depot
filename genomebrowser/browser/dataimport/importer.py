@@ -1287,7 +1287,7 @@ class Importer(object):
             if len(dirnames) == 0 and len(filenames) == 0 :
                 empty_dirs.append(dirpath)
         for directory in empty_dirs:
-            os.remove(directory)
+            os.rmdir(directory)
             
         
     def import_genomes(self, lines):
