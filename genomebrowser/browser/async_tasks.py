@@ -1,7 +1,7 @@
 import time
 from django.utils import timezone
 from django_q.tasks import async_task, result
-from cgcmsadmin.tasks import test_task_impl, import_genomes_impl, delete_genomes_impl, import_sample_metadata_impl, import_sample_descriptions_impl, update_strain_metadata_impl, import_annotations_impl, import_regulon_impl
+from browser.tasks import test_task_impl, import_genomes_impl, delete_genomes_impl, import_sample_metadata_impl, import_sample_descriptions_impl, update_strain_metadata_impl, import_annotations_impl, import_regulon_impl
 
 def test_async_task(request, queryset):
     timeout = 60

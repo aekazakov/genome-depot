@@ -10,7 +10,7 @@ from django.contrib import messages
 # Import your models here
 from browser.models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog
 from browser.dataimport.importer import Importer
-from cgcmsadmin.async_tasks import test_async_task, async_import_genomes, async_delete_genomes, async_import_sample_metadata, async_import_sample_descriptions, async_update_strain_metadata, async_import_annotations, async_import_regulon
+from browser.async_tasks import test_async_task, async_import_genomes, async_delete_genomes, async_import_sample_metadata, async_import_sample_descriptions, async_update_strain_metadata, async_import_annotations, async_import_regulon
 from django_q.models import OrmQ
 
 
@@ -62,6 +62,7 @@ class GenomeAdmin(admin.ModelAdmin):
         ('external_id', 'external_url'),
         'gbk_filepath'
     )
+    autocomplete_fields = ('strain', 'sample', 'taxon', )
     
     def get_urls(self):
         urls = super().get_urls()
@@ -127,6 +128,7 @@ class GeneAdmin(admin.ModelAdmin):
     list_filter = ['type']
     ordering = ['locus_tag', 'genome']
     search_fields = ['locus_tag', 'genome__name']
+    autocomplete_fields = ('genome', 'contig', 'protein', 'operon', )
 
 admin.site.register(Gene, GeneAdmin)
 
@@ -143,6 +145,7 @@ class StrainAdmin(admin.ModelAdmin):
     list_display = ['strain_id', 'full_name', 'order', 'taxon']
     ordering = ['strain_id']
     search_fields = ['strain_id', 'full_name']
+    autocomplete_fields = ('taxon',)
 
 admin.site.register(Strain, StrainAdmin)
 
@@ -251,7 +254,8 @@ class OrthologGroupAdmin(admin.ModelAdmin):
     list_display = ['eggnog_id', 'taxon']
     ordering = ['eggnog_id']
     search_fields = ['eggnog_id', 'taxon']
-
+    autocomplete_fields = ('taxon', )
+    
 admin.site.register(Ortholog_group, OrthologGroupAdmin)
 
 
@@ -267,6 +271,7 @@ class StrainMetadataAdmin(admin.ModelAdmin):
     list_display = ['strain', 'key', 'source']
     ordering = ['strain', 'key']
     search_fields = ['strain', 'key', 'source']
+    autocomplete_fields = ('strain',)
 
     def get_urls(self):
         urls = super().get_urls()
@@ -298,6 +303,7 @@ class SampleMetadataAdmin(admin.ModelAdmin):
     list_display = ['sample', 'key', 'source']
     ordering = ['sample', 'key']
     search_fields = ['sample', 'key', 'source']
+    autocomplete_fields = ('sample',)
 
     def get_urls(self):
         urls = super().get_urls()
@@ -334,6 +340,9 @@ class ProteinAdmin(admin.ModelAdmin):
     list_display = ['name', 'protein_hash', 'length']
     ordering = ['protein_hash']
     search_fields = ['name', 'protein_hash', 'length']
+    autocomplete_fields = ('taxonomy_id', )
+    raw_id_fields = ('ortholog_groups', 'cog_classes', 'kegg_reactions', 'kegg_pathways', 'kegg_orthologs', 'go_terms', 'cazy_families', 'ec_numbers', 'tc_families', )
+    
 
 admin.site.register(Protein, ProteinAdmin)
 
@@ -342,6 +351,7 @@ class AnnotationAdmin(admin.ModelAdmin):
     list_display = ['gene_id', 'key', 'value', 'source']
     ordering = ['gene_id', 'key']
     search_fields = ['gene_id__locus_tag', 'key', 'value', 'source']
+    autocomplete_fields = ('gene_id',)
 
     def get_urls(self):
         urls = super().get_urls()
@@ -378,6 +388,7 @@ class OperonAdmin(admin.ModelAdmin):
     list_display = ['name', 'genome', 'contig', 'start', 'end']
     ordering = ['genome', 'name']
     search_fields = ['name', 'genome', 'contig']
+    autocomplete_fields = ('genome', 'contig', )
 
 admin.site.register(Operon, OperonAdmin)
 
@@ -386,6 +397,8 @@ class SiteAdmin(admin.ModelAdmin):
     list_display = ['name', 'genome', 'contig', 'start', 'end', 'type']
     ordering = ['genome', 'name']
     search_fields = ['name', 'genome', 'contig', 'type']
+    autocomplete_fields = ('genome', 'contig', 'regulon',)
+    raw_id_fields = ('operons', 'genes',)
 
 admin.site.register(Site, SiteAdmin)
 
@@ -394,6 +407,8 @@ class RegulonAdmin(admin.ModelAdmin):
     list_display = ['name', 'genome']
     ordering = ['genome', 'name']
     search_fields = ['name', 'genome']
+    autocomplete_fields = ('genome', )
+    raw_id_fields = ('regulators', )
 
     def get_urls(self):
         urls = super().get_urls()
@@ -438,7 +453,8 @@ class ContigAdmin(admin.ModelAdmin):
     list_display = ['contig_id', 'name', 'genome', 'size']
     ordering = ['genome', 'contig_id']
     search_fields = ['contig_id', 'name', 'genome']
-
+    autocomplete_fields = ('genome', )
+    
 admin.site.register(Contig, ContigAdmin)
 
 

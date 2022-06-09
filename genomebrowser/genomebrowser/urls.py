@@ -17,11 +17,9 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
 import debug_toolbar
-from cgcmsadmin.admin import cgcms_admin_site
 
 urlpatterns = [
     path('', include('browser.urls')),
     path('admin/', admin.site.urls),
-#    path('cgcmsadmin/', cgcms_admin_site.urls),
     path('__debug__/', include(debug_toolbar.urls)),
 ]
