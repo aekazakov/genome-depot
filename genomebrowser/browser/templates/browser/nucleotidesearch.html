@@ -23,6 +23,7 @@
 							<th>Genome</th>
 							<th>%identity</th>
 							<th>Alignment length</th>
+							<th>%Query coverage</th>
 							<th>E-value</th>
 							<th>Bit-score</th>
 						</tr>
@@ -30,12 +31,13 @@
 					<tbody>
 			    {% for item in hits %}
 				<tr>
-					<td align="left"><a href="{% url 'genomedetails' name=item.1.genome.name %}?contig={{ item.1.contig_id }}&start={{ item.6 }}&end={{ item.7 }}">{{ item.0 }}</a></td>
+					<td align="left"><a href="{% url 'genomedetails' name=item.1.genome.name %}?contig={{ item.1.contig_id }}&start={{ item.7 }}&end={{ item.8 }}">{{ item.0 }}</a></td>
 					<td align="left">{{ item.1.genome.name }} [{{ item.1.genome.taxon.name }}]</td>
 					<td>{{ item.2 }}</td>
 					<td>{{ item.3 }}</td>
 					<td>{{ item.4 }}</td>
 					<td>{{ item.5 }}</td>
+					<td>{{ item.6 }}</td>
 				</tr>
 			    {% endfor %}
 					</tbody>

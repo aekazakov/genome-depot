@@ -813,18 +813,20 @@ def protein_search(request):
     if request.POST.get("sequence"):
         result = {}
         sequence = request.POST.get("sequence")
-        hits, searchcontext = run_protein_search(sequence)
+        hits, searchcontext, query_len = run_protein_search(sequence)
         if searchcontext != '':
             context['searchcontext'] = searchcontext
         for row in hits:
             row=row.split('\t')
             if row[0] not in result:
                 result[row[0]] = []
+            unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
+            query_cov = (query_len - unaligned_part) * 100.0 / query_len
             genes = Gene.objects.select_related('protein', 'genome', 'genome__taxon').filter(protein__protein_hash = row[1])
             # Generate hit description
             for target in genes:
                 hit = [target.genome.name, target.locus_tag, target.genome.taxon.name,
-                       target.function, '{:.1f}'.format(float(row[2])), row[3], row[10], row[11]]
+                       target.function, '{:.1f}'.format(float(row[2])), row[3], '{:.1f}'.format(query_cov), row[10], row[11]]
                 result[row[0]].append(hit)
         context['searchresult'] = result
     return render(request, 'browser/proteinsearch.html', context)
@@ -835,7 +837,7 @@ def protein_search_external(request):
     if request.GET.get("sequence"):
         result = {}
         sequence = request.GET.get("sequence")
-        hits, searchcontext = run_protein_search(sequence)
+        hits, searchcontext, query_len = run_protein_search(sequence)
         if searchcontext != '':
             context['searchcontext'] = searchcontext
         for row in hits:
@@ -843,12 +845,12 @@ def protein_search_external(request):
             print('Search for gene', row[1])
             if row[0] not in result:
                 result[row[0]] = []
-            #protein = Protein.objects.get(protein_hash = row[1])
-            #genes = protein.gene_set.all()
+            unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
+            query_cov = (query_len - unaligned_part) * 100.0 / query_len
             genes = Gene.objects.select_related('protein', 'genome', 'genome__taxon').filter(protein__protein_hash = row[1])
             for target in genes:
                 hit = [target.genome.name, target.locus_tag, target.genome.taxon.name,
-                       target.function, '{:.1f}'.format(float(row[2])), row[3], row[10], row[11]]
+                       target.function, '{:.1f}'.format(float(row[2])), row[3], '{:.1f}'.format(query_cov), row[10], row[11]]
                 result[row[0]].append(hit)
         context['searchresult'] = result
     else:
@@ -861,7 +863,7 @@ def nucleotide_search(request):
     if request.POST.get("sequence"):
         result = {}
         sequence = request.POST.get("sequence")
-        hits, searchcontext = run_nucleotide_search(sequence)
+        hits, searchcontext, query_len = run_nucleotide_search(sequence)
         if searchcontext != '':
             context['searchcontext'] = searchcontext
         for row in hits:
@@ -873,14 +875,15 @@ def nucleotide_search(request):
             print('Search for contig', contig_name, 'in genome', genome_name)
             target = Contig.objects.select_related('genome', 'genome__taxon').get(contig_id = contig_name, genome__name = genome_name)
             ani = float(row[2])
-            # MMseqs2 hit
             strand = '+'
             start = row[8]
             end = row[9]
+            unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
+            query_cov = (query_len - unaligned_part) * 100.0 / query_len
             if int(row[7]) < int(row[6]):
                 strand = '-'
             hit = [contig_name + ': (' + strand + 'strand) ' + start + '..' + end,
-                    target, row[2], row[3], row[10], row[11], start, end]
+                    target, '{:.2f}'.format(float(row[2])), row[3], '{:.1f}'.format(query_cov), row[10], row[11], start, end]
             result[row[0]].append(hit)
         context['searchresult'] = result
     return render(request, 'browser/nucleotidesearch.html', context)
