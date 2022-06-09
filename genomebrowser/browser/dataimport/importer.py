@@ -571,21 +571,30 @@ class Importer(object):
             os.remove(orthologs_file)
         eggnog_mapper_script = os.path.join(self.config['cgcms.temp_dir'], 'run_emapper.sh')
         with open(eggnog_mapper_script, 'w') as outfile:
+            outfile.write('#!/bin/bash\n')
+            outfile.write('source ' + self.config['cgcms.eggnog-mapper.conda_path'] + '\n')
+            outfile.write('conda activate ' + self.config['cgcms.eggnog-mapper.conda_env'] + '\n')
             outfile.write('cd ' + work_dir + '\n')
             outfile.write('split -l ' + chunk_size + ' -a 3 -d ' +
                           os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_input.faa') +
                           ' input_file.chunk_ \n')
             outfile.write('for f in input_file.chunk_*; do\n')
-            outfile.write(self.config['cgcms.eggnog_command'] + ' -m diamond --no_annot --no_file_comments --cpu ' + self.config['cgcms.threads'] + ' -i $f -o $f;\n')
+            outfile.write(self.config['cgcms.eggnog_command'] +
+                          ' -m diamond --no_annot --no_file_comments ' +
+                          ' --dmnd_db ' + self.config['cgcms.eggnog-mapper.dmnd_db'] + 
+                          ' --data_dir ' + self.config['cgcms.eggnog-mapper.data_dir'] + 
+                          ' --cpu ' + self.config['cgcms.threads'] + ' -i $f -o $f;\n')
             outfile.write('done\n')
             outfile.write('cat input_file.chunk_*.emapper.seed_orthologs >> ' + orthologs_file + '\n')
             outfile.write(self.config['cgcms.eggnog_command'] + 
+                          ' --dmnd_db ' + self.config['cgcms.eggnog-mapper.dmnd_db'] + 
+                          ' --data_dir ' + self.config['cgcms.eggnog-mapper.data_dir'] + 
                           ' --annotate_hits_table ' +
                           orthologs_file +
                           ' --no_file_comments -o ' +
                           os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_output') +
                           ' --cpu 10\n')
-            outfile.write('\n')
+            outfile.write('conda deactivate\n')
         '''
         # split input file into chunks
         split -l 200000 -a 3 -d eggnog_mapper_input.faa input_file.chunk_
@@ -626,12 +635,18 @@ class Importer(object):
 #                row = line.rstrip('\n\r').split('\t')
 #                existing_eggnog_annotations.add(row[0])
             
-        data_fields = ['query_name', 'eggNOG_ortholog', 'evalue', 'score', 'taxonomic_group', 
-            'name', 'GO_terms', 'EC_number', 'KEGG_ko', 'KEGG_Pathway', 'KEGG_Module', 'KEGG_Reaction',
-            'KEGG_rclass', 'BRITE', 'KEGG_TC', 'CAZy', 'BiGG_Reaction', 'tax_scope', 'eggNOG_OG', 'bestOG',
-            'COG_Functional_Category', 'description']
+        data_fields = ['query_name', 'eggNOG_ortholog', 'evalue', 'score', 'eggNOG_OG',
+            'taxonomic_group', 'COG_Functional_Category', 'description', 'name', 'GO_terms',
+            'EC_number', 'KEGG_ko', 'KEGG_Pathway', 'KEGG_Module', 'KEGG_Reaction',
+            'KEGG_rclass', 'BRITE', 'KEGG_TC', 'CAZy', 'BiGG_Reaction', 'PFAMs']
         list_data_fields = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        #data_fields = ['query_name', 'eggNOG_ortholog', 'evalue', 'score', 'taxonomic_group', 
+        #    'name', 'GO_terms', 'EC_number', 'KEGG_ko', 'KEGG_Pathway', 'KEGG_Module', 'KEGG_Reaction',
+        #    'KEGG_rclass', 'BRITE', 'KEGG_TC', 'CAZy', 'BiGG_Reaction', 'tax_scope', 'eggNOG_OG', 'bestOG',
+        #    'COG_Functional_Category', 'description']
+        #list_data_fields = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
         with open(eggnog_outfile, 'r') as infile:
+            infile.readline()
             for line in infile:
                 row = line.rstrip('\n\r').split('\t')
                 protein_hash = row[0]
@@ -641,7 +656,7 @@ class Importer(object):
                     continue # Skip proteins that already have eggnog mappings
                 result.append(line)
                 for row_index, row_value in enumerate(row):
-                    if row_index < 2:
+                    if row_index < 4:
                         continue
                     if row_value.startswith('ko:'):
                         row_value = row_value[3:]
@@ -772,6 +787,7 @@ class Importer(object):
                 continue
             orthogroup_ids = self.protein_data[protein_hash]['eggnog.eggNOG_OG'].split(',')
             for orthogroup_id in orthogroup_ids:
+                orthogroup_id = orthogroup_id.split('|')[0]
                 if orthogroup_id == '':
                     continue
                 eggnog_id, eggnog_taxonomy_id = orthogroup_id.split('@')
@@ -788,8 +804,10 @@ class Importer(object):
         for protein_hash in self.protein_data:
             if 'eggnog.taxonomic_group' not in self.protein_data[protein_hash]:
                 continue
-            taxon_name = self.protein_data[protein_hash]['eggnog.taxonomic_group']
-            taxonomy_id = self.taxonomy_id_lookup[taxon_name]
+            #taxon_name = self.protein_data[protein_hash]['eggnog.taxonomic_group']
+            #taxonomy_id = self.taxonomy_id_lookup[taxon_name]
+            taxonomy_id = self.protein_data[protein_hash]['eggnog.taxonomic_group'].split('|')[0]
+            taxonomy_id = taxonomy_id.split('.')[0]
             self.protein_data[protein_hash]['taxonomic_group'] = taxonomy_id
             if taxonomy_id not in saved_taxonomy_ids and taxonomy_id not in self.taxon_instances:
                 self.taxon_instances[taxonomy_id] = Taxon(taxonomy_id=taxonomy_id,
@@ -1239,25 +1257,31 @@ class Importer(object):
 
     def create_search_databases(self):
         # Make blast search databases
-        cmd = ['makeblastdb', '-dbtype', 'nucl', '-in', self.config['cgcms.search_db_nucl'], '-out', os.path.join(self.config['cgcms.search_db_dir'], 'blast_nucl')]
-        print(' '.join(cmd))
-        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-            for line in proc.stdout:
-                print(line, end='')
-        if proc.returncode != 0:
-            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-            # pylint: disable=no-member
-            raise CalledProcessError(proc.returncode, proc.args)
+        if os.path.exists(self.config['cgcms.search_db_nucl']) and os.stat(self.config['cgcms.search_db_nucl']).st_size > 0:
+            cmd = ['makeblastdb', '-dbtype', 'nucl', '-in', self.config['cgcms.search_db_nucl'], '-out', os.path.join(self.config['cgcms.search_db_dir'], 'blast_nucl')]
+            print(' '.join(cmd))
+            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
+                for line in proc.stdout:
+                    print(line, end='')
+            if proc.returncode != 0:
+                # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+                # pylint: disable=no-member
+                raise CalledProcessError(proc.returncode, proc.args)
+        else:
+            print(self.config['cgcms.search_db_nucl'], ' is missing or empty. Sequence database was not created.')
 
-        cmd = ['makeblastdb', '-dbtype', 'prot', '-in', self.config['cgcms.search_db_prot'], '-out', os.path.join(self.config['cgcms.search_db_dir'], 'blast_prot')]
-        print(' '.join(cmd))
-        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-            for line in proc.stdout:
-                print(line, end='')
-        if proc.returncode != 0:
-            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-            # pylint: disable=no-member
-            raise CalledProcessError(proc.returncode, proc.args)
+        if os.path.exists(self.config['cgcms.search_db_prot']) and os.stat(self.config['cgcms.search_db_prot']).st_size > 0:
+            cmd = ['makeblastdb', '-dbtype', 'prot', '-in', self.config['cgcms.search_db_prot'], '-out', os.path.join(self.config['cgcms.search_db_dir'], 'blast_prot')]
+            print(' '.join(cmd))
+            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
+                for line in proc.stdout:
+                    print(line, end='')
+            if proc.returncode != 0:
+                # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+                # pylint: disable=no-member
+                raise CalledProcessError(proc.returncode, proc.args)
+        else:
+            print(self.config['cgcms.search_db_prot'], ' is missing or empty. Sequence database was not created.')
 
 #    def append_eggnog_stored_data(self, new_eggnog_data):
 #        with open(self.config['genomes.eggnog_output_stored'], 'a') as outfile:
@@ -1497,9 +1521,9 @@ class Importer(object):
         poem_script = os.path.join(working_dir, 'run_poem.sh')
         with open(poem_script, 'w') as outfile:
             outfile.write('#!/bin/bash\n')
-            outfile.write('source ~/miniconda3/etc/profile.d/conda.sh\n')
-            outfile.write('conda activate poem_py3\n')
-            outfile.write('bash /home/aekazakov/Soft/POEM_py3k/bin/run_poem_cgcms.sh -f ' + working_dir + ' -a n -p pro\n')
+            outfile.write('source ' + self.config['cgcms.poem.conda_path'] + '\n')
+            outfile.write('conda activate ' + self.config['cgcms.poem.conda_env'] + '\n')
+            outfile.write('bash ' + self.config['cgcms.poem_command'] + ' -f ' + working_dir + ' -a n -p pro\n')
             outfile.write('conda deactivate\n')
             
         cmd = ['/bin/bash', poem_script]

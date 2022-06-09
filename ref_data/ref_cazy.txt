@@ -1,15 +1,20 @@
 AA10	AA10	AA10 (formerly CBM33) proteins are copper-dependent lytic polysaccharide monooxygenases (LPMOs); some proteins have been shown to act on chitin, others on cellulose; 
+AA13	AA13	Family built after Vu et al. Proc. Natl. Acad. Sci. USA (2014) 111:13822-7 (PMID 25201969);	AA13 proteins are copper-dependent lytic polysaccharide monooxygenases (LPMOs); cleavage of starch with oxidation of C-1 at the site of cleavage has been demonstrated for the LPMO encoded by gene NCU08746 from Neurospora crassa
+AA9	AA9	AA9 (formerly GH61). The enzymes in this family were originally classified as a glycoside hydrolases (GH61) based on very weak endo-1,4-b-D-glucanase activity in one family member. They are now reclassified in the AA category of CAZy. AA9 (formerly GH61) proteins are copper-dependent lytic polysaccharide monooxygenases (LPMOs); cleavage of cellulose chains with oxidation of various carbons (C-1, C-4 and C-6) has been reported several times in the literature
 CBM1	CBM1	Modules of approx. 40 residues found almost exclusively in fungi. The cellulose-binding function has been demonstrated in many cases, and appears to be mediated by three aromatic residues separated by about 10.4 angstrom and which form a flat surface. The only non-fungal occurence of CBM1 is in an algal non-hydrolytic polysaccharide-binding protein which is composed of four repeated CBM1 modules. Binding to chitin has been demonstrated in one case.
 CBM15	CBM15	Binding to xylan and xylooligosaccharides has been demonstrated in the case of Xyn10C of Cellvibrio mixtus.
 CBM18	CBM18	Modules of approx. 40 residues. The chitin-binding function has been demonstrated in many cases. These modules are found attached to a number of chitinase catalytic domains, but also in non-catalytic proteins either in isolation or as multiple repeats.
 CBM20	CBM20	The granular starch-binding function has been demonstrated in several cases. Interact strongly with cyclodextrins. Often designated as starch-binding domains (SBD).
+CBM39	CBM39	Formerly known as X67 modules.	Modules generally found at the N-terminus of a GH16 module (itself frequently lacking a catalytic machinery) and more seldomly in isolation. The beta-1,3-glucan binding function has been demonstrated, along with binding to lipopolysaccharide and lipoteichoic acid.
 CBM42	CBM42	Modules of approx. 160 residues found mostly at the C-terminus of GH54 catalytic domains. Binding to arabinofuranose (present in arabinoxylan) has been demonstrated.
+CBM43	CBM43	Formerly known as X8 modules.	Modules of approx. 90-100 residues found at the C-terminus of GH17 or GH72 enzymatic modules and also sometimes isolated. CBM43 modules sometimes carry a C-terminal membrane anchor. The beta-1,3-glucan binding function has been demonstrated with the olive pollen protein Ole e 10.
 CBM48	CBM48	Modules of approx. 100 residues with glycogen-binding function, appended to GH13 modules. Also found in the beta subunit (glycogen-binding) of AMP-activated protein kinases (AMPK)
 CBM5	CBM5	Modules of approx. 60 residues found in bacterial enzymes. Chitin-binding described in several cases. Distantly related to the CBM12 family.
 CBM50	CBM50	Modules of approx. 50 residues found attached to various enzymes from families GH18, GH19, GH23, GH24, GH25 and GH73, i.e. enzymes cleaving either chitin or peptidoglycan. Binding to chitopentaose demonstrated in the case of Pteris ryukyuensis chitinase A [Ohnuma T et al. (2008) J. Biol. Chem. 283:5178-87 (PMID: 18083709)]. CBM50 modules are also found in a multitude of other enzymes targeting the petidoglycan such as peptidases and amidases. These enzymes are not reported in the list below.
 CBM6	CBM6	Modules of approx. 120 residues. The cellulose-binding function has been demonstrated in one case on amorphous cellulose and beta-1,4-xylan. Some of these modules also bind beta-1,3-glucan, beta-1,3-1,4-glucan, and beta-1,4-glucan.
 CBM73	CBM73	Modules of approx 65 residues found on various enzymes active of chitin. Chitin-binding function demonstrated for the Cellvibrio japonicus CjLPMO10A protein.
 CE1	CE1	acetyl xylan esterase (EC 3.1.1.72); cinnamoyl esterase (EC 3.1.1.-); feruloyl esterase (EC 3.1.1.73); carboxylesterase (EC 3.1.1.1); S-formylglutathione hydrolase (EC 3.1.2.12)
+CE10	CE10	arylesterase (EC 3.1.1.-);  carboxyl esterase (EC 3.1.1.3); acetylcholinesterase (EC 3.1.1.7); cholinesterase (EC 3.1.1.8); sterol esterase (EC 3.1.1.13); brefeldin A esterase (EC 3.1.1.-)
 GH1	GH1	beta-glucosidase (EC 3.2.1.21); beta-galactosidase (EC 3.2.1.23); beta-mannosidase (EC 3.2.1.25); beta-glucuronidase (EC 3.2.1.31); beta-D-fucosidase (EC 3.2.1.38); phlorizin hydrolase (EC 3.2.1.62); exo-beta-1,4-glucanase (EC 3.2.1.74); 6-phospho-beta-galactosidase (EC 3.2.1.85); 6-phospho-beta-glucosidase (EC 3.2.1.86); strictosidine beta-glucosidase (EC 3.2.1.105); lactase (EC 3.2.1.108); amygdalin beta-glucosidase (EC 3.2.1.117); prunasin beta-glucosidase (EC 3.2.1.118); raucaffricine beta-glucosidase (EC 3.2.1.125); thioglucosidase (EC 3.2.1.147); beta-primeverosidase (EC 3.2.1.149); isoflavonoid 7-O-beta-apiosyl-beta-glucosidase (EC 3.2.1.161); hydroxyisourate hydrolase (EC 3.-.-.-); beta-glycosidase (EC 3.2.1.-)
 GH101	GH101	endo-alpha-N-acetylgalactosaminidase (EC 3.2.1.97)
 GH102	GH102	peptidoglycan lytic transglycosylase (EC 3.2.1.-)
@@ -80,13 +85,16 @@ GT12	GT12	[N-acetylneuraminyl]-galactosylglucosylceramide N-acetylgalactosaminyl
 GT13	GT13	alpha-1,3-mannosyl-glycoprotein beta-1,2-N-acetylglucosaminyltransferase (EC 2.4.1.101)
 GT14	GT14	beta-1,3-galactosyl-O-glycosyl-glycoprotein beta-1,6-N-acetylglucosaminyltransferase (EC 2.4.1.102); N-acetyllactosaminide beta-1,6-N-acetylglucosaminyltransferase (EC 2.4.1.150); protein O-beta-xylosyltransferase (EC 2.4.2.26)
 GT15	GT15	glycolipid 2-alpha-mannosyltransferase (EC 2.4.1.131); GDP-Man: alpha-1,2-mannosyltransferase (EC 2.4.1.-).
+GT16	GT16	alpha-1,6-mannosyl-glycoprotein beta-1,2-N-acetylglucosaminyltransferase (EC 2.4.1.143).
 GT17	GT17	beta-1,4-mannosyl-glycoprotein beta-1,4-N-acetylglucosaminyltransferase (EC 2.4.1.144).
+GT18	GT18	alpha-1,3(6)-mannosylglycoprotein beta-1,6-N-acetyl-glucosaminyltransferase (EC 2.4.1.155).
 GT19	GT19	lipid-A-disaccharide synthase (EC 2.4.1.182).
 GT2	GT2	cellulose synthase (EC 2.4.1.12); chitin synthase (EC 2.4.1.16); dolichyl-phosphate beta-D-mannosyltransferase (EC 2.4.1.83); dolichyl-phosphate beta-glucosyltransferase (EC 2.4.1.117); N-acetylglucosaminyltransferase (EC 2.4.1.-); N-acetylgalactosaminyltransferase (EC 2.4.1.-); hyaluronan synthase (EC 2.4.1.212); chitin oligosaccharide synthase (EC 2.4.1.-); beta-1,3-glucan synthase (EC 2.4.1.34); beta-1,4-mannan synthase (EC 2.4.1.-); beta-mannosylphosphodecaprenol-mannooligosaccharide alpha-1,6-mannosyltransferase (EC 2.4.1.199); alpha-1,3-L-rhamnosyltransferase (EC 2.4.1.-)
 GT20	GT20	alpha,alpha-trehalose-phosphate synthase [UDP-forming] (EC 2.4.1.15)
 GT21	GT21	UDP-Glc: ceramide beta-glucosyltransferase (EC 2.4.1.80).
 GT22	GT22	Dol-P-Man alpha-mannosyltransferase (EC 2.4.1.-)
 GT23	GT23	N-acetyl-beta-D-glucosaminide alpha-1,6-L-fucosyltransferase (EC 2.4.1.68)
+GT24	GT24	Distant similarity to family GT8	UDP-Glc: glycoprotein alpha-glucosyltransferase (EC 2.4.1.-).
 GT25	GT25	lipopolysaccharide beta-1,4-galactosyltransferase (EC 2.4.1.-); beta-1,3-glucosyltransferase (EC 2.4.1.-); beta-1,2-glucosyltransferase (EC 2.4.1.-); beta-1,2-galactosyltransferase (EC 2.4.1.-)
 GT26	GT26	UDP-ManNAcA: beta-N-acetyl mannosaminuronyltransferase (EC 2.4.1.-); UDP-ManNAc: beta-N-acetyl-mannosaminyltransferase (EC 2.4.1.-); UDP-Glc: beta-1,4-glucosyltransferase (EC 2.4.1.-).
 GT27	GT27	polypeptide alpha-N-acetylgalactosaminyltransferase (EC 2.4.1.41)
@@ -96,21 +104,38 @@ GT3	GT3	glycogen synthase (EC 2.4.1.11).
 GT30	GT30	CMP-beta-KDO: alpha-3-deoxy-D-manno-octulosonic-acid (KDO) transferase (EC 2.4.99.-).
 GT31	GT31	N-acetyllactosaminide beta-1,3-N-acetylglucosaminyltransferase (EC 2.4.1.149); Glycoprotein-N-acetylgalactosamine 3-beta-galactosyltransferase (EC 2.4.1.122); fucose-specific beta-1,3-N-acetylglucosaminyltransferase (EC 2.4.1.-); globotriosylceramide beta-1,3-GalNAc transferase (EC 2.4.1.79); chondroitin synthase (beta-1,3-GlcUA and beta-1,4-GalNAc transferase (EC 2.4.1.175); chondroitin beta-1,3-glucuronyltransferase (EC 2.4.1.226); chondroitin beta-1,4-N-acetylgalactosaminyltransferase (EC 2.4.1.-).
 GT32	GT32	alpha-1,6-mannosyltransferase (EC 2.4.1.-); alpha-1,4-N-acetylglucosaminyltransferase (EC 2.4.1.-); alpha-1,4-N-acetylgalactosaminyltransferase (EC 2.4.1.-);
+GT33	GT33	GDP-Man: chitobiosyldiphosphodolichol beta-mannosyltransferase (EC 2.4.1.142).
 GT34	GT34	UDP-Gal: galactomannan alpha-1,6-galactosyltransferase (EC 2.4.1.-); UDP-Xyl: xyloglucan alpha-1,6-xylosyltransferase (EC 2.4.2.39); alpha-1,2-galactosyltransferase (EC 2.4.1.-)
 GT35	GT35	glycogen or starch phosphorylase (EC 2.4.1.1).
+GT36	GH94	cellobiose phosphorylase (EC 2.4.1.20);  cellodextrin phosphorylase (EC 2.4.1.49);  chitobiose phosphorylase (EC 2.4.1.-); cyclic beta-1,2-glucan synthase (EC 2.4.1.-)
+GT37	GT37	galactoside 2-L-fucosyltransferase (EC 2.4.1.69)
 GT39	GT39	Dol-P-Man: protein alpha-mannosyltransferase (EC 2.4.1.109)
 GT4	GT4	sucrose synthase (EC 2.4.1.13); sucrose-phosphate synthase (EC 2.4.1.14); alpha-glucosyltransferase (EC 2.4.1.52); lipopolysaccharide N-acetylglucosaminyltransferase (EC 2.4.1.56); GDP-Man alpha-mannosyltransferase (EC 2.4.1.-); 1,2-diacylglycerol 3-glucosyltransferase (EC 2.4.1.157);  diglucosyl diacylglycerol synthase (EC 2.4.1.208); digalactosyldiacylglycerol synthase (EC 2.4.1.141); trehalose phosphorylase (EC 2.4.1.231); phosphatidylinositol alpha-mannosyltransferase (EC 2.4.1.57); UDP-Gal alpha-galactosyltransferase (EC 2.4.1.-); UDP-Xyl alpha-xylosyltransferase (EC 2.4.2.-)
+GT40	GT40	These enzymes use UDP-galactofuranose as donor	beta-1,3-galactofuranosyltransferases (EC 2.4.1.-)
 GT41	GT41	UDP-GlcNAc: peptide beta-N-acetylglucosaminyltransferase (EC 2.4.1.94)
 GT43	GT43	beta-glucuronyltransferase (EC 2.4.1.135); UDP-Xyl: xylan  beta-1,4-xylosyltransferase (EC 2.4.2.-)
 GT47	GT47	heparan beta-glucuronyltransferase (EC 2.4.1.225); xyloglucan beta-galactosyltransferase (EC 2.4.1.-); heparan synthase (EC 2.4.1.-); arabinan alphalpha-L-arabinosyltransferase (EC 2.4.2.-).
+GT48	GT48	1,3-beta-glucan synthase (EC 2.4.1.34)
+GT49	GT49	beta-1,3-N-acetylglucosaminyltransferase (EC 2.4.1.-).
 GT5	GT5	UDP-Glc: glycogen glucosyltransferase (EC 2.4.1.11); ADP-Glc: starch glucosyltransferase (EC 2.4.1.21); NDP-Glc: starch glucosyltransferase (EC 2.4.1.242); UDP-Glc: alpha-1,3-glucan synthase (EC 2.4.1.183) UDP-Glc: alpha-1,4-glucan synthase (EC 2.4.1.-)
+GT50	GT50	These enzymes use dolichol-P-mannose as the sugar donor.	Dol-P-Man alpha-1,4-mannosyltransferase (EC 2.4.1.-)
 GT51	GT51	murein polymerase (EC 2.4.1.129).
 GT52	GT52	alpha-2,3-sialyltransferase (EC 2.4.99.4); alpha-glucosyltransferase (EC 2.4.1.-)
+GT54	GT54	UDP-GlcNAc: alpha-1,3-D-mannoside beta-1,4-N-acetylglucosaminyltransferase (EC 2.4.1.145)
 GT56	GT56	TDP-Fuc4NAc: lipid II Fuc4NAc transferase (EC 2.4.1.-)
+GT57	GT57	These enzymes use dolichol-P-glucose as the sugar donor.	Dol-P-Glc: alpha-1,3-glucosyltransferase (EC 2.4.1.-)
+GT58	GT58	These enzymes use dolichol-P-mannose as the sugar donor.	Dol-P-Man: dolichol pyrophosphate-mannose alpha-1,3-mannosyltransferase (EC 2.4.1.130); Dol-P-Man: dolichol pyrophosphate-Man5GlcNAc2 alpha-1,2-mannosyltransferase (EC 2.4.1.130)
+GT59	GT59	These enzymes use dolichol-P-glucose as the sugar donor.	Dol-P-Glc: Glc2Man9GlcNAc2-PP-Dol alpha-1,2-glucosyltransferase (EC 2.4.1.-)
 GT6	GT6	alpha-1,3-galactosyltransferase (EC 2.4.1.87); alpha-1,3 N-acetylgalactosaminyltransferase (EC 2.4.1.40); alpha-galactosyltransferase (EC 2.4.1.37); globoside alpha-N-acetylgalactosaminyltransferase (EC 2.4.1.88).
 GT60	GT60	UDP-GlcNAc: polypeptide alpha-N-acetylglucosaminyltransferase (EC 2.4.1.-); UDP-GlcNAc: hydroxyproline polypeptide alpha-N-acetylglucosaminyltransferase (EC 2.4.1.-)
+GT61	GT61	beta-1,2-xylosyltransferase (EC 2.4.2.38)
 GT62	GT62	alpha-1,2-mannosyltransferase (EC 2.4.1.-); alpha-1,6-mannosyltransferase (EC 2.4.1.-)
+GT64	GT64	The long animal heparan synthases are made of two domains. The N-terminal domain, which adds b-1,4-GlcA residues, belongs to family GT47 while the C-terminal domain, which adds a-1,4-GlcNAc residues, belongs to family GT64. The plant homologs have a single domain.	UDP-GlcNAc: heparan alpha-N-acetylhexosaminyltransferase (EC 2.4.1.224)
+GT65	GT65	Distantly related to families GT68, GT23, GT11	GDP-Fuc: protein O-alpha-fucosyltransferase (EC 2.4.1.-)
 GT66	GT66	Dol-PP-alpha-oligosaccharide: protein beta-oligosaccharyltransferase (EC 2.4.1.119)
+GT67	GT67	Activity shown by Dobson et al. (2003) J Biol Chem. 278:15523-15531	UDP-Gal: phosphoglycan betalpha-1,3 galactosyltransferase 1 (SCG1) (EC 2.4.1.-)
+GT68	GT68	Distantly related to families GT65, GT23, GT11; created after reading Martinez-Dunker et al. (2003) Glycobiology 13:1C-5C	GDP-Fuc: protein O-alpha-fucosyltransferase (EC 2.4.1.-)
+GT69	GT69	Created after reading Sommer et al. (2003) J. Biol. Chem. 278:47724-47730.	GDP-Man: alpha-1,3-mannosyltransferase (EC 2.4.1.-)
 GT7	GT7	lactose synthase (EC 2.4.1.22); beta-N-acetylglucosaminyl-glycopeptide beta-1,4-galactosyltransferase (EC 2.4.1.38); N-acetyllactosamine synthase (EC 2.4.1.90); beta-1,4-N-acetylglucosaminyltransferase (EC 2.4.1.-); xylosylprotein beta-4-galactosyltransferase (EC 2.4.1.133)
 GT70	GT70	UDP-GlcA: beta-glucuronosyltransferase (EC 2.4.1.17)
 GT71	GT71	alpha-mannosyltransferase (EC 2.4.1.-)
@@ -119,6 +144,7 @@ GT75	GT75	UDP-Glc: self-glucosylating beta-glucosyltransferase (EC 2.4.1.-)
 GT76	GT76	Dol-P-Man: alpha-1,6-mannosyltransferase (EC 2.4.1.-)
 GT77	GT77	alpha-xylosyltransferase (EC 2.4.2.39); alpha-1,3-galactosyltransferase (EC 2.4.1.37); arabinosyltransferase (EC 2.4.2.-)
 GT78	GT78	GDP-Man: alpha-mannosyltransferase (mannosylglycerate synthase) (EC 2.4.1.-)
+GT79	GT79	Created after reading Goswami et al. Glycobiology (2006) 16, 230-236 (PMID: 16272216)	GDP-D-Ara: phosphoglycan alpha-1,2-D-arabinopyranosyltransferase 1 (EC 2.4.2.-)
 GT8	GT8	lipopolysaccharide alpha-1,3-galactosyltransferase (EC 2.4.1.44);  UDP-Glc: (glucosyl)lipopolysaccharide alpha-1,2-glucosyltransferase (EC 2.4.1.-); lipopolysaccharide glucosyltransferase 1 (EC 2.4.1.58); glycogenin glucosyltransferase (EC 2.4.1.186); inositol 1-alpha-galactosyltransferase (galactinol synthase) (EC 2.4.1.123); homogalacturonan alpha-1,4-galacturonosyltransferase (EC 2.4.1.43); UDP-GlcA: xylan alpha-glucuronyltransferase (EC 2.4.1.-)
 GT80	GT80	beta-galactoside alpha-2,6-sialyltransferase (EC 2.4.99.1); beta-galactoside alpha-2,3-sialyltransferase (EC 2.4.99.4)
 GT81	GT81	NDP-Glc: glucosyl-3-phosphoglycerate synthase (EC 2.4.1.-); NDP-Man: mannosyl-3-phosphoglycerate synthase (EC 2.4.1.-);
@@ -129,6 +155,10 @@ GT87	GT87	polyprenol-P-Man: alpha-1,2-mannosyltransferase (EC 2.4.1.-)
 GT89	GT89	beta-D-arabinofuranosyl-1-monophosphoryldecaprenol : arabinan beta-1,2-arabinofuranosyltransferase (EC 2.4.2.-)
 GT9	GT9	lipopolysaccharide N-acetylglucosaminyltransferase (EC 2.4.1.56); heptosyltransferase (EC 2.4.-.-).
 GT90	GT90	UDP-Xyl: (mannosyl) glucuronoxylomannan/galactoxylomannan beta-1,2-xylosyltransferase (EC 2.4.2.-)
+GT91	GT91	Created from Mille et al. (2008) J Biol Chem. 283, 9724-9736 (PMID: 18234669)	beta-1,2-mannosyltransferase (EC 2.4.1.-)
+GT92	GT92	Created from Tiz et al. (2009) J. Biol. Chem., 284(52):36223-33 (PMID:19858195)	UDP-Gal: N-glycan core alpha-1,6-fucoside beta-1,4-galactosyltransferase (EC 2.4.1.-); UDP-Gal: beta-galactoside beta-1,4-galactosyltransferase (EC 2.4.1.-)
+GT95	GT95	UDP-beta-L-Araf:hydroxyproline beta-L-arabinofuranosyltransferase (EC 2.4.2.-);
+GT96	GT96	UDP-Gal: peptidyl serine alpha-galactosyltransferase (EC 2.4.1.-)
 PL11	PL11	rhamnogalacturonan lyase (EC 4.2.2.-); exo-unsaturated rhamnogalacturonan lyase (EC 4.2.2.-)
 PL12	PL12	heparin-sulfate lyase (EC 4.2.2.8)
 PL13	PL13	heparin lyase  (EC 4.2.2.7)
@@ -136,33 +166,3 @@ PL21	PL21	heparin lyase (EC 4.2.2.7); heparin-sulfate lyase (EC 4.2.2.8); achara
 PL4	PL4	rhamnogalacturonan lyase (EC 4.2.2.-).
 PL6	PL6	alginate lyase (EC 4.2.2.3); chondroitinase B (EC 4.2.2.4).
 PL8	PL8	hyaluronate lyase (EC 4.2.2.1); chondroitin AC lyase (EC 4.2.2.5); xanthan lyase (EC 4.2.2.12); chondroitin ABC lyase (EC 4.2.2.20)
-AA13	AA13	Family built after Vu et al. Proc. Natl. Acad. Sci. USA (2014) 111:13822-7 (PMID 25201969);	AA13 proteins are copper-dependent lytic polysaccharide monooxygenases (LPMOs); cleavage of starch with oxidation of C-1 at the site of cleavage has been demonstrated for the LPMO encoded by gene NCU08746 from Neurospora crassa
-AA9	AA9	AA9 (formerly GH61). The enzymes in this family were originally classified as a glycoside hydrolases (GH61) based on very weak endo-1,4-b-D-glucanase activity in one family member. They are now reclassified in the AA category of CAZy. AA9 (formerly GH61) proteins are copper-dependent lytic polysaccharide monooxygenases (LPMOs); cleavage of cellulose chains with oxidation of various carbons (C-1, C-4 and C-6) has been reported several times in the literature
-CE10	CE10	arylesterase (EC 3.1.1.-);  carboxyl esterase (EC 3.1.1.3); acetylcholinesterase (EC 3.1.1.7); cholinesterase (EC 3.1.1.8); sterol esterase (EC 3.1.1.13); brefeldin A esterase (EC 3.1.1.-)
-CBM39	CBM39	Formerly known as X67 modules.	Modules generally found at the N-terminus of a GH16 module (itself frequently lacking a catalytic machinery) and more seldomly in isolation. The beta-1,3-glucan binding function has been demonstrated, along with binding to lipopolysaccharide and lipoteichoic acid.
-CBM43	CBM43	Formerly known as X8 modules.	Modules of approx. 90-100 residues found at the C-terminus of GH17 or GH72 enzymatic modules and also sometimes isolated. CBM43 modules sometimes carry a C-terminal membrane anchor. The beta-1,3-glucan binding function has been demonstrated with the olive pollen protein Ole e 10.
-GT16	GT16	alpha-1,6-mannosyl-glycoprotein beta-1,2-N-acetylglucosaminyltransferase (EC 2.4.1.143).
-GT18	GT18	alpha-1,3(6)-mannosylglycoprotein beta-1,6-N-acetyl-glucosaminyltransferase (EC 2.4.1.155).
-GT24	GT24	Distant similarity to family GT8	UDP-Glc: glycoprotein alpha-glucosyltransferase (EC 2.4.1.-).
-GT33	GT33	GDP-Man: chitobiosyldiphosphodolichol beta-mannosyltransferase (EC 2.4.1.142).
-GT36	GH94	cellobiose phosphorylase (EC 2.4.1.20);  cellodextrin phosphorylase (EC 2.4.1.49);  chitobiose phosphorylase (EC 2.4.1.-); cyclic beta-1,2-glucan synthase (EC 2.4.1.-)
-GT37	GT37	galactoside 2-L-fucosyltransferase (EC 2.4.1.69)
-GT40	GT40	These enzymes use UDP-galactofuranose as donor	beta-1,3-galactofuranosyltransferases (EC 2.4.1.-)
-GT64	GT64	The long animal heparan synthases are made of two domains. The N-terminal domain, which adds b-1,4-GlcA residues, belongs to family GT47 while the C-terminal domain, which adds a-1,4-GlcNAc residues, belongs to family GT64. The plant homologs have a single domain.	UDP-GlcNAc: heparan alpha-N-acetylhexosaminyltransferase (EC 2.4.1.224)
-GT48	GT48	1,3-beta-glucan synthase (EC 2.4.1.34)
-GT49	GT49	beta-1,3-N-acetylglucosaminyltransferase (EC 2.4.1.-).
-GT50	GT50	These enzymes use dolichol-P-mannose as the sugar donor.	Dol-P-Man alpha-1,4-mannosyltransferase (EC 2.4.1.-)
-GT54	GT54	UDP-GlcNAc: alpha-1,3-D-mannoside beta-1,4-N-acetylglucosaminyltransferase (EC 2.4.1.145)
-GT57	GT57	These enzymes use dolichol-P-glucose as the sugar donor.	Dol-P-Glc: alpha-1,3-glucosyltransferase (EC 2.4.1.-)
-GT58	GT58	These enzymes use dolichol-P-mannose as the sugar donor.	Dol-P-Man: dolichol pyrophosphate-mannose alpha-1,3-mannosyltransferase (EC 2.4.1.130); Dol-P-Man: dolichol pyrophosphate-Man5GlcNAc2 alpha-1,2-mannosyltransferase (EC 2.4.1.130)
-GT59	GT59	These enzymes use dolichol-P-glucose as the sugar donor.	Dol-P-Glc: Glc2Man9GlcNAc2-PP-Dol alpha-1,2-glucosyltransferase (EC 2.4.1.-)
-GT61	GT61	beta-1,2-xylosyltransferase (EC 2.4.2.38)
-GT67	GT67	Activity shown by Dobson et al. (2003) J Biol Chem. 278:15523-15531	UDP-Gal: phosphoglycan betalpha-1,3 galactosyltransferase 1 (SCG1) (EC 2.4.1.-)
-GT68	GT68	Distantly related to families GT65, GT23, GT11; created after reading Martinez-Dunker et al. (2003) Glycobiology 13:1C-5C	GDP-Fuc: protein O-alpha-fucosyltransferase (EC 2.4.1.-)
-GT65	GT65	Distantly related to families GT68, GT23, GT11	GDP-Fuc: protein O-alpha-fucosyltransferase (EC 2.4.1.-)
-GT69	GT69	Created after reading Sommer et al. (2003) J. Biol. Chem. 278:47724-47730.	GDP-Man: alpha-1,3-mannosyltransferase (EC 2.4.1.-)
-GT79	GT79	Created after reading Goswami et al. Glycobiology (2006) 16, 230-236 (PMID: 16272216)	GDP-D-Ara: phosphoglycan alpha-1,2-D-arabinopyranosyltransferase 1 (EC 2.4.2.-)
-GT91	GT91	Created from Mille et al. (2008) J Biol Chem. 283, 9724-9736 (PMID: 18234669)	beta-1,2-mannosyltransferase (EC 2.4.1.-)
-GT92	GT92	Created from Tiz et al. (2009) J. Biol. Chem., 284(52):36223-33 (PMID:19858195)	UDP-Gal: N-glycan core alpha-1,6-fucoside beta-1,4-galactosyltransferase (EC 2.4.1.-); UDP-Gal: beta-galactoside beta-1,4-galactosyltransferase (EC 2.4.1.-)
-GT95	GT95	UDP-beta-L-Araf:hydroxyproline beta-L-arabinofuranosyltransferase (EC 2.4.2.-);
-GT96	GT96	UDP-Gal: peptidyl serine alpha-galactosyltransferase (EC 2.4.1.-)

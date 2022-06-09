@@ -1,6 +1,13 @@
 cgcms.temp_dir = 
 cgcms.threads = 8
-cgcms.eggnog_command = eggnog-mapper-path/eggnog-mapper/emapper.py
+cgcms.eggnog-mapper.conda_env = 
+cgcms.eggnog-mapper.conda_path =
+cgcms.eggnog_command = emapper.py
+cgcms.eggnog-mapper.data_dir = 
+cgcms.eggnog-mapper.dmnd_db =
+cgcms.poem.conda_env = poem_py3
+cgcms.poem.conda_path = 
+cgcms.poem_command = 
 cgcms.eggnog_outdir = 
 cgcms.eggnog_taxonomy = CGCMS/ref_data/eggnog_taxonomy_rules.txt
 cgcms.static_dir = static/mysite

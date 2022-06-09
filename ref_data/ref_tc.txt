@@ -1,3 +1,5 @@
+1.A.1.1	1.A.1.1	The Voltage-gated Ion Channel (VIC) Superfamily
+1.A.1.10	1.A.1.10	The Voltage-gated Ion Channel (VIC) Superfamily
 1.A.1.10.1	1.A.1.10.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: sodium(1+))
 1.A.1.10.12	1.A.1.10.12	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: sodium(1+))
 1.A.1.10.13	1.A.1.10.13	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: sodium(1+))
@@ -33,21 +35,26 @@
 1.A.1.11.7	1.A.1.11.7	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: calcium(2+))
 1.A.1.11.8	1.A.1.11.8	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: calcium(2+))
 1.A.1.11.9	1.A.1.11.9	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: calcium(2+))
+1.A.1.13	1.A.1.13	The Voltage-gated Ion Channel (VIC) Superfamily
+1.A.1.14	1.A.1.14	The Voltage-gated Ion Channel (VIC) Superfamily
 1.A.1.15.1	1.A.1.15.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.15.2	1.A.1.15.2	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.15.3	1.A.1.15.3	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.15.4	1.A.1.15.4	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.15.5	1.A.1.15.5	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.15.6	1.A.1.15.6	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
+1.A.1.16	1.A.1.16	The Voltage-gated Ion Channel (VIC) Superfamily
 1.A.1.16.1	1.A.1.16.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.16.2	1.A.1.16.2	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.16.3	1.A.1.16.3	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.16.4	1.A.1.16.4	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.16.5	1.A.1.16.5	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
+1.A.1.17	1.A.1.17	The Voltage-gated Ion Channel (VIC) Superfamily
 1.A.1.18.1	1.A.1.18.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.19.1	1.A.1.19.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: calcium(2+))
 1.A.1.19.2	1.A.1.19.2	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: calcium(2+))
 1.A.1.19.3	1.A.1.19.3	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: calcium(2+))
+1.A.1.2	1.A.1.2	The Voltage-gated Ion Channel (VIC) Superfamily
 1.A.1.2.1	1.A.1.2.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.2.10	1.A.1.2.10	The Voltage-gated Ion Channel (VIC) Superfamily (substrates: inorganic cation, hydron, potassium(1+))
 1.A.1.2.11	1.A.1.2.11	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
@@ -66,12 +73,16 @@
 1.A.1.2.6	1.A.1.2.6	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.2.7	1.A.1.2.7	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.2.9	1.A.1.2.9	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
+1.A.1.20	1.A.1.20	The Voltage-gated Ion Channel (VIC) Superfamily
 1.A.1.20.1	1.A.1.20.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrates: potassium(1+))
 1.A.1.20.2	1.A.1.20.2	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.20.3	1.A.1.20.3	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.20.4	1.A.1.20.4	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.20.5	1.A.1.20.5	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.20.6	1.A.1.20.6	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
+1.A.1.23	1.A.1.23	The Voltage-gated Ion Channel (VIC) Superfamily
+1.A.1.24	1.A.1.24	The Voltage-gated Ion Channel (VIC) Superfamily
+1.A.1.25	1.A.1.25	The Voltage-gated Ion Channel (VIC) Superfamily
 1.A.1.29.1	1.A.1.29.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.3.1	1.A.1.3.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.3.2	1.A.1.3.2	The Voltage-gated Ion Channel (VIC) Superfamily (substrates: potassium(1+), iron(2+), calcium(1+))
@@ -81,6 +92,8 @@
 1.A.1.3.6	1.A.1.3.6	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.3.7	1.A.1.3.7	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.3.8	1.A.1.3.8	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
+1.A.1.4	1.A.1.4	The Voltage-gated Ion Channel (VIC) Superfamily
+1.A.1.5	1.A.1.5	The Voltage-gated Ion Channel (VIC) Superfamily
 1.A.1.5.1	1.A.1.5.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrates: potassium(1+), sodium(1+))
 1.A.1.5.10	1.A.1.5.10	The Voltage-gated Ion Channel (VIC) Superfamily (substrates: potassium(1+), sodium(1+))
 1.A.1.5.11	1.A.1.5.11	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: cation)
@@ -92,9 +105,13 @@
 1.A.1.5.20	1.A.1.5.20	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: cation)
 1.A.1.5.3	1.A.1.5.3	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: cation)
 1.A.1.5.4	1.A.1.5.4	The Voltage-gated Ion Channel (VIC) Superfamily (substrates: calcium(2+), sodium(1+))
+1.A.1.6	1.A.1.6	The Voltage-gated Ion Channel (VIC) Superfamily
+1.A.1.7	1.A.1.7	The Voltage-gated Ion Channel (VIC) Superfamily
+1.A.1.8	1.A.1.8	The Voltage-gated Ion Channel (VIC) Superfamily
 1.A.1.8.1	1.A.1.8.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.8.2	1.A.1.8.2	The Voltage-gated Ion Channel (VIC) Superfamily (substrates: lithium(1+), ammonium, potassium(1+), caesium(1+), sodium(1+), rubidium(1+))
 1.A.1.8.3	1.A.1.8.3	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
+1.A.1.9	1.A.1.9	The Voltage-gated Ion Channel (VIC) Superfamily
 1.A.1.9.1	1.A.1.9.1	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.9.10	1.A.1.9.10	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.9.11	1.A.1.9.11	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
@@ -104,6 +121,7 @@
 1.A.1.9.4	1.A.1.9.4	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.9.6	1.A.1.9.6	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
 1.A.1.9.7	1.A.1.9.7	The Voltage-gated Ion Channel (VIC) Superfamily (substrate: potassium(1+))
+1.A.10.1	1.A.10.1	The Glutamate-gated Ion Channel (GIC) Family of Neurotransmitter Receptors
 1.A.10.1.1	1.A.10.1.1	The Glutamate-gated Ion Channel (GIC) Family of Neurotransmitter Receptors (substrate: monoatomic monocation)
 1.A.10.1.10	1.A.10.1.10	The Glutamate-gated Ion Channel (GIC) Family of Neurotransmitter Receptors (substrates: ion, calcium ion)
 1.A.10.1.11	1.A.10.1.11	The Glutamate-gated Ion Channel (GIC) Family of Neurotransmitter Receptors (substrate: ion)
@@ -122,6 +140,13 @@
 1.A.10.1.7	1.A.10.1.7	The Glutamate-gated Ion Channel (GIC) Family of Neurotransmitter Receptors (substrate: ion)
 1.A.10.1.8	1.A.10.1.8	The Glutamate-gated Ion Channel (GIC) Family of Neurotransmitter Receptors (substrate: ion)
 1.A.10.1.9	1.A.10.1.9	The Glutamate-gated Ion Channel (GIC) Family of Neurotransmitter Receptors (substrate: ion)
+1.A.101.1	1.A.101.1	The Peroxisomal Pore-forming Pex11 (Pex11) Family
+1.A.106.1	1.A.106.1	The Calcium Load-activated Calcium Channel (CLAC) Family 
+1.A.107.1.3	1.A.107.1.3	The Pore-forming Globin (Globin) Family
+1.A.107.1.4	1.A.107.1.4	The Pore-forming Globin (Globin) Family
+1.A.107.1.5	1.A.107.1.5	The Pore-forming Globin (Globin) Family
+1.A.11	1.A.11	The Ammonium Transporter Channel (Amt) Family
+1.A.11.4	1.A.11.4	The Ammonium Transporter Channel (Amt) Family
 1.A.11.4.3	1.A.11.4.3	The Ammonium Transporter Channel (Amt) Family (substrates: ammonium, ethylamine, carbon dioxide, methylamine)
 1.A.12.1.1	1.A.12.1.1	The Intracellular Chloride Channel (CLIC) Family (substrate: chloride)
 1.A.12.1.2	1.A.12.1.2	The Intracellular Chloride Channel (CLIC) Family (substrate: chloride)
@@ -134,10 +159,24 @@
 1.A.12.2.2	1.A.12.2.2	The Intracellular Chloride Channel (CLIC) Family (substrate: chloride)
 1.A.12.3.1	1.A.12.3.1	The Intracellular Chloride Channel (CLIC) Family (substrates: inorganic anion, chloride)
 1.A.12.3.2	1.A.12.3.2	The Intracellular Chloride Channel (CLIC) Family (substrate: glutathione)
+1.A.13.1	1.A.13.1	The Epithelial Chloride Channel (E-ClC) Family
+1.A.13.2.2	1.A.13.2.2	The Epithelial Chloride Channel (E-ClC) Family
 1.A.13.2.3	1.A.13.2.3	The Epithelial Chloride Channel (E-ClC) Family (substrate: chloride)
+1.A.14.1.1	1.A.14.1.1	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
+1.A.14.1.2	1.A.14.1.2	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
+1.A.14.1.3	1.A.14.1.3	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
+1.A.14.1.4	1.A.14.1.4	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
+1.A.14.1.5	1.A.14.1.5	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
+1.A.14.2.1	1.A.14.2.1	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
+1.A.15.1	1.A.15.1	The Non-selective Cation Channel-2 (NSCC2) Family
+1.A.15.2	1.A.15.2	The Non-selective Cation Channel-2 (NSCC2) Family
 1.A.16.1.1	1.A.16.1.1	The Formate-Nitrite Transporter (FNT) Family (substrate: formate)
 1.A.16.1.2	1.A.16.1.2	The Formate-Nitrite Transporter (FNT) Family (substrate: formate)
 1.A.16.1.3	1.A.16.1.3	The Formate-Nitrite Transporter (FNT) Family (substrate: formate)
+1.A.16.2	1.A.16.2	The Formate-Nitrite Transporter (FNT) Family
+1.A.16.3	1.A.16.3	The Formate-Nitrite Transporter (FNT) Family
+1.A.16.4	1.A.16.4	The Formate-Nitrite Transporter (FNT) Family
+1.A.17.1	1.A.17.1	The Calcium-dependent Chloride Channel (Ca-ClC) Family
 1.A.17.1.1	1.A.17.1.1	The Calcium-dependent Chloride Channel (Ca-ClC) Family (substrates: chloride, hydrogencarbonate)
 1.A.17.1.2	1.A.17.1.2	The Calcium-dependent Chloride Channel (Ca-ClC) Family (substrate: chloride)
 1.A.17.1.20	1.A.17.1.20	The Calcium-dependent Chloride Channel (Ca-ClC) Family (substrates: chloride, phospholipid)
@@ -147,6 +186,8 @@
 1.A.17.1.3	1.A.17.1.3	The Calcium-dependent Chloride Channel (Ca-ClC) Family (substrate: chloride)
 1.A.17.1.4	1.A.17.1.4	The Calcium-dependent Chloride Channel (Ca-ClC) Family (substrates: anion, phospholipid)
 1.A.17.1.5	1.A.17.1.5	The Calcium-dependent Chloride Channel (Ca-ClC) Family (substrate: chloride)
+1.A.17.4	1.A.17.4	The Calcium-dependent Chloride Channel (Ca-ClC) Family
+1.A.2.1	1.A.2.1	The Inward Rectifier K+ Channel (IRK-C) Family
 1.A.2.1.1	1.A.2.1.1	The Inward Rectifier K+ Channel (IRK-C) Family (substrates: potassium(1+), caesium(1+), rubidium(1+))
 1.A.2.1.10	1.A.2.1.10	The Inward Rectifier K+ Channel (IRK-C) Family (substrate: potassium(1+))
 1.A.2.1.11	1.A.2.1.11	The Inward Rectifier K+ Channel (IRK-C) Family (substrate: potassium(1+))
@@ -163,6 +204,7 @@
 1.A.2.1.7	1.A.2.1.7	The Inward Rectifier K+ Channel (IRK-C) Family (substrate: potassium(1+))
 1.A.2.1.8	1.A.2.1.8	The Inward Rectifier K+ Channel (IRK-C) Family (substrate: potassium(1+))
 1.A.2.1.9	1.A.2.1.9	The Inward Rectifier K+ Channel (IRK-C) Family (substrate: potassium(1+))
+1.A.2.2	1.A.2.2	The Inward Rectifier K+ Channel (IRK-C) Family
 1.A.20.1.1	1.A.20.1.1	The BCL2/Adenovirus E1B-interacting Protein 3 (BNip3) Family (substrate: unknown molecule)
 1.A.20.1.2	1.A.20.1.2	The BCL2/Adenovirus E1B-interacting Protein 3 (BNip3) Family (substrate: unknown molecule)
 1.A.20.2.1	1.A.20.2.1	The BCL2/Adenovirus E1B-interacting Protein 3 (BNip3) Family (substrate: unknown molecule)
@@ -172,9 +214,13 @@
 1.A.21.1.5	1.A.21.1.5	The Bcl-2 (Bcl-2) Family (substrate: cytochrome c)
 1.A.21.1.6	1.A.21.1.6	The Bcl-2 (Bcl-2) Family (substrates: unknown molecule, cytochrome c)
 1.A.21.2.1	1.A.21.2.1	The Bcl-2 (Bcl-2) Family (substrate: cytochrome c)
+1.A.22.1	1.A.22.1	The Large Conductance Mechanosensitive Ion Channel (MscL) Family
 1.A.23.1.1	1.A.23.1.1	The Small Conductance Mechanosensitive Ion Channel (MscS) Family (substrates: chloride, potassium(1+), ion, water)
 1.A.23.1.2	1.A.23.1.2	The Small Conductance Mechanosensitive Ion Channel (MscS) Family (substrate: ion)
 1.A.23.1.3	1.A.23.1.3	The Small Conductance Mechanosensitive Ion Channel (MscS) Family (substrates: unknown molecule, ion)
+1.A.23.2	1.A.23.2	The Small Conductance Mechanosensitive Ion Channel (MscS) Family
+1.A.23.3	1.A.23.3	The Small Conductance Mechanosensitive Ion Channel (MscS) Family
+1.A.23.4	1.A.23.4	The Small Conductance Mechanosensitive Ion Channel (MscS) Family
 1.A.23.4.5	1.A.23.4.5	The Small Conductance Mechanosensitive Ion Channel (MscS) Family (substrates: unknown molecule, ion)
 1.A.24.1.1	1.A.24.1.1	The Gap Junction-forming Connexin (Connexin) Family (substrates: unknown molecule, alpha-amino acid, ATP, glutamate(2-))
 1.A.24.1.10	1.A.24.1.10	The Gap Junction-forming Connexin (Connexin) Family (substrate: unknown molecule)
@@ -188,24 +234,38 @@
 1.A.24.1.7	1.A.24.1.7	The Gap Junction-forming Connexin (Connexin) Family (substrates: unknown molecule, ATP)
 1.A.24.1.8	1.A.24.1.8	The Gap Junction-forming Connexin (Connexin) Family (substrate: unknown molecule)
 1.A.24.1.9	1.A.24.1.9	The Gap Junction-forming Connexin (Connexin) Family (substrate: unknown molecule)
+1.A.24.2.1	1.A.24.2.1	The Gap Junction-forming Connexin (Connexin) Family
 1.A.24.2.4	1.A.24.2.4	The Gap Junction-forming Connexin (Connexin) Family (substrate: unknown molecule)
+1.A.25.1	1.A.25.1	The Gap Junction-forming Innexin (Innexin) Family
 1.A.25.2.1	1.A.25.2.1	The Gap Junction-forming Innexin (Innexin) Family (substrates: ATP, anion)
 1.A.25.2.2	1.A.25.2.2	The Gap Junction-forming Innexin (Innexin) Family (substrate: unknown molecule)
 1.A.25.2.3	1.A.25.2.3	The Gap Junction-forming Innexin (Innexin) Family (substrate: calcium(2+))
+1.A.25.3	1.A.25.3	The Gap Junction-forming Innexin (Innexin) Family
+1.A.26.1	1.A.26.1	The Mg2+ Transporter-E (MgtE) Family
+1.A.26.2	1.A.26.2	The Mg2+ Transporter-E (MgtE) Family
+1.A.26.3	1.A.26.3	The Mg2+ Transporter-E (MgtE) Family
 1.A.27.1.1	1.A.27.1.1	The Phospholemman (PLM) Family (substrates: anion, hygromycin B)
 1.A.27.1.2	1.A.27.1.2	The Phospholemman (PLM) Family (substrate: chloride)
 1.A.27.1.3	1.A.27.1.3	The Phospholemman (PLM) Family (substrate: anion)
 1.A.27.1.4	1.A.27.1.4	The Phospholemman (PLM) Family (substrate: anion)
 1.A.27.1.5	1.A.27.1.5	The Phospholemman (PLM) Family (substrate: anion)
+1.A.27.2	1.A.27.2	The Phospholemman (PLM) Family
+1.A.27.3	1.A.27.3	The Phospholemman (PLM) Family
+1.A.28.1	1.A.28.1	The Urea Transporter (UT) Family
+1.A.28.2	1.A.28.2	The Urea Transporter (UT) Family
 1.A.29.1.1	1.A.29.1.1	The Urea/Amide Channel (UAC) Family (substrate: amide)
 1.A.29.1.2	1.A.29.1.2	The Urea/Amide Channel (UAC) Family (substrate: amide)
 1.A.29.1.3	1.A.29.1.3	The Urea/Amide Channel (UAC) Family (substrates: urea, hydroxyurea)
 1.A.29.1.4	1.A.29.1.4	The Urea/Amide Channel (UAC) Family (substrate: urea)
 1.A.29.1.5	1.A.29.1.5	The Urea/Amide Channel (UAC) Family (substrate: urea)
 1.A.29.1.6	1.A.29.1.6	The Urea/Amide Channel (UAC) Family (substrates: urea, acetamide)
+1.A.3.1	1.A.3.1	The Ryanodine-Inositol 1,4,5-triphosphate Receptor Ca2+ Channel (RIR-CaC) Family
 1.A.3.1.2	1.A.3.1.2	The Ryanodine-Inositol 1,4,5-triphosphate Receptor Ca2+ Channel (RIR-CaC) Family (substrates: calcium(2+), potassium(1+))
+1.A.3.2	1.A.3.2	The Ryanodine-Inositol 1,4,5-triphosphate Receptor Ca2+ Channel (RIR-CaC) Family
+1.A.30.1	1.A.30.1	The H+- or Na+-translocating Bacterial Flagellar Motor/ExbBD Outer Membrane Transport Energizer (Mot/Exb) Superfamily; H+- or Na+-translocating bacterial flagellar motor (Mot) subfamily
 1.A.30.2.1	1.A.30.2.1	The H+- or Na+-translocating Bacterial Flagellar Motor/ExbBD Outer Membrane Transport Energizer (Mot/Exb) Superfamily; TonB-ExbB-ExbD/TolA-TolQ-TolR of energizers for outer-membrane receptor (OMR)-mediated active transport (Exb) subfamily (substrates: hydron, sodium(1+))
 1.A.30.2.2	1.A.30.2.2	The H+- or Na+-translocating Bacterial Flagellar Motor/ExbBD Outer Membrane Transport Energizer (Mot/Exb) Superfamily; TonB-ExbB-ExbD/TolA-TolQ-TolR of energizers for outer-membrane receptor (OMR)-mediated active transport (Exb) subfamily (substrates: hydron, sodium(1+))
+1.A.31	1.A.31	The Annexin (Annexin) Family
 1.A.31.1.1	1.A.31.1.1	The Annexin (Annexin) Family (substrate: ion)
 1.A.31.1.2	1.A.31.1.2	The Annexin (Annexin) Family (substrate: ion)
 1.A.31.1.3	1.A.31.1.3	The Annexin (Annexin) Family (substrate: ion)
@@ -213,7 +273,26 @@
 1.A.31.1.5	1.A.31.1.5	The Annexin (Annexin) Family (substrate: cation)
 1.A.31.1.6	1.A.31.1.6	The Annexin (Annexin) Family (substrate: calcium(2+))
 1.A.31.1.7	1.A.31.1.7	The Annexin (Annexin) Family (substrates: calcium(2+), phospholipid)
+1.A.33	1.A.33	The Cation Channel-forming Heat Shock Protein-70 (Hsp70) Family
+1.A.33.1	1.A.33.1	The Cation Channel-forming Heat Shock Protein-70 (Hsp70) Family
+1.A.34.1.1	1.A.34.1.1	The Bacillus Gap Junction-like Channel-forming Complex (GJ-CC) Family
+1.A.34.1.2	1.A.34.1.2	The Bacillus Gap Junction-like Channel-forming Complex (GJ-CC) Family
+1.A.35.1	1.A.35.1	The CorA Metal Ion Transporter (MIT) Family
+1.A.35.2	1.A.35.2	The CorA Metal Ion Transporter (MIT) Family
+1.A.35.3	1.A.35.3	The CorA Metal Ion Transporter (MIT) Family
+1.A.35.4	1.A.35.4	The CorA Metal Ion Transporter (MIT) Family
+1.A.35.5	1.A.35.5	The CorA Metal Ion Transporter (MIT) Family
+1.A.36.1	1.A.36.1	The Intracellular Chloride Channel (ICC) Family
+1.A.37.1	1.A.37.1	The CD20 Ca2+ Channel (CD20) Family
+1.A.37.2	1.A.37.2	The CD20 Ca2+ Channel (CD20) Family
+1.A.37.2.1	1.A.37.2.1	The CD20 Ca2+ Channel (CD20) Family
+1.A.37.3.1	1.A.37.3.1	The CD20 Ca2+ Channel (CD20) Family
 1.A.37.3.2	1.A.37.3.2	The CD20 Ca2+ Channel (CD20) Family (substrate: signalling molecule)
+1.A.37.5	1.A.37.5	The CD20 Ca2+ Channel (CD20) Family
+1.A.37.6	1.A.37.6	The CD20 Ca2+ Channel (CD20) Family
+1.A.37.7	1.A.37.7	The CD20 Ca2+ Channel (CD20) Family
+1.A.38	1.A.38	The Golgi pH Regulator (GPHR) Family
+1.A.4.1	1.A.4.1	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family
 1.A.4.1.1	1.A.4.1.1	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrate: calcium(2+))
 1.A.4.1.10	1.A.4.1.10	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrate: calcium(2+))
 1.A.4.1.12	1.A.4.1.12	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrates: calcium(2+), monoatomic monocation)
@@ -243,6 +322,7 @@
 1.A.4.5.3	1.A.4.5.3	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrates: potassium(1+), caesium(1+), sodium(1+))
 1.A.4.5.4	1.A.4.5.4	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrates: potassium(1+), sodium(1+))
 1.A.4.5.5	1.A.4.5.5	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrates: inorganic cation, calcium(2+))
+1.A.4.5.6	1.A.4.5.6	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family
 1.A.4.5.7	1.A.4.5.7	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrates: inorganic cation, calcium(2+))
 1.A.4.5.8	1.A.4.5.8	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrates: calcium(2+), magnesium(2+))
 1.A.4.5.9	1.A.4.5.9	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrate: cation)
@@ -250,12 +330,20 @@
 1.A.4.6.2	1.A.4.6.2	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrate: cation)
 1.A.4.6.3	1.A.4.6.3	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrate: cation)
 1.A.4.6.5	1.A.4.6.5	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family (substrate: calcium(2+))
+1.A.43.1	1.A.43.1	The Camphor Resistance or Fluoride Exporter (Fluc) Family
+1.A.43.2	1.A.43.2	The Camphor Resistance or Fluoride Exporter (Fluc) Family
+1.A.43.3	1.A.43.3	The Camphor Resistance or Fluoride Exporter (Fluc) Family
+1.A.46.1	1.A.46.1	The Anion Channel-forming Bestrophin (Bestrophin) Family
 1.A.46.1.1	1.A.46.1.1	The Anion Channel-forming Bestrophin (Bestrophin) Family (substrates: iodide, nitrate, chloride, bromide)
 1.A.46.1.2	1.A.46.1.2	The Anion Channel-forming Bestrophin (Bestrophin) Family (substrates: nitrate, chloride)
 1.A.46.1.4	1.A.46.1.4	The Anion Channel-forming Bestrophin (Bestrophin) Family (substrates: iodide, chloride, isothiocyanato group)
+1.A.46.2	1.A.46.2	The Anion Channel-forming Bestrophin (Bestrophin) Family
+1.A.47	1.A.47	The Nucleotide-sensitive Anion-selective Channel, ICln (ICln) Family
+1.A.5.1	1.A.5.1	The Polycystin Cation Channel (PCC) Family
 1.A.5.1.1	1.A.5.1.1	The Polycystin Cation Channel (PCC) Family (substrate: inorganic cation)
 1.A.5.1.2	1.A.5.1.2	The Polycystin Cation Channel (PCC) Family (substrate: calcium(2+))
 1.A.5.1.3	1.A.5.1.3	The Polycystin Cation Channel (PCC) Family (substrates: calcium(2+), cation)
+1.A.5.2	1.A.5.2	The Polycystin Cation Channel (PCC) Family
 1.A.5.2.1	1.A.5.2.1	The Polycystin Cation Channel (PCC) Family (substrates: calcium(2+), monoatomic monocation)
 1.A.5.2.2	1.A.5.2.2	The Polycystin Cation Channel (PCC) Family (substrate: cation)
 1.A.5.2.4	1.A.5.2.4	The Polycystin Cation Channel (PCC) Family (substrate: cation)
@@ -266,6 +354,7 @@
 1.A.52.1.1	1.A.52.1.1	The Ca2+ Release-activated Ca2+ (CRAC) Channel (CRAC-C) Family (substrates: strontium(2+), calcium(2+), barium(2+), monoatomic monocation)
 1.A.52.1.2	1.A.52.1.2	The Ca2+ Release-activated Ca2+ (CRAC) Channel (CRAC-C) Family (substrate: calcium(2+))
 1.A.52.1.3	1.A.52.1.3	The Ca2+ Release-activated Ca2+ (CRAC) Channel (CRAC-C) Family (substrate: calcium(2+))
+1.A.56.1	1.A.56.1	The Copper Transporter (Ctr) Family
 1.A.6.1.1	1.A.6.1.1	The Epithelial Na+ Channel (ENaC) Family (substrate: sodium(1+))
 1.A.6.1.10	1.A.6.1.10	The Epithelial Na+ Channel (ENaC) Family (substrate: ion)
 1.A.6.1.2	1.A.6.1.2	The Epithelial Na+ Channel (ENaC) Family (substrates: potassium(1+), cation, sodium(1+))
@@ -276,24 +365,72 @@
 1.A.6.1.7	1.A.6.1.7	The Epithelial Na+ Channel (ENaC) Family (substrate: cation)
 1.A.6.1.8	1.A.6.1.8	The Epithelial Na+ Channel (ENaC) Family (substrate: cation)
 1.A.6.1.9	1.A.6.1.9	The Epithelial Na+ Channel (ENaC) Family (substrate: ion)
+1.A.6.2	1.A.6.2	The Epithelial Na+ Channel (ENaC) Family
+1.A.6.4	1.A.6.4	The Epithelial Na+ Channel (ENaC) Family
+1.A.6.5	1.A.6.5	The Epithelial Na+ Channel (ENaC) Family
 1.A.64.6.1	1.A.64.6.1	The Plasmolipin (Plasmolipin) Family (substrate: ion)
+1.A.7.1	1.A.7.1	The ATP-gated P2X Receptor Cation Channel (P2X Receptor) Family
 1.A.7.1.1	1.A.7.1.1	The ATP-gated P2X Receptor Cation Channel (P2X Receptor) Family (substrate: cation)
 1.A.7.1.2	1.A.7.1.2	The ATP-gated P2X Receptor Cation Channel (P2X Receptor) Family (substrate: cation)
 1.A.7.1.3	1.A.7.1.3	The ATP-gated P2X Receptor Cation Channel (P2X Receptor) Family (substrates: N-methylglucamine, dye, potassium(1+), inorganic cation, calcium(2+), phospholipid, phosphatidyl-L-serine, triethylammonium ion, sodium(1+))
 1.A.7.1.4	1.A.7.1.4	The ATP-gated P2X Receptor Cation Channel (P2X Receptor) Family (substrate: cation)
 1.A.7.1.5	1.A.7.1.5	The ATP-gated P2X Receptor Cation Channel (P2X Receptor) Family (substrate: ion)
 1.A.7.1.6	1.A.7.1.6	The ATP-gated P2X Receptor Cation Channel (P2X Receptor) Family (substrate: calcium(2+))
+1.A.7.3.1	1.A.7.3.1	The ATP-gated P2X Receptor Cation Channel (P2X Receptor) Family
+1.A.72.1	1.A.72.1	The Mer Superfamily
+1.A.72.4	1.A.72.4	The Mer Superfamily
+1.A.72.5	1.A.72.5	The Mer Superfamily
+1.A.75.1	1.A.75.1	The Mechanical Nociceptor, Piezo (Piezo) Family
+1.A.77.1	1.A.77.1	The Mg2+/Ca2+ Uniporter (MCU) Family
+1.A.8	1.A.8	The Major Intrinsic Protein (MIP) Family
+1.A.8.1	1.A.8.1	The Major Intrinsic Protein (MIP) Family
+1.A.8.10	1.A.8.10	The Major Intrinsic Protein (MIP) Family
+1.A.8.11	1.A.8.11	The Major Intrinsic Protein (MIP) Family
+1.A.8.12	1.A.8.12	The Major Intrinsic Protein (MIP) Family
+1.A.8.16	1.A.8.16	The Major Intrinsic Protein (MIP) Family
+1.A.8.2	1.A.8.2	The Major Intrinsic Protein (MIP) Family
+1.A.8.8	1.A.8.8	The Major Intrinsic Protein (MIP) Family
+1.A.8.9	1.A.8.9	The Major Intrinsic Protein (MIP) Family
 1.A.84.1.1	1.A.84.1.1	The Calcium Homeostasis Modulator Ca2+ Channel (CALHM-C) Family (substrates: calcium(2+), potassium(1+), monovalent inorganic anion, sodium(1+))
 1.A.84.1.2	1.A.84.1.2	The Calcium Homeostasis Modulator Ca2+ Channel (CALHM-C) Family (substrates: calcium(2+), ATP, ion)
 1.A.84.1.3	1.A.84.1.3	The Calcium Homeostasis Modulator Ca2+ Channel (CALHM-C) Family (substrate: calcium(2+))
+1.A.9.1	1.A.9.1	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
+1.A.9.11	1.A.9.11	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
+1.A.9.2	1.A.9.2	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
+1.A.9.3	1.A.9.3	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
+1.A.9.4	1.A.9.4	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
+1.A.9.5	1.A.9.5	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
+1.B.1	1.B.1	The General Bacterial Porin (GBP) Family
+1.B.1.1	1.B.1.1	The General Bacterial Porin (GBP) Family
 1.B.1.1.1	1.B.1.1.1	The General Bacterial Porin (GBP) Family (substrates: ceftazidime, cefpirome, ceftriaxone, ion, peptide)
 1.B.1.1.2	1.B.1.1.2	The General Bacterial Porin (GBP) Family (substrate: phosphate(3-))
 1.B.1.1.3	1.B.1.1.3	The General Bacterial Porin (GBP) Family (substrates: orobol, antimicrobial agent)
 1.B.1.1.4	1.B.1.1.4	The General Bacterial Porin (GBP) Family (substrates: ceftriaxone, anion, hydrogen peroxide)
 1.B.1.1.5	1.B.1.1.5	The General Bacterial Porin (GBP) Family (substrate: unknown molecule)
 1.B.1.2.1	1.B.1.2.1	The General Bacterial Porin (GBP) Family (substrate: unknown molecule)
+1.B.1.5	1.B.1.5	The General Bacterial Porin (GBP) Family
 1.B.1.8.1	1.B.1.8.1	The General Bacterial Porin (GBP) Family (substrate: ion)
+1.B.10	1.B.10	The Nucleoside-specific Channel-forming Outer Membrane Porin (Tsx) Family
+1.B.11.3	1.B.11.3	The Outer Membrane Fimbrial Usher Porin (FUP) Family
+1.B.12	1.B.12	The Autotransporter-1 (AT-1) Family
+1.B.12.1.1	1.B.12.1.1	The Autotransporter-1 (AT-1) Family
+1.B.12.1.2	1.B.12.1.2	The Autotransporter-1 (AT-1) Family
+1.B.12.1.3	1.B.12.1.3	The Autotransporter-1 (AT-1) Family
+1.B.12.2.1	1.B.12.2.1	The Autotransporter-1 (AT-1) Family
+1.B.12.2.2	1.B.12.2.2	The Autotransporter-1 (AT-1) Family
+1.B.12.2.3	1.B.12.2.3	The Autotransporter-1 (AT-1) Family
+1.B.12.3	1.B.12.3	The Autotransporter-1 (AT-1) Family
+1.B.12.4	1.B.12.4	The Autotransporter-1 (AT-1) Family
 1.B.12.5.1	1.B.12.5.1	The Autotransporter-1 (AT-1) Family (substrate: serine protease inhibitor)
+1.B.12.5.3	1.B.12.5.3	The Autotransporter-1 (AT-1) Family
+1.B.12.5.5	1.B.12.5.5	The Autotransporter-1 (AT-1) Family
+1.B.12.6.1	1.B.12.6.1	The Autotransporter-1 (AT-1) Family
+1.B.12.8	1.B.12.8	The Autotransporter-1 (AT-1) Family
+1.B.12.8.2	1.B.12.8.2	The Autotransporter-1 (AT-1) Family
+1.B.12.9	1.B.12.9	The Autotransporter-1 (AT-1) Family
+1.B.13.1	1.B.13.1	The Alginate Export Porin (AEP) Family
+1.B.14	1.B.14	The Outer Membrane Receptor (OMR) Family
+1.B.14.1	1.B.14.1	The Outer Membrane Receptor (OMR) Family
 1.B.14.1.10	1.B.14.1.10	The Outer Membrane Receptor (OMR) Family (substrates: ferrioxamine B, desferrioxamine B)
 1.B.14.1.11	1.B.14.1.11	The Outer Membrane Receptor (OMR) Family (substrate: Fe(III)-complexed siderophore)
 1.B.14.1.14	1.B.14.1.14	The Outer Membrane Receptor (OMR) Family (substrate: Fe(III)-complexed siderophore)
@@ -301,31 +438,60 @@
 1.B.14.1.3	1.B.14.1.3	The Outer Membrane Receptor (OMR) Family (substrate: ferrienterobactin(3-))
 1.B.14.1.5	1.B.14.1.5	The Outer Membrane Receptor (OMR) Family (substrate: ferrienterobactin(3-))
 1.B.14.1.8	1.B.14.1.8	The Outer Membrane Receptor (OMR) Family (substrate: nickel(2+))
+1.B.14.10	1.B.14.10	The Outer Membrane Receptor (OMR) Family
+1.B.14.2	1.B.14.2	The Outer Membrane Receptor (OMR) Family
+1.B.14.3	1.B.14.3	The Outer Membrane Receptor (OMR) Family
+1.B.14.5	1.B.14.5	The Outer Membrane Receptor (OMR) Family
 1.B.14.6.1	1.B.14.6.1	The Outer Membrane Receptor (OMR) Family (substrate: maltooligosaccharide)
+1.B.14.7.1	1.B.14.7.1	The Outer Membrane Receptor (OMR) Family
 1.B.14.7.2	1.B.14.7.2	The Outer Membrane Receptor (OMR) Family (substrate: unknown molecule)
+1.B.17	1.B.17	The Outer Membrane Factor (OMF) Family
+1.B.17.1	1.B.17.1	The Outer Membrane Factor (OMF) Family
 1.B.17.2.2	1.B.17.2.2	The Outer Membrane Factor (OMF) Family (substrates: cadmium(2+), zinc(2+), cobalt(2+))
 1.B.17.3.3	1.B.17.3.3	The Outer Membrane Factor (OMF) Family (substrate: drug)
 1.B.17.3.4	1.B.17.3.4	The Outer Membrane Factor (OMF) Family (substrate: silver(1+))
 1.B.17.3.5	1.B.17.3.5	The Outer Membrane Factor (OMF) Family (substrates: copper(1+), silver(1+))
 1.B.17.3.8	1.B.17.3.8	The Outer Membrane Factor (OMF) Family (substrate: unknown molecule)
 1.B.17.3.9	1.B.17.3.9	The Outer Membrane Factor (OMF) Family (substrate: unknown molecule)
+1.B.18	1.B.18	The Outer Membrane Auxiliary (OMA) Protein Family
+1.B.18.1	1.B.18.1	The Outer Membrane Auxiliary (OMA) Protein Family
+1.B.19.1	1.B.19.1	The Glucose-selective OprB Porin (OprB) Family
+1.B.2.1	1.B.2.1	The Chlamydial Porin (CP) Family
+1.B.2.2	1.B.2.2	The Chlamydial Porin (CP) Family
+1.B.20	1.B.20	The Two-Partner Secretion (TPS) Family
 1.B.21.1.1	1.B.21.1.1	The OmpG Porin (OmpG) Family (substrate: unknown molecule)
+1.B.25	1.B.25	The Outer Membrane Porin (Opr) Family
 1.B.25.1.1	1.B.25.1.1	The Outer Membrane Porin (Opr) Family (substrates: meropenem, ornithine, imipenem, 2-(Biaryl)carbapenems, arginine, histidine, lysine, penems)
 1.B.25.1.5	1.B.25.1.5	The Outer Membrane Porin (Opr) Family (substrate: beta-D-glucosiduronic acid)
 1.B.25.2.1	1.B.25.2.1	The Outer Membrane Porin (Opr) Family (substrate: benzoate)
 1.B.3.1.1	1.B.3.1.1	The Sugar Porin (SP) Family (substrates: antimicrobial agent, alpha-maltotriose, maltotetraose, maltose, alpha-cyclodextrin, maltopentaose pentasaccharide, maltoheptaose heptasaccharide)
 1.B.3.1.2	1.B.3.1.2	The Sugar Porin (SP) Family (substrates: raffinose, sucrose, maltooligosaccharide)
 1.B.3.1.3	1.B.3.1.3	The Sugar Porin (SP) Family (substrates: hydroquinone O-beta-D-glucopyranoside, gentiobiose, cellobiose, salicin)
+1.B.33	1.B.33	The Outer Membrane Protein Insertion Porin (Bam Complex) (OmpIP) Family
+1.B.33.1	1.B.33.1	The Outer Membrane Protein Insertion Porin (Bam Complex) (OmpIP) Family
 1.B.33.2.4	1.B.33.2.4	The Outer Membrane Protein Insertion Porin (Bam Complex) (OmpIP) Family (substrate: protein polypeptide chain)
+1.B.33.3	1.B.33.3	The Outer Membrane Protein Insertion Porin (Bam Complex) (OmpIP) Family
+1.B.35.1	1.B.35.1	The Oligogalacturonate-specific Porin (KdgM) Family
+1.B.35.2	1.B.35.2	The Oligogalacturonate-specific Porin (KdgM) Family
+1.B.4.2.1	1.B.4.2.1	The Brucella-Rhizobium Porin (BRP) Family
 1.B.4.2.2	1.B.4.2.2	The Brucella-Rhizobium Porin (BRP) Family (substrate: unknown molecule)
+1.B.40	1.B.40	The Autotransporter-2 (AT-2) Family
 1.B.40.1.1	1.B.40.1.1	The Autotransporter-2 (AT-2) Family (substrate: protein polypeptide chain)
 1.B.40.1.3	1.B.40.1.3	The Autotransporter-2 (AT-2) Family (substrate: protein polypeptide chain)
 1.B.40.1.4	1.B.40.1.4	The Autotransporter-2 (AT-2) Family (substrate: protein polypeptide chain)
+1.B.40.2	1.B.40.2	The Autotransporter-2 (AT-2) Family
+1.B.42.1	1.B.42.1	The Outer Membrane Lipopolysaccharide Export Porin (LPS-EP) Family
+1.B.5.1	1.B.5.1	The Pseudomonas OprP Porin (POP) Family
+1.B.55.3	1.B.55.3	The Poly Acetyl Glucosamine Porin (PgaA) Family
+1.B.6	1.B.6	The OmpA-OmpF Porin (OOP) Family
 1.B.6.1.3	1.B.6.1.3	The OmpA-OmpF Porin (OOP) Family (substrates: unknown molecule, ammonium ion)
 1.B.6.2.1	1.B.6.2.1	The OmpA-OmpF Porin (OOP) Family (substrate: unknown molecule)
 1.B.6.2.2	1.B.6.2.2	The OmpA-OmpF Porin (OOP) Family (substrate: unknown molecule)
 1.B.66.3.1	1.B.66.3.1	The Putative Beta-Barrel Porin-2 (BBP2) Family (substrate: unknown molecule)
 1.B.66.3.2	1.B.66.3.2	The Putative Beta-Barrel Porin-2 (BBP2) Family (substrate: unknown molecule)
+1.B.8.1	1.B.8.1	The Mitochondrial and Plastid Porin (MPP) Family
+1.B.9	1.B.9	The FadL Outer Membrane Protein (FadL) Family
+1.C.11	1.C.11	The Pore-forming RTX Toxin (RTX-toxin) Family
 1.C.115.1.1	1.C.115.1.1	The Membrane-permeabilizing Peptide, Atticin (Atticin) Family (substrate: unknown molecule)
 1.C.123.1.1	1.C.123.1.1	The Pore-forming Gasdermin (Gasdermin) Family (substrate: orobol)
 1.C.123.1.2	1.C.123.1.2	The Pore-forming Gasdermin (Gasdermin) Family (substrate: orobol)
@@ -334,6 +500,14 @@
 1.C.123.1.5	1.C.123.1.5	The Pore-forming Gasdermin (Gasdermin) Family (substrate: orobol)
 1.C.123.1.6	1.C.123.1.6	The Pore-forming Gasdermin (Gasdermin) Family (substrate: orobol)
 1.C.123.1.7	1.C.123.1.7	The Pore-forming Gasdermin (Gasdermin) Family (substrate: orobol)
+1.C.14	1.C.14	The Cytohemolysin (CHL) Family
+1.C.20	1.C.20	The Nisin (Nisin) Family
+1.C.3.1	1.C.3.1	The alpha-Hemolysin Channel-forming Toxin (alphaHL) Family
+1.C.3.2	1.C.3.2	The alpha-Hemolysin Channel-forming Toxin (alphaHL) Family
+1.C.3.3	1.C.3.3	The alpha-Hemolysin Channel-forming Toxin (alphaHL) Family
+1.C.3.4	1.C.3.4	The alpha-Hemolysin Channel-forming Toxin (alphaHL) Family
+1.C.36.3	1.C.36.3	The Bacterial Type III-Target Cell Pore (IIITCP) Family
+1.C.36.5	1.C.36.5	The Bacterial Type III-Target Cell Pore (IIITCP) Family
 1.C.39.15.1	1.C.39.15.1	The Membrane Attack Complex/Perforin (MACPF) Family (substrate: unknown molecule)
 1.C.39.8.3	1.C.39.8.3	The Membrane Attack Complex/Perforin (MACPF) Family (substrate: unknown molecule)
 1.C.40.1.2	1.C.40.1.2	The Bactericidal Permeability Increasing Protein (BPIP) Family (substrate: unknown molecule)
@@ -341,10 +515,21 @@
 1.C.40.1.4	1.C.40.1.4	The Bactericidal Permeability Increasing Protein (BPIP) Family (substrate: unknown molecule)
 1.C.40.1.8	1.C.40.1.8	The Bactericidal Permeability Increasing Protein (BPIP) Family (substrates: lipoprotein, triglyceride, cholesteryl ester)
 1.C.47.1.1	1.C.47.1.1	The Insect/Fungal Defensin (Insect/Fungal Defensin) Family (substrates: unknown molecule, ion)
+1.C.65.1	1.C.65.1	The Type III Secretion System Plant Host Cell Membrane Pore-forming HrpF (HrpF) Family
+1.C.72.1	1.C.72.1	The Pertussis Toxin (PTX) Family
+1.C.72.2	1.C.72.2	The Pertussis Toxin (PTX) Family
+1.C.72.3	1.C.72.3	The Pertussis Toxin (PTX) Family
 1.C.85.1.2	1.C.85.1.2	The Pore-Forming beta-Defensin (beta-Defensin) Family (substrate: unknown molecule)
 1.C.89.1.1	1.C.89.1.1	The Dynorphin Channel-forming Neuropeptide (Dynorphin) Family (substrate: calcium(2+))
 1.C.89.1.2	1.C.89.1.2	The Dynorphin Channel-forming Neuropeptide (Dynorphin) Family (substrate: calcium(2+))
+1.E.14.1	1.E.14.1	The CidA/LrgA Holin (CidA/LrgA Holin) Family
+1.E.14.2	1.E.14.2	The CidA/LrgA Holin (CidA/LrgA Holin) Family
+1.F.1.1	1.F.1.1	The Synaptosomal Vesicle Fusion Pore (SVF-Pore) Family
+1.I.1	1.I.1	The Nuclear Pore Complex (NPC) Family
 1.I.1.1.3	1.I.1.1.3	The Nuclear Pore Complex (NPC) Family (substrates: (ribonucleotide)n+m, protein polypeptide chain)
+1.l.1	1.L.1	The Tunneling Nanotube (TNT) Family
+2.A.1	2.A.1	The Major Facilitator Superfamily (MFS)
+2.A.1.1	2.A.1.1	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily
 2.A.1.1.1	2.A.1.1.1	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily (substrates: 2-deoxy-D-glucopyranose, D-fucopyranose, D-galactopyranose, galactose, 2-deoxy-D-galactopyranose, aldehydo-D-xylose)
 2.A.1.1.12	2.A.1.1.12	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily (substrate: glucose)
 2.A.1.1.13	2.A.1.1.13	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily (substrate: fructose)
@@ -355,6 +540,7 @@
 2.A.1.1.28	2.A.1.1.28	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily (substrates: quercetin, dehydroascorbic acid, arsenite(3-), D-glucopyranose)
 2.A.1.1.29	2.A.1.1.29	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily (substrates: glucosamine, glucose)
 2.A.1.1.3	2.A.1.1.3	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily (substrates: xylose, hydron)
+2.A.1.1.37	2.A.1.1.37	Sugar porter (SP) subfamily
 2.A.1.1.4	2.A.1.1.4	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily (substrate: glucose)
 2.A.1.1.44	2.A.1.1.44	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily (substrate: hexose)
 2.A.1.1.46	2.A.1.1.46	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily (substrate: glucose)
@@ -365,6 +551,10 @@
 2.A.1.1.66	2.A.1.1.66	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily (substrate: myo-inositol)
 2.A.1.10.1	2.A.1.10.1	The Major Facilitator Superfamily (MFS) (substrates: thymidine, inosine, adenosine, cytidine, guanosine)
 2.A.1.10.2	2.A.1.10.2	The Major Facilitator Superfamily (MFS) (substrates: thymidine, inosine, adenosine, cytidine, xanthosine)
+2.A.1.11	2.A.1.11	The Major Facilitator Superfamily (MFS); Oxalate:formate antiporter (OFA) subfamily
+2.A.1.12	2.A.1.12	The Major Facilitator Superfamily (MFS); Sialate,H+ symporter(SHS) subfamily
+2.A.1.13	2.A.1.13	The Major Facilitator Superfamily (MFS); Monocarboxylate porter (MCP) subfamily
+2.A.1.14	2.A.1.14	The Major Facilitator Superfamily (MFS); Anion,cation symporter (ACS) subfamily
 2.A.1.14.1	2.A.1.14.1	The Major Facilitator Superfamily (MFS); Anion,cation symporter (ACS) subfamily (substrate: glucarate(2-))
 2.A.1.14.10	2.A.1.14.10	The Major Facilitator Superfamily (MFS); Anion,cation symporter (ACS) subfamily (substrate: N-acetyl-beta-neuraminic acid)
 2.A.1.14.14	2.A.1.14.14	The Major Facilitator Superfamily (MFS); Anion,cation symporter (ACS) subfamily (substrates: galactarate(2-), hydron, 2-(E)-O-feruloyl-D-galactarate(2-), glycerates)
@@ -378,6 +568,10 @@
 2.A.1.14.7	2.A.1.14.7	The Major Facilitator Superfamily (MFS); Anion,cation symporter (ACS) subfamily (substrate: D-galactonic acid)
 2.A.1.14.8	2.A.1.14.8	The Major Facilitator Superfamily (MFS); Anion,cation symporter (ACS) subfamily (substrate: phthalate(2-))
 2.A.1.14.9	2.A.1.14.9	The Major Facilitator Superfamily (MFS); Anion,cation symporter (ACS) subfamily (substrate: 4-hydroxyphenylacetic acid)
+2.A.1.15	2.A.1.15	The Major Facilitator Superfamily (MFS); Aromatic acid,H+ symporter (AAHS) subfamily
+2.A.1.16	2.A.1.16	The Major Facilitator Superfamily (MFS); Siderophore-iron transporter (SIT) subfamily
+2.A.1.17	2.A.1.17	The Major Facilitator Superfamily (MFS); Cyanate porter(CP) subfamily
+2.A.1.19	2.A.1.19	The Major Facilitator Superfamily (MFS); Organic cation transporter(OCT) subfamily
 2.A.1.19.1	2.A.1.19.1	The Major Facilitator Superfamily (MFS); Organic cation transporter(OCT) subfamily (substrates: 1-methylnicotinamide, neurotransmitter, xenobiotic, vitamin, tetramethylammonium)
 2.A.1.19.10	2.A.1.19.10	The Major Facilitator Superfamily (MFS); Organic cation transporter(OCT) subfamily (substrates: dehydroepiandrosterone sulfate, 7,9-dihydro-1H-purine-2,6,8(3H)-trione, osmolyte, estrone 3-sulfate, glutamate(2-), bile acid, ochratoxin A, sodium(1+))
 2.A.1.19.11	2.A.1.19.11	The Major Facilitator Superfamily (MFS); Organic cation transporter(OCT) subfamily (substrates: orotate, anion, 7,9-dihydro-1H-purine-2,6,8(3H)-trione)
@@ -396,6 +590,7 @@
 2.A.1.19.7	2.A.1.19.7	The Major Facilitator Superfamily (MFS); Organic cation transporter(OCT) subfamily (substrates: p-aminohippuric acid, cimetidine, dicarboxylic acid dianion, estrone 3-sulfate, ochratoxin A)
 2.A.1.19.8	2.A.1.19.8	The Major Facilitator Superfamily (MFS); Organic cation transporter(OCT) subfamily (substrates: Fe(III)-complexed siderophore, organic cation)
 2.A.1.19.9	2.A.1.19.9	The Major Facilitator Superfamily (MFS); Organic cation transporter(OCT) subfamily (substrates: glutathione, flavonoid, drug, dicarboxylic acid dianion, antiviral agent)
+2.A.1.2	2.A.1.2	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily
 2.A.1.2.10	2.A.1.2.10	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrates: hydron, diterpene, quinolone)
 2.A.1.2.11	2.A.1.2.11	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrates: doxorubicin, hydron, monoamine molecular messenger)
 2.A.1.2.12	2.A.1.2.12	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrates: drug, serotonin(1+), monoamine molecular messenger)
@@ -420,19 +615,29 @@
 2.A.1.2.4	2.A.1.2.4	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrate: hydron)
 2.A.1.2.41	2.A.1.2.41	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrates: tetracycline)
 2.A.1.2.6	2.A.1.2.6	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrates: drug, cycloheximide, fluconazole, benomyl)
+2.A.1.2.65	2.A.1.2.65	Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily
 2.A.1.2.68	2.A.1.2.68	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrate: tetracycline)
 2.A.1.2.70	2.A.1.2.70	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrates: drug, tetracycline)
 2.A.1.2.75	2.A.1.2.75	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrates: tetracycline)
 2.A.1.2.8	2.A.1.2.8	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrates: ethidium bromide, chloramphenicol, 3,6-diamino-10-methylacridinium chloride, spermidine, fluoroquinolone antibiotic, hydron)
 2.A.1.2.9	2.A.1.2.9	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily (substrates: benzalkonium chloride, hydron, CCCP, sodium dodecyl sulfate)
+2.A.1.20	2.A.1.20	The Major Facilitator Superfamily (MFS); Sugar efflux transporter (SET) subfamily
 2.A.1.21.1	2.A.1.21.1	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-3 (12 transmembrane segments)(DHA3) subfamily (substrates: azithromycin, oleandomycin, erythromycin A)
 2.A.1.21.2	2.A.1.21.2	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-3 (12 transmembrane segments)(DHA3) subfamily (substrate: tetracycline)
 2.A.1.21.22	2.A.1.21.22	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-3 (12 transmembrane segments)(DHA3) subfamily (substrates: macrolide, erythromycin A)
 2.A.1.21.3	2.A.1.21.3	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-3 (12 transmembrane segments)(DHA3) subfamily (substrates: tetracycline)
 2.A.1.21.5	2.A.1.21.5	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-3 (12 transmembrane segments)(DHA3) subfamily (substrates: bacilysin, bacilysin zwitterion)
 2.A.1.21.6	2.A.1.21.6	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-3 (12 transmembrane segments)(DHA3) subfamily (substrates: tetracycline)
+2.A.1.22	2.A.1.22	The Major Facilitator Superfamily (MFS); Vesicular neurotransmitter transporter (VNT) subfamily
+2.A.1.24	2.A.1.24	The Major Facilitator Superfamily (MFS); Unknown major facilitator-1 (UMF1) subfamily
+2.A.1.25	2.A.1.25	The Major Facilitator Superfamily (MFS); Peptide-acetyl-CoA transporter(PAT) subfamily
+2.A.1.26	2.A.1.26	The Major Facilitator Superfamily (MFS); Unknown major facilitator-2 (UMF2) subfamily
+2.A.1.27	2.A.1.27	The Major Facilitator Superfamily (MFS); Phenylpropionate permease (PPP) subfamily
+2.A.1.28	2.A.1.28	The Major Facilitator Superfamily (MFS); Unknown major facilitator-3 (UMF3) subfamily
 2.A.1.28.1	2.A.1.28.1	The Major Facilitator Superfamily (MFS); Unknown major facilitator-3 (UMF3) subfamily (substrate: ferroheme b)
+2.A.1.28.2	2.A.1.28.2	Unknown major facilitator-3 (UMF3) subfamily
 2.A.1.28.4	2.A.1.28.4	The Major Facilitator Superfamily (MFS); Unknown major facilitator-3 (UMF3) subfamily (substrate: ferroheme b)
+2.A.1.3	2.A.1.3	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-2 (14 transmembane segments)(DHA2) subfamily
 2.A.1.3.1	2.A.1.3.1	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-2 (14 transmembane segments)(DHA2) subfamily (substrates: 4-nitroquinoline N-oxide, hydron, amitrole, L-cysteine)
 2.A.1.3.10	2.A.1.3.10	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-2 (14 transmembane segments)(DHA2) subfamily (substrates: hydron, drug)
 2.A.1.3.16	2.A.1.3.16	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-2 (14 transmembane segments)(DHA2) subfamily (substrates: hydron, tetracycline)
@@ -449,40 +654,77 @@
 2.A.1.3.60	2.A.1.3.60	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-2 (14 transmembane segments)(DHA2) subfamily (substrates: norfloxacin, ethidium bromide, 3,6-diamino-10-methylacridinium chloride)
 2.A.1.3.61	2.A.1.3.61	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-2 (14 transmembane segments)(DHA2) subfamily (substrates: quaternary ammonium salt, rhodamine 6G, antimicrobial agent, ethidium bromide, daunorubicin, 2'-(4-ethoxyphenyl)-5-(4-methylpiperazin-1-yl)-2,5'-bibenzimidazole, doxorubicin, tetraphenylphosphonium)
 2.A.1.3.7	2.A.1.3.7	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-2 (14 transmembane segments)(DHA2) subfamily (substrates: hydron, actinorhodin)
+2.A.1.31	2.A.1.31	The Major Facilitator Superfamily (MFS); Nickel resistance mediator (Nre) subfamily
+2.A.1.32	2.A.1.32	The Major Facilitator Superfamily (MFS); Putative aromatic compound/drug exporter (ACDE) subfamily
+2.A.1.33	2.A.1.33	The Major Facilitator Superfamily (MFS); Putative YqgE transporter (YqgE) subfamily
+2.A.1.35	2.A.1.35	The Major Facilitator Superfamily (MFS); Fosmidomycin resistance mediator (Fsr) subfamily
+2.A.1.36	2.A.1.36	The Major Facilitator Superfamily (MFS); Acriflavin sensitivity mediator(YnfM) subfamily
+2.A.1.38	2.A.1.38	The Major Facilitator Superfamily (MFS)
+2.A.1.4	2.A.1.4	The Major Facilitator Superfamily (MFS); Organic phosphate:Pi antiporter(OPA) subfamily
 2.A.1.4.1	2.A.1.4.1	The Major Facilitator Superfamily (MFS); Organic phosphate:Pi antiporter(OPA) subfamily (substrate: phospho sugar)
 2.A.1.4.2	2.A.1.4.2	The Major Facilitator Superfamily (MFS); Organic phosphate:Pi antiporter(OPA) subfamily (substrate: phosphate(3-))
 2.A.1.4.3	2.A.1.4.3	The Major Facilitator Superfamily (MFS); Organic phosphate:Pi antiporter(OPA) subfamily (substrate: glycerol 1-phosphate)
 2.A.1.4.4	2.A.1.4.4	The Major Facilitator Superfamily (MFS); Organic phosphate:Pi antiporter(OPA) subfamily (substrates: hexose phosphate, phosphate(3-))
 2.A.1.4.5	2.A.1.4.5	The Major Facilitator Superfamily (MFS); Organic phosphate:Pi antiporter(OPA) subfamily (substrates: D-glucopyranose 6-phosphate, beta-D-glucose 6-phosphate)
 2.A.1.4.6	2.A.1.4.6	The Major Facilitator Superfamily (MFS); Organic phosphate:Pi antiporter(OPA) subfamily (substrate: D-glucopyranose 6-phosphate)
+2.A.1.40	2.A.1.40	The Major Facilitator Superfamily (MFS)
+2.A.1.41	2.A.1.41	The Major Facilitator Superfamily (MFS)
+2.A.1.42	2.A.1.42	The Major Facilitator Superfamily (MFS)
+2.A.1.44	2.A.1.44	The Major Facilitator Superfamily (MFS)
+2.A.1.5	2.A.1.5	The Major Facilitator Superfamily (MFS); Oligosaccharide,H+ symporter(OHS) subfamily
 2.A.1.50.1	2.A.1.50.1	The Major Facilitator Superfamily (MFS) (substrates: antifolate, folic acid, pemetrexed)
 2.A.1.50.2	2.A.1.50.2	The Major Facilitator Superfamily (MFS) (substrate: cation)
+2.A.1.50.3	2.A.1.50.3	The Major Facilitator Superfamily (MFS)
 2.A.1.50.4	2.A.1.50.4	The Major Facilitator Superfamily (MFS) (substrate: drug)
+2.A.1.6	2.A.1.6	The Major Facilitator Superfamily (MFS); Metabolite,H+ symporter (MHS) subfamily
 2.A.1.6.1	2.A.1.6.1	The Major Facilitator Superfamily (MFS); Metabolite,H+ symporter (MHS) subfamily (substrates: hydron, citrate salt)
 2.A.1.6.2	2.A.1.6.2	The Major Facilitator Superfamily (MFS); Metabolite,H+ symporter (MHS) subfamily (substrates: hydron, 2-oxoglutarate(2-), arabinose)
 2.A.1.6.3	2.A.1.6.3	The Major Facilitator Superfamily (MFS); Metabolite,H+ symporter (MHS) subfamily (substrate: dicarboxylic acid dianion)
 2.A.1.6.4	2.A.1.6.4	The Major Facilitator Superfamily (MFS); Metabolite,H+ symporter (MHS) subfamily (substrates: taurine, carnitinium, pipecolic acid, N,N-dimethylglycine, ectoine, proline, glycine betaine, 3-pyridylacetic acid, hydron, sodium(1+), L-proline betaine)
 2.A.1.6.6	2.A.1.6.6	The Major Facilitator Superfamily (MFS); Metabolite,H+ symporter (MHS) subfamily (substrates: hydron, shikimic acid)
 2.A.1.6.7	2.A.1.6.7	The Major Facilitator Superfamily (MFS); Metabolite,H+ symporter (MHS) subfamily (substrates: tricarballylate, citrate salt)
+2.A.1.7	2.A.1.7	The Major Facilitator Superfamily (MFS); Fucose,H+ symporter(FHS) subfamily
+2.A.1.8	2.A.1.8	The Major Facilitator Superfamily (MFS); Nitrate/nitrite porter (NNP) subfamily
+2.A.1.9	2.A.1.9	The Major Facilitator Superfamily (MFS); Phosphate,H+ symporter (PHS) subfamily
+2.A.10.1	2.A.10.1	The 2-Keto-3-Deoxygluconate Transporter (KdgT) Family
+2.A.100.1	2.A.100.1	The Ferroportin (Fpn) Family
+2.A.103.1	2.A.103.1	The Bacterial Murein Precursor Exporter (MPE) Family
+2.A.105.1	2.A.105.1	The Mitochondrial Pyruvate Carrier (MPC) Family
+2.A.108.1	2.A.108.1	The Iron/Lead Transporter (ILT) Family
+2.A.108.2	2.A.108.2	The Iron/Lead Transporter (ILT) Family
 2.A.108.2.10	2.A.108.2.10	The Iron/Lead Transporter (ILT) Family (substrate: iron atom)
 2.A.108.2.3	2.A.108.2.3	The Iron/Lead Transporter (ILT) Family (substrate: iron(2+))
 2.A.108.2.4	2.A.108.2.4	The Iron/Lead Transporter (ILT) Family (substrate: iron atom)
 2.A.108.2.9	2.A.108.2.9	The Iron/Lead Transporter (ILT) Family (substrate: iron atom)
+2.A.11	2.A.11	The Citrate-Mg2+:H+ (CitM) Citrate-Ca2+:H+ (CitH) Symporter (CitMHS) Family
 2.A.11.1.1	2.A.11.1.1	The Citrate-Mg2+:H+ (CitM) Citrate-Ca2+:H+ (CitH) Symporter (CitMHS) Family (substrates: magnesium(2+), manganese(2+), cobalt(2+), zinc(2+), hydron, nickel(2+))
 2.A.112.1.1	2.A.112.1.1	The KX Blood-group Antigen (KXA) Family (substrate: alpha-amino acid)
+2.A.12	2.A.12	The ATP:ADP Antiporter (AAA) Family
 2.A.125.1.1	2.A.125.1.1	The Eukaryotic Riboflavin Transporter (E-RFT) Family (substrate: riboflavin)
 2.A.125.1.2	2.A.125.1.2	The Eukaryotic Riboflavin Transporter (E-RFT) Family (substrate: riboflavin)
 2.A.125.1.3	2.A.125.1.3	The Eukaryotic Riboflavin Transporter (E-RFT) Family (substrate: riboflavin)
+2.A.125.1.5	2.A.125.1.5	The Eukaryotic Riboflavin Transporter (E-RFT) Family
+2.A.13.1	2.A.13.1	The C4-Dicarboxylate Uptake (Dcu) Family
+2.A.14	2.A.14	The Lactate Permease (LctP) Family
 2.A.14.1.1	2.A.14.1.1	The Lactate Permease (LctP) Family (substrates: lactate, glycolate)
 2.A.14.1.2	2.A.14.1.2	The Lactate Permease (LctP) Family (substrates: lactate, glycolate)
+2.A.15	2.A.15	The Betaine/Carnitine/Choline Transporter (BCCT) Family
 2.A.15.1.1	2.A.15.1.1	The Betaine/Carnitine/Choline Transporter (BCCT) Family (substrates: glycine betaine, sodium(1+), S,S-dimethyl-beta-propiothetin, (carboxymethyl)(dimethyl)sulfonium)
 2.A.15.1.11	2.A.15.1.11	The Betaine/Carnitine/Choline Transporter (BCCT) Family (substrates: glycine betaine, sodium(1+))
 2.A.15.1.3	2.A.15.1.3	The Betaine/Carnitine/Choline Transporter (BCCT) Family (substrates: hydron, glycine betaine, choline)
 2.A.15.1.4	2.A.15.1.4	The Betaine/Carnitine/Choline Transporter (BCCT) Family (substrates: sodium(1+), choline)
+2.A.15.2	2.A.15.2	The Betaine/Carnitine/Choline Transporter (BCCT) Family
+2.A.16	2.A.16	The Telurite-resistance/Dicarboxylate Transporter (TDT) Family
+2.A.16.1	2.A.16.1	The Telurite-resistance/Dicarboxylate Transporter (TDT) Family
+2.A.17	2.A.17	The Proton-dependent Oligopeptide Transporter (POT/PTR) Family
+2.A.17.3	2.A.17.3	The Proton-dependent Oligopeptide Transporter (POT/PTR) Family
 2.A.17.4.1	2.A.17.4.1	The Proton-dependent Oligopeptide Transporter (POT/PTR) Family (substrates: hydron, peptide)
 2.A.17.4.2	2.A.17.4.2	The Proton-dependent Oligopeptide Transporter (POT/PTR) Family (substrate: peptide)
 2.A.17.4.4	2.A.17.4.4	The Proton-dependent Oligopeptide Transporter (POT/PTR) Family (substrate: peptide)
 2.A.17.4.5	2.A.17.4.5	The Proton-dependent Oligopeptide Transporter (POT/PTR) Family (substrate: peptide)
+2.A.18.1	2.A.18.1	The Amino Acid/Auxin Permease (AAAP) Family
+2.A.18.5	2.A.18.5	The Amino Acid/Auxin Permease (AAAP) Family
+2.A.18.6	2.A.18.6	The Amino Acid/Auxin Permease (AAAP) Family
 2.A.18.6.1	2.A.18.6.1	The Amino Acid/Auxin Permease (AAAP) Family (substrate: glutamine)
 2.A.18.6.2	2.A.18.6.2	The Amino Acid/Auxin Permease (AAAP) Family (substrates: glutamine, histidine)
 2.A.18.6.3	2.A.18.6.3	The Amino Acid/Auxin Permease (AAAP) Family (substrates: asparagine, histidine, alanine, hydron, sodium(1+), glutamine)
@@ -490,12 +732,33 @@
 2.A.18.6.5	2.A.18.6.5	The Amino Acid/Auxin Permease (AAAP) Family (substrates: L-phenylalanine, L-asparagine, alpha-amino acid, glycine, L-glutamine, L-threonine, L-leucine, L-methionine, L-proline, L-serine, L-alanine, (S)-3-aminoisobutyric acid)
 2.A.18.6.7	2.A.18.6.7	The Amino Acid/Auxin Permease (AAAP) Family (substrates: sodium(1+), alanine)
 2.A.18.6.8	2.A.18.6.8	The Amino Acid/Auxin Permease (AAAP) Family (substrates: hydron, sodium(1+), glutamine)
+2.A.18.8	2.A.18.8	The Amino Acid/Auxin Permease (AAAP) Family
+2.A.19	2.A.19	The Ca2+:Cation Antiporter (CaCA) Family
+2.A.19.3	2.A.19.3	The Ca2+:Cation Antiporter (CaCA) Family
 2.A.19.3.6	2.A.19.3.6	The Ca2+:Cation Antiporter (CaCA) Family (substrate: calcium(2+))
+2.A.19.4	2.A.19.4	The Ca2+:Cation Antiporter (CaCA) Family
 2.A.19.4.1	2.A.19.4.1	The Ca2+:Cation Antiporter (CaCA) Family (substrates: calcium(2+), potassium(1+), sodium(1+))
 2.A.19.4.2	2.A.19.4.2	The Ca2+:Cation Antiporter (CaCA) Family (substrates: calcium(2+), potassium(1+), sodium(1+))
 2.A.19.4.4	2.A.19.4.4	The Ca2+:Cation Antiporter (CaCA) Family (substrates: calcium(2+), potassium(1+), sodium(1+))
 2.A.19.4.5	2.A.19.4.5	The Ca2+:Cation Antiporter (CaCA) Family (substrates: calcium(2+), potassium(1+), sodium(1+))
 2.A.19.4.6	2.A.19.4.6	The Ca2+:Cation Antiporter (CaCA) Family (substrates: calcium(2+), potassium(1+), sodium(1+))
+2.A.19.5	2.A.19.5	The Ca2+:Cation Antiporter (CaCA) Family
+2.A.19.6	2.A.19.6	The Ca2+:Cation Antiporter (CaCA) Family
+2.A.2	2.A.2	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
+2.A.2.1	2.A.2.1	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
+2.A.2.2	2.A.2.2	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
+2.A.2.4	2.A.2.4	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
+2.A.2.5	2.A.2.5	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
+2.A.2.6	2.A.2.6	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
+2.A.20	2.A.20	The Inorganic Phosphate Transporter (PiT) Family
+2.A.20.1	2.A.20.1	The Inorganic Phosphate Transporter (PiT) Family
+2.A.20.2	2.A.20.2	The Inorganic Phosphate Transporter (PiT) Family
+2.A.20.4	2.A.20.4	The Inorganic Phosphate Transporter (PiT) Family
+2.A.21	2.A.21	The Solute:Sodium Symporter (SSS) Family
+2.A.21.1	2.A.21.1	The Solute:Sodium Symporter (SSS) Family
+2.A.21.2	2.A.21.2	The Solute:Sodium Symporter (SSS) Family
+2.A.21.3	2.A.21.3	The Solute:Sodium Symporter (SSS) Family
+2.A.21.3.1	2.A.21.3.1	The Solute:Sodium Symporter (SSS) Family
 2.A.21.3.3	2.A.21.3.3	The Solute:Sodium Symporter (SSS) Family (substrates: nucleoside, sodium(1+), glucose)
 2.A.21.3.4	2.A.21.3.4	The Solute:Sodium Symporter (SSS) Family (substrates: sodium(1+), glucose)
 2.A.21.3.5	2.A.21.3.5	The Solute:Sodium Symporter (SSS) Family (substrates: myo-inositol, sodium(1+))
@@ -505,11 +768,21 @@
 2.A.21.5.3	2.A.21.5.3	The Solute:Sodium Symporter (SSS) Family (substrates: acetate, butyrate, pyruvate, propionate, lactate, sodium(1+))
 2.A.21.5.4	2.A.21.5.4	The Solute:Sodium Symporter (SSS) Family (substrates: butyrate, nicotinate, pyruvate, hydron, lactate)
 2.A.21.5.5	2.A.21.5.5	The Solute:Sodium Symporter (SSS) Family (substrates: butyrate, nicotinate, pyruvate, lactate, sodium(1+))
+2.A.21.6	2.A.21.6	The Solute:Sodium Symporter (SSS) Family
+2.A.21.7	2.A.21.7	The Solute:Sodium Symporter (SSS) Family
+2.A.21.8	2.A.21.8	The Solute:Sodium Symporter (SSS) Family
+2.A.22	2.A.22	The Neurotransmitter:Sodium Symporter (NSS) Family
 2.A.22.1.1	2.A.22.1.1	The Neurotransmitter:Sodium Symporter (NSS) Family (substrates: serotonin, chloride, sodium(1+), amphetamine)
 2.A.22.1.2	2.A.22.1.2	The Neurotransmitter:Sodium Symporter (NSS) Family (substrates: (R)-noradrenaline, sodium(1+), amphetamine)
 2.A.22.1.3	2.A.22.1.3	The Neurotransmitter:Sodium Symporter (NSS) Family (substrates: dopamine, sodium(1+), amphetamine)
+2.A.22.2	2.A.22.2	The Neurotransmitter:Sodium Symporter (NSS) Family
+2.A.22.3	2.A.22.3	The Neurotransmitter:Sodium Symporter (NSS) Family
 2.A.22.3.2	2.A.22.3.2	The Neurotransmitter:Sodium Symporter (NSS) Family (substrate: gamma-aminobutyric acid)
+2.A.22.4	2.A.22.4	The Neurotransmitter:Sodium Symporter (NSS) Family
+2.A.22.5	2.A.22.5	The Neurotransmitter:Sodium Symporter (NSS) Family
+2.A.22.6	2.A.22.6	The Neurotransmitter:Sodium Symporter (NSS) Family
 2.A.22.6.3	2.A.22.6.3	The Neurotransmitter:Sodium Symporter (NSS) Family (substrates: chloride, sodium(1+))
+2.A.23	2.A.23	The Dicarboxylate/Amino Acid:Cation (Na+ or H+) Symporter (DAACS) Family
 2.A.23.1.1	2.A.23.1.1	The Dicarboxylate/Amino Acid:Cation (Na+ or H+) Symporter (DAACS) Family (substrates: aspartate(2-), glutamate(2-))
 2.A.23.1.2	2.A.23.1.2	The Dicarboxylate/Amino Acid:Cation (Na+ or H+) Symporter (DAACS) Family (substrates: aspartate(2-), hydron, sodium(1+), glutamate(2-))
 2.A.23.1.3	2.A.23.1.3	The Dicarboxylate/Amino Acid:Cation (Na+ or H+) Symporter (DAACS) Family (substrates: fumarate(2-), itaconate(2-), mesaconate(2-), malate(2-), orotate)
@@ -518,10 +791,19 @@
 2.A.23.2.1	2.A.23.2.1	The Dicarboxylate/Amino Acid:Cation (Na+ or H+) Symporter (DAACS) Family (substrates: aspartate(2-), potassium(1+), glutamate(2-), hydron, sodium(1+))
 2.A.23.2.2	2.A.23.2.2	The Dicarboxylate/Amino Acid:Cation (Na+ or H+) Symporter (DAACS) Family (substrates: aspartate(2-), potassium(1+), sodium(1+), glutamate(2-))
 2.A.23.2.3	2.A.23.2.3	The Dicarboxylate/Amino Acid:Cation (Na+ or H+) Symporter (DAACS) Family (substrates: lithium(1+), aspartate(2-), potassium(1+), glutamate(2-), cysteine, sodium(1+))
+2.A.23.4	2.A.23.4	The Dicarboxylate/Amino Acid:Cation (Na+ or H+) Symporter (DAACS) Family
+2.A.24.2	2.A.24.2	The 2-Hydroxycarboxylate Transporter (2-HCT) Family
+2.A.25	2.A.25	The Alanine or Glycine:Cation Symporter (AGCS) Family
+2.A.26	2.A.26	The Branched Chain Amino Acid:Cation Symporter (LIVCS) Family
+2.A.27	2.A.27	The Glutamate:Na+ Symporter (ESS) Family
+2.A.28	2.A.28	The Bile Acid:Na+ Symporter (BASS) Family
+2.A.28.1	2.A.28.1	The Bile Acid:Na+ Symporter (BASS) Family
 2.A.28.1.1	2.A.28.1.1	The Bile Acid:Na+ Symporter (BASS) Family (substrates: bile acid, taurocholic acid, sodium(1+), organic acid)
 2.A.28.1.2	2.A.28.1.2	The Bile Acid:Na+ Symporter (BASS) Family (substrates: bile acid, bile acid conjugate)
 2.A.28.1.3	2.A.28.1.3	The Bile Acid:Na+ Symporter (BASS) Family (substrates: dehydroepiandrosterone sulfate, organic anion, estrone 3-sulfate, sodium(1+))
 2.A.28.1.4	2.A.28.1.4	The Bile Acid:Na+ Symporter (BASS) Family (substrates: dehydroepiandrosterone sulfate, pregnenolone sulfate, estrone 3-sulfate, organic anion, sodium(1+))
+2.A.29	2.A.29	The Mitochondrial Carrier (MC) Family 
+2.A.29.1	2.A.29.1	The Mitochondrial Carrier (MC) Family 
 2.A.29.10.1	2.A.29.10.1	The Mitochondrial Carrier (MC) Family  (substrate: FAD)
 2.A.29.10.2	2.A.29.10.2	The Mitochondrial Carrier (MC) Family  (substrate: folic acid)
 2.A.29.10.3	2.A.29.10.3	The Mitochondrial Carrier (MC) Family  (substrate: folic acid)
@@ -533,6 +815,10 @@
 2.A.29.14.2	2.A.29.14.2	The Mitochondrial Carrier (MC) Family  (substrates: aspartate(2-), calcium(2+), glutamate(2-))
 2.A.29.14.3	2.A.29.14.3	The Mitochondrial Carrier (MC) Family  (substrates: hydron, glutamate(2-))
 2.A.29.14.4	2.A.29.14.4	The Mitochondrial Carrier (MC) Family  (substrates: aspartate(2-), glutamate(2-))
+2.A.29.15	2.A.29.15	The Mitochondrial Carrier (MC) Family 
+2.A.29.16	2.A.29.16	The Mitochondrial Carrier (MC) Family 
+2.A.29.18	2.A.29.18	The Mitochondrial Carrier (MC) Family 
+2.A.29.19	2.A.29.19	The Mitochondrial Carrier (MC) Family 
 2.A.29.2.1	2.A.29.2.1	The Mitochondrial Carrier (MC) Family  (substrates: coproporphyrin III, 2-oxoglutaric acid, hemin, malate(2-))
 2.A.29.2.2	2.A.29.2.2	The Mitochondrial Carrier (MC) Family  (substrates: oxaloacetate(2-), fumarate(2-), succinate(2-), 2-oxoglutarate(2-), malate(2-))
 2.A.29.2.3	2.A.29.2.3	The Mitochondrial Carrier (MC) Family  (substrates: oxaloacetate(2-), succinate(2-), sulfate, phosphate(3-), sulfurous acid, malate(2-))
@@ -542,11 +828,22 @@
 2.A.29.2.8	2.A.29.2.8	The Mitochondrial Carrier (MC) Family  (substrates: oxaloacetate(2-), adipic acid, glutarate(2-), 2-oxoglutarate(2-), 2-oxoadipic acid, 2-oxopimelate(2-), malate(2-), citrate salt)
 2.A.29.2.9	2.A.29.2.9	The Mitochondrial Carrier (MC) Family  (substrates: oxaloacetate(2-), phosphate(3-), succinate(2-), sulfate, 2-oxoglutarate(2-), thiosulfate(2-), malate(2-))
 2.A.29.20.1	2.A.29.20.1	The Mitochondrial Carrier (MC) Family  (substrates: coenzyme A, adenosine 5'-monophosphate, FAD, FMN, adenosine 3',5'-bismonophosphate, ADP, NAD(+))
+2.A.29.23	2.A.29.23	The Mitochondrial Carrier (MC) Family 
+2.A.29.24	2.A.29.24	The Mitochondrial Carrier (MC) Family 
+2.A.29.25	2.A.29.25	The Mitochondrial Carrier (MC) Family 
+2.A.29.28	2.A.29.28	The Mitochondrial Carrier (MC) Family 
 2.A.29.3.1	2.A.29.3.1	The Mitochondrial Carrier (MC) Family  (substrates: hydron, fatty acid, halide anion)
 2.A.29.3.2	2.A.29.3.2	The Mitochondrial Carrier (MC) Family  (substrates: hydron, chloride, fatty acid)
 2.A.29.3.3	2.A.29.3.3	The Mitochondrial Carrier (MC) Family  (substrates: oxaloacetate(2-), aspartate(2-), phosphate(3-), sulfate, 2-oxaloglutaric acid, 3-sulfino-L-alanine(1-), dicarboxylic acid dianion, glutamate(2-), thiosulfate(2-), malate(2-), L-cysteate(1-))
 2.A.29.3.4	2.A.29.3.4	The Mitochondrial Carrier (MC) Family  (substrates: hydron, chloride)
 2.A.29.3.5	2.A.29.3.5	The Mitochondrial Carrier (MC) Family  (substrates: hydron, chloride)
+2.A.29.30	2.A.29.30	The Mitochondrial Carrier (MC) Family 
+2.A.29.4	2.A.29.4	The Mitochondrial Carrier (MC) Family 
+2.A.29.5	2.A.29.5	The Mitochondrial Carrier (MC) Family 
+2.A.29.7	2.A.29.7	The Mitochondrial Carrier (MC) Family 
+2.A.29.8	2.A.29.8	The Mitochondrial Carrier (MC) Family 
+2.A.29.9	2.A.29.9	The Mitochondrial Carrier (MC) Family 
+2.A.3.1	2.A.3.1	The Amino Acid-Polyamine-Organocation (APC) Family; Amino acid transporter (AAT) subfamily
 2.A.3.1.1	2.A.3.1.1	The Amino Acid-Polyamine-Organocation (APC) Family; Amino acid transporter (AAT) subfamily (substrate: phenylalanine)
 2.A.3.1.10	2.A.3.1.10	The Amino Acid-Polyamine-Organocation (APC) Family; Amino acid transporter (AAT) subfamily (substrates: N-methyl-L-methionine, S-methyl-L-methionine)
 2.A.3.1.12	2.A.3.1.12	The Amino Acid-Polyamine-Organocation (APC) Family; Amino acid transporter (AAT) subfamily (substrates: tryptophan, tyrosine, phenylalanine, histidine)
@@ -559,12 +856,20 @@
 2.A.3.1.7	2.A.3.1.7	The Amino Acid-Polyamine-Organocation (APC) Family; Amino acid transporter (AAT) subfamily (substrates: D-alanine, glycine, D-serine, serine, hydron, D-cycloserine)
 2.A.3.1.8	2.A.3.1.8	The Amino Acid-Polyamine-Organocation (APC) Family; Amino acid transporter (AAT) subfamily (substrate: asparagine)
 2.A.3.1.9	2.A.3.1.9	The Amino Acid-Polyamine-Organocation (APC) Family; Amino acid transporter (AAT) subfamily (substrate: histidine)
+2.A.3.10	2.A.3.10	The Amino Acid-Polyamine-Organocation (APC) Family; Yeast amino acid transporter (YAT) subfamily
+2.A.3.12	2.A.3.12	The Amino Acid-Polyamine-Organocation (APC) Family
+2.A.3.13	2.A.3.13	The Amino Acid-Polyamine-Organocation (APC) Family
+2.A.3.2	2.A.3.2	The Amino Acid-Polyamine-Organocation (APC) Family; Basic amino acid:polyamine antiporter (APA) subfamily
+2.A.3.3	2.A.3.3	The Amino Acid-Polyamine-Organocation (APC) Family; Cationic amino acid transporter (CAT) subfamily
 2.A.3.3.1	2.A.3.3.1	The Amino Acid-Polyamine-Organocation (APC) Family; Cationic amino acid transporter (CAT) subfamily (substrates: lysine, ornithine, arginine)
 2.A.3.3.2	2.A.3.3.2	The Amino Acid-Polyamine-Organocation (APC) Family; Cationic amino acid transporter (CAT) subfamily (substrates: lysine, ornithine, arginine)
 2.A.3.3.5	2.A.3.3.5	The Amino Acid-Polyamine-Organocation (APC) Family; Cationic amino acid transporter (CAT) subfamily (substrates: lysine, ornithine, arginine)
 2.A.3.4.1	2.A.3.4.1	The Amino Acid-Polyamine-Organocation (APC) Family; Amino acid/choline transporter (ACT) subfamily (substrates: myo-inositol, ethanolamines, 2-dimethylaminoethyl chloride, mechlorethamine, choline)
+2.A.3.4.4	2.A.3.4.4	Amino acid/choline transporter (ACT) subfamily
+2.A.3.5	2.A.3.5	The Amino Acid-Polyamine-Organocation (APC) Family; Ethanolamine transporter(EAT) subfamily
 2.A.3.7.1	2.A.3.7.1	The Amino Acid-Polyamine-Organocation (APC) Family; Glutamate:g-aminobutyrate antiporter (GA) subfamily (substrates: gamma-aminobutyric acid, glutamate(2-))
 2.A.3.7.3	2.A.3.7.3	The Amino Acid-Polyamine-Organocation (APC) Family; Glutamate:g-aminobutyrate antiporter (GA) subfamily (substrate: glutamate(2-))
+2.A.3.8	2.A.3.8	The Amino Acid-Polyamine-Organocation (APC) Family; l-amino acid transporter (LAT) subfamily
 2.A.3.8.1	2.A.3.8.1	The Amino Acid-Polyamine-Organocation (APC) Family; l-amino acid transporter (LAT) subfamily (substrates: alpha-amino acid, thyroid hormone)
 2.A.3.8.13	2.A.3.8.13	The Amino Acid-Polyamine-Organocation (APC) Family; l-amino acid transporter (LAT) subfamily (substrates: hydron, D-alpha-amino acid, L-alpha-amino acid, amino acid derivative)
 2.A.3.8.15	2.A.3.8.15	The Amino Acid-Polyamine-Organocation (APC) Family; l-amino acid transporter (LAT) subfamily (substrate: cystine)
@@ -576,24 +881,50 @@
 2.A.3.9.1	2.A.3.9.1	The Amino Acid-Polyamine-Organocation (APC) Family; Spore germination protein(SGP) subfamily (substrate: L-alanine)
 2.A.3.9.2	2.A.3.9.2	The Amino Acid-Polyamine-Organocation (APC) Family; Spore germination protein(SGP) subfamily (substrates: L-asparagine, D-alanine)
 2.A.3.9.3	2.A.3.9.3	The Amino Acid-Polyamine-Organocation (APC) Family; Spore germination protein(SGP) subfamily (substrate: alpha-amino acid)
+2.A.3.9.4	2.A.3.9.4	Spore germination protein(SGP) subfamily
+2.A.30	2.A.30	The Cation-Chloride Cotransporter (CCC) Family
+2.A.30.1	2.A.30.1	The Cation-Chloride Cotransporter (CCC) Family
+2.A.30.2	2.A.30.2	The Cation-Chloride Cotransporter (CCC) Family
+2.A.30.3	2.A.30.3	The Cation-Chloride Cotransporter (CCC) Family
+2.A.30.4	2.A.30.4	The Cation-Chloride Cotransporter (CCC) Family
+2.A.30.5	2.A.30.5	The Cation-Chloride Cotransporter (CCC) Family
+2.A.31.1	2.A.31.1	The Anion Exchanger (AE) Family
 2.A.31.1.1	2.A.31.1.1	The Anion Exchanger (AE) Family (substrates: inorganic anion, potassium(1+), anion, phospholipid, chloride, organic anion, sodium(1+), hydrogencarbonate)
 2.A.31.1.2	2.A.31.1.2	The Anion Exchanger (AE) Family (substrates: chloride, hydrogencarbonate)
+2.A.31.2	2.A.31.2	The Anion Exchanger (AE) Family
 2.A.31.2.1	2.A.31.2.1	The Anion Exchanger (AE) Family (substrates: sodium(1+), hydrogencarbonate)
 2.A.31.2.2	2.A.31.2.2	The Anion Exchanger (AE) Family (substrate: hydrogencarbonate)
 2.A.31.2.3	2.A.31.2.3	The Anion Exchanger (AE) Family (substrates: chloride, sodium(1+), hydrogencarbonate)
 2.A.31.2.4	2.A.31.2.4	The Anion Exchanger (AE) Family (substrates: chloride, sodium(1+), hydrogencarbonate)
 2.A.31.2.5	2.A.31.2.5	The Anion Exchanger (AE) Family (substrate: anion)
 2.A.31.2.9	2.A.31.2.9	The Anion Exchanger (AE) Family (substrates: sodium(1+), hydrogencarbonate)
+2.A.31.4	2.A.31.4	The Anion Exchanger (AE) Family
+2.A.33.1	2.A.33.1	The NhaA Na+:H+ Antiporter (NhaA) Family
+2.A.34.1	2.A.34.1	The NhaB Na+:H+ Antiporter (NhaB) Family
+2.A.35	2.A.35	The NhaC Na+:H+ Antiporter (NhaC) Family
+2.A.36	2.A.36	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family
+2.A.36.1	2.A.36.1	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family
 2.A.36.1.1	2.A.36.1.1	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family (substrates: hydron, sodium(1+))
+2.A.36.1.10	2.A.36.1.10	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family
 2.A.36.1.12	2.A.36.1.12	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family (substrates: hydron, sodium(1+))
 2.A.36.1.2	2.A.36.1.2	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family (substrates: hydron, sodium(1+))
 2.A.36.1.3	2.A.36.1.3	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family (substrates: hydron, potassium(1+), sodium(1+))
 2.A.36.1.4	2.A.36.1.4	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family (substrates: hydron, sodium(1+))
 2.A.36.1.6	2.A.36.1.6	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family (substrates: hydron, sodium(1+))
 2.A.36.1.9	2.A.36.1.9	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family (substrate: sodium(1+))
+2.A.36.6	2.A.36.6	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family
+2.A.37	2.A.37	The Monovalent Cation:Proton Antiporter-2 (CPA2) Family
 2.A.37.1.1	2.A.37.1.1	The Monovalent Cation:Proton Antiporter-2 (CPA2) Family (substrate: potassium(1+))
 2.A.37.1.2	2.A.37.1.2	The Monovalent Cation:Proton Antiporter-2 (CPA2) Family (substrate: potassium(1+))
+2.A.38.1	2.A.38.1	The K+ Transporter (Trk) Family
+2.A.38.4	2.A.38.4	The K+ Transporter (Trk) Family
+2.A.39	2.A.39	The Nucleobase:Cation Symporter-1 (NCS1) Family
+2.A.39.1	2.A.39.1	The Nucleobase:Cation Symporter-1 (NCS1) Family
 2.A.39.3.8	2.A.39.3.8	The Nucleobase:Cation Symporter-1 (NCS1) Family (substrate: allantoin)
+2.A.4	2.A.4	The Cation Diffusion Facilitator (CDF) Family
+2.A.4.1	2.A.4.1	The Cation Diffusion Facilitator (CDF) Family
+2.A.4.2	2.A.4.2	The Cation Diffusion Facilitator (CDF) Family
+2.A.4.3	2.A.4.3	The Cation Diffusion Facilitator (CDF) Family
 2.A.4.3.1	2.A.4.3.1	The Cation Diffusion Facilitator (CDF) Family (substrate: zinc(2+))
 2.A.4.3.2	2.A.4.3.2	The Cation Diffusion Facilitator (CDF) Family (substrate: zinc(2+))
 2.A.4.3.3	2.A.4.3.3	The Cation Diffusion Facilitator (CDF) Family (substrate: zinc(2+))
@@ -601,7 +932,9 @@
 2.A.4.4.3	2.A.4.4.3	The Cation Diffusion Facilitator (CDF) Family (substrate: zinc(2+))
 2.A.4.4.4	2.A.4.4.4	The Cation Diffusion Facilitator (CDF) Family (substrate: zinc(2+))
 2.A.4.4.5	2.A.4.4.5	The Cation Diffusion Facilitator (CDF) Family (substrate: zinc(2+))
+2.A.4.6	2.A.4.6	The Cation Diffusion Facilitator (CDF) Family
 2.A.4.7.1	2.A.4.7.1	The Cation Diffusion Facilitator (CDF) Family (substrates: mercury(2+), cadmium(2+), zinc(2+), hydron, iron(2+))
+2.A.40	2.A.40	The Nucleobase/Ascorbate Transporter (NAT) or Nucleobase:Cation Symporter-2 (NCS2) Family
 2.A.40.1.1	2.A.40.1.1	The Nucleobase/Ascorbate Transporter (NAT) or Nucleobase:Cation Symporter-2 (NCS2) Family (substrate: uracil)
 2.A.40.1.2	2.A.40.1.2	The Nucleobase/Ascorbate Transporter (NAT) or Nucleobase:Cation Symporter-2 (NCS2) Family (substrate: uracil)
 2.A.40.1.3	2.A.40.1.3	The Nucleobase/Ascorbate Transporter (NAT) or Nucleobase:Cation Symporter-2 (NCS2) Family (substrate: pyrimidine)
@@ -609,6 +942,10 @@
 2.A.40.3.2	2.A.40.3.2	The Nucleobase/Ascorbate Transporter (NAT) or Nucleobase:Cation Symporter-2 (NCS2) Family (substrate: 7,9-dihydro-1H-purine-2,6,8(3H)-trione)
 2.A.40.4.2	2.A.40.4.2	The Nucleobase/Ascorbate Transporter (NAT) or Nucleobase:Cation Symporter-2 (NCS2) Family (substrate: 9H-xanthine)
 2.A.40.4.3	2.A.40.4.3	The Nucleobase/Ascorbate Transporter (NAT) or Nucleobase:Cation Symporter-2 (NCS2) Family (substrate: 9H-xanthine)
+2.A.40.6	2.A.40.6	The Nucleobase/Ascorbate Transporter (NAT) or Nucleobase:Cation Symporter-2 (NCS2) Family
+2.A.41	2.A.41	The Concentrative Nucleoside Transporter (CNT) Family
+2.A.41.1	2.A.41.1	The Concentrative Nucleoside Transporter (CNT) Family
+2.A.41.2	2.A.41.2	The Concentrative Nucleoside Transporter (CNT) Family
 2.A.41.2.10	2.A.41.2.10	The Concentrative Nucleoside Transporter (CNT) Family (substrate: nucleoside)
 2.A.41.2.9	2.A.41.2.9	The Concentrative Nucleoside Transporter (CNT) Family (substrate: pseudouridine)
 2.A.42.1.1	2.A.42.1.1	The Hydroxy/Aromatic Amino Acid Permease (HAAAP) Family (substrate: tyrosine)
@@ -617,8 +954,16 @@
 2.A.42.1.4	2.A.42.1.4	The Hydroxy/Aromatic Amino Acid Permease (HAAAP) Family (substrate: tyrosine)
 2.A.42.2.1	2.A.42.2.1	The Hydroxy/Aromatic Amino Acid Permease (HAAAP) Family (substrate: serine)
 2.A.42.2.2	2.A.42.2.2	The Hydroxy/Aromatic Amino Acid Permease (HAAAP) Family (substrates: serine, L-threonine)
+2.A.45.1	2.A.45.1	The Arsenite-Antimonite (ArsB) Efflux Family
+2.A.46.1	2.A.46.1	The Benzoate:H+ Symporter (BenE) Family
+2.A.47	2.A.47	The Divalent Anion:Na+ Symporter (DASS) Family
+2.A.47.1	2.A.47.1	The Divalent Anion:Na+ Symporter (DASS) Family
+2.A.47.2	2.A.47.2	The Divalent Anion:Na+ Symporter (DASS) Family
 2.A.47.3.2	2.A.47.3.2	The Divalent Anion:Na+ Symporter (DASS) Family (substrates: succinate(2-), citrate salt)
 2.A.47.3.3	2.A.47.3.3	The Divalent Anion:Na+ Symporter (DASS) Family (substrates: eliglustat tartrate, succinate(2-))
+2.A.48.1	2.A.48.1	The Reduced Folate Carrier (RFC) Family 
+2.A.48.2	2.A.48.2	The Reduced Folate Carrier (RFC) Family 
+2.A.49	2.A.49	The Chloride Carrier/Channel (ClC) Family
 2.A.49.1.1	2.A.49.1.1	The Chloride Carrier/Channel (ClC) Family (substrate: chloride)
 2.A.49.1.2	2.A.49.1.2	The Chloride Carrier/Channel (ClC) Family (substrate: chloride)
 2.A.49.1.3	2.A.49.1.3	The Chloride Carrier/Channel (ClC) Family (substrate: chloride)
@@ -635,7 +980,9 @@
 2.A.49.2.8	2.A.49.2.8	The Chloride Carrier/Channel (ClC) Family (substrates: hydron, chloride)
 2.A.49.3.3	2.A.49.3.3	The Chloride Carrier/Channel (ClC) Family (substrate: chloride)
 2.A.49.3.4	2.A.49.3.4	The Chloride Carrier/Channel (ClC) Family (substrates: iodide, hydron, chloride, bromide)
+2.A.5.1	2.A.5.1	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
 2.A.5.2.1	2.A.5.2.1	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family (substrate: manganese(2+))
+2.A.5.3	2.A.5.3	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
 2.A.5.4.1	2.A.5.4.1	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family (substrate: zinc(2+))
 2.A.5.4.10	2.A.5.4.10	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family (substrate: zinc(2+))
 2.A.5.4.11	2.A.5.4.11	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family (substrates: cadmium(2+), zinc(2+))
@@ -649,9 +996,18 @@
 2.A.5.4.4	2.A.5.4.4	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family (substrate: zinc(2+))
 2.A.5.4.5	2.A.5.4.5	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family (substrates: iron(2+), cadmium(2+), manganese(2+), zinc(2+))
 2.A.5.4.6	2.A.5.4.6	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family (substrate: zinc(2+))
+2.A.5.4.7	2.A.5.4.7	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
 2.A.5.4.8	2.A.5.4.8	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family (substrates: mercury(2+), metal cation, cadmium(2+), zinc(2+), lead(2+), copper(2+), hydrogencarbonate)
 2.A.5.4.9	2.A.5.4.9	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family (substrate: zinc(2+))
+2.A.5.5	2.A.5.5	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
 2.A.5.5.2	2.A.5.5.2	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family (substrate: zinc(2+))
+2.A.5.6	2.A.5.6	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
+2.A.5.7.1	2.A.5.7.1	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
+2.A.51.1	2.A.51.1	The Chromate Ion Transporter (CHR) Family
+2.A.52.1	2.A.52.1	The Ni2+-Co2+ Transporter (NiCoT) Family
+2.A.52.2	2.A.52.2	The Ni2+-Co2+ Transporter (NiCoT) Family
+2.A.53.1	2.A.53.1	The Sulfate Permease (SulP) Family
+2.A.53.2	2.A.53.2	The Sulfate Permease (SulP) Family
 2.A.53.2.1	2.A.53.2.1	The Sulfate Permease (SulP) Family (substrates: chloride, sulfate, hydroxide)
 2.A.53.2.10	2.A.53.2.10	The Sulfate Permease (SulP) Family (substrates: anion, sodium(1+))
 2.A.53.2.2	2.A.53.2.2	The Sulfate Permease (SulP) Family (substrates: sulfate, hydrogencarbonate)
@@ -662,17 +1018,29 @@
 2.A.53.2.7	2.A.53.2.7	The Sulfate Permease (SulP) Family (substrates: sulfate, formate, hydroxide, hydrogensulfate, oxalate(2-), chloride, hydrogencarbonate)
 2.A.53.2.8	2.A.53.2.8	The Sulfate Permease (SulP) Family (substrates: sulfate, formate, hydroxide, hydrogensulfate, oxalate(2-), chloride, hydrogencarbonate)
 2.A.53.2.9	2.A.53.2.9	The Sulfate Permease (SulP) Family (substrates: chloride, sulfate, oxalate(2-))
+2.A.53.3	2.A.53.3	The Sulfate Permease (SulP) Family
+2.A.55	2.A.55	The Metal Ion (Mn2+-iron) Transporter (Nramp) Family
+2.A.55.1	2.A.55.1	The Metal Ion (Mn2+-iron) Transporter (Nramp) Family
 2.A.55.2.1	2.A.55.2.1	The Metal Ion (Mn2+-iron) Transporter (Nramp) Family (substrates: copper(2+), manganese(2+), cadmium(2+), zinc(2+), iron(2+), lead(2+), nickel(2+))
 2.A.55.2.2	2.A.55.2.2	The Metal Ion (Mn2+-iron) Transporter (Nramp) Family (substrates: iron(2+), hydron, cadmium(2+), cobalt(2+))
 2.A.55.2.3	2.A.55.2.3	The Metal Ion (Mn2+-iron) Transporter (Nramp) Family (substrates: lutein, manganese(2+), alpha-carotene, lycopene, hydron, iron(2+), beta-carotene)
 2.A.55.2.6	2.A.55.2.6	The Metal Ion (Mn2+-iron) Transporter (Nramp) Family (substrate: manganese(2+))
+2.A.55.3	2.A.55.3	The Metal Ion (Mn2+-iron) Transporter (Nramp) Family
+2.A.56.1	2.A.56.1	The Tripartite ATP-independent Periplasmic Transporter (TRAP-T) Family
+2.A.57.1	2.A.57.1	The Equilibrative Nucleoside Transporter (ENT) Family
 2.A.57.1.5	2.A.57.1.5	The Equilibrative Nucleoside Transporter (ENT) Family (substrates: metformin, dopamine, N-methyl-4-phenylpyridinium, serotonin)
+2.A.58.1	2.A.58.1	The Phosphate:Na+ Symporter (PNaS) Family
+2.A.58.2	2.A.58.2	The Phosphate:Na+ Symporter (PNaS) Family
+2.A.59	2.A.59	The Arsenical Resistance-3 (ACR3) Family
+2.A.6.1	2.A.6.1	The Resistance-Nodulation-Cell Division (RND) Superfamily; Heavy-metal exporter(HME) subfamily
 2.A.6.1.2	2.A.6.1.2	The Resistance-Nodulation-Cell Division (RND) Superfamily; Heavy-metal exporter(HME) subfamily (substrates: cadmium(2+), zinc(2+), cobalt(2+))
 2.A.6.1.4	2.A.6.1.4	The Resistance-Nodulation-Cell Division (RND) Superfamily; Heavy-metal exporter(HME) subfamily (substrates: copper(1+), silver(1+))
+2.A.6.2	2.A.6.2	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily
 2.A.6.2.13	2.A.6.2.13	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily (substrates: ethidium, rhodamine 6G, crystal violet, sodium dodecyl sulfate, benzalkonium chloride, deoxycholate, 17beta-estradiol, progesterone, doxorubicin, erythromycin A, thiamine(1+) diphosphate)
 2.A.6.2.15	2.A.6.2.15	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily (substrates: carbenicillin, piperacillin, azithromycin, aztreonam, beta-lactam, chloramphenicol, ceftazidime, cefoperazone, tetracycline, fluoroquinolone antibiotic, macrolide, levofloxacin, erythromycin A, cefepime)
 2.A.6.2.16	2.A.6.2.16	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily (substrates: acrolein, fluoroquinolone antibiotic, chloramphenicol)
 2.A.6.2.17	2.A.6.2.17	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily (substrates: triclosan, chloramphenicol, tetracycline, fluoroquinolone antibiotic, macrolide, acrolein, erythromycin A)
+2.A.6.2.20	2.A.6.2.20	Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily
 2.A.6.2.21	2.A.6.2.21	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily (substrates: carbapenemcarboxylic acid, ofloxacin, imipenem, ciprofloxacin, beta-lactam, chloramphenicol, tetracycline, fluoroquinolone antibiotic, macrolide, amino cyclitol glycoside, erythromycin A)
 2.A.6.2.24	2.A.6.2.24	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily (substrates: gentamycin, tobramycin, clindamycin, streptomycin, neomycin, clarithromycin, spectinomycin, kanamycin, erythromycin A)
 2.A.6.2.25	2.A.6.2.25	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily (substrates: drug, chloramphenicol)
@@ -685,8 +1053,11 @@
 2.A.6.2.41	2.A.6.2.41	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily (substrate: ciprofloxacin)
 2.A.6.2.47	2.A.6.2.47	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily (substrate: drug)
 2.A.6.2.7	2.A.6.2.7	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily (substrates: sodium dodecyl sulfate, gentamycin, tobramycin, neomycin, L-cysteine, amikacin, deoxycholate, 17beta-estradiol, kanamycin, progesterone, zinc(2+), copper(2+), amino cyclitol glycoside)
+2.A.6.4	2.A.6.4	The Resistance-Nodulation-Cell Division (RND) Superfamily; Secretory accessory protein (SecDF) subfamily
 2.A.6.5.5	2.A.6.5.5	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-2 (G+ bacteria)(HAE2) subfamily (substrate: ferroheme b)
 2.A.6.5.6	2.A.6.5.6	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-2 (G+ bacteria)(HAE2) subfamily (substrates: mycolic acid, trehalose monomycolate)
+2.A.6.6	2.A.6.6	The Resistance-Nodulation-Cell Division (RND) Superfamily; Eukaryotic sterol transporter (EST) subfamily
+2.A.60.1	2.A.60.1	The Organo Anion Transporter (OAT) Family
 2.A.60.1.1	2.A.60.1.1	The Organo Anion Transporter (OAT) Family (substrates: toxin, beta-D-glucosiduronic acid, drug, rocuronium bromide, taurocholic acid, icosanoid, bilirubin, cholate, digoxin, bromosulfophthalein sodium, steroid hormone, peptide)
 2.A.60.1.10	2.A.60.1.10	The Organo Anion Transporter (OAT) Family (substrates: 3,3',5-triiodo-L-thyronine, troglitazone, cerivastatin, thyroxine)
 2.A.60.1.11	2.A.60.1.11	The Organo Anion Transporter (OAT) Family (substrates: ouabain, cardenolide glycoside, 3',5'-cyclic AMP, 3,3',5-triiodo-L-thyronine, methotrexate, thyroxine)
@@ -702,44 +1073,104 @@
 2.A.60.1.7	2.A.60.1.7	The Organo Anion Transporter (OAT) Family (substrates: bile acid, drug, icosanoid)
 2.A.60.1.8	2.A.60.1.8	The Organo Anion Transporter (OAT) Family (substrates: toxin, 7,9-dihydro-1H-purine-2,6,8(3H)-trione, anion, icosanoid, hormone, bile acid)
 2.A.60.1.9	2.A.60.1.9	The Organo Anion Transporter (OAT) Family (substrates: bile acid, icosanoid, thyroid hormone)
+2.A.61.1	2.A.61.1	The C4-dicarboxylate Uptake C (DcuC) Family
+2.A.63	2.A.63	The Monovalent Cation (K+ or Na+):Proton Antiporter-3 (CPA3) Family
+2.A.63.1	2.A.63.1	The Monovalent Cation (K+ or Na+):Proton Antiporter-3 (CPA3) Family
+2.A.63.2	2.A.63.2	The Monovalent Cation (K+ or Na+):Proton Antiporter-3 (CPA3) Family
+2.A.64	2.A.64	The Twin Arginine Targeting (Tat) Family
+2.A.66.1	2.A.66.1	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily
 2.A.66.1.13	2.A.66.1.13	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily (substrates: tigecycline, fluoroquinolone antibiotic)
+2.A.66.2	2.A.66.2	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily
 2.A.66.2.1	2.A.66.2.1	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily (substrate: lipopolysaccharide)
 2.A.66.2.11	2.A.66.2.11	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily (substrate: exopolysaccharide)
 2.A.66.2.14	2.A.66.2.14	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily (substrate: lipooligosaccharide)
 2.A.66.2.2	2.A.66.2.2	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily (substrate: polysaccharide)
+2.A.66.2.3	2.A.66.2.3	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily
 2.A.66.2.6	2.A.66.2.6	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily (substrate: teichuronic acid)
 2.A.66.2.7	2.A.66.2.7	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily (substrate: lipopolysaccharide)
 2.A.66.2.8	2.A.66.2.8	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily (substrate: exopolysaccharide)
+2.A.66.3	2.A.66.3	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily
+2.A.66.4	2.A.66.4	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily
+2.A.69.1	2.A.69.1	The Auxin Efflux Carrier (AEC) Family
 2.A.69.2.1	2.A.69.2.1	The Auxin Efflux Carrier (AEC) Family (substrate: auxin)
+2.A.7	2.A.7	The Drug/Metabolite Transporter (DMT) Superfamily
+2.A.7.1	2.A.7.1	The Drug/Metabolite Transporter (DMT) Superfamily; 4-TMS small multidrug resistance protein(SMR) subfamily
 2.A.7.1.11	2.A.7.1.11	The Drug/Metabolite Transporter (DMT) Superfamily; 4-TMS small multidrug resistance protein(SMR) subfamily (substrates: nifedipine, sodium dodecyl sulfate, ethidium bromide, novobiocin, benzalkonium chloride, deoxycholate, acridine orange free base, chloramphenicol, 3,6-diamino-10-methylacridinium chloride, erythromycin A, thiamine(1+) diphosphate)
 2.A.7.1.5	2.A.7.1.5	The Drug/Metabolite Transporter (DMT) Superfamily; 4-TMS small multidrug resistance protein(SMR) subfamily (substrates: crystal violet, ethidium bromide, streptomycin, 3,6-diaminoacridine, chloramphenicol, fosfomycin, tetracycline, pyronin Y)
 2.A.7.1.6	2.A.7.1.6	The Drug/Metabolite Transporter (DMT) Superfamily; 4-TMS small multidrug resistance protein(SMR) subfamily (substrates: 3,6-diamino-10-methylacridinium chloride, ethidium bromide, safranin O, pyronin Y)
 2.A.7.1.9	2.A.7.1.9	The Drug/Metabolite Transporter (DMT) Superfamily; 4-TMS small multidrug resistance protein(SMR) subfamily (substrates: sodium dodecyl sulfate, deoxycholate, spermidine)
+2.A.7.10	2.A.7.10	The Drug/Metabolite Transporter (DMT) Superfamily; UDP-N-acetylglucosamine:UMP antiporter(UAA) subfamily
 2.A.7.11.1	2.A.7.11.1	The Drug/Metabolite Transporter (DMT) Superfamily; UDP-galactose:UMP antiporter (UGA) subfamily (substrate: UDP-alpha-D-galactose)
+2.A.7.11.2	2.A.7.11.2	UDP-galactose:UMP antiporter (UGA) subfamily
+2.A.7.11.3	2.A.7.11.3	UDP-galactose:UMP antiporter (UGA) subfamily
 2.A.7.11.4	2.A.7.11.4	The Drug/Metabolite Transporter (DMT) Superfamily; UDP-galactose:UMP antiporter (UGA) subfamily (substrates: UDP-D-glucose, UDP-alpha-D-galactose)
+2.A.7.11.5	2.A.7.11.5	UDP-galactose:UMP antiporter (UGA) subfamily
+2.A.7.12	2.A.7.12	The Drug/Metabolite Transporter (DMT) Superfamily; CMP-sialate:CMP antiporter (CSA) subfamily
+2.A.7.13	2.A.7.13	The Drug/Metabolite Transporter (DMT) Superfamily; GDP-mannose:GMP antiporter (GMA) subfamily
+2.A.7.15	2.A.7.15	The Drug/Metabolite Transporter (DMT) Superfamily
+2.A.7.16	2.A.7.16	The Drug/Metabolite Transporter (DMT) Superfamily
+2.A.7.2	2.A.7.2	The Drug/Metabolite Transporter (DMT) Superfamily; 5-TMS bacterial/archaeal transporter (BAT) subfamily
+2.A.7.21	2.A.7.21	The Drug/Metabolite Transporter (DMT) Superfamily
+2.A.7.22	2.A.7.22	The Drug/Metabolite Transporter (DMT) Superfamily
 2.A.7.24.1	2.A.7.24.1	The Drug/Metabolite Transporter (DMT) Superfamily (substrate: thiamine(1+) diphosphate)
+2.A.7.24.2	2.A.7.24.2	The Drug/Metabolite Transporter (DMT) Superfamily
+2.A.7.24.3	2.A.7.24.3	The Drug/Metabolite Transporter (DMT) Superfamily
+2.A.7.24.4	2.A.7.24.4	The Drug/Metabolite Transporter (DMT) Superfamily
+2.A.7.24.6	2.A.7.24.6	The Drug/Metabolite Transporter (DMT) Superfamily
+2.A.7.24.7	2.A.7.24.7	The Drug/Metabolite Transporter (DMT) Superfamily
 2.A.7.24.8	2.A.7.24.8	The Drug/Metabolite Transporter (DMT) Superfamily (substrate: thiamine(1+))
 2.A.7.25.1	2.A.7.25.1	The Drug/Metabolite Transporter (DMT) Superfamily (substrate: magnesium(2+))
+2.A.7.26	2.A.7.26	The Drug/Metabolite Transporter (DMT) Superfamily
+2.A.7.3	2.A.7.3	The Drug/Metabolite Transporter (DMT) Superfamily; 10-TMS drug/metabolite exporter (DME) subfamily
 2.A.7.3.2	2.A.7.3.2	The Drug/Metabolite Transporter (DMT) Superfamily; 10-TMS drug/metabolite exporter (DME) subfamily (substrates: cysteine, asparagine, glutamine)
 2.A.7.3.3	2.A.7.3.3	The Drug/Metabolite Transporter (DMT) Superfamily; 10-TMS drug/metabolite exporter (DME) subfamily (substrate: indigoidine)
 2.A.7.3.6	2.A.7.3.6	The Drug/Metabolite Transporter (DMT) Superfamily; 10-TMS drug/metabolite exporter (DME) subfamily (substrates: L-threonine, homoserine)
 2.A.7.3.7	2.A.7.3.7	The Drug/Metabolite Transporter (DMT) Superfamily; 10-TMS drug/metabolite exporter (DME) subfamily (substrates: S-adenosyl-L-methionine, S-adenosyl-L-homocysteine)
+2.A.7.5	2.A.7.5	The Drug/Metabolite Transporter (DMT) Superfamily; Glucose/ribose porter (GRP) subfamily
+2.A.7.6	2.A.7.6	The Drug/Metabolite Transporter (DMT) Superfamily; L-Rhamnose transporter (RhaT) subfamily
+2.A.7.7	2.A.7.7	The Drug/Metabolite Transporter (DMT) Superfamily; Chloramphenicol-sensitivity protein (RarD) subfamily
+2.A.7.9	2.A.7.9	The Drug/Metabolite Transporter (DMT) Superfamily; Triose-phosphate transporter(TPT) subfamily
+2.A.72	2.A.72	The K+ Uptake Permease (KUP) Family
+2.A.73.1	2.A.73.1	The Short Chain Fatty Acid Uptake (AtoE) Family
+2.A.75.1	2.A.75.1	The L-Lysine Exporter (LysE) Family
+2.A.76	2.A.76	The Resistance to Homoserine/Threonine (RhtB) Family 
 2.A.76.1.1	2.A.76.1.1	The Resistance to Homoserine/Threonine (RhtB) Family  (substrates: homoserine lactone, homoserine)
 2.A.76.1.2	2.A.76.1.2	The Resistance to Homoserine/Threonine (RhtB) Family  (substrates: hydron, L-threonine)
 2.A.76.1.3	2.A.76.1.3	The Resistance to Homoserine/Threonine (RhtB) Family  (substrate: alpha-amino acid)
 2.A.76.1.4	2.A.76.1.4	The Resistance to Homoserine/Threonine (RhtB) Family  (substrates: cysteine, azaserine)
 2.A.76.1.5	2.A.76.1.5	The Resistance to Homoserine/Threonine (RhtB) Family  (substrate: leucine)
 2.A.76.1.6	2.A.76.1.6	The Resistance to Homoserine/Threonine (RhtB) Family  (substrate: alpha-amino acid)
+2.A.8	2.A.8	The Gluconate:H+ Symporter (GntP) Family
 2.A.8.1.12	2.A.8.1.12	The Gluconate:H+ Symporter (GntP) Family (substrate: histidine)
 2.A.8.1.2	2.A.8.1.2	The Gluconate:H+ Symporter (GntP) Family (substrates: hydron, D-gluconate, L-idonate)
 2.A.8.1.3	2.A.8.1.3	The Gluconate:H+ Symporter (GntP) Family (substrates: D-fructofuranuronic acid, hydron, D-gluconate)
 2.A.8.1.4	2.A.8.1.4	The Gluconate:H+ Symporter (GntP) Family (substrate: D-gluconate)
 2.A.8.1.5	2.A.8.1.5	The Gluconate:H+ Symporter (GntP) Family (substrate: serine)
 2.A.8.1.8	2.A.8.1.8	The Gluconate:H+ Symporter (GntP) Family (substrate: gluconate)
+2.A.80.1	2.A.80.1	The Tricarboxylate Transporter (TTT) Family
+2.A.81	2.A.81	The Aspartate:Alanine Exchanger (AAEx) Family
+2.A.82.1	2.A.82.1	The Organic Solute Transporter (OST) Family
 2.A.85.1.2	2.A.85.1.2	The Aromatic Acid Exporter (ArAE) Family (substrate: 4-hydroxybenzoate)
 2.A.85.6.1	2.A.85.6.1	The Aromatic Acid Exporter (ArAE) Family (substrates: puromycin, 3,6-diamino-10-methylacridinium chloride)
+2.A.86.1	2.A.86.1	The Autoinducer-2 Exporter (AI-2E) Family (Formerly the PerM Family, TC #9.B.22)
 2.A.86.1.7	2.A.86.1.7	The Autoinducer-2 Exporter (AI-2E) Family (Formerly the PerM Family, TC #9.B.22) (substrate: ferroheme b)
+2.A.88.1	2.A.88.1	The Vitamin Uptake Transporter (VUT or ECF) Family
+2.A.88.2	2.A.88.2	The Vitamin Uptake Transporter (VUT or ECF) Family
+2.A.88.3	2.A.88.3	The Vitamin Uptake Transporter (VUT or ECF) Family
+2.A.88.5	2.A.88.5	The Vitamin Uptake Transporter (VUT or ECF) Family
+2.A.9	2.A.9	The Membrane Protein Insertase (YidC/Alb3/Oxa1) Family
+2.A.9.1	2.A.9.1	The Membrane Protein Insertase (YidC/Alb3/Oxa1) Family
+2.A.9.4	2.A.9.4	The Membrane Protein Insertase (YidC/Alb3/Oxa1) Family
+2.A.92.1	2.A.92.1	The Choline Transporter-like (CTL) Family
 2.A.92.1.1	2.A.92.1.1	The Choline Transporter-like (CTL) Family (substrates: sodium(1+), choline)
+2.A.93.1	2.A.28.3	The Bile Acid:Na+ Symporter (BASS) Family
+2.A.95.1	2.A.95.1	The 6 TMS Neutral Amino Acid Transporter (NAAT) Family
+2.A.97.1	2.A.97.1	The Mitochondrial Inner Membrane K+/H+ and Ca2+/H+ Exchanger (LetM1) Family
+2.C.1.1	2.C.1.1	The TonB-ExbB-ExbD/TolA-TolQ-TolR Outer Membrane Receptor Energizers and Stabilizers (TonB/TolA) Family
+2.C.1.2	2.C.1.2	The TonB-ExbB-ExbD/TolA-TolQ-TolR Outer Membrane Receptor Energizers and Stabilizers (TonB/TolA) Family
+2.D.1.1	2.D.1.1	The PI4P/PS Counter Transporter (P/P-CT) Family
+3.A.1	3.A.1	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.1	3.A.1.1	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily
 3.A.1.1.1	3.A.1.1.1	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrates: maltose, maltooligosaccharide)
 3.A.1.1.11	3.A.1.1.11	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrate: oligogalacturonide)
 3.A.1.1.13	3.A.1.1.13	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrates: mannose, galactose, glucose)
@@ -749,11 +1180,13 @@
 3.A.1.1.17	3.A.1.1.17	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrates: alpha,alpha-trehalose, maltose, sucrose)
 3.A.1.1.18	3.A.1.1.18	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrates: N-acetyl-beta-D-glucosamine, N-acetyl-beta-D-glucosaminyl-(1->4)-N-acetyl-aldehydo-D-glucosamine)
 3.A.1.1.2	3.A.1.1.2	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrate: galactooligosaccharide)
+3.A.1.1.20	3.A.1.1.20	Carbohydrate importer-1 (CUT1) subfamily
 3.A.1.1.21	3.A.1.1.21	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrate: xylobiose)
 3.A.1.1.22	3.A.1.1.22	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrates: alpha,alpha-trehalose, maltose, maltotetraose, alpha-maltotriose)
 3.A.1.1.23	3.A.1.1.23	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrate: cellobiose)
 3.A.1.1.24	3.A.1.1.24	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrates: mannose, glucose)
 3.A.1.1.28	3.A.1.1.28	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrates: raffinose, stachyose)
+3.A.1.1.29	3.A.1.1.29	Carbohydrate importer-1 (CUT1) subfamily
 3.A.1.1.3	3.A.1.1.3	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrate: glycerol 1-phosphate)
 3.A.1.1.30	3.A.1.1.30	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrate: glucose)
 3.A.1.1.32	3.A.1.1.32	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrate: 1-O-(D-glucosyl)glycerol)
@@ -767,36 +1200,74 @@
 3.A.1.1.5	3.A.1.1.5	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrate: hexitol)
 3.A.1.1.8	3.A.1.1.8	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrates: alpha,alpha-trehalose, maltose, sucrose)
 3.A.1.1.9	3.A.1.1.9	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily (substrate: oligosaccharide)
+3.A.1.10	3.A.1.10	The ATP-binding Cassette (ABC) Superfamily; Ferric ion importer (FeT) subfamily
+3.A.1.101	3.A.1.101	The ATP-binding Cassette (ABC) Superfamily; Capsular polysaccharide exporter (CPSE) subfamily
+3.A.1.102	3.A.1.102	The ATP-binding Cassette (ABC) Superfamily; Lipooligosaccharide exporter (LOSE) subfamily
+3.A.1.103	3.A.1.103	The ATP-binding Cassette (ABC) Superfamily; Lipopolysaccharide exporter (LPSE) subfamily
+3.A.1.104	3.A.1.104	The ATP-binding Cassette (ABC) Superfamily; Teichoic acid exporter (TAE) subfamily
 3.A.1.105.2	3.A.1.105.2	The ATP-binding Cassette (ABC) Superfamily; Drug exporter-1 (DrugE1) subfamily (substrate: oleandomycin)
+3.A.1.106	3.A.1.106	The ATP-binding Cassette (ABC) Superfamily; Lipid exporter (LipidE) subfamily
 3.A.1.106.13	3.A.1.106.13	The ATP-binding Cassette (ABC) Superfamily; Lipid exporter (LipidE) subfamily (substrates: peptide)
 3.A.1.106.5	3.A.1.106.5	The ATP-binding Cassette (ABC) Superfamily; Lipid exporter (LipidE) subfamily (substrates: nifedipine, norfloxacin, 2'-(4-ethoxyphenyl)-5-(4-methylpiperazin-1-yl)-2,5'-bibenzimidazole, tetracycline)
 3.A.1.106.6	3.A.1.106.6	The ATP-binding Cassette (ABC) Superfamily; Lipid exporter (LipidE) subfamily (substrates: streptomycin, chloramphenicol, tetracycline, vancomycin, ampicillin)
 3.A.1.106.7	3.A.1.106.7	The ATP-binding Cassette (ABC) Superfamily; Lipid exporter (LipidE) subfamily (substrate: enterobactin)
+3.A.1.107	3.A.1.107	The ATP-binding Cassette (ABC) Superfamily; Heme exporter (HemeE) subfamily
+3.A.1.109	3.A.1.109	The ATP-binding Cassette (ABC) Superfamily; Protein-1 exporter (Prot1E) subfamily
 3.A.1.109.1	3.A.1.109.1	The ATP-binding Cassette (ABC) Superfamily; Protein-1 exporter (Prot1E) subfamily (substrate: protein)
+3.A.1.109.2	3.A.1.109.2	Protein-1 exporter (Prot1E) subfamily
 3.A.1.109.3	3.A.1.109.3	The ATP-binding Cassette (ABC) Superfamily; Protein-1 exporter (Prot1E) subfamily (substrate: 2'-(4-ethoxyphenyl)-5-(4-methylpiperazin-1-yl)-2,5'-bibenzimidazole)
 3.A.1.109.4	3.A.1.109.4	The ATP-binding Cassette (ABC) Superfamily; Protein-1 exporter (Prot1E) subfamily (substrates: ciprofloxacin, gentamycin, tobramycin)
+3.A.1.11	3.A.1.11	The ATP-binding Cassette (ABC) Superfamily; Polyamine/opine/phosphonate importer (POPT) subfamily
 3.A.1.11.1	3.A.1.11.1	The ATP-binding Cassette (ABC) Superfamily; Polyamine/opine/phosphonate importer (POPT) subfamily (substrates: putrescine, spermidine)
 3.A.1.11.2	3.A.1.11.2	The ATP-binding Cassette (ABC) Superfamily; Polyamine/opine/phosphonate importer (POPT) subfamily (substrate: putrescine)
 3.A.1.11.3	3.A.1.11.3	The ATP-binding Cassette (ABC) Superfamily; Polyamine/opine/phosphonate importer (POPT) subfamily (substrate: mannopine)
 3.A.1.11.5	3.A.1.11.5	The ATP-binding Cassette (ABC) Superfamily; Polyamine/opine/phosphonate importer (POPT) subfamily (substrate: (2-aminoethyl)phosphonic acid)
+3.A.1.110	3.A.1.110	The ATP-binding Cassette (ABC) Superfamily; Protein-2 exporter (Prot2E) subfamily
+3.A.1.110.10	3.A.1.110.10	Protein-2 exporter (Prot2E) subfamily
 3.A.1.110.3	3.A.1.110.3	The ATP-binding Cassette (ABC) Superfamily; Protein-2 exporter (Prot2E) subfamily (substrate: protein polypeptide chain)
+3.A.1.110.5	3.A.1.110.5	Protein-2 exporter (Prot2E) subfamily
+3.A.1.111.1	3.A.1.111.1	Peptide-1 exporter (Pep1E) subfamily
 3.A.1.111.2	3.A.1.111.2	The ATP-binding Cassette (ABC) Superfamily; Peptide-1 exporter (Pep1E) subfamily (substrate: Mycosubtilin)
 3.A.1.111.3	3.A.1.111.3	The ATP-binding Cassette (ABC) Superfamily; Peptide-1 exporter (Pep1E) subfamily (substrate: alphaprodine)
+3.A.1.112	3.A.1.112	The ATP-binding Cassette (ABC) Superfamily; Peptide-2 exporter (Pep2E) subfamily
+3.A.1.112.1	3.A.1.112.1	Peptide-2 exporter (Pep2E) subfamily
+3.A.1.113	3.A.1.113	The ATP-binding Cassette (ABC) Superfamily; Peptide-3 exporter (Pep3E) subfamily
 3.A.1.113.1	3.A.1.113.1	The ATP-binding Cassette (ABC) Superfamily; Peptide-3 exporter (Pep3E) subfamily (substrate: syringomycin)
 3.A.1.113.2	3.A.1.113.2	The ATP-binding Cassette (ABC) Superfamily; Peptide-3 exporter (Pep3E) subfamily (substrate: pyoverdine)
 3.A.1.113.3	3.A.1.113.3	The ATP-binding Cassette (ABC) Superfamily; Peptide-3 exporter (Pep3E) subfamily (substrate: microcin)
+3.A.1.115	3.A.1.115	The ATP-binding Cassette (ABC) Superfamily; Na+ exporter (NatE) subfamily
+3.A.1.117	3.A.1.117	The ATP-binding Cassette (ABC) Superfamily; Drug exporter-2 (DrugE2) subfamily
+3.A.1.12	3.A.1.12	The ATP-binding Cassette (ABC) Superfamily; Quaternary amine importer (QAT) subfamily
+3.A.1.120	3.A.1.120	The ATP-binding Cassette (ABC) Superfamily; Drug resistance ATPase-1 (Drug RA1) subfamily
+3.A.1.120.6	3.A.1.120.6	Drug resistance ATPase-1 (Drug RA1) subfamily
+3.A.1.121	3.A.1.121	The ATP-binding Cassette (ABC) Superfamily; Drug resistance ATPase-2 (Drug RA2) subfamily
 3.A.1.121.1	3.A.1.121.1	The ATP-binding Cassette (ABC) Superfamily; Drug resistance ATPase-2 (Drug RA2) subfamily (substrate: erythromycin A)
 3.A.1.121.2	3.A.1.121.2	The ATP-binding Cassette (ABC) Superfamily; Drug resistance ATPase-2 (Drug RA2) subfamily (substrate: pristinamycin)
 3.A.1.121.3	3.A.1.121.3	The ATP-binding Cassette (ABC) Superfamily; Drug resistance ATPase-2 (Drug RA2) subfamily (substrate: lincomycin)
 3.A.1.122.1	3.A.1.122.1	The ATP-binding Cassette (ABC) Superfamily (substrates: macrolide, drug, erythromycin A, L-cysteine)
 3.A.1.122.12	3.A.1.122.12	The ATP-binding Cassette (ABC) Superfamily (substrate: Arthrofactin)
+3.A.1.123	3.A.1.123	The ATP-binding Cassette (ABC) Superfamily
 3.A.1.124.1	3.A.1.124.1	The ATP-binding Cassette (ABC) Superfamily (substrate: alphaprodine)
 3.A.1.124.2	3.A.1.124.2	The ATP-binding Cassette (ABC) Superfamily (substrate: Mycosubtilin)
+3.A.1.124.3	3.A.1.124.3	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.124.4	3.A.1.124.4	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.124.5	3.A.1.124.5	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.124.6	3.A.1.124.6	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.125	3.A.1.125	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.129	3.A.1.129	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.13	3.A.1.13	The ATP-binding Cassette (ABC) Superfamily; Vitamin B12 importer (VB12T) subfamily
+3.A.1.130	3.A.1.130	The ATP-binding Cassette (ABC) Superfamily
 3.A.1.131.1	3.A.1.131.1	The ATP-binding Cassette (ABC) Superfamily (substrate: bacitracin)
 3.A.1.132.2	3.A.1.132.2	The ATP-binding Cassette (ABC) Superfamily (substrate: copper(2+))
 3.A.1.133.1	3.A.1.133.1	The ATP-binding Cassette (ABC) Superfamily (substrate: peptide)
+3.A.1.134	3.A.1.134	The ATP-binding Cassette (ABC) Superfamily
 3.A.1.134.3	3.A.1.134.3	The ATP-binding Cassette (ABC) Superfamily (substrate: bacitracin)
 3.A.1.134.6	3.A.1.134.6	The ATP-binding Cassette (ABC) Superfamily (substrates: drug, cationic peptidyl group)
+3.A.1.134.7	3.A.1.134.7	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.135	3.A.1.135	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.14	3.A.1.14	The ATP-binding Cassette (ABC) Superfamily; Iron chelate importer (FeCT) subfamily
+3.A.1.140	3.A.1.140	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.15	3.A.1.15	The ATP-binding Cassette (ABC) Superfamily; Manganese/zinc/iron chelate importer (MZT) subfamily
 3.A.1.15.1	3.A.1.15.1	The ATP-binding Cassette (ABC) Superfamily; Manganese/zinc/iron chelate importer (MZT) subfamily (substrate: manganese(2+))
 3.A.1.15.14	3.A.1.15.14	The ATP-binding Cassette (ABC) Superfamily; Manganese/zinc/iron chelate importer (MZT) subfamily (substrate: manganese(2+))
 3.A.1.15.15	3.A.1.15.15	The ATP-binding Cassette (ABC) Superfamily; Manganese/zinc/iron chelate importer (MZT) subfamily (substrate: manganese(2+))
@@ -806,15 +1277,20 @@
 3.A.1.15.6	3.A.1.15.6	The ATP-binding Cassette (ABC) Superfamily; Manganese/zinc/iron chelate importer (MZT) subfamily (substrates: iron(2+), copper(2+), zinc(2+))
 3.A.1.15.7	3.A.1.15.7	The ATP-binding Cassette (ABC) Superfamily; Manganese/zinc/iron chelate importer (MZT) subfamily (substrates: iron(2+), manganese(2+))
 3.A.1.15.9	3.A.1.15.9	The ATP-binding Cassette (ABC) Superfamily; Manganese/zinc/iron chelate importer (MZT) subfamily (substrates: iron(2+), manganese(2+))
+3.A.1.16	3.A.1.16	The ATP-binding Cassette (ABC) Superfamily; Nitrate/nitrite/cyanate importer (NitT) subfamily
 3.A.1.16.1	3.A.1.16.1	The ATP-binding Cassette (ABC) Superfamily; Nitrate/nitrite/cyanate importer (NitT) subfamily (substrates: nitrate, nitrite)
 3.A.1.16.2	3.A.1.16.2	The ATP-binding Cassette (ABC) Superfamily; Nitrate/nitrite/cyanate importer (NitT) subfamily (substrates: cyanate, nitrite)
 3.A.1.16.3	3.A.1.16.3	The ATP-binding Cassette (ABC) Superfamily; Nitrate/nitrite/cyanate importer (NitT) subfamily (substrate: hydrogencarbonate)
+3.A.1.17	3.A.1.17	The ATP-binding Cassette (ABC) Superfamily; Taurine importer (TauT) subfamily
 3.A.1.17.1	3.A.1.17.1	The ATP-binding Cassette (ABC) Superfamily; Taurine importer (TauT) subfamily (substrate: taurine)
 3.A.1.17.2	3.A.1.17.2	The ATP-binding Cassette (ABC) Superfamily; Taurine importer (TauT) subfamily (substrate: sulfonate)
 3.A.1.17.3	3.A.1.17.3	The ATP-binding Cassette (ABC) Superfamily; Taurine importer (TauT) subfamily (substrate: pyrimidine)
 3.A.1.17.4	3.A.1.17.4	The ATP-binding Cassette (ABC) Superfamily; Taurine importer (TauT) subfamily (substrate: taurine)
 3.A.1.17.5	3.A.1.17.5	The ATP-binding Cassette (ABC) Superfamily; Taurine importer (TauT) subfamily (substrate: phthalate(2-))
 3.A.1.17.6	3.A.1.17.6	The ATP-binding Cassette (ABC) Superfamily; Taurine importer (TauT) subfamily (substrate: pyrimidine)
+3.A.1.18	3.A.1.18	The ATP-binding Cassette (ABC) Superfamily; Putative cobalt importer (CoT) subfamily
+3.A.1.19	3.A.1.19	The ATP-binding Cassette (ABC) Superfamily; Thiamin importer (ThiT) subfamily
+3.A.1.2	3.A.1.2	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-2 (CUT2) subfamily
 3.A.1.2.1	3.A.1.2.1	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-2 (CUT2) subfamily (substrate: beta-D-ribopyranose)
 3.A.1.2.11	3.A.1.2.11	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-2 (CUT2) subfamily (substrate: erythritol)
 3.A.1.2.13	3.A.1.2.13	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-2 (CUT2) subfamily (substrate: autoinducer-2)
@@ -830,6 +1306,9 @@
 3.A.1.2.7	3.A.1.2.7	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-2 (CUT2) subfamily (substrates: beta-D-ribopyranose, mannose, fructose)
 3.A.1.2.8	3.A.1.2.8	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-2 (CUT2) subfamily (substrate: autoinducer-2)
 3.A.1.2.9	3.A.1.2.9	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-2 (CUT2) subfamily (substrate: alpha-L-rhamnopyranose)
+3.A.1.201	3.A.1.201	The ATP-binding Cassette (ABC) Superfamily; Multidrug resistance exporter (MDR) subfamily
+3.A.1.202	3.A.1.202	The ATP-binding Cassette (ABC) Superfamily; Cystic-fibrosis transmembrane-conductance exporter(CFTR) subfamily
+3.A.1.203	3.A.1.203	The ATP-binding Cassette (ABC) Superfamily; Peroxisomal fatty acyl-CoA transporter (FAT) subfamily
 3.A.1.203.1	3.A.1.203.1	The ATP-binding Cassette (ABC) Superfamily; Peroxisomal fatty acyl-CoA transporter (FAT) subfamily (substrates: bile acid, fatty acyl-CoA, branched-chain fatty acid, pristanic acid, long-chain fatty acid)
 3.A.1.203.11	3.A.1.203.11	The ATP-binding Cassette (ABC) Superfamily; Peroxisomal fatty acyl-CoA transporter (FAT) subfamily (substrate: fatty acid)
 3.A.1.203.2	3.A.1.203.2	The ATP-binding Cassette (ABC) Superfamily; Peroxisomal fatty acyl-CoA transporter (FAT) subfamily (substrate: long-chain fatty acyl-CoA)
@@ -837,19 +1316,36 @@
 3.A.1.203.4	3.A.1.203.4	The ATP-binding Cassette (ABC) Superfamily; Peroxisomal fatty acyl-CoA transporter (FAT) subfamily (substrate: bleomycin A2)
 3.A.1.203.6	3.A.1.203.6	The ATP-binding Cassette (ABC) Superfamily; Peroxisomal fatty acyl-CoA transporter (FAT) subfamily (substrates: long-chain fatty acid, oleic acid)
 3.A.1.203.7	3.A.1.203.7	The ATP-binding Cassette (ABC) Superfamily; Peroxisomal fatty acyl-CoA transporter (FAT) subfamily (substrate: fatty acid)
+3.A.1.204	3.A.1.204	The ATP-binding Cassette (ABC) Superfamily; Eye pigment precuror transporter (EPP) subfamily
+3.A.1.205	3.A.1.205	The ATP-binding Cassette (ABC) Superfamily; Pleiotropic drug resistance exporter (PDR) subfamily
+3.A.1.208	3.A.1.208	The ATP-binding Cassette (ABC) Superfamily; Conjugate transporter-2 (CT2) subfamily
 3.A.1.208.1	3.A.1.208.1	The ATP-binding Cassette (ABC) Superfamily; Conjugate transporter-2 (CT2) subfamily (substrates: leukotriene, glutathione, vincristine, drug, folic acid, methotrexate)
+3.A.1.208.10	3.A.1.208.10	Conjugate transporter-2 (CT2) subfamily
 3.A.1.208.13	3.A.1.208.13	The ATP-binding Cassette (ABC) Superfamily; Conjugate transporter-2 (CT2) subfamily (substrates: cyclic nucleotide, dinucleotide analogue, nucleoside analogue, coenzyme Q10, zalcitabine)
 3.A.1.208.15	3.A.1.208.15	The ATP-binding Cassette (ABC) Superfamily; Conjugate transporter-2 (CT2) subfamily (substrates: mercaptopurine, nucleoside analogue, dinucleotide analogue, 3',5'-cyclic GMP, glutathione conjugate, adefovir, 3',5'-cyclic AMP, folic acid, ganciclovir, methotrexate)
 3.A.1.208.2	3.A.1.208.2	The ATP-binding Cassette (ABC) Superfamily; Conjugate transporter-2 (CT2) subfamily (substrates: glutathione, taurolithocholic acid sulfate, taurocholic acid, alkaloid, mono(glucosyluronic acid)bilirubin, lopinavir, anthracycline, methotrexate)
+3.A.1.208.4	3.A.1.208.4	Conjugate transporter-2 (CT2) subfamily
 3.A.1.208.7	3.A.1.208.7	The ATP-binding Cassette (ABC) Superfamily; Conjugate transporter-2 (CT2) subfamily (substrates: prostaglandin E2, leukotriene, prostaglandin E1, cyclic nucleotide, dinucleotide analogue, bile acid, methotrexate)
 3.A.1.208.8	3.A.1.208.8	The ATP-binding Cassette (ABC) Superfamily; Conjugate transporter-2 (CT2) subfamily (substrates: glutathione, cobalamin, antimony(0), mercury(2+), leukotriene C4, glutathione conjugate, bis(2-chloroethyl) sulfide, folic acid, estrone 3-sulfate, mechlorethamine, arsenate(3-), arsenite(3-), methotrexate)
 3.A.1.208.9	3.A.1.208.9	The ATP-binding Cassette (ABC) Superfamily; Conjugate transporter-2 (CT2) subfamily (substrates: leukotriene C4, etoposide, bile acid, teniposide, 4'-demethylepipodophyllotoxin, methotrexate)
+3.A.1.209	3.A.1.209	The ATP-binding Cassette (ABC) Superfamily; Major histocompatibility complex transporter (TAP) subfamily
+3.A.1.21	3.A.1.21	The ATP-binding Cassette (ABC) Superfamily; Yersiniabactin Fe3+ importer (YbtPQ) subfamily
 3.A.1.21.2	3.A.1.21.2	The ATP-binding Cassette (ABC) Superfamily; Yersiniabactin Fe3+ importer (YbtPQ) subfamily (substrate: carboxymycobactin)
+3.A.1.210	3.A.1.210	The ATP-binding Cassette (ABC) Superfamily; Heavy-metal transporter (HMT) subfamily
+3.A.1.211	3.A.1.211	The ATP-binding Cassette (ABC) Superfamily; Cholesterol/phospholipid/retinal transporter (flippase)(CPR) subfamily
+3.A.1.22	3.A.1.22	The ATP-binding Cassette (ABC) Superfamily; Nickel importer(NiT) subfamily
+3.A.1.23	3.A.1.23	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.24	3.A.1.24	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.25	3.A.1.25	The ATP-binding Cassette (ABC) Superfamily
 3.A.1.25.1	3.A.1.25.1	The ATP-binding Cassette (ABC) Superfamily (substrate: biotin)
+3.A.1.27	3.A.1.27	The ATP-binding Cassette (ABC) Superfamily
 3.A.1.27.1	3.A.1.27.1	The ATP-binding Cassette (ABC) Superfamily (substrate: gamma-hexachlorocyclohexane)
 3.A.1.27.3	3.A.1.27.3	The ATP-binding Cassette (ABC) Superfamily (substrate: phospholipid)
 3.A.1.27.4	3.A.1.27.4	The ATP-binding Cassette (ABC) Superfamily (substrate: cholesterol)
 3.A.1.27.5	3.A.1.27.5	The ATP-binding Cassette (ABC) Superfamily (substrate: steroid)
+3.A.1.28	3.A.1.28	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.29	3.A.1.29	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.3	3.A.1.3	The ATP-binding Cassette (ABC) Superfamily; Polar amino acid importer (PAAT) subfamily
 3.A.1.3.1	3.A.1.3.1	The ATP-binding Cassette (ABC) Superfamily; Polar amino acid importer (PAAT) subfamily (substrates: lysine, ornithine, arginine, histidine)
 3.A.1.3.10	3.A.1.3.10	The ATP-binding Cassette (ABC) Superfamily; Polar amino acid importer (PAAT) subfamily (substrates: 7,8-diaminononanoic acid, cystine)
 3.A.1.3.11	3.A.1.3.11	The ATP-binding Cassette (ABC) Superfamily; Polar amino acid importer (PAAT) subfamily (substrates: ornithine, arginine)
@@ -868,10 +1364,17 @@
 3.A.1.3.7	3.A.1.3.7	The ATP-binding Cassette (ABC) Superfamily; Polar amino acid importer (PAAT) subfamily (substrates: aspartate(2-), asparagine, glutamate(2-), glutamine)
 3.A.1.3.8	3.A.1.3.8	The ATP-binding Cassette (ABC) Superfamily; Polar amino acid importer (PAAT) subfamily (substrate: alpha-amino acid)
 3.A.1.3.9	3.A.1.3.9	The ATP-binding Cassette (ABC) Superfamily; Polar amino acid importer (PAAT) subfamily (substrate: glutamate(2-))
+3.A.1.30	3.A.1.30	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.31	3.A.1.31	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.32	3.A.1.32	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.33	3.A.1.33	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.35	3.A.1.35	The ATP-binding Cassette (ABC) Superfamily
+3.A.1.4	3.A.1.4	The ATP-binding Cassette (ABC) Superfamily; Hydrophobic amino acid importer (HAAT) subfamily
 3.A.1.4.2	3.A.1.4.2	The ATP-binding Cassette (ABC) Superfamily; Hydrophobic amino acid importer (HAAT) subfamily (substrates: glycine, proline, serine, alanine, histidine, leucine)
 3.A.1.4.4	3.A.1.4.4	The ATP-binding Cassette (ABC) Superfamily; Hydrophobic amino acid importer (HAAT) subfamily (substrate: urea)
 3.A.1.4.5	3.A.1.4.5	The ATP-binding Cassette (ABC) Superfamily; Hydrophobic amino acid importer (HAAT) subfamily (substrates: urea, hydroxyurea, thiourea)
 3.A.1.4.6	3.A.1.4.6	The ATP-binding Cassette (ABC) Superfamily; Hydrophobic amino acid importer (HAAT) subfamily (substrate: alpha-amino acid zwitterion)
+3.A.1.5	3.A.1.5	The ATP-binding Cassette (ABC) Superfamily; Peptide/opine/nickel importer (PepT) subfamily
 3.A.1.5.1	3.A.1.5.1	The ATP-binding Cassette (ABC) Superfamily; Peptide/opine/nickel importer (PepT) subfamily (substrate: oligopeptide)
 3.A.1.5.11	3.A.1.5.11	The ATP-binding Cassette (ABC) Superfamily; Peptide/opine/nickel importer (PepT) subfamily (substrate: glutathione)
 3.A.1.5.18	3.A.1.5.18	The ATP-binding Cassette (ABC) Superfamily; Peptide/opine/nickel importer (PepT) subfamily (substrate: oligopeptide)
@@ -886,19 +1389,84 @@
 3.A.1.6.3	3.A.1.6.3	The ATP-binding Cassette (ABC) Superfamily; Sulfate importer (SulT) subfamily (substrate: sulfate)
 3.A.1.6.4	3.A.1.6.4	The ATP-binding Cassette (ABC) Superfamily; Sulfate importer (SulT) subfamily (substrate: vanadium oxoanion)
 3.A.1.6.5	3.A.1.6.5	The ATP-binding Cassette (ABC) Superfamily; Sulfate importer (SulT) subfamily (substrates: tungstate, molybdate)
+3.A.1.7	3.A.1.7	The ATP-binding Cassette (ABC) Superfamily; Phosphate importer (PhoT) subfamily
+3.A.1.8	3.A.1.8	The ATP-binding Cassette (ABC) Superfamily; Molybdate importer (MolT) subfamily
+3.A.1.9	3.A.1.9	The ATP-binding Cassette (ABC) Superfamily; Phosphonate importer (PhnT) subfamily
+3.A.10.1	3.A.10.1	The H+, Na+-translocating Pyrophosphatase (M+-PPase) Family
+3.A.11.1	3.A.11.1	The Bacterial Competence-related DNA Transformation Transporter (DNA-T) Family
+3.A.11.2	3.A.11.2	The Bacterial Competence-related DNA Transformation Transporter (DNA-T) Family
+3.A.12	3.A.12	The Septal DNA Translocator (S-DNA-T) Family
+3.A.14.1	3.A.14.1	The Fimbrilin/Protein Exporter (FPE) Family
+3.A.15	3.A.15	The Outer Membrane Protein Secreting Main Terminal Branch (MTB) Family
+3.A.15.2	3.A.15.2	The Outer Membrane Protein Secreting Main Terminal Branch (MTB) Family
+3.A.16.1	3.A.16.1	The Endoplasmic Reticular Retrotranslocon (ER-RT) Family
+3.A.19	3.A.19	The TMS Recognition/Insertion Complex (TRC) Family
+3.A.19.1	3.A.19.1	The TMS Recognition/Insertion Complex (TRC) Family
+3.A.2.1	3.A.2.1	The H+- or Na+-translocating F-type, V-type and A-type ATPase (F-ATPase) Superfamily
+3.A.2.2	3.A.2.2	The H+- or Na+-translocating F-type, V-type and A-type ATPase (F-ATPase) Superfamily
+3.A.2.3	3.A.2.3	The H+- or Na+-translocating F-type, V-type and A-type ATPase (F-ATPase) Superfamily
+3.A.20.1	3.A.20.1	The Peroxisomal Protein Importer (PPI) Family
 3.A.20.1.1	3.A.20.1.1	The Peroxisomal Protein Importer (PPI) Family (substrate: protein polypeptide chain)
+3.A.21	3.A.21	The C-terminal Tail-Anchored Membrane Protein Biogenesis/ Insertion Complex (TAMP-B) Family
+3.A.21.1	3.A.21.1	The C-terminal Tail-Anchored Membrane Protein Biogenesis/ Insertion Complex (TAMP-B) Family
 3.A.22.1.1	3.A.22.1.1	The Transcription-coupled TREX/TAP Nuclear mRNA Export Complex (TREX) Family (substrate: (ribonucleotide)n+m)
+3.A.23.1	3.A.23.1	The Type VI Symbiosis/Virulence Secretory System (T6SS) Family
+3.A.3	3.A.3	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.1	3.A.3.1	The P-type ATPase (P-ATPase) Superfamily
 3.A.3.1.2	3.A.3.1.2	The P-type ATPase (P-ATPase) Superfamily (substrates: oxonium, potassium(1+))
 3.A.3.1.4	3.A.3.1.4	The P-type ATPase (P-ATPase) Superfamily (substrates: ammonium, hydron, potassium(1+))
+3.A.3.10	3.A.3.10	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.2	3.A.3.2	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.23	3.A.3.23	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.24	3.A.3.24	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.3	3.A.3.3	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.32	3.A.3.32	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.4	3.A.3.4	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.5	3.A.3.5	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.5.20	3.A.3.5.20	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.6	3.A.3.6	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.7	3.A.3.7	The P-type ATPase (P-ATPase) Superfamily
+3.A.3.8	3.A.3.8	The P-type ATPase (P-ATPase) Superfamily
+3.A.4.1	3.A.4.1	The Arsenite-Antimonite (ArsAB) Efflux Family
+3.A.5	3.A.5	The General Secretory Pathway (Sec) Family
+3.A.5.1	3.A.5.1	The General Secretory Pathway (Sec) Family
 3.A.5.1.2	3.A.5.1.2	The General Secretory Pathway (Sec) Family (substrates: protein polypeptide chain, protein)
+3.A.5.10	3.A.5.10	The General Secretory Pathway (Sec) Family
+3.A.5.2	3.A.5.2	The General Secretory Pathway (Sec) Family
+3.A.5.4	3.A.5.4	The General Secretory Pathway (Sec) Family
+3.A.5.7	3.A.5.7	The General Secretory Pathway (Sec) Family
+3.A.5.8	3.A.5.8	The General Secretory Pathway (Sec) Family
+3.A.5.9	3.A.5.9	The General Secretory Pathway (Sec) Family
+3.A.6.1	3.A.6.1	The Type III (Virulence-related) Secretory Pathway (IIISP) Family
+3.A.6.2	3.A.6.2	The Type III (Virulence-related) Secretory Pathway (IIISP) Family
+3.A.6.3	3.A.6.3	The Type III (Virulence-related) Secretory Pathway (IIISP) Family
+3.A.7	3.A.7	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family
 3.A.7.10.1	3.A.7.10.1	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family (substrate: protein polypeptide chain)
 3.A.7.11.1	3.A.7.11.1	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family (substrate: deoxyribonucleic acid)
+3.A.7.12.1	3.A.7.12.1	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family
 3.A.7.3.1	3.A.7.3.1	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family (substrate: toxin)
+3.A.7.4	3.A.7.4	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family
 3.A.7.8.1	3.A.7.8.1	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family (substrate: deoxyribonucleic acid)
 3.A.7.9.1	3.A.7.9.1	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family (substrate: protein polypeptide chain)
+3.A.8.1	3.A.8.1	The Mitochondrial Protein Translocase (MPT) Family
 3.B.1.1.1	3.B.1.1.1	The Na+-transporting Carboxylic Acid Decarboxylase (NaT-DC) Family (substrate: sodium(1+))
 3.B.1.1.3	3.B.1.1.3	The Na+-transporting Carboxylic Acid Decarboxylase (NaT-DC) Family (substrate: sodium(1+))
 3.B.1.1.4	3.B.1.1.4	The Na+-transporting Carboxylic Acid Decarboxylase (NaT-DC) Family (substrate: sodium(1+))
+3.D.1	3.D.1	The H+ or Na+-translocating NADH Dehydrogenase (NDH) Family
+3.D.1.6	3.D.1.6	The H+ or Na+-translocating NADH Dehydrogenase (NDH) Family
+3.D.4.1	3.D.4.1	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.4.10	3.D.4.10	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.4.11	3.D.4.11	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.4.2	3.D.4.2	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.4.3	3.D.4.3	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.4.4	3.D.4.4	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.4.5	3.D.4.5	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.4.6	3.D.4.6	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.4.7	3.D.4.7	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.4.8	3.D.4.8	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.4.9	3.D.4.9	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
+3.D.7.1	3.D.7.1	The H2:Heterodisulfide Oxidoreductase (HHO) Family
+3.D.9.1	3.D.9.1	The H+-translocating F420H2 Dehydrogenase (F420H2DH) Family
 4.A.1.1.1	4.A.1.1.1	The PTS Glucose-Glucoside (Glc) Family (substrate: D-glucopyranose)
 4.A.1.1.10	4.A.1.1.10	The PTS Glucose-Glucoside (Glc) Family (substrates: turanose, isomaltose, 6-O-alpha-D-glucopyranosyl-D-fructofuranose, maltitol, trehalulose, glucose)
 4.A.1.1.11	4.A.1.1.11	The PTS Glucose-Glucoside (Glc) Family (substrates: maltose, alpha-maltotriose)
@@ -906,6 +1474,7 @@
 4.A.1.1.13	4.A.1.1.13	The PTS Glucose-Glucoside (Glc) Family (substrate: glucose)
 4.A.1.1.14	4.A.1.1.14	The PTS Glucose-Glucoside (Glc) Family (substrate: glucose)
 4.A.1.1.15	4.A.1.1.15	The PTS Glucose-Glucoside (Glc) Family (substrate: N-acetyl-beta-D-glucosamine)
+4.A.1.1.16	4.A.1.1.16	The PTS Glucose-Glucoside (Glc) Family
 4.A.1.1.2	4.A.1.1.2	The PTS Glucose-Glucoside (Glc) Family (substrate: N-acetyl-beta-D-glucosamine)
 4.A.1.1.3	4.A.1.1.3	The PTS Glucose-Glucoside (Glc) Family (substrate: maltose)
 4.A.1.1.4	4.A.1.1.4	The PTS Glucose-Glucoside (Glc) Family (substrates: alpha,alpha-trehalose, 6-O-alpha-D-glucopyranosyl-D-fructofuranose, turanose)
@@ -927,17 +1496,27 @@
 4.A.1.2.7	4.A.1.2.7	The PTS Glucose-Glucoside (Glc) Family (substrate: N-acetyl-alpha-D-muramic acid)
 4.A.1.2.8	4.A.1.2.8	The PTS Glucose-Glucoside (Glc) Family (substrate: alpha,alpha-trehalose)
 4.A.1.2.9	4.A.1.2.9	The PTS Glucose-Glucoside (Glc) Family (substrate: sucrose)
+4.A.2.1	4.A.2.1	The PTS Fructose-Mannitol (Fru) Family
 4.A.2.1.12	4.A.2.1.12	The PTS Fructose-Mannitol (Fru) Family (substrates: D-mannitol, D-glucitol)
 4.A.2.1.2	4.A.2.1.2	The PTS Fructose-Mannitol (Fru) Family (substrate: D-mannitol)
 4.A.2.1.24	4.A.2.1.24	The PTS Fructose-Mannitol (Fru) Family (substrate: D-mannitol)
 4.A.2.1.3	4.A.2.1.3	The PTS Fructose-Mannitol (Fru) Family (substrate: 2-(alpha-D-mannosyl)-D-glyceric acid)
 4.A.2.1.5	4.A.2.1.5	The PTS Fructose-Mannitol (Fru) Family (substrate: D-mannitol)
+4.A.3.1	4.A.3.1	The PTS Lactose-N,N'-Diacetylchitobiose-beta-glucoside (Lac) Family
+4.A.3.2	4.A.3.2	The PTS Lactose-N,N'-Diacetylchitobiose-beta-glucoside (Lac) Family
+4.A.4.1	4.A.4.1	The PTS Glucitol (Gut) Family
+4.A.5	4.A.5	The PTS Galactitol (Gat) Family
+4.A.5.1	4.A.5.1	The PTS Galactitol (Gat) Family
+4.A.6.1	4.A.6.1	The PTS Mannose-Fructose-Sorbose (Man) Family
 4.A.6.1.17	4.A.6.1.17	The PTS Mannose-Fructose-Sorbose (Man) Family (substrate: 2-amino-2-deoxy-D-gluconic acid)
 4.A.6.1.19	4.A.6.1.19	The PTS Mannose-Fructose-Sorbose (Man) Family (substrate: fructosyllysine(1+))
 4.A.6.1.2	4.A.6.1.2	The PTS Mannose-Fructose-Sorbose (Man) Family (substrate: fructose)
 4.A.6.1.3	4.A.6.1.3	The PTS Mannose-Fructose-Sorbose (Man) Family (substrate: sorbose)
 4.A.6.1.4	4.A.6.1.4	The PTS Mannose-Fructose-Sorbose (Man) Family (substrate: N-acetylgalactosamine)
 4.A.6.1.5	4.A.6.1.5	The PTS Mannose-Fructose-Sorbose (Man) Family (substrate: 2-amino-2-deoxy-D-galactopyranose)
+4.A.7.1	4.A.7.1	The PTS L-Ascorbate (L-Asc) Family
+4.B.1.1	4.B.1.1	The Nicotinamide Ribonucleoside (NR) Uptake Permease (PnuC) Family
+4.C.1.1	4.C.1.1	The Fatty Acid Transporter (FAT) Family
 4.C.1.1.1	4.C.1.1.1	The Fatty Acid Transporter (FAT) Family (substrate: fatty acid)
 4.C.1.1.5	4.C.1.1.5	The Fatty Acid Transporter (FAT) Family (substrate: fatty acid)
 4.C.1.1.8	4.C.1.1.8	The Fatty Acid Transporter (FAT) Family (substrate: fatty acid)
@@ -949,6 +1528,12 @@
 4.D.1.1.5	4.D.1.1.5	The Putative Vectorial Glycosyl Polymerization (VGP) Family (substrate: hyaluronate)
 4.D.1.1.7	4.D.1.1.7	The Putative Vectorial Glycosyl Polymerization (VGP) Family (substrate: alginic acid)
 4.D.1.1.9	4.D.1.1.9	The Putative Vectorial Glycosyl Polymerization (VGP) Family (substrate: alginic acid)
+4.D.1.3	4.D.1.3	The Putative Vectorial Glycosyl Polymerization (VGP) Family
+4.D.1.4	4.D.1.4	The Putative Vectorial Glycosyl Polymerization (VGP) Family
+4.D.2	4.D.2	The Glycosyl Transferase 2 (GT2) Family
+4.D.2.1.8	4.D.2.1.8	The Glycosyl Transferase 2 (GT2) Family
+4.D.2.1.9	4.D.2.1.9	The Glycosyl Transferase 2 (GT2) Family
+4.D.2.4.1	4.D.2.4.1	The Glycosyl Transferase 2 (GT2) Family
 4.D.3.1.1	4.D.3.1.1	The Glycan Glucosyl Transferase (OpgH) Family (substrate: D-glucosyl group)
 4.D.3.1.10	4.D.3.1.10	The Glycan Glucosyl Transferase (OpgH) Family (substrate: glycosyl group)
 4.D.3.1.2	4.D.3.1.2	The Glycan Glucosyl Transferase (OpgH) Family (substrate: (1->4)-beta-D-glucan)
@@ -957,609 +1542,6 @@
 4.D.3.1.6	4.D.3.1.6	The Glycan Glucosyl Transferase (OpgH) Family (substrate: (1->4)-beta-D-glucan)
 4.D.3.1.7	4.D.3.1.7	The Glycan Glucosyl Transferase (OpgH) Family (substrate: (1->4)-beta-D-glucan)
 4.D.3.1.8	4.D.3.1.8	The Glycan Glucosyl Transferase (OpgH) Family (substrate: glycosyl group)
-5.B.1.1.1	5.B.1.1.1	The Phagocyte (gp91phox) NADPH Oxidase Family (substrate: electron)
-5.B.1.1.2	5.B.1.1.2	The Phagocyte (gp91phox) NADPH Oxidase Family (substrate: electron)
-5.B.1.1.3	5.B.1.1.3	The Phagocyte (gp91phox) NADPH Oxidase Family (substrate: electron)
-5.B.1.1.4	5.B.1.1.4	The Phagocyte (gp91phox) NADPH Oxidase Family (substrate: electron)
-5.B.1.1.5	5.B.1.1.5	The Phagocyte (gp91phox) NADPH Oxidase Family (substrate: electron)
-5.B.6.1.1	5.B.6.1.1	The Transmembrane Epithelial Antigen Protein-3 Ferric Reductase (STEAP) Family (substrate: electron)
-5.B.6.1.2	5.B.6.1.2	The Transmembrane Epithelial Antigen Protein-3 Ferric Reductase (STEAP) Family (substrate: electron)
-5.B.6.1.3	5.B.6.1.3	The Transmembrane Epithelial Antigen Protein-3 Ferric Reductase (STEAP) Family (substrate: electron)
-5.B.6.1.4	5.B.6.1.4	The Transmembrane Epithelial Antigen Protein-3 Ferric Reductase (STEAP) Family (substrate: electron)
-8.A.5.1.1	8.A.5.1.1	The Voltage-gated K+ Channel beta-subunit (Kvbeta) Family (substrate: potassium(1+))
-9.A.40.1.2	9.A.40.1.2	The HlyC/CorC (HCC) Family (substrate: cobalt(2+))
-9.A.45.1.1	9.A.45.1.1	The Archaeocin/Halocin C8 (HalC8) Family (substrate: unknown molecule)
-9.A.45.1.2	9.A.45.1.2	The Archaeocin/Halocin C8 (HalC8) Family (substrate: unknown molecule)
-9.A.9.1.1	9.A.9.1.1	The Low Affinity Fe2+ Transporter (FeT) Family (substrates: iron(3+), iron(2+))
-9.B.13.1.1	9.B.13.1.1	The Putative Pore-forming Entericidin (ECN) Family (substrate: unknown molecule)
-9.B.39.1.3	9.B.39.1.3	The Long Chain Fatty Acid Translocase (lcFAT) Family (substrates: lipoprotein, phosphatidyl-L-serine, cholesteryl ester, phospholipid)
-9.B.39.1.4	9.B.39.1.4	The Long Chain Fatty Acid Translocase (lcFAT) Family (substrate: fatty acid)
-9.B.87.1.1	9.B.87.1.1	The Selenoprotein P Receptor (SelP-Receptor) Family (substrate: protein)
-1.A.1.1	1.A.1.1	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.10	1.A.1.10	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.13	1.A.1.13	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.14	1.A.1.14	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.16	1.A.1.16	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.17	1.A.1.17	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.2	1.A.1.2	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.20	1.A.1.20	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.23	1.A.1.23	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.24	1.A.1.24	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.25	1.A.1.25	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.4	1.A.1.4	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.5	1.A.1.5	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.6	1.A.1.6	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.7	1.A.1.7	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.8	1.A.1.8	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.1.9	1.A.1.9	The Voltage-gated Ion Channel (VIC) Superfamily
-1.A.10.1	1.A.10.1	The Glutamate-gated Ion Channel (GIC) Family of Neurotransmitter Receptors
-1.A.101.1	1.A.101.1	The Peroxisomal Pore-forming Pex11 (Pex11) Family
-1.A.106.1	1.A.106.1	The Calcium Load-activated Calcium Channel (CLAC) Family 
-1.A.107.1.3	1.A.107.1.3	The Pore-forming Globin (Globin) Family
-1.A.107.1.4	1.A.107.1.4	The Pore-forming Globin (Globin) Family
-1.A.107.1.5	1.A.107.1.5	The Pore-forming Globin (Globin) Family
-1.A.11	1.A.11	The Ammonium Transporter Channel (Amt) Family
-1.A.11.4	1.A.11.4	The Ammonium Transporter Channel (Amt) Family
-1.A.13.1	1.A.13.1	The Epithelial Chloride Channel (E-ClC) Family
-1.A.13.2.2	1.A.13.2.2	The Epithelial Chloride Channel (E-ClC) Family
-1.A.14.1.1	1.A.14.1.1	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
-1.A.14.1.2	1.A.14.1.2	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
-1.A.14.1.3	1.A.14.1.3	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
-1.A.14.1.4	1.A.14.1.4	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
-1.A.14.1.5	1.A.14.1.5	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
-1.A.14.2.1	1.A.14.2.1	The Calcium Transporter A (CaTA) (formerly the Testis-Enhanced Gene Transfer (TEGT) Family
-1.A.15.1	1.A.15.1	The Non-selective Cation Channel-2 (NSCC2) Family
-1.A.15.2	1.A.15.2	The Non-selective Cation Channel-2 (NSCC2) Family
-1.A.16.2	1.A.16.2	The Formate-Nitrite Transporter (FNT) Family
-1.A.16.3	1.A.16.3	The Formate-Nitrite Transporter (FNT) Family
-1.A.16.4	1.A.16.4	The Formate-Nitrite Transporter (FNT) Family
-1.A.17.1	1.A.17.1	The Calcium-dependent Chloride Channel (Ca-ClC) Family
-1.A.17.4	1.A.17.4	The Calcium-dependent Chloride Channel (Ca-ClC) Family
-1.A.2.1	1.A.2.1	The Inward Rectifier K+ Channel (IRK-C) Family
-1.A.2.2	1.A.2.2	The Inward Rectifier K+ Channel (IRK-C) Family
-1.A.22.1	1.A.22.1	The Large Conductance Mechanosensitive Ion Channel (MscL) Family
-1.A.23.2	1.A.23.2	The Small Conductance Mechanosensitive Ion Channel (MscS) Family
-1.A.23.3	1.A.23.3	The Small Conductance Mechanosensitive Ion Channel (MscS) Family
-1.A.23.4	1.A.23.4	The Small Conductance Mechanosensitive Ion Channel (MscS) Family
-1.A.24.2.1	1.A.24.2.1	The Gap Junction-forming Connexin (Connexin) Family
-1.A.25.1	1.A.25.1	The Gap Junction-forming Innexin (Innexin) Family
-1.A.25.3	1.A.25.3	The Gap Junction-forming Innexin (Innexin) Family
-1.A.26.1	1.A.26.1	The Mg2+ Transporter-E (MgtE) Family
-1.A.26.2	1.A.26.2	The Mg2+ Transporter-E (MgtE) Family
-1.A.26.3	1.A.26.3	The Mg2+ Transporter-E (MgtE) Family
-1.A.27.2	1.A.27.2	The Phospholemman (PLM) Family
-1.A.27.3	1.A.27.3	The Phospholemman (PLM) Family
-1.A.28.1	1.A.28.1	The Urea Transporter (UT) Family
-1.A.28.2	1.A.28.2	The Urea Transporter (UT) Family
-1.A.3.1	1.A.3.1	The Ryanodine-Inositol 1,4,5-triphosphate Receptor Ca2+ Channel (RIR-CaC) Family
-1.A.3.2	1.A.3.2	The Ryanodine-Inositol 1,4,5-triphosphate Receptor Ca2+ Channel (RIR-CaC) Family
-1.A.30.1	1.A.30.1	The H+- or Na+-translocating Bacterial Flagellar Motor/ExbBD Outer Membrane Transport Energizer (Mot/Exb) Superfamily; H+- or Na+-translocating bacterial flagellar motor (Mot) subfamily
-1.A.31	1.A.31	The Annexin (Annexin) Family
-1.A.33	1.A.33	The Cation Channel-forming Heat Shock Protein-70 (Hsp70) Family
-1.A.33.1	1.A.33.1	The Cation Channel-forming Heat Shock Protein-70 (Hsp70) Family
-1.A.34.1.1	1.A.34.1.1	The Bacillus Gap Junction-like Channel-forming Complex (GJ-CC) Family
-1.A.34.1.2	1.A.34.1.2	The Bacillus Gap Junction-like Channel-forming Complex (GJ-CC) Family
-1.A.35.1	1.A.35.1	The CorA Metal Ion Transporter (MIT) Family
-1.A.35.2	1.A.35.2	The CorA Metal Ion Transporter (MIT) Family
-1.A.35.3	1.A.35.3	The CorA Metal Ion Transporter (MIT) Family
-1.A.35.4	1.A.35.4	The CorA Metal Ion Transporter (MIT) Family
-1.A.35.5	1.A.35.5	The CorA Metal Ion Transporter (MIT) Family
-1.A.36.1	1.A.36.1	The Intracellular Chloride Channel (ICC) Family
-1.A.37.1	1.A.37.1	The CD20 Ca2+ Channel (CD20) Family
-1.A.37.2	1.A.37.2	The CD20 Ca2+ Channel (CD20) Family
-1.A.37.2.1	1.A.37.2.1	The CD20 Ca2+ Channel (CD20) Family
-1.A.37.3.1	1.A.37.3.1	The CD20 Ca2+ Channel (CD20) Family
-1.A.37.5	1.A.37.5	The CD20 Ca2+ Channel (CD20) Family
-1.A.37.6	1.A.37.6	The CD20 Ca2+ Channel (CD20) Family
-1.A.37.7	1.A.37.7	The CD20 Ca2+ Channel (CD20) Family
-1.A.38	1.A.38	The Golgi pH Regulator (GPHR) Family
-1.A.4.1	1.A.4.1	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family
-1.A.4.5.6	1.A.4.5.6	The Transient Receptor Potential Ca2+ Channel (TRP-CC) Family
-1.A.43.1	1.A.43.1	The Camphor Resistance or Fluoride Exporter (Fluc) Family
-1.A.43.2	1.A.43.2	The Camphor Resistance or Fluoride Exporter (Fluc) Family
-1.A.43.3	1.A.43.3	The Camphor Resistance or Fluoride Exporter (Fluc) Family
-1.A.46.1	1.A.46.1	The Anion Channel-forming Bestrophin (Bestrophin) Family
-1.A.46.2	1.A.46.2	The Anion Channel-forming Bestrophin (Bestrophin) Family
-1.A.47	1.A.47	The Nucleotide-sensitive Anion-selective Channel, ICln (ICln) Family
-1.A.5.1	1.A.5.1	The Polycystin Cation Channel (PCC) Family
-1.A.5.2	1.A.5.2	The Polycystin Cation Channel (PCC) Family
-1.A.56.1	1.A.56.1	The Copper Transporter (Ctr) Family
-1.A.6.2	1.A.6.2	The Epithelial Na+ Channel (ENaC) Family
-1.A.6.4	1.A.6.4	The Epithelial Na+ Channel (ENaC) Family
-1.A.6.5	1.A.6.5	The Epithelial Na+ Channel (ENaC) Family
-1.A.7.1	1.A.7.1	The ATP-gated P2X Receptor Cation Channel (P2X Receptor) Family
-1.A.7.3.1	1.A.7.3.1	The ATP-gated P2X Receptor Cation Channel (P2X Receptor) Family
-1.A.72.1	1.A.72.1	The Mer Superfamily
-1.A.72.4	1.A.72.4	The Mer Superfamily
-1.A.72.5	1.A.72.5	The Mer Superfamily
-1.A.75.1	1.A.75.1	The Mechanical Nociceptor, Piezo (Piezo) Family
-1.A.77.1	1.A.77.1	The Mg2+/Ca2+ Uniporter (MCU) Family
-1.A.8	1.A.8	The Major Intrinsic Protein (MIP) Family
-1.A.8.1	1.A.8.1	The Major Intrinsic Protein (MIP) Family
-1.A.8.10	1.A.8.10	The Major Intrinsic Protein (MIP) Family
-1.A.8.11	1.A.8.11	The Major Intrinsic Protein (MIP) Family
-1.A.8.12	1.A.8.12	The Major Intrinsic Protein (MIP) Family
-1.A.8.16	1.A.8.16	The Major Intrinsic Protein (MIP) Family
-1.A.8.2	1.A.8.2	The Major Intrinsic Protein (MIP) Family
-1.A.8.8	1.A.8.8	The Major Intrinsic Protein (MIP) Family
-1.A.8.9	1.A.8.9	The Major Intrinsic Protein (MIP) Family
-1.A.9.1	1.A.9.1	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
-1.A.9.11	1.A.9.11	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
-1.A.9.2	1.A.9.2	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
-1.A.9.3	1.A.9.3	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
-1.A.9.4	1.A.9.4	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
-1.A.9.5	1.A.9.5	The Neurotransmitter Receptor, Cys loop, Ligand-gated Ion Channel (LIC) Family
-1.B.1	1.B.1	The General Bacterial Porin (GBP) Family
-1.B.1.1	1.B.1.1	The General Bacterial Porin (GBP) Family
-1.B.1.5	1.B.1.5	The General Bacterial Porin (GBP) Family
-1.B.10	1.B.10	The Nucleoside-specific Channel-forming Outer Membrane Porin (Tsx) Family
-1.B.11.3	1.B.11.3	The Outer Membrane Fimbrial Usher Porin (FUP) Family
-1.B.12	1.B.12	The Autotransporter-1 (AT-1) Family
-1.B.12.1.1	1.B.12.1.1	The Autotransporter-1 (AT-1) Family
-1.B.12.1.2	1.B.12.1.2	The Autotransporter-1 (AT-1) Family
-1.B.12.1.3	1.B.12.1.3	The Autotransporter-1 (AT-1) Family
-1.B.12.2.1	1.B.12.2.1	The Autotransporter-1 (AT-1) Family
-1.B.12.2.2	1.B.12.2.2	The Autotransporter-1 (AT-1) Family
-1.B.12.2.3	1.B.12.2.3	The Autotransporter-1 (AT-1) Family
-1.B.12.3	1.B.12.3	The Autotransporter-1 (AT-1) Family
-1.B.12.4	1.B.12.4	The Autotransporter-1 (AT-1) Family
-1.B.12.5.3	1.B.12.5.3	The Autotransporter-1 (AT-1) Family
-1.B.12.5.5	1.B.12.5.5	The Autotransporter-1 (AT-1) Family
-1.B.12.6.1	1.B.12.6.1	The Autotransporter-1 (AT-1) Family
-1.B.12.8	1.B.12.8	The Autotransporter-1 (AT-1) Family
-1.B.12.8.2	1.B.12.8.2	The Autotransporter-1 (AT-1) Family
-1.B.12.9	1.B.12.9	The Autotransporter-1 (AT-1) Family
-1.B.13.1	1.B.13.1	The Alginate Export Porin (AEP) Family
-1.B.14	1.B.14	The Outer Membrane Receptor (OMR) Family
-1.B.14.1	1.B.14.1	The Outer Membrane Receptor (OMR) Family
-1.B.14.10	1.B.14.10	The Outer Membrane Receptor (OMR) Family
-1.B.14.2	1.B.14.2	The Outer Membrane Receptor (OMR) Family
-1.B.14.3	1.B.14.3	The Outer Membrane Receptor (OMR) Family
-1.B.14.5	1.B.14.5	The Outer Membrane Receptor (OMR) Family
-1.B.14.7.1	1.B.14.7.1	The Outer Membrane Receptor (OMR) Family
-1.B.17	1.B.17	The Outer Membrane Factor (OMF) Family
-1.B.17.1	1.B.17.1	The Outer Membrane Factor (OMF) Family
-1.B.18	1.B.18	The Outer Membrane Auxiliary (OMA) Protein Family
-1.B.18.1	1.B.18.1	The Outer Membrane Auxiliary (OMA) Protein Family
-1.B.19.1	1.B.19.1	The Glucose-selective OprB Porin (OprB) Family
-1.B.2.1	1.B.2.1	The Chlamydial Porin (CP) Family
-1.B.2.2	1.B.2.2	The Chlamydial Porin (CP) Family
-1.B.20	1.B.20	The Two-Partner Secretion (TPS) Family
-1.B.25	1.B.25	The Outer Membrane Porin (Opr) Family
-1.B.33	1.B.33	The Outer Membrane Protein Insertion Porin (Bam Complex) (OmpIP) Family
-1.B.33.1	1.B.33.1	The Outer Membrane Protein Insertion Porin (Bam Complex) (OmpIP) Family
-1.B.33.3	1.B.33.3	The Outer Membrane Protein Insertion Porin (Bam Complex) (OmpIP) Family
-1.B.35.1	1.B.35.1	The Oligogalacturonate-specific Porin (KdgM) Family
-1.B.35.2	1.B.35.2	The Oligogalacturonate-specific Porin (KdgM) Family
-1.B.4.2.1	1.B.4.2.1	The Brucella-Rhizobium Porin (BRP) Family
-1.B.40	1.B.40	The Autotransporter-2 (AT-2) Family
-1.B.40.2	1.B.40.2	The Autotransporter-2 (AT-2) Family
-1.B.42.1	1.B.42.1	The Outer Membrane Lipopolysaccharide Export Porin (LPS-EP) Family
-1.B.5.1	1.B.5.1	The Pseudomonas OprP Porin (POP) Family
-1.B.55.3	1.B.55.3	The Poly Acetyl Glucosamine Porin (PgaA) Family
-1.B.6	1.B.6	The OmpA-OmpF Porin (OOP) Family
-1.B.8.1	1.B.8.1	The Mitochondrial and Plastid Porin (MPP) Family
-1.B.9	1.B.9	The FadL Outer Membrane Protein (FadL) Family
-1.C.11	1.C.11	The Pore-forming RTX Toxin (RTX-toxin) Family
-1.C.14	1.C.14	The Cytohemolysin (CHL) Family
-1.C.20	1.C.20	The Nisin (Nisin) Family
-1.C.3.1	1.C.3.1	The alpha-Hemolysin Channel-forming Toxin (alphaHL) Family
-1.C.3.2	1.C.3.2	The alpha-Hemolysin Channel-forming Toxin (alphaHL) Family
-1.C.3.3	1.C.3.3	The alpha-Hemolysin Channel-forming Toxin (alphaHL) Family
-1.C.3.4	1.C.3.4	The alpha-Hemolysin Channel-forming Toxin (alphaHL) Family
-1.C.36.3	1.C.36.3	The Bacterial Type III-Target Cell Pore (IIITCP) Family
-1.C.36.5	1.C.36.5	The Bacterial Type III-Target Cell Pore (IIITCP) Family
-1.C.65.1	1.C.65.1	The Type III Secretion System Plant Host Cell Membrane Pore-forming HrpF (HrpF) Family
-1.C.72.1	1.C.72.1	The Pertussis Toxin (PTX) Family
-1.C.72.2	1.C.72.2	The Pertussis Toxin (PTX) Family
-1.C.72.3	1.C.72.3	The Pertussis Toxin (PTX) Family
-1.E.14.1	1.E.14.1	The CidA/LrgA Holin (CidA/LrgA Holin) Family
-1.E.14.2	1.E.14.2	The CidA/LrgA Holin (CidA/LrgA Holin) Family
-1.F.1.1	1.F.1.1	The Synaptosomal Vesicle Fusion Pore (SVF-Pore) Family
-1.I.1	1.I.1	The Nuclear Pore Complex (NPC) Family
-1.l.1	1.L.1	The Tunneling Nanotube (TNT) Family
-2.A.1	2.A.1	The Major Facilitator Superfamily (MFS)
-2.A.1.1	2.A.1.1	The Major Facilitator Superfamily (MFS); Sugar porter (SP) subfamily
-2.A.1.1.37	2.A.1.1.37	Sugar porter (SP) subfamily
-2.A.1.11	2.A.1.11	The Major Facilitator Superfamily (MFS); Oxalate:formate antiporter (OFA) subfamily
-2.A.1.12	2.A.1.12	The Major Facilitator Superfamily (MFS); Sialate,H+ symporter(SHS) subfamily
-2.A.1.13	2.A.1.13	The Major Facilitator Superfamily (MFS); Monocarboxylate porter (MCP) subfamily
-2.A.1.14	2.A.1.14	The Major Facilitator Superfamily (MFS); Anion,cation symporter (ACS) subfamily
-2.A.1.15	2.A.1.15	The Major Facilitator Superfamily (MFS); Aromatic acid,H+ symporter (AAHS) subfamily
-2.A.1.16	2.A.1.16	The Major Facilitator Superfamily (MFS); Siderophore-iron transporter (SIT) subfamily
-2.A.1.17	2.A.1.17	The Major Facilitator Superfamily (MFS); Cyanate porter(CP) subfamily
-2.A.1.19	2.A.1.19	The Major Facilitator Superfamily (MFS); Organic cation transporter(OCT) subfamily
-2.A.1.2	2.A.1.2	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily
-2.A.1.2.65	2.A.1.2.65	Drug:H+ antiporter-1 (12 transmembrane segments)(DHA1) subfamily
-2.A.1.20	2.A.1.20	The Major Facilitator Superfamily (MFS); Sugar efflux transporter (SET) subfamily
-2.A.1.22	2.A.1.22	The Major Facilitator Superfamily (MFS); Vesicular neurotransmitter transporter (VNT) subfamily
-2.A.1.24	2.A.1.24	The Major Facilitator Superfamily (MFS); Unknown major facilitator-1 (UMF1) subfamily
-2.A.1.25	2.A.1.25	The Major Facilitator Superfamily (MFS); Peptide-acetyl-CoA transporter(PAT) subfamily
-2.A.1.26	2.A.1.26	The Major Facilitator Superfamily (MFS); Unknown major facilitator-2 (UMF2) subfamily
-2.A.1.27	2.A.1.27	The Major Facilitator Superfamily (MFS); Phenylpropionate permease (PPP) subfamily
-2.A.1.28	2.A.1.28	The Major Facilitator Superfamily (MFS); Unknown major facilitator-3 (UMF3) subfamily
-2.A.1.28.2	2.A.1.28.2	Unknown major facilitator-3 (UMF3) subfamily
-2.A.1.3	2.A.1.3	The Major Facilitator Superfamily (MFS); Drug:H+ antiporter-2 (14 transmembane segments)(DHA2) subfamily
-2.A.1.31	2.A.1.31	The Major Facilitator Superfamily (MFS); Nickel resistance mediator (Nre) subfamily
-2.A.1.32	2.A.1.32	The Major Facilitator Superfamily (MFS); Putative aromatic compound/drug exporter (ACDE) subfamily
-2.A.1.33	2.A.1.33	The Major Facilitator Superfamily (MFS); Putative YqgE transporter (YqgE) subfamily
-2.A.1.35	2.A.1.35	The Major Facilitator Superfamily (MFS); Fosmidomycin resistance mediator (Fsr) subfamily
-2.A.1.36	2.A.1.36	The Major Facilitator Superfamily (MFS); Acriflavin sensitivity mediator(YnfM) subfamily
-2.A.1.38	2.A.1.38	The Major Facilitator Superfamily (MFS)
-2.A.1.4	2.A.1.4	The Major Facilitator Superfamily (MFS); Organic phosphate:Pi antiporter(OPA) subfamily
-2.A.1.40	2.A.1.40	The Major Facilitator Superfamily (MFS)
-2.A.1.41	2.A.1.41	The Major Facilitator Superfamily (MFS)
-2.A.1.42	2.A.1.42	The Major Facilitator Superfamily (MFS)
-2.A.1.44	2.A.1.44	The Major Facilitator Superfamily (MFS)
-2.A.1.5	2.A.1.5	The Major Facilitator Superfamily (MFS); Oligosaccharide,H+ symporter(OHS) subfamily
-2.A.1.50.3	2.A.1.50.3	The Major Facilitator Superfamily (MFS)
-2.A.1.6	2.A.1.6	The Major Facilitator Superfamily (MFS); Metabolite,H+ symporter (MHS) subfamily
-2.A.1.7	2.A.1.7	The Major Facilitator Superfamily (MFS); Fucose,H+ symporter(FHS) subfamily
-2.A.1.8	2.A.1.8	The Major Facilitator Superfamily (MFS); Nitrate/nitrite porter (NNP) subfamily
-2.A.1.9	2.A.1.9	The Major Facilitator Superfamily (MFS); Phosphate,H+ symporter (PHS) subfamily
-2.A.10.1	2.A.10.1	The 2-Keto-3-Deoxygluconate Transporter (KdgT) Family
-2.A.100.1	2.A.100.1	The Ferroportin (Fpn) Family
-2.A.103.1	2.A.103.1	The Bacterial Murein Precursor Exporter (MPE) Family
-2.A.105.1	2.A.105.1	The Mitochondrial Pyruvate Carrier (MPC) Family
-2.A.108.1	2.A.108.1	The Iron/Lead Transporter (ILT) Family
-2.A.108.2	2.A.108.2	The Iron/Lead Transporter (ILT) Family
-2.A.11	2.A.11	The Citrate-Mg2+:H+ (CitM) Citrate-Ca2+:H+ (CitH) Symporter (CitMHS) Family
-2.A.12	2.A.12	The ATP:ADP Antiporter (AAA) Family
-2.A.125.1.5	2.A.125.1.5	The Eukaryotic Riboflavin Transporter (E-RFT) Family
-2.A.13.1	2.A.13.1	The C4-Dicarboxylate Uptake (Dcu) Family
-2.A.14	2.A.14	The Lactate Permease (LctP) Family
-2.A.15	2.A.15	The Betaine/Carnitine/Choline Transporter (BCCT) Family
-2.A.15.2	2.A.15.2	The Betaine/Carnitine/Choline Transporter (BCCT) Family
-2.A.16	2.A.16	The Telurite-resistance/Dicarboxylate Transporter (TDT) Family
-2.A.16.1	2.A.16.1	The Telurite-resistance/Dicarboxylate Transporter (TDT) Family
-2.A.17	2.A.17	The Proton-dependent Oligopeptide Transporter (POT/PTR) Family
-2.A.17.3	2.A.17.3	The Proton-dependent Oligopeptide Transporter (POT/PTR) Family
-2.A.18.1	2.A.18.1	The Amino Acid/Auxin Permease (AAAP) Family
-2.A.18.5	2.A.18.5	The Amino Acid/Auxin Permease (AAAP) Family
-2.A.18.6	2.A.18.6	The Amino Acid/Auxin Permease (AAAP) Family
-2.A.18.8	2.A.18.8	The Amino Acid/Auxin Permease (AAAP) Family
-2.A.19	2.A.19	The Ca2+:Cation Antiporter (CaCA) Family
-2.A.19.3	2.A.19.3	The Ca2+:Cation Antiporter (CaCA) Family
-2.A.19.4	2.A.19.4	The Ca2+:Cation Antiporter (CaCA) Family
-2.A.19.5	2.A.19.5	The Ca2+:Cation Antiporter (CaCA) Family
-2.A.19.6	2.A.19.6	The Ca2+:Cation Antiporter (CaCA) Family
-2.A.2	2.A.2	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
-2.A.2.1	2.A.2.1	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
-2.A.2.2	2.A.2.2	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
-2.A.2.4	2.A.2.4	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
-2.A.2.5	2.A.2.5	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
-2.A.2.6	2.A.2.6	The Glycoside-Pentoside-Hexuronide (GPH):Cation Symporter Family
-2.A.20	2.A.20	The Inorganic Phosphate Transporter (PiT) Family
-2.A.20.1	2.A.20.1	The Inorganic Phosphate Transporter (PiT) Family
-2.A.20.2	2.A.20.2	The Inorganic Phosphate Transporter (PiT) Family
-2.A.20.4	2.A.20.4	The Inorganic Phosphate Transporter (PiT) Family
-2.A.21	2.A.21	The Solute:Sodium Symporter (SSS) Family
-2.A.21.1	2.A.21.1	The Solute:Sodium Symporter (SSS) Family
-2.A.21.2	2.A.21.2	The Solute:Sodium Symporter (SSS) Family
-2.A.21.3	2.A.21.3	The Solute:Sodium Symporter (SSS) Family
-2.A.21.3.1	2.A.21.3.1	The Solute:Sodium Symporter (SSS) Family
-2.A.21.6	2.A.21.6	The Solute:Sodium Symporter (SSS) Family
-2.A.21.7	2.A.21.7	The Solute:Sodium Symporter (SSS) Family
-2.A.21.8	2.A.21.8	The Solute:Sodium Symporter (SSS) Family
-2.A.22	2.A.22	The Neurotransmitter:Sodium Symporter (NSS) Family
-2.A.22.2	2.A.22.2	The Neurotransmitter:Sodium Symporter (NSS) Family
-2.A.22.3	2.A.22.3	The Neurotransmitter:Sodium Symporter (NSS) Family
-2.A.22.4	2.A.22.4	The Neurotransmitter:Sodium Symporter (NSS) Family
-2.A.22.5	2.A.22.5	The Neurotransmitter:Sodium Symporter (NSS) Family
-2.A.22.6	2.A.22.6	The Neurotransmitter:Sodium Symporter (NSS) Family
-2.A.23	2.A.23	The Dicarboxylate/Amino Acid:Cation (Na+ or H+) Symporter (DAACS) Family
-2.A.23.4	2.A.23.4	The Dicarboxylate/Amino Acid:Cation (Na+ or H+) Symporter (DAACS) Family
-2.A.24.2	2.A.24.2	The 2-Hydroxycarboxylate Transporter (2-HCT) Family
-2.A.25	2.A.25	The Alanine or Glycine:Cation Symporter (AGCS) Family
-2.A.26	2.A.26	The Branched Chain Amino Acid:Cation Symporter (LIVCS) Family
-2.A.27	2.A.27	The Glutamate:Na+ Symporter (ESS) Family
-2.A.28	2.A.28	The Bile Acid:Na+ Symporter (BASS) Family
-2.A.28.1	2.A.28.1	The Bile Acid:Na+ Symporter (BASS) Family
-2.A.29	2.A.29	The Mitochondrial Carrier (MC) Family 
-2.A.29.1	2.A.29.1	The Mitochondrial Carrier (MC) Family 
-2.A.29.15	2.A.29.15	The Mitochondrial Carrier (MC) Family 
-2.A.29.16	2.A.29.16	The Mitochondrial Carrier (MC) Family 
-2.A.29.18	2.A.29.18	The Mitochondrial Carrier (MC) Family 
-2.A.29.19	2.A.29.19	The Mitochondrial Carrier (MC) Family 
-2.A.29.23	2.A.29.23	The Mitochondrial Carrier (MC) Family 
-2.A.29.24	2.A.29.24	The Mitochondrial Carrier (MC) Family 
-2.A.29.25	2.A.29.25	The Mitochondrial Carrier (MC) Family 
-2.A.29.28	2.A.29.28	The Mitochondrial Carrier (MC) Family 
-2.A.29.30	2.A.29.30	The Mitochondrial Carrier (MC) Family 
-2.A.29.4	2.A.29.4	The Mitochondrial Carrier (MC) Family 
-2.A.29.5	2.A.29.5	The Mitochondrial Carrier (MC) Family 
-2.A.29.7	2.A.29.7	The Mitochondrial Carrier (MC) Family 
-2.A.29.8	2.A.29.8	The Mitochondrial Carrier (MC) Family 
-2.A.29.9	2.A.29.9	The Mitochondrial Carrier (MC) Family 
-2.A.3.1	2.A.3.1	The Amino Acid-Polyamine-Organocation (APC) Family; Amino acid transporter (AAT) subfamily
-2.A.3.10	2.A.3.10	The Amino Acid-Polyamine-Organocation (APC) Family; Yeast amino acid transporter (YAT) subfamily
-2.A.3.12	2.A.3.12	The Amino Acid-Polyamine-Organocation (APC) Family
-2.A.3.13	2.A.3.13	The Amino Acid-Polyamine-Organocation (APC) Family
-2.A.3.2	2.A.3.2	The Amino Acid-Polyamine-Organocation (APC) Family; Basic amino acid:polyamine antiporter (APA) subfamily
-2.A.3.3	2.A.3.3	The Amino Acid-Polyamine-Organocation (APC) Family; Cationic amino acid transporter (CAT) subfamily
-2.A.3.4.4	2.A.3.4.4	Amino acid/choline transporter (ACT) subfamily
-2.A.3.5	2.A.3.5	The Amino Acid-Polyamine-Organocation (APC) Family; Ethanolamine transporter(EAT) subfamily
-2.A.3.8	2.A.3.8	The Amino Acid-Polyamine-Organocation (APC) Family; l-amino acid transporter (LAT) subfamily
-2.A.3.9.4	2.A.3.9.4	Spore germination protein(SGP) subfamily
-2.A.30	2.A.30	The Cation-Chloride Cotransporter (CCC) Family
-2.A.30.1	2.A.30.1	The Cation-Chloride Cotransporter (CCC) Family
-2.A.30.2	2.A.30.2	The Cation-Chloride Cotransporter (CCC) Family
-2.A.30.3	2.A.30.3	The Cation-Chloride Cotransporter (CCC) Family
-2.A.30.4	2.A.30.4	The Cation-Chloride Cotransporter (CCC) Family
-2.A.30.5	2.A.30.5	The Cation-Chloride Cotransporter (CCC) Family
-2.A.31.1	2.A.31.1	The Anion Exchanger (AE) Family
-2.A.31.2	2.A.31.2	The Anion Exchanger (AE) Family
-2.A.31.4	2.A.31.4	The Anion Exchanger (AE) Family
-2.A.33.1	2.A.33.1	The NhaA Na+:H+ Antiporter (NhaA) Family
-2.A.34.1	2.A.34.1	The NhaB Na+:H+ Antiporter (NhaB) Family
-2.A.35	2.A.35	The NhaC Na+:H+ Antiporter (NhaC) Family
-2.A.36	2.A.36	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family
-2.A.36.1	2.A.36.1	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family
-2.A.36.1.10	2.A.36.1.10	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family
-2.A.36.6	2.A.36.6	The Monovalent Cation:Proton Antiporter-1 (CPA1) Family
-2.A.37	2.A.37	The Monovalent Cation:Proton Antiporter-2 (CPA2) Family
-2.A.38.1	2.A.38.1	The K+ Transporter (Trk) Family
-2.A.38.4	2.A.38.4	The K+ Transporter (Trk) Family
-2.A.39	2.A.39	The Nucleobase:Cation Symporter-1 (NCS1) Family
-2.A.39.1	2.A.39.1	The Nucleobase:Cation Symporter-1 (NCS1) Family
-2.A.4	2.A.4	The Cation Diffusion Facilitator (CDF) Family
-2.A.4.1	2.A.4.1	The Cation Diffusion Facilitator (CDF) Family
-2.A.4.2	2.A.4.2	The Cation Diffusion Facilitator (CDF) Family
-2.A.4.3	2.A.4.3	The Cation Diffusion Facilitator (CDF) Family
-2.A.4.6	2.A.4.6	The Cation Diffusion Facilitator (CDF) Family
-2.A.40	2.A.40	The Nucleobase/Ascorbate Transporter (NAT) or Nucleobase:Cation Symporter-2 (NCS2) Family
-2.A.40.6	2.A.40.6	The Nucleobase/Ascorbate Transporter (NAT) or Nucleobase:Cation Symporter-2 (NCS2) Family
-2.A.41	2.A.41	The Concentrative Nucleoside Transporter (CNT) Family
-2.A.41.1	2.A.41.1	The Concentrative Nucleoside Transporter (CNT) Family
-2.A.41.2	2.A.41.2	The Concentrative Nucleoside Transporter (CNT) Family
-2.A.45.1	2.A.45.1	The Arsenite-Antimonite (ArsB) Efflux Family
-2.A.46.1	2.A.46.1	The Benzoate:H+ Symporter (BenE) Family
-2.A.47	2.A.47	The Divalent Anion:Na+ Symporter (DASS) Family
-2.A.47.1	2.A.47.1	The Divalent Anion:Na+ Symporter (DASS) Family
-2.A.47.2	2.A.47.2	The Divalent Anion:Na+ Symporter (DASS) Family
-2.A.48.1	2.A.48.1	The Reduced Folate Carrier (RFC) Family 
-2.A.48.2	2.A.48.2	The Reduced Folate Carrier (RFC) Family 
-2.A.49	2.A.49	The Chloride Carrier/Channel (ClC) Family
-2.A.5.1	2.A.5.1	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
-2.A.5.3	2.A.5.3	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
-2.A.5.4.7	2.A.5.4.7	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
-2.A.5.5	2.A.5.5	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
-2.A.5.6	2.A.5.6	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
-2.A.5.7.1	2.A.5.7.1	The Zinc (Zn2+)-Iron (Fe2+) Permease (ZIP) Family
-2.A.51.1	2.A.51.1	The Chromate Ion Transporter (CHR) Family
-2.A.52.1	2.A.52.1	The Ni2+-Co2+ Transporter (NiCoT) Family
-2.A.52.2	2.A.52.2	The Ni2+-Co2+ Transporter (NiCoT) Family
-2.A.53.1	2.A.53.1	The Sulfate Permease (SulP) Family
-2.A.53.2	2.A.53.2	The Sulfate Permease (SulP) Family
-2.A.53.3	2.A.53.3	The Sulfate Permease (SulP) Family
-2.A.55	2.A.55	The Metal Ion (Mn2+-iron) Transporter (Nramp) Family
-2.A.55.1	2.A.55.1	The Metal Ion (Mn2+-iron) Transporter (Nramp) Family
-2.A.55.3	2.A.55.3	The Metal Ion (Mn2+-iron) Transporter (Nramp) Family
-2.A.56.1	2.A.56.1	The Tripartite ATP-independent Periplasmic Transporter (TRAP-T) Family
-2.A.57.1	2.A.57.1	The Equilibrative Nucleoside Transporter (ENT) Family
-2.A.58.1	2.A.58.1	The Phosphate:Na+ Symporter (PNaS) Family
-2.A.58.2	2.A.58.2	The Phosphate:Na+ Symporter (PNaS) Family
-2.A.59	2.A.59	The Arsenical Resistance-3 (ACR3) Family
-2.A.6.1	2.A.6.1	The Resistance-Nodulation-Cell Division (RND) Superfamily; Heavy-metal exporter(HME) subfamily
-2.A.6.2	2.A.6.2	The Resistance-Nodulation-Cell Division (RND) Superfamily; Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily
-2.A.6.2.20	2.A.6.2.20	Hydrophobic/amphiphilic exporter-1 (mainly G- bacteria)(HAE1) subfamily
-2.A.6.4	2.A.6.4	The Resistance-Nodulation-Cell Division (RND) Superfamily; Secretory accessory protein (SecDF) subfamily
-2.A.6.6	2.A.6.6	The Resistance-Nodulation-Cell Division (RND) Superfamily; Eukaryotic sterol transporter (EST) subfamily
-2.A.60.1	2.A.60.1	The Organo Anion Transporter (OAT) Family
-2.A.61.1	2.A.61.1	The C4-dicarboxylate Uptake C (DcuC) Family
-2.A.63	2.A.63	The Monovalent Cation (K+ or Na+):Proton Antiporter-3 (CPA3) Family
-2.A.63.1	2.A.63.1	The Monovalent Cation (K+ or Na+):Proton Antiporter-3 (CPA3) Family
-2.A.63.2	2.A.63.2	The Monovalent Cation (K+ or Na+):Proton Antiporter-3 (CPA3) Family
-2.A.64	2.A.64	The Twin Arginine Targeting (Tat) Family
-2.A.66.1	2.A.66.1	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily
-2.A.66.2	2.A.66.2	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily
-2.A.66.2.3	2.A.66.2.3	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily
-2.A.66.3	2.A.66.3	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily
-2.A.66.4	2.A.66.4	The Multidrug/Oligosaccharidyl-lipid/Polysaccharide (MOP) Flippase Superfamily
-2.A.69.1	2.A.69.1	The Auxin Efflux Carrier (AEC) Family
-2.A.7	2.A.7	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.1	2.A.7.1	The Drug/Metabolite Transporter (DMT) Superfamily; 4-TMS small multidrug resistance protein(SMR) subfamily
-2.A.7.10	2.A.7.10	The Drug/Metabolite Transporter (DMT) Superfamily; UDP-N-acetylglucosamine:UMP antiporter(UAA) subfamily
-2.A.7.11.2	2.A.7.11.2	UDP-galactose:UMP antiporter (UGA) subfamily
-2.A.7.11.3	2.A.7.11.3	UDP-galactose:UMP antiporter (UGA) subfamily
-2.A.7.11.5	2.A.7.11.5	UDP-galactose:UMP antiporter (UGA) subfamily
-2.A.7.12	2.A.7.12	The Drug/Metabolite Transporter (DMT) Superfamily; CMP-sialate:CMP antiporter (CSA) subfamily
-2.A.7.13	2.A.7.13	The Drug/Metabolite Transporter (DMT) Superfamily; GDP-mannose:GMP antiporter (GMA) subfamily
-2.A.7.15	2.A.7.15	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.16	2.A.7.16	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.2	2.A.7.2	The Drug/Metabolite Transporter (DMT) Superfamily; 5-TMS bacterial/archaeal transporter (BAT) subfamily
-2.A.7.21	2.A.7.21	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.22	2.A.7.22	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.24.2	2.A.7.24.2	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.24.3	2.A.7.24.3	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.24.4	2.A.7.24.4	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.24.6	2.A.7.24.6	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.24.7	2.A.7.24.7	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.26	2.A.7.26	The Drug/Metabolite Transporter (DMT) Superfamily
-2.A.7.3	2.A.7.3	The Drug/Metabolite Transporter (DMT) Superfamily; 10-TMS drug/metabolite exporter (DME) subfamily
-2.A.7.5	2.A.7.5	The Drug/Metabolite Transporter (DMT) Superfamily; Glucose/ribose porter (GRP) subfamily
-2.A.7.6	2.A.7.6	The Drug/Metabolite Transporter (DMT) Superfamily; L-Rhamnose transporter (RhaT) subfamily
-2.A.7.7	2.A.7.7	The Drug/Metabolite Transporter (DMT) Superfamily; Chloramphenicol-sensitivity protein (RarD) subfamily
-2.A.7.9	2.A.7.9	The Drug/Metabolite Transporter (DMT) Superfamily; Triose-phosphate transporter(TPT) subfamily
-2.A.72	2.A.72	The K+ Uptake Permease (KUP) Family
-2.A.73.1	2.A.73.1	The Short Chain Fatty Acid Uptake (AtoE) Family
-2.A.75.1	2.A.75.1	The L-Lysine Exporter (LysE) Family
-2.A.76	2.A.76	The Resistance to Homoserine/Threonine (RhtB) Family 
-2.A.8	2.A.8	The Gluconate:H+ Symporter (GntP) Family
-2.A.80.1	2.A.80.1	The Tricarboxylate Transporter (TTT) Family
-2.A.81	2.A.81	The Aspartate:Alanine Exchanger (AAEx) Family
-2.A.82.1	2.A.82.1	The Organic Solute Transporter (OST) Family
-2.A.86.1	2.A.86.1	The Autoinducer-2 Exporter (AI-2E) Family (Formerly the PerM Family, TC #9.B.22)
-2.A.88.1	2.A.88.1	The Vitamin Uptake Transporter (VUT or ECF) Family
-2.A.88.2	2.A.88.2	The Vitamin Uptake Transporter (VUT or ECF) Family
-2.A.88.3	2.A.88.3	The Vitamin Uptake Transporter (VUT or ECF) Family
-2.A.88.5	2.A.88.5	The Vitamin Uptake Transporter (VUT or ECF) Family
-2.A.9	2.A.9	The Membrane Protein Insertase (YidC/Alb3/Oxa1) Family
-2.A.9.1	2.A.9.1	The Membrane Protein Insertase (YidC/Alb3/Oxa1) Family
-2.A.9.4	2.A.9.4	The Membrane Protein Insertase (YidC/Alb3/Oxa1) Family
-2.A.92.1	2.A.92.1	The Choline Transporter-like (CTL) Family
-2.A.93.1	2.A.28.3	The Bile Acid:Na+ Symporter (BASS) Family
-2.A.95.1	2.A.95.1	The 6 TMS Neutral Amino Acid Transporter (NAAT) Family
-2.A.97.1	2.A.97.1	The Mitochondrial Inner Membrane K+/H+ and Ca2+/H+ Exchanger (LetM1) Family
-2.C.1.1	2.C.1.1	The TonB-ExbB-ExbD/TolA-TolQ-TolR Outer Membrane Receptor Energizers and Stabilizers (TonB/TolA) Family
-2.C.1.2	2.C.1.2	The TonB-ExbB-ExbD/TolA-TolQ-TolR Outer Membrane Receptor Energizers and Stabilizers (TonB/TolA) Family
-2.D.1.1	2.D.1.1	The PI4P/PS Counter Transporter (P/P-CT) Family
-3.A.1	3.A.1	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.1	3.A.1.1	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-1 (CUT1) subfamily
-3.A.1.1.20	3.A.1.1.20	Carbohydrate importer-1 (CUT1) subfamily
-3.A.1.1.29	3.A.1.1.29	Carbohydrate importer-1 (CUT1) subfamily
-3.A.1.10	3.A.1.10	The ATP-binding Cassette (ABC) Superfamily; Ferric ion importer (FeT) subfamily
-3.A.1.101	3.A.1.101	The ATP-binding Cassette (ABC) Superfamily; Capsular polysaccharide exporter (CPSE) subfamily
-3.A.1.102	3.A.1.102	The ATP-binding Cassette (ABC) Superfamily; Lipooligosaccharide exporter (LOSE) subfamily
-3.A.1.103	3.A.1.103	The ATP-binding Cassette (ABC) Superfamily; Lipopolysaccharide exporter (LPSE) subfamily
-3.A.1.104	3.A.1.104	The ATP-binding Cassette (ABC) Superfamily; Teichoic acid exporter (TAE) subfamily
-3.A.1.106	3.A.1.106	The ATP-binding Cassette (ABC) Superfamily; Lipid exporter (LipidE) subfamily
-3.A.1.107	3.A.1.107	The ATP-binding Cassette (ABC) Superfamily; Heme exporter (HemeE) subfamily
-3.A.1.109	3.A.1.109	The ATP-binding Cassette (ABC) Superfamily; Protein-1 exporter (Prot1E) subfamily
-3.A.1.109.2	3.A.1.109.2	Protein-1 exporter (Prot1E) subfamily
-3.A.1.11	3.A.1.11	The ATP-binding Cassette (ABC) Superfamily; Polyamine/opine/phosphonate importer (POPT) subfamily
-3.A.1.110	3.A.1.110	The ATP-binding Cassette (ABC) Superfamily; Protein-2 exporter (Prot2E) subfamily
-3.A.1.110.10	3.A.1.110.10	Protein-2 exporter (Prot2E) subfamily
-3.A.1.110.5	3.A.1.110.5	Protein-2 exporter (Prot2E) subfamily
-3.A.1.111.1	3.A.1.111.1	Peptide-1 exporter (Pep1E) subfamily
-3.A.1.112	3.A.1.112	The ATP-binding Cassette (ABC) Superfamily; Peptide-2 exporter (Pep2E) subfamily
-3.A.1.112.1	3.A.1.112.1	Peptide-2 exporter (Pep2E) subfamily
-3.A.1.113	3.A.1.113	The ATP-binding Cassette (ABC) Superfamily; Peptide-3 exporter (Pep3E) subfamily
-3.A.1.115	3.A.1.115	The ATP-binding Cassette (ABC) Superfamily; Na+ exporter (NatE) subfamily
-3.A.1.117	3.A.1.117	The ATP-binding Cassette (ABC) Superfamily; Drug exporter-2 (DrugE2) subfamily
-3.A.1.12	3.A.1.12	The ATP-binding Cassette (ABC) Superfamily; Quaternary amine importer (QAT) subfamily
-3.A.1.120	3.A.1.120	The ATP-binding Cassette (ABC) Superfamily; Drug resistance ATPase-1 (Drug RA1) subfamily
-3.A.1.120.6	3.A.1.120.6	Drug resistance ATPase-1 (Drug RA1) subfamily
-3.A.1.121	3.A.1.121	The ATP-binding Cassette (ABC) Superfamily; Drug resistance ATPase-2 (Drug RA2) subfamily
-3.A.1.123	3.A.1.123	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.124.3	3.A.1.124.3	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.124.4	3.A.1.124.4	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.124.5	3.A.1.124.5	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.124.6	3.A.1.124.6	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.125	3.A.1.125	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.129	3.A.1.129	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.13	3.A.1.13	The ATP-binding Cassette (ABC) Superfamily; Vitamin B12 importer (VB12T) subfamily
-3.A.1.130	3.A.1.130	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.134	3.A.1.134	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.134.7	3.A.1.134.7	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.135	3.A.1.135	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.14	3.A.1.14	The ATP-binding Cassette (ABC) Superfamily; Iron chelate importer (FeCT) subfamily
-3.A.1.140	3.A.1.140	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.15	3.A.1.15	The ATP-binding Cassette (ABC) Superfamily; Manganese/zinc/iron chelate importer (MZT) subfamily
-3.A.1.16	3.A.1.16	The ATP-binding Cassette (ABC) Superfamily; Nitrate/nitrite/cyanate importer (NitT) subfamily
-3.A.1.17	3.A.1.17	The ATP-binding Cassette (ABC) Superfamily; Taurine importer (TauT) subfamily
-3.A.1.18	3.A.1.18	The ATP-binding Cassette (ABC) Superfamily; Putative cobalt importer (CoT) subfamily
-3.A.1.19	3.A.1.19	The ATP-binding Cassette (ABC) Superfamily; Thiamin importer (ThiT) subfamily
-3.A.1.2	3.A.1.2	The ATP-binding Cassette (ABC) Superfamily; Carbohydrate importer-2 (CUT2) subfamily
-3.A.1.201	3.A.1.201	The ATP-binding Cassette (ABC) Superfamily; Multidrug resistance exporter (MDR) subfamily
-3.A.1.202	3.A.1.202	The ATP-binding Cassette (ABC) Superfamily; Cystic-fibrosis transmembrane-conductance exporter(CFTR) subfamily
-3.A.1.203	3.A.1.203	The ATP-binding Cassette (ABC) Superfamily; Peroxisomal fatty acyl-CoA transporter (FAT) subfamily
-3.A.1.204	3.A.1.204	The ATP-binding Cassette (ABC) Superfamily; Eye pigment precuror transporter (EPP) subfamily
-3.A.1.205	3.A.1.205	The ATP-binding Cassette (ABC) Superfamily; Pleiotropic drug resistance exporter (PDR) subfamily
-3.A.1.208	3.A.1.208	The ATP-binding Cassette (ABC) Superfamily; Conjugate transporter-2 (CT2) subfamily
-3.A.1.208.10	3.A.1.208.10	Conjugate transporter-2 (CT2) subfamily
-3.A.1.208.4	3.A.1.208.4	Conjugate transporter-2 (CT2) subfamily
-3.A.1.209	3.A.1.209	The ATP-binding Cassette (ABC) Superfamily; Major histocompatibility complex transporter (TAP) subfamily
-3.A.1.21	3.A.1.21	The ATP-binding Cassette (ABC) Superfamily; Yersiniabactin Fe3+ importer (YbtPQ) subfamily
-3.A.1.210	3.A.1.210	The ATP-binding Cassette (ABC) Superfamily; Heavy-metal transporter (HMT) subfamily
-3.A.1.211	3.A.1.211	The ATP-binding Cassette (ABC) Superfamily; Cholesterol/phospholipid/retinal transporter (flippase)(CPR) subfamily
-3.A.1.22	3.A.1.22	The ATP-binding Cassette (ABC) Superfamily; Nickel importer(NiT) subfamily
-3.A.1.23	3.A.1.23	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.24	3.A.1.24	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.25	3.A.1.25	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.27	3.A.1.27	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.28	3.A.1.28	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.29	3.A.1.29	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.3	3.A.1.3	The ATP-binding Cassette (ABC) Superfamily; Polar amino acid importer (PAAT) subfamily
-3.A.1.30	3.A.1.30	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.31	3.A.1.31	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.32	3.A.1.32	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.33	3.A.1.33	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.35	3.A.1.35	The ATP-binding Cassette (ABC) Superfamily
-3.A.1.4	3.A.1.4	The ATP-binding Cassette (ABC) Superfamily; Hydrophobic amino acid importer (HAAT) subfamily
-3.A.1.5	3.A.1.5	The ATP-binding Cassette (ABC) Superfamily; Peptide/opine/nickel importer (PepT) subfamily
-3.A.1.7	3.A.1.7	The ATP-binding Cassette (ABC) Superfamily; Phosphate importer (PhoT) subfamily
-3.A.1.8	3.A.1.8	The ATP-binding Cassette (ABC) Superfamily; Molybdate importer (MolT) subfamily
-3.A.1.9	3.A.1.9	The ATP-binding Cassette (ABC) Superfamily; Phosphonate importer (PhnT) subfamily
-3.A.10.1	3.A.10.1	The H+, Na+-translocating Pyrophosphatase (M+-PPase) Family
-3.A.11.1	3.A.11.1	The Bacterial Competence-related DNA Transformation Transporter (DNA-T) Family
-3.A.11.2	3.A.11.2	The Bacterial Competence-related DNA Transformation Transporter (DNA-T) Family
-3.A.12	3.A.12	The Septal DNA Translocator (S-DNA-T) Family
-3.A.14.1	3.A.14.1	The Fimbrilin/Protein Exporter (FPE) Family
-3.A.15	3.A.15	The Outer Membrane Protein Secreting Main Terminal Branch (MTB) Family
-3.A.15.2	3.A.15.2	The Outer Membrane Protein Secreting Main Terminal Branch (MTB) Family
-3.A.16.1	3.A.16.1	The Endoplasmic Reticular Retrotranslocon (ER-RT) Family
-3.A.19	3.A.19	The TMS Recognition/Insertion Complex (TRC) Family
-3.A.19.1	3.A.19.1	The TMS Recognition/Insertion Complex (TRC) Family
-3.A.2.1	3.A.2.1	The H+- or Na+-translocating F-type, V-type and A-type ATPase (F-ATPase) Superfamily
-3.A.2.2	3.A.2.2	The H+- or Na+-translocating F-type, V-type and A-type ATPase (F-ATPase) Superfamily
-3.A.2.3	3.A.2.3	The H+- or Na+-translocating F-type, V-type and A-type ATPase (F-ATPase) Superfamily
-3.A.20.1	3.A.20.1	The Peroxisomal Protein Importer (PPI) Family
-3.A.21	3.A.21	The C-terminal Tail-Anchored Membrane Protein Biogenesis/ Insertion Complex (TAMP-B) Family
-3.A.21.1	3.A.21.1	The C-terminal Tail-Anchored Membrane Protein Biogenesis/ Insertion Complex (TAMP-B) Family
-3.A.23.1	3.A.23.1	The Type VI Symbiosis/Virulence Secretory System (T6SS) Family
-3.A.3	3.A.3	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.1	3.A.3.1	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.10	3.A.3.10	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.2	3.A.3.2	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.23	3.A.3.23	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.24	3.A.3.24	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.3	3.A.3.3	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.32	3.A.3.32	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.4	3.A.3.4	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.5	3.A.3.5	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.5.20	3.A.3.5.20	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.6	3.A.3.6	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.7	3.A.3.7	The P-type ATPase (P-ATPase) Superfamily
-3.A.3.8	3.A.3.8	The P-type ATPase (P-ATPase) Superfamily
-3.A.4.1	3.A.4.1	The Arsenite-Antimonite (ArsAB) Efflux Family
-3.A.5	3.A.5	The General Secretory Pathway (Sec) Family
-3.A.5.1	3.A.5.1	The General Secretory Pathway (Sec) Family
-3.A.5.10	3.A.5.10	The General Secretory Pathway (Sec) Family
-3.A.5.2	3.A.5.2	The General Secretory Pathway (Sec) Family
-3.A.5.4	3.A.5.4	The General Secretory Pathway (Sec) Family
-3.A.5.7	3.A.5.7	The General Secretory Pathway (Sec) Family
-3.A.5.8	3.A.5.8	The General Secretory Pathway (Sec) Family
-3.A.5.9	3.A.5.9	The General Secretory Pathway (Sec) Family
-3.A.6.1	3.A.6.1	The Type III (Virulence-related) Secretory Pathway (IIISP) Family
-3.A.6.2	3.A.6.2	The Type III (Virulence-related) Secretory Pathway (IIISP) Family
-3.A.6.3	3.A.6.3	The Type III (Virulence-related) Secretory Pathway (IIISP) Family
-3.A.7	3.A.7	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family
-3.A.7.12.1	3.A.7.12.1	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family
-3.A.7.4	3.A.7.4	The Type IV (Conjugal DNA-Protein Transfer or VirB) Secretory Pathway (IVSP) Family
-3.A.8.1	3.A.8.1	The Mitochondrial Protein Translocase (MPT) Family
-3.D.1	3.D.1	The H+ or Na+-translocating NADH Dehydrogenase (NDH) Family
-3.D.1.6	3.D.1.6	The H+ or Na+-translocating NADH Dehydrogenase (NDH) Family
-3.D.4.1	3.D.4.1	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.4.10	3.D.4.10	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.4.11	3.D.4.11	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.4.2	3.D.4.2	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.4.3	3.D.4.3	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.4.4	3.D.4.4	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.4.5	3.D.4.5	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.4.6	3.D.4.6	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.4.7	3.D.4.7	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.4.8	3.D.4.8	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.4.9	3.D.4.9	The Proton-translocating Cytochrome Oxidase (COX) Superfamily
-3.D.7.1	3.D.7.1	The H2:Heterodisulfide Oxidoreductase (HHO) Family
-3.D.9.1	3.D.9.1	The H+-translocating F420H2 Dehydrogenase (F420H2DH) Family
-4.A.1.1.16	4.A.1.1.16	The PTS Glucose-Glucoside (Glc) Family
-4.A.2.1	4.A.2.1	The PTS Fructose-Mannitol (Fru) Family
-4.A.3.1	4.A.3.1	The PTS Lactose-N,N'-Diacetylchitobiose-beta-glucoside (Lac) Family
-4.A.3.2	4.A.3.2	The PTS Lactose-N,N'-Diacetylchitobiose-beta-glucoside (Lac) Family
-4.A.4.1	4.A.4.1	The PTS Glucitol (Gut) Family
-4.A.5	4.A.5	The PTS Galactitol (Gat) Family
-4.A.5.1	4.A.5.1	The PTS Galactitol (Gat) Family
-4.A.6.1	4.A.6.1	The PTS Mannose-Fructose-Sorbose (Man) Family
-4.A.7.1	4.A.7.1	The PTS L-Ascorbate (L-Asc) Family
-4.B.1.1	4.B.1.1	The Nicotinamide Ribonucleoside (NR) Uptake Permease (PnuC) Family
-4.C.1.1	4.C.1.1	The Fatty Acid Transporter (FAT) Family
-4.D.1.3	4.D.1.3	The Putative Vectorial Glycosyl Polymerization (VGP) Family
-4.D.1.4	4.D.1.4	The Putative Vectorial Glycosyl Polymerization (VGP) Family
-4.D.2	4.D.2	The Glycosyl Transferase 2 (GT2) Family
-4.D.2.1.8	4.D.2.1.8	The Glycosyl Transferase 2 (GT2) Family
-4.D.2.1.9	4.D.2.1.9	The Glycosyl Transferase 2 (GT2) Family
-4.D.2.4.1	4.D.2.4.1	The Glycosyl Transferase 2 (GT2) Family
 4.D.3.1.9	4.D.3.1.9	The Glycan Glucosyl Transferase (OpgH) Family
 5.A.1.1	5.A.1.1	The Disulfide Bond Oxidoreductase D (DsbD) Family
 5.A.1.2	5.A.1.2	The Disulfide Bond Oxidoreductase D (DsbD) Family
@@ -1575,8 +1557,17 @@
 5.A.3.6	5.A.3.6	The Prokaryotic Molybdopterin-containing Oxidoreductase (PMO) Family
 5.A.3.8	5.A.3.8	The Prokaryotic Molybdopterin-containing Oxidoreductase (PMO) Family
 5.A.3.9	5.A.3.9	The Prokaryotic Molybdopterin-containing Oxidoreductase (PMO) Family
+5.B.1.1.1	5.B.1.1.1	The Phagocyte (gp91phox) NADPH Oxidase Family (substrate: electron)
+5.B.1.1.2	5.B.1.1.2	The Phagocyte (gp91phox) NADPH Oxidase Family (substrate: electron)
+5.B.1.1.3	5.B.1.1.3	The Phagocyte (gp91phox) NADPH Oxidase Family (substrate: electron)
+5.B.1.1.4	5.B.1.1.4	The Phagocyte (gp91phox) NADPH Oxidase Family (substrate: electron)
+5.B.1.1.5	5.B.1.1.5	The Phagocyte (gp91phox) NADPH Oxidase Family (substrate: electron)
 5.B.1.2	5.B.1.2	The Phagocyte (gp91phox) NADPH Oxidase Family
 5.B.2.1	5.B.2.1	The Eukaryotic Cytochrome b561 (Cytb561) Family
+5.B.6.1.1	5.B.6.1.1	The Transmembrane Epithelial Antigen Protein-3 Ferric Reductase (STEAP) Family (substrate: electron)
+5.B.6.1.2	5.B.6.1.2	The Transmembrane Epithelial Antigen Protein-3 Ferric Reductase (STEAP) Family (substrate: electron)
+5.B.6.1.3	5.B.6.1.3	The Transmembrane Epithelial Antigen Protein-3 Ferric Reductase (STEAP) Family (substrate: electron)
+5.B.6.1.4	5.B.6.1.4	The Transmembrane Epithelial Antigen Protein-3 Ferric Reductase (STEAP) Family (substrate: electron)
 8.A.1	8.A.1	The Membrane Fusion Protein (MFP) Family
 8.A.1.1	8.A.1.1	The Membrane Fusion Protein (MFP) Family
 8.A.1.1.3	8.A.1.1.3	The Membrane Fusion Protein (MFP) Family
@@ -1627,6 +1618,7 @@
 8.A.49.1.1	8.A.49.1.1	The Klotho Auxiliary Protein (Klotho) Family
 8.A.49.1.2	8.A.49.1.2	The Klotho Auxiliary Protein (Klotho) Family
 8.A.5.1	8.A.5.1	The Voltage-gated K+ Channel beta-subunit (Kvbeta) Family
+8.A.5.1.1	8.A.5.1.1	The Voltage-gated K+ Channel beta-subunit (Kvbeta) Family (substrate: potassium(1+))
 8.A.5.1.2	8.A.5.1.2	The Voltage-gated K+ Channel beta-subunit (Kvbeta) Family
 8.A.5.1.3	8.A.5.1.3	The Voltage-gated K+ Channel beta-subunit (Kvbeta) Family
 8.A.58.1	8.A.58.1	The Dispanin (Dispanin) Family 
@@ -1661,7 +1653,10 @@
 9.A.24	9.A.24	The Mitochondrial Cholesterol/Porphyrin/5-aminolevulinic acid  Uptake Translocator Protein (TSPO) Family
 9.A.3.1.1	9.A.3.1.1	The Sorting Nexin27 (SNX27)-Retromer Assembly Apparatus 
 9.A.3.1.2	9.A.3.1.2	The Sorting Nexin27 (SNX27)-Retromer Assembly Apparatus 
+9.A.40.1.2	9.A.40.1.2	The HlyC/CorC (HCC) Family (substrate: cobalt(2+))
 9.A.40.3	9.A.40.3	The HlyC/CorC (HCC) Family
+9.A.45.1.1	9.A.45.1.1	The Archaeocin/Halocin C8 (HalC8) Family (substrate: unknown molecule)
+9.A.45.1.2	9.A.45.1.2	The Archaeocin/Halocin C8 (HalC8) Family (substrate: unknown molecule)
 9.A.45.1.3	9.A.45.1.3	The Archaeocin/Halocin C8 (HalC8) Family
 9.A.45.1.4	9.A.45.1.4	The Archaeocin/Halocin C8 (HalC8) Family
 9.A.45.1.6	9.A.45.1.6	The Archaeocin/Halocin C8 (HalC8) Family
@@ -1673,8 +1668,10 @@
 9.A.58.2	9.A.58.2	The Maintenance of Mitochondrial Morphology  (MMM) Family
 9.A.63.1.3	9.A.63.1.3	The Retromer-dependent Vacuolar Protein Sorting (R-VPS) Family
 9.A.8.1	9.A.8.1	The Ferrous Iron Uptake (FeoB) Family
+9.A.9.1.1	9.A.9.1.1	The Low Affinity Fe2+ Transporter (FeT) Family (substrates: iron(3+), iron(2+))
 9.B.121	9.B.121	The AsmA (AsmA) Family
 9.B.129.1	9.B.129.1	The Membrane Protein MLC1 Family
+9.B.13.1.1	9.B.13.1.1	The Putative Pore-forming Entericidin (ECN) Family (substrate: unknown molecule)
 9.B.14.1	9.B.14.1	The Putative Heme Handling Protein (HHP) Family
 9.B.146	9.B.146	The Putative Undecaprenyl-phosphate N-Acetylglucosaminyl Transferase (MurG) Family
 9.B.157.1	9.B.157.1	The Cell Shape-determining MreBCD (MreBCD) Family
@@ -1700,6 +1697,8 @@
 9.B.37.2	8.A.114.1	The Huntington-interacting protein 14 (HIP14) Family
 9.B.37.3	8.A.114.1	The Huntington-interacting protein 14 (HIP14) Family
 9.B.39.1.1	9.B.39.1.1	The Long Chain Fatty Acid Translocase (lcFAT) Family
+9.B.39.1.3	9.B.39.1.3	The Long Chain Fatty Acid Translocase (lcFAT) Family (substrates: lipoprotein, phosphatidyl-L-serine, cholesteryl ester, phospholipid)
+9.B.39.1.4	9.B.39.1.4	The Long Chain Fatty Acid Translocase (lcFAT) Family (substrate: fatty acid)
 9.B.4.1.1	9.B.4.1.1	The Universal Stress Protein-B (UspB) Family
 9.B.41.1	9.B.41.1	The Occludin (Occludin) Family
 9.B.41.2	9.B.41.2	The Occludin (Occludin) Family
@@ -1711,6 +1710,7 @@
 9.B.67.2	9.B.67.2	The O-antigen Polymerase (OAP) Family
 9.B.67.4	9.B.67.4	The O-antigen Polymerase (OAP) Family
 9.B.67.5	9.B.67.5	The O-antigen Polymerase (OAP) Family
+9.B.87.1.1	9.B.87.1.1	The Selenoprotein P Receptor (SelP-Receptor) Family (substrate: protein)
 9.B.87.1.9	9.B.87.1.9	The Selenoprotein P Receptor (SelP-Receptor) Family
 9.B.92.1	9.B.92.1	The Folate Receptor (FR) Family
 9.B.99.1	9.B.99.1	The MipA-interacting Protein (MipA) Family
