@@ -305,6 +305,12 @@ ADMIN_SHORTCUTS = [
                 'url_name': 'admin:auth_user_add',
                 'has_perms': 'example.utils.has_perms_to_users',
             },
+            {
+                'title': 'Clusters',
+                'url': 'clusters/',
+                'count_new': 'browser.admin.count_clusters',
+                'count':'Django Q clusters',
+            },
         ]
     },
 ]

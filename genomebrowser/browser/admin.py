@@ -1,6 +1,7 @@
 import os
 import csv
 import shutil
+import datetime
 from django import forms
 from django.contrib import admin
 from django.urls import path
@@ -12,6 +13,7 @@ from browser.models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_clas
 from browser.dataimport.importer import Importer
 from browser.async_tasks import test_async_task, async_import_genomes, async_delete_genomes, async_import_sample_metadata, async_import_sample_descriptions, async_update_strain_metadata, async_import_annotations, async_import_regulon
 from django_q.models import OrmQ
+from django_q.monitor import Stat
 
 
 admin.site.site_header = "CGCMS admin"
@@ -41,7 +43,13 @@ def delete_genomes(self, request, queryset):
 
 def count_tasks(request):
     return str(OrmQ.objects.all().count())
-    
+
+def count_clusters(request):
+    result = 0
+    for stat in Stat.get_all():
+        result += 1
+    return str(result)
+
 
 # Register your models here.
 class GenomeAdmin(admin.ModelAdmin):
@@ -464,4 +472,16 @@ class ChangeLogAdmin(admin.ModelAdmin):
     ordering = ['timestamp']
 
 admin.site.register(ChangeLog, ChangeLogAdmin)
+
+
+def clusters_view(request):
+    cluster_count = 0
+    clusters = []
+    for stat in Stat.get_all():
+        cluster_count += 1
+        clusters.append({'id':str(stat.cluster_id), 'tob': str(stat.tob), 'uptime': str(datetime.timedelta(seconds=stat.uptime())), 'workers': ','.join([str(x) for x in stat.workers])})
+    context = {'cluster_count':str(cluster_count), 'clusters':clusters}
+    return render(
+        request, "admin/clusters.html", context
+    )
 

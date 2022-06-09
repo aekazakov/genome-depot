@@ -1101,7 +1101,6 @@ def export_csv(request):
 
     return response
 
-
 def export_fasta(request):
     response = HttpResponse(content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="export.faa"'
@@ -1282,7 +1281,6 @@ def export_fasta(request):
             response.write('>' + gene.locus_tag + '|' + gene.genome.name + ' [' + gene.genome.taxon.name + ']\n' + gene.protein.sequence + '\n')
 
     return response
-
     
 def handler404(request, exception):
     return render(request, '404.html', status=404)

@@ -1,0 +1,33 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+    <div>
+	<h2>Django Q clusters</h2>
+	<p>
+	CGCMS uses Django Q cluster to handle long-running tasks like genome import. If there is no cluster running, start it using Django’s manage.py command:
+	</p>
+	 <pre>python manage.py qcluster</pre>
+	<br />
+	<table>
+		<thead>
+			<tr>
+				<th>Cluster ID</th>
+				<th>Time of birth</th>
+				<th>Uptime</th>
+				<th>Worker process IDs</th>
+			</tr>
+		</thead>
+		<tbody>
+    {% for cluster in clusters %}
+			<tr>
+				<td>{{ cluster.id }}</td>
+				<td>{{ cluster.tob }}</td>
+				<td>{{ cluster.uptime }}</td>
+				<td>{{ cluster.workers }}</td>
+			</tr>
+    {% endfor %}
+		</tbody>
+	</table>
+
+    </div>
+    <br />
+{% endblock %}
