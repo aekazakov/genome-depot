@@ -62,7 +62,11 @@ paths to Jbrowse utilites: prepare-refseqs.pl, flatfile-to-json.pl, generate-nam
 
 path to strain metadata file.
 
-9. Activate virtual environment cgcms-venv, change directory to cgcms/app/mygenomes/CGCMS/genomebrowser and run
+9. Activate virtual environment cgcms-venv, change directory to cgcms/app/mygenomes/CGCMS/genomebrowser and run Django configuration commands
+
+source cgcms/cgcms-venv/bin/activate
+
+cd cgcms/app/mygenomes/CGCMS/genomebrowser
 
 python manage.py collectstatic
 
