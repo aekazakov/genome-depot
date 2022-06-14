@@ -26,25 +26,36 @@ sudo apt install muscle hmmer ncbi-blast+
 1. Create a directory where CGCMS and external tools will be installed (for example, ~/cgcms). Create "app" subdirectory. Do it only for the first CGCMS installation.
 
 cd ~
+
 mkdir cgcms
+
 cd cgcms
+
 mkdir apps
+
 cd apps
+
 
 2. Create a directory for the new CGCMS installation in cgcms/apps (for example, mygenomes) and clone the repository into it.
 
 mkdir mygenomes 
+
 cd mygenomes
+
 git clone https://github.com/aekazakov/CGCMS
+
 
 3. Install external tools and create virtual environment.
 
 cd CGSMS
+
 bash install_tools.sh
 
-2. Create mysql user (for example, cgcmsuser) or use existing mysql account.
 
-3. Create database.
+4. Create mysql user (for example, cgcmsuser) or use existing mysql account.
+
+
+5. Create database.
 
 log into mysql as root: mysql -u root -p
 
@@ -54,15 +65,18 @@ GRANT ALL PRIVILEGES ON cgcms.* TO 'cgcmsuser'@'localhost';
 
 quit
 
-4. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/secrets.json in a text editor. Enter secret key, hostname, database name (like cgcms), database username (like cgcmsuser), database password and URL to static files directory.
 
-5. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/configs.txt in a text editor. Check:
+6. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/secrets.json in a text editor. Enter secret key, hostname, database name (like cgcms), database username (like cgcmsuser), database password and URL to static files directory.
+
+
+7. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/configs.txt in a text editor. Check:
 
 paths to Jbrowse utilites: prepare-refseqs.pl, flatfile-to-json.pl, generate-names.pl,
 
 path to strain metadata file.
 
-9. Activate virtual environment cgcms-venv, change directory to cgcms/app/mygenomes/CGCMS/genomebrowser and run Django configuration commands
+
+8. Activate virtual environment cgcms-venv, change directory to cgcms/app/mygenomes/CGCMS/genomebrowser and run Django configuration commands
 
 source cgcms/cgcms-venv/bin/activate
 
@@ -80,10 +94,13 @@ python manage.py configure_cgcms -i configs.txt
 
 python manage.py createcachetable
 
-10. Run python manage.py runserver 127.0.0.1:8000 and open in the browser http://127.0.0.1:8000/admin. You should be able to log in with the username you entered at the previous step.
-If web-server cannot find static files, check if www-data user can read from the cgcms/static/my_genomes directory (giving rw permissions for www-data group would work).
 
-11. Configure web-server for CGCMS. Open apache2 site configuration file (it may be default_ssl.conf) in a text editor and add the following (with correct paths):
+9. Run python manage.py runserver 127.0.0.1:8000 and open in the browser http://127.0.0.1:8000/admin. You should be able to log in with the username you entered at the previous step.
+
+If test server cannot find static files, check if www-data user can read from the cgcms/static/my_genomes directory (giving rw permissions for www-data group would work).
+
+
+10. Configure web-server for CGCMS. Open apache2 site configuration file (it may be default_ssl.conf) in a text editor and add the following (with correct paths):
 
 	WSGIDaemonProcess cgcmspy python-home=/path/to/cgcms/cgcms-venv python-path=/path/to/cgcms/app/mygenomes/CGCMS/genomebrowser
 
@@ -116,11 +133,12 @@ If web-server cannot find static files, check if www-data user can read from the
 	Alias /static /path/to/cgcms/static/
 
 	
-12. Restart apache2:
+
+11. Restart apache2:
 
 sudo systemctl restart apache2
 
-13. Now you would be able to open https://your.domain.name/mygenomes in a web browser.
+Now you would be able to open https://your.domain.name/mygenomes in a web browser.
 
 
 ## Genome import from the command line
