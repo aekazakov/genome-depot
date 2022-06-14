@@ -3,23 +3,19 @@ Compararive genomic content management system
 
 ## Prerequisites
 
-1. Linux-based OS with installed Python 3.8+.
+1. Linux-based OS with installed Python 3.8+ and conda (miniconda, anaconda etc.).
 
 2. MySQL server
 
-3. Apache2 web-server
+3. Apache2 web-server 
 
-4. Conda (miniconda, anaconda etc.)
+4. Muscle
 
-5. Muscle
+5. HMMER
 
-6. HMMER
+6. NCBI-BLAST
 
-7. NCBI-BLAST
-
-8. Jbrowse genome browser v. 1. (https://jbrowse.org/jbrowse1.html)
-
-9. Django 
+7. Jbrowse genome browser v. 1. (https://jbrowse.org/jbrowse1.html)
 
 In Ubuntu-based distibutions, you can install Muscle, HMMER and NCBI-BLAST+ from package repository:
 sudo apt install muscle hmmer ncbi-blast+
@@ -35,18 +31,16 @@ cd cgcms
 mkdir apps
 cd apps
 
-2. Create a directory for the new CGCMS installation in cgcms/apps (for example, my_genomes) and clone the repository into it.
+2. Create a directory for the new CGCMS installation in cgcms/apps (for example, mygenomes) and clone the repository into it.
 
-mkdir my_genomes 
-cd my_genomes
+mkdir mygenomes 
+cd mygenomes
 git clone https://github.com/aekazakov/CGCMS
 
 3. Install external tools and create virtual environment.
 
 cd CGSMS
 bash install_tools.sh
-
-
 
 2. Create mysql user (for example, cgcmsuser) or use existing mysql account.
 
@@ -60,41 +54,17 @@ GRANT ALL PRIVILEGES ON cgcms.* TO 'cgcmsuser'@'localhost';
 
 quit
 
-4. Copy cgcms/CGCMS/genomebrowser/secrets.json.template to cgcms/CGCMS/genomebrowser/secrets.json and edit it in a text editor. Set secret key, hostname, database name (like cgcms), database username (like cgcmsuser), database password and path to directory with static files.
+4. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/secrets.json in a text editor. Enter secret key, hostname, database name (like cgcms), database username (like cgcmsuser), database password and URL to static files directory.
 
-5. Create a directory for static files and copy static files from cgcms/CGCMS/static into it. Make it accessible for webserver (giving rw permissions for www-data group would work).
-
-6. [Optional] Install other annotation tools:
-
-- amrfinderplus (https://github.com/ncbi/amr)
-
-- antismash (https://github.com/antismash/antismash)
-
-- ecis-screen (https://github.com/ipb-jianyang/eCIS-screen)
-
-- fama (https://github.com/novichkov-lab/fama)
-
-- phispy (https://github.com/linsalrob/PhiSpy)
-
-7. Copy cgcms/CGCMS/genomebrowser/configs.txt.template to cgcms/CGCMS/genomebrowser/configs.txt and edit it in a text editor. Set parameters:
-
-cgcms.temp_dir: directory for temporary files (for example cgcms/tmp),
-
-cgcms.eggnog-command: path to emapper.py, 
-
-cgcms.eggnog_outdir: output directory for eggnog-mapper (for example cgcms/tmp/eggnog), 
+5. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/configs.txt in a text editor. Check:
 
 paths to Jbrowse utilites: prepare-refseqs.pl, flatfile-to-json.pl, generate-names.pl,
 
-paths to reference files,
+path to strain metadata file.
 
-paths and commands for plugins (optional). 
+9. Activate virtual environment cgcms-venv, change directory to cgcms/app/mygenomes/CGCMS/genomebrowser and run
 
-Delete all unnecessary plugin entries.
-
-8. Create virtual environment for Django.
-
-9. Activate virtual environment, change directory to cgcms/CGCMS/genomebrowser and run
+python manage.py collectstatic
 
 python manage.py makemigrations
 
@@ -107,14 +77,15 @@ python manage.py configure_cgcms -i configs.txt
 python manage.py createcachetable
 
 10. Run python manage.py runserver 127.0.0.1:8000 and open in the browser http://127.0.0.1:8000/admin. You should be able to log in with the username you entered at the previous step.
+If web-server cannot find static files, check if www-data user can read from the cgcms/static/my_genomes directory (giving rw permissions for www-data group would work).
 
-11. Edit apache2 site configuration file (it may be default_ssl.conf). Add the following (with correct paths):
+11. Configure web-server for CGCMS. Open apache2 site configuration file (it may be default_ssl.conf) in a text editor and add the following (with correct paths):
 
-	WSGIDaemonProcess cgcmspy python-home=/path/to/virtual/environment python-path=/path/to/cgcms/CGCMS/genomebrowser
+	WSGIDaemonProcess cgcmspy python-home=/path/to/cgcms/cgcms-venv python-path=/path/to/cgcms/app/mygenomes/CGCMS/genomebrowser
 
-	WSGIScriptAlias /genomes /path/to/cgcms/CGCMS/genomebrowser/genomebrowser/wsgi.py process-group=cgcmspy application-group=%{GLOBAL}
+	WSGIScriptAlias /mygenomes /path/to/cgcms/app/mygenomes/CGCMS/genomebrowser/genomebrowser/wsgi.py process-group=cgcmspy application-group=%{GLOBAL}
 
-	<Directory /path/to/cgcms/CGCMS/genomebrowser/genomebrowser/>
+	<Directory /path/to/cgcms/app/mygenomes/CGCMS/genomebrowser/genomebrowser/>
 
 	    <Files wsgi.py>
 
@@ -124,7 +95,7 @@ python manage.py createcachetable
 
 	</Directory>
 
-	<Directory /path/to/static/files>
+	<Directory /path/to/cgcms/static/mygenomes>
 
 		Options -Indexes +FollowSymLinks
 
@@ -138,17 +109,17 @@ python manage.py createcachetable
 
 	</Directory>
 
-	Alias /static /path/to/static/files
+	Alias /static /path/to/cgcms/static/
 
 	
 12. Restart apache2:
 
 sudo systemctl restart apache2
 
-13. Test if you can open your.domain.name/genomes.
+13. Now you would be able to open https://your.domain.name/mygenomes in a web browser.
 
 
-## Genome import
+## Genome import from the command line
 
 1. Download genomes in genbank format (files may be gzipped). Make a tab-separated file (for example, genomes.txt) with six columns:
 
@@ -185,3 +156,5 @@ python manage.py update_domain_mappings -i genomes.txt
 
 python manage.py update_annotations -i genomes.txt
 
+
+## TODO: Genome import from the admin interface

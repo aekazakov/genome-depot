@@ -1,9 +1,9 @@
 #!/bin/bash
 WORKDIR=$(pwd)
-CGCMSDIR = $(dirname "$WORKDIR")
-APPNAME = $(basename "CGCMSDIR")
-CGCMSDIR = $(dirname "$CGCMSDIR")
-CGCMSDIR = $(dirname "$CGCMSDIR")
+CGCMSDIR=$(dirname "$WORKDIR")
+APPNAME=$(basename "$CGCMSDIR")
+CGCMSDIR=$(dirname "$CGCMSDIR")
+CGCMSDIR=$(dirname "$CGCMSDIR")
 if ! [ -d "$CGCMSDIR/cgcms-venv" ]; then
 	python3 -m venv "$CGCMSDIR/cgcms-venv"
 fi
@@ -43,6 +43,7 @@ fi
 if ! [ -d "$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7" ]; then
 	conda activate cgcms-emapper
 	mkdir "$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7"
+	echo "Downloading reference databases for eggnog-mapper_v2.1.7. Answer \"y\" to all questions."
 	download_eggnog_data.py --data_dir "$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7"
 	conda deactivate
 fi
@@ -144,39 +145,59 @@ fi
 
 echo "Activate virtual environment $CGCMSDIR/cgcms-venv  and install Django before running CGCMS"
 cd "$WORKDIR/genomebrowser"
-cp configs.txt configs.txt~
+if [ -f "configs.txt" ]; then
+	cp configs.txt configs.txt~
+	echo "Existing configs.txt copied to configs.txt~"
+fi
 cp configs.txt.template configs.txt
-echo "cgcms.conda_path	$CONDA" >> configs.txt
-echo "cgcms.eggnog-mapper.data_dir	$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7" >> configs.txt
-echo "cgcms.eggnog-mapper.dmnd_db	$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7/eggnog_proteins.dmnd" >> configs.txt
-echo "cgcms.eggnog_outdir	$WORKDIR/temp/eggnog" >> configs.txt
-echo "cgcms.eggnog_taxonomy	$WORKDIR/ref_data/eggnog_taxonomy_rules.txt" >> configs.txt
-echo "cgcms.json_dir	$WORKDIR/ref_data/eggnog_taxonomy_rules.txt" >> configs.txt
-echo "cgcms.poem_command	$CGCMSDIR/external_tools/POEM_py3k/bin/run_poem_cgcms.sh" >> configs.txt
-echo "cgcms.search_db_dir	$WORKDIR/appdata" >> configs.txt
-echo "cgcms.search_db_nucl	$WORKDIR/appdata/nucl.fna" >> configs.txt
-echo "cgcms.search_db_prot	$WORKDIR/appdata/prot.faa" >> configs.txt
-echo "cgcms.static_dir	$CGCMSDIR/static/$APPNAME/genomes" >> configs.txt
-echo "cgcms.temp_dir	$WORKDIR/temp" >> configs.txt
-echo "plugins.antismash.antismash_ref	$WORKDIR/ref_data/ref_antismash.txt" >> configs.txt
-echo "plugins.ecis_screen.ecis_hmm	$CGCMSDIR/external_tools/eCIS-screen/eCIS.hmm" >> configs.txt
+echo "cgcms.conda_path = $CONDA" >> configs.txt
+echo "cgcms.eggnog-mapper.data_dir = $CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7" >> configs.txt
+echo "cgcms.eggnog-mapper.dmnd_db = $CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7/eggnog_proteins.dmnd" >> configs.txt
+echo "cgcms.eggnog_outdir = $WORKDIR/temp/eggnog" >> configs.txt
+echo "cgcms.eggnog_taxonomy = $WORKDIR/ref_data/eggnog_taxonomy_rules.txt" >> configs.txt
+echo "cgcms.json_dir = $WORKDIR/ref_data/eggnog_taxonomy_rules.txt" >> configs.txt
+echo "cgcms.poem_command = $CGCMSDIR/external_tools/POEM_py3k/bin/run_poem_cgcms.sh" >> configs.txt
+echo "cgcms.search_db_dir = $WORKDIR/appdata" >> configs.txt
+echo "cgcms.search_db_nucl = $WORKDIR/appdata/nucl.fna" >> configs.txt
+echo "cgcms.search_db_prot = $WORKDIR/appdata/prot.faa" >> configs.txt
+echo "cgcms.static_dir = $CGCMSDIR/static/$APPNAME/genomes" >> configs.txt
+echo "cgcms.temp_dir = $WORKDIR/temp" >> configs.txt
+echo "plugins.antismash.antismash_ref = $WORKDIR/ref_data/ref_antismash.txt" >> configs.txt
+echo "plugins.ecis_screen.ecis_hmm = $CGCMSDIR/external_tools/eCIS-screen/eCIS.hmm" >> configs.txt
 echo "plugins.fama.fama_dir	$CGCMSDIR/external_tools/fama/py" >> configs.txt
-echo "plugins.fama.fama_config	$CGCMSDIR/external_tools/fama/config.ini" >> configs.txt
-echo "plugins.fama.fama_cazy_lib	$CGCMSDIR/external_refdata/fama/cazy2/collection_functions.txt" >> configs.txt
-echo "plugins.fama.fama_nitrate_lib	$CGCMSDIR/external_refdata/fama/nitrogen11/fama_nitrogen-cycle_v.11.0_functions_thresholds.tsv" >> configs.txt
-echo "plugins.fama.fama_universal_lib	$CGCMSDIR/external_refdata/fama/universal1.4/fama_function_thresholds_v.1.4.txt" >> configs.txt
-echo "plugins.phispy.pvog_path	$CGCMSDIR/external_refdata/phispy/pvogs.hmm" >> configs.txt
-echo "ref.cazy_file	$WORKDIR/ref_data/ref_cazy.txt" >> configs.txt
-echo "ref.cog_codes_file	$WORKDIR/ref_data/ref_cog_codes.txt" >> configs.txt
-echo "ref.ec_file	$WORKDIR/ref_data/ec_file" >> configs.txt
-echo "ref.go_file	$WORKDIR/ref_data/ref_go.txt" >> configs.txt
-echo "ref.kegg_orthologs_file	$WORKDIR/ref_data/ref_kegg_ko.txt" >> configs.txt
-echo "ref.kegg_pathways_file	$WORKDIR/ref_data/ref_kegg_pathways.txt" >> configs.txt
-echo "ref.kegg_reactions_file	$WORKDIR/ref_data/ref_kegg_reactions.txt" >> configs.txt
-echo "ref.tc_file	$WORKDIR/ref_data/ref_tc.txt" >> configs.txt
-echo "ref.taxonomy	$WORKDIR/ref_data/ref_taxonomy.txt" >> configs.txt
-echo "ref.pfam_hmm_lib	$CGCMSDIR/external_refdata/pfam/Pfam-A.hmm" >> configs.txt
-echo "ref.pfam_hmm_list	$CGCMSDIR/external_refdata/pfam/ref_pfam.txt" >> configs.txt
-echo "ref.tigrfam_hmm_lib	$CGCMSDIR/external_refdata/tigrfam/TIGRFAM.HMM" >> configs.txt
-echo "ref.tigrfam_hmm_list	$CGCMSDIR/external_refdata/tigrfam/ref_tigrfam.txt" >> configs.txt
-echo "Configs.txt.template created."
+echo "plugins.fama.fama_config = $CGCMSDIR/external_tools/fama/config.ini" >> configs.txt
+echo "plugins.fama.fama_cazy_lib = $CGCMSDIR/external_refdata/fama/cazy2/collection_functions.txt" >> configs.txt
+echo "plugins.fama.fama_nitrate_lib = $CGCMSDIR/external_refdata/fama/nitrogen11/fama_nitrogen-cycle_v.11.0_functions_thresholds.tsv" >> configs.txt
+echo "plugins.fama.fama_universal_lib = $CGCMSDIR/external_refdata/fama/universal1.4/fama_function_thresholds_v.1.4.txt" >> configs.txt
+echo "plugins.phispy.pvog_path = $CGCMSDIR/external_refdata/phispy/pvogs.hmm" >> configs.txt
+echo "ref.cazy_file = $WORKDIR/ref_data/ref_cazy.txt" >> configs.txt
+echo "ref.cog_codes_file = $WORKDIR/ref_data/ref_cog_codes.txt" >> configs.txt
+echo "ref.ec_file = $WORKDIR/ref_data/ec_file" >> configs.txt
+echo "ref.go_file = $WORKDIR/ref_data/ref_go.txt" >> configs.txt
+echo "ref.kegg_orthologs_file = $WORKDIR/ref_data/ref_kegg_ko.txt" >> configs.txt
+echo "ref.kegg_pathways_file = $WORKDIR/ref_data/ref_kegg_pathways.txt" >> configs.txt
+echo "ref.kegg_reactions_file = $WORKDIR/ref_data/ref_kegg_reactions.txt" >> configs.txt
+echo "ref.tc_file = $WORKDIR/ref_data/ref_tc.txt" >> configs.txt
+echo "ref.taxonomy = $WORKDIR/ref_data/ref_taxonomy.txt" >> configs.txt
+echo "ref.pfam_hmm_lib = $CGCMSDIR/external_refdata/pfam/Pfam-A.hmm" >> configs.txt
+echo "ref.pfam_hmm_list = $CGCMSDIR/external_refdata/pfam/ref_pfam.txt" >> configs.txt
+echo "ref.tigrfam_hmm_lib = $CGCMSDIR/external_refdata/tigrfam/TIGRFAM.HMM" >> configs.txt
+echo "ref.tigrfam_hmm_list = $CGCMSDIR/external_refdata/tigrfam/ref_tigrfam.txt" >> configs.txt
+echo "configs.txt created."
+
+if [ -f "secrets.json" ]; then
+	cp secrets.json secrets.json~
+	echo "Existing secrets.json copied to secrets.json~"
+fi
+cp secrets.json.template secrets.json
+echo "    \"STATIC_ROOT\": \"$CGCMSDIR/static/$APPNAME\"," >> secrets.json
+echo "    \"STATICFILES_DIR\": \"$WORKDIR/genomebrowser/static\"" >> secrets.json
+echo "}" >> secrets.json
+echo "secrets.json created."
+
+#Installing dependencies in the virtual environment
+echo "Installing python dependencies in cgcms-venv virtual environment"
+source "$CGCMSDIR/cgcms-venv/bin/activate"
+pip install "django==3.2.6" django_admin_shortcuts django_cors_headers django_q django_debug_toolbar openpyxl parasail biopython toytree urllib3 mysqlclient --no-cache-dir
+deactivate
+echo "Edit secrets.json and genomebrowser/settings.py before running \"python manage.py configure_cgcsms -i configs.txt\""
