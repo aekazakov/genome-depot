@@ -8,7 +8,7 @@ from browser.models import *
     This plugin runs Fama for a set of genomes.
 """
 
-collections = ['nitrogen_v11', 'cazy_v1', 'universal_v1.4']
+FAMA_REFERENCE = ['nitrogen_v11', 'cazy_v2', 'universal_v1.4']
 
 
 def application(annotator, genomes):
@@ -20,12 +20,10 @@ def application(annotator, genomes):
         
     """
     working_dir = os.path.join(annotator.config['cgcms.temp_dir'], 'fama-plugin-temp')
-    project_files = preprocess(annotator, genomes, working_dir)
+    script_path = preprocess(annotator, genomes, working_dir)
+    run(script_path)
     
-    for collection in project_files:
-        run(annotator, project_files[collection])
-    
-    output_file = postprocess(annotator, genomes, project_files, working_dir)
+    output_file = postprocess(annotator, genomes, working_dir)
     return output_file
 
 
@@ -62,29 +60,38 @@ def preprocess(annotator, genomes, working_dir):
                         proteins_written.add(gene.protein.protein_hash)
 
 
-#        fama_input_files[genome] = _export_proteins(genome, input_dir)
-    project_files = {}
     seqlist_file = os.path.join(working_dir, 'sequences_list.txt')
     with open(seqlist_file, 'w') as outfile:
         outfile.write('\t'.join(['fama_input', fama_input_file]) + '\n')
-#        for genome in sorted(fama_input_files.keys()):
-#            outfile.write('\t'.join([genome, fama_input_files[genome]]) + '\n')
-    for collection in collections:
-        fama_project_file = os.path.join(working_dir, 'project_' + collection + '.ini')
-        _run_prepare(annotator, seqlist_file, collection)
-        project_files[collection]  = fama_project_file
-    return project_files
 
+    fama_script = os.path.join(working_dir, 'run_fama.sh')
     
-def run(annotator, fama_project_file):
+    with open(amrfinder_script, 'w') as outfile:
+        outfile.write('#!/bin/bash\n')
+        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('conda activate ' + annotator.config['plugins.fama.conda_env'] + '\n')
+        for collection in collections:
+            fama_project_file = os.path.join(working_dir, 'project_' + collection + '.ini')
+            outfile.write(' '.join(['python', os.path.join(annotator.config['plugins.fama.fama_dir'], 'fama_prepare.py'),
+                  '-c', annotator.config['plugins.fama.fama_config'],
+                  '-p', collection,
+                  '-i', seqlist_file,
+                  '-r', collection,
+                  '--prot'
+                  ]) + '\n')
+            outfile.write(' '.join(['python', os.path.join(annotator.config['plugins.fama.fama_dir'], 'fama.py'),
+                                    '-c', annotator.config['plugins.fama.fama_config'],
+                                    '-p', fama_project_file,
+                                    '--prot'
+                  ]) + '\n')
+        outfile.write('conda deactivate\n')
+
+def run(script_path):
     """
-    Runs fama.py for FASTA files of proteins.
+    Runs fama.py for one or several project files.
     """
-    cmd = ['python', os.path.join(annotator.config['plugins.fama.fama_dir'], 'fama.py'),
-          '-c', annotator.config['plugins.fama.fama_config'],
-          '-p', fama_project_file,
-          '--prot'
-          ]
+    cmd = ['/bin/bash', script_path]
+    print('Running ' + ' '.join(cmd))
     print(' '.join(cmd))
     # Close MySQL connection before starting external process because it may run for too long resulting in "MySQL server has gone away" error
     connection.close()
@@ -121,7 +128,7 @@ def postprocess(annotator, genomes, project_files, working_dir):
             ref_data[row[0]]['library'] = 'Carbohydrate-active enzymes'
 
     with open(output_file, 'w') as outfile:
-        for collection in project_files:
+        for collection in FAMA_REFERENCE:
             fama_output = os.path.join(working_dir, collection, 'all_proteins.list.txt')
             with open(fama_output, 'r') as infile:
                 infile.readline()
@@ -143,7 +150,6 @@ def postprocess(annotator, genomes, project_files, working_dir):
     _cleanup(working_dir)
     return output_file
 
-
 def _export_proteins(genome, output_dir):
     """Creates protein FASTA file"""
     try:
@@ -159,27 +165,6 @@ def _export_proteins(genome, output_dir):
                 outfile.write('>' + gene.locus_tag + '\n')
                 outfile.write(gene.protein.sequence + '\n')
     return out_path
-
-
-def _run_prepare(annotator, seqlist_file, collection):
-    """
-    Runs fama_prepare.py for FASTA files of proteins.
-    """
-    cmd = ['python', os.path.join(annotator.config['plugins.fama.fama_dir'], 'fama_prepare.py'),
-          '-c', annotator.config['plugins.fama.fama_config'],
-          '-p', collection,
-          '-i', seqlist_file,
-          '-r', collection,
-          '--prot'
-          ]
-    with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-        for line in proc.stdout:
-            print(line, end='')
-    if proc.returncode != 0:
-        # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-        # pylint: disable=no-member
-        raise CalledProcessError(proc.returncode, proc.args)
-
 
 def _cleanup(working_dir):
     shutil.rmtree(working_dir)

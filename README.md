@@ -5,30 +5,48 @@ Compararive genomic content management system
 
 1. Linux-based OS with installed Python 3.8+.
 
-2. MySQL
+2. MySQL server
 
-3. Apache2
+3. Apache2 web-server
 
-4. Django 
+4. Conda (miniconda, anaconda etc.)
 
-5. eggnog-mapper v. 2.0.1 (https://github.com/eggnogdb/eggnog-mapper/tree/2.0.1) with reference databases. 
+5. Muscle
 
 6. HMMER
 
-7. Jbrowse genome browser v. 1. (https://jbrowse.org/jbrowse1.html)
+7. NCBI-BLAST
 
-8. POEM_py3 (https://github.com/Rinoahu/POEM_py3k)
+8. Jbrowse genome browser v. 1. (https://jbrowse.org/jbrowse1.html)
+
+9. Django 
+
+In Ubuntu-based distibutions, you can install Muscle, HMMER and NCBI-BLAST+ from package repository:
+sudo apt install muscle hmmer ncbi-blast+
 
 
 ## Installation
 
-1. Create a directory and clone repository into it;
+1. Create a directory where CGCMS and external tools will be installed (for example, ~/cgcms). Create "app" subdirectory. Do it only for the first CGCMS installation.
 
+cd ~
 mkdir cgcms
-
 cd cgcms
+mkdir apps
+cd apps
 
+2. Create a directory for the new CGCMS installation in cgcms/apps (for example, my_genomes) and clone the repository into it.
+
+mkdir my_genomes 
+cd my_genomes
 git clone https://github.com/aekazakov/CGCMS
+
+3. Install external tools and create virtual environment.
+
+cd CGSMS
+bash install_tools.sh
+
+
 
 2. Create mysql user (for example, cgcmsuser) or use existing mysql account.
 

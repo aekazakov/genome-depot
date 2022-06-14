@@ -43,13 +43,16 @@ def preprocess(annotator, genomes, working_dir):
     antismash_script = os.path.join(working_dir, 'run_antismash.sh')
     with open(antismash_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
+        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('conda activate ' + annotator.config['plugins.antismash.conda_env'] + '\n')
         for genome in sorted(genomes.keys()):
             outfile.write(' '.join([annotator.config['plugins.antismash.antismash_cmd'],
                                     genomes[genome],
-                                    os.path.join(output_dir, genome),
+                                    '--output-dir', os.path.join(output_dir, genome),
                                     '--cpus',
                                     annotator.config['plugins.antismash.threads'],
                                     '--genefinding-tool', 'prodigal']) + '\n')
+        outfile.write('conda deactivate\n')
     return antismash_script
 
     

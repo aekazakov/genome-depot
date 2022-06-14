@@ -54,11 +54,14 @@ def preprocess(annotator, genomes, working_dir):
                 outfile.write(line)
     with open(ecis_screen_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
+        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('conda activate ' + annotator.config['plugins.ecis_screen.conda_env'] + '\n')
         outfile.write('cd ' + working_dir + '\n')
         outfile.write(' '.join([annotator.config['plugins.ecis_screen.ecis-screen_cmd'],
                                 annotator.config['plugins.ecis_screen.ecis_hmm'],
                                 input_dir,
                                 os.path.join(working_dir, 'ecis-screen_summary.txt')]) + '\n')
+        outfile.write('conda deactivate\n')
     return ecis_screen_script
 
     

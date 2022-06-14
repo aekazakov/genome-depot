@@ -572,7 +572,7 @@ class Importer(object):
         eggnog_mapper_script = os.path.join(self.config['cgcms.temp_dir'], 'run_emapper.sh')
         with open(eggnog_mapper_script, 'w') as outfile:
             outfile.write('#!/bin/bash\n')
-            outfile.write('source ' + self.config['cgcms.eggnog-mapper.conda_path'] + '\n')
+            outfile.write('source ' + self.config['cgcms.conda_path'] + '\n')
             outfile.write('conda activate ' + self.config['cgcms.eggnog-mapper.conda_env'] + '\n')
             outfile.write('cd ' + work_dir + '\n')
             outfile.write('split -l ' + chunk_size + ' -a 3 -d ' +
@@ -1521,7 +1521,7 @@ class Importer(object):
         poem_script = os.path.join(working_dir, 'run_poem.sh')
         with open(poem_script, 'w') as outfile:
             outfile.write('#!/bin/bash\n')
-            outfile.write('source ' + self.config['cgcms.poem.conda_path'] + '\n')
+            outfile.write('source ' + self.config['cgcms.conda_path'] + '\n')
             outfile.write('conda activate ' + self.config['cgcms.poem.conda_env'] + '\n')
             outfile.write('bash ' + self.config['cgcms.poem_command'] + ' -f ' + working_dir + ' -a n -p pro\n')
             outfile.write('conda deactivate\n')
