@@ -23,7 +23,6 @@ dumpdata*
 # Distribution / packaging 
 .Python build/ 
 develop-eggs/ 
-dist/ 
 downloads/ 
 eggs/ 
 .eggs/ 
