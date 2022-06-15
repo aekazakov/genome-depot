@@ -44,7 +44,7 @@ if ! [ -d "$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7" ]; then
 	conda activate cgcms-emapper
 	mkdir "$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7"
 	echo "Downloading reference databases for eggnog-mapper_v2.1.7. Answer \"y\" to all questions."
-	download_eggnog_data.py --data_dir "$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7"
+	download_eggnog_data.py -y --data_dir "$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7"
 	conda deactivate
 fi
 # Install poem_py3

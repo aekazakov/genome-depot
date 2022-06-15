@@ -116,7 +116,7 @@ If test server cannot find static files, check if www-data user can read from th
 
 	</Directory>
 
-	<Directory /path/to/cgcms/static/mygenomes>
+	<Directory /path/to/cgcms/static/>
 
 		Options -Indexes +FollowSymLinks
 
@@ -130,7 +130,7 @@ If test server cannot find static files, check if www-data user can read from th
 
 	</Directory>
 
-	Alias /static /path/to/cgcms/static/
+	Alias /cgcmsstatic /path/to/cgcms/static/
 
 	
 

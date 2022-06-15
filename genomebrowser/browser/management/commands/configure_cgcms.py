@@ -2,6 +2,7 @@ import os
 from django.core.management.base import BaseCommand
 from browser.models import Config
 from browser.dataimport.importer import Importer
+from genomebrowser.settings import STATIC_URL
 
 class Command(BaseCommand):
     help = 'Imports config settings from file'
@@ -27,5 +28,13 @@ class Command(BaseCommand):
             for param in configs:
                 if param not in configs_saved:
                     config = Config.objects.create(param=param, value=configs[param])
+                    
+            tracklist_template = 'trackList.json.template'
+            tracklist_file = os.path.join(Config.objects.get(param='cgcms.json_dir').value, 'trackList.json')
+            print('Writing', tracklist_file)
+            with open(tracklist_file, 'w') as outfile:
+                with open(tracklist_template, 'r') as infile:
+                    for line in infile:
+                        outfile.write(line.replace('https://example.com/', STATIC_URL))
         else:
             raise ValueError('Parameters file not found.')

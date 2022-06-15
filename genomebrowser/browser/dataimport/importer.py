@@ -249,13 +249,14 @@ class Importer(object):
             This function creates strain entries and strain metadata for new genomes.
         """
         saved_metadata = defaultdict(dict)
-        with open(self.config['strains.metadata_file'], 'r') as infile:
-            # Strain metadata fields: strain, source, url, key, value
-            for line in infile:
-                if line.startswith('#'):
-                    continue
-                row = line.rstrip('\n\r').split('\t')
-                saved_metadata[row[0]][row[3]] = [row[1], row[2], row[4]]
+        if 'strains.metadata_file' in self.config and os.path.exists(self.config['strains.metadata_file']):
+            with open(self.config['strains.metadata_file'], 'r') as infile:
+                # Strain metadata fields: strain, source, url, key, value
+                for line in infile:
+                    if line.startswith('#'):
+                        continue
+                    row = line.rstrip('\n\r').split('\t')
+                    saved_metadata[row[0]][row[3]] = [row[1], row[2], row[4]]
             
         saved_strains = {strain_data['strain_id']:strain_data['taxon__taxonomy_id'] for strain_data in Strain.objects.values('strain_id', 'taxon__taxonomy_id')}
         for genome_id in self.inputgenomes:
@@ -1246,8 +1247,8 @@ class Importer(object):
         if os.path.exists(dest_dir):
             shutil.rmtree(dest_dir)
         shutil.copytree(temp_dir, dest_dir)
-        if os.path.exists(os.path.join(self.config['cgcms.temp_dir'], 'trackList.json')):
-            shutil.copyfile(os.path.join(self.config['cgcms.temp_dir'], 'trackList.json'), os.path.join(self.config['cgcms.json_dir'], genome, 'trackList.json'))
+        if os.path.exists(os.path.join(self.config['cgcms.json_dir'], 'trackList.json')):
+            shutil.copyfile(os.path.join(self.config['cgcms.json_dir'], 'trackList.json'), os.path.join(self.config['cgcms.json_dir'], genome, 'trackList.json'))
         shutil.rmtree(temp_dir)
 
     def copy_static_files(self):

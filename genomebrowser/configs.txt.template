@@ -16,4 +16,4 @@ plugins.ecis_screen.ecis-screen_cmd = HMMsearch_genomesII_fast.pl
 cgcms.prepare_refseqs_command = jbrowsepath/jbrowse/bin/prepare-refseqs.pl
 cgcms.flatfile_to_json_command = jbrowsepath/jbrowse/bin/flatfile-to-json.pl
 cgcms.generate_names_command = jbrowsepath/jbrowse/bin/generate-names.pl
-strains.metadata_file = CGCMS/enigma_data/isolates_metadata_master.txt
+strains.metadata_file = 
