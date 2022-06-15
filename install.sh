@@ -155,7 +155,7 @@ echo "cgcms.eggnog-mapper.data_dir = $CGCMSDIR/external_refdata/eggnog-mapper_v2
 echo "cgcms.eggnog-mapper.dmnd_db = $CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7/eggnog_proteins.dmnd" >> configs.txt
 echo "cgcms.eggnog_outdir = $WORKDIR/temp/eggnog" >> configs.txt
 echo "cgcms.eggnog_taxonomy = $WORKDIR/ref_data/eggnog_taxonomy_rules.txt" >> configs.txt
-echo "cgcms.json_dir = $WORKDIR/ref_data/eggnog_taxonomy_rules.txt" >> configs.txt
+echo "cgcms.json_dir = $CGCMSDIR/static/$APPNAME/genomes/json" >> configs.txt
 echo "cgcms.poem_command = $CGCMSDIR/external_tools/POEM_py3k/bin/run_poem_cgcms.sh" >> configs.txt
 echo "cgcms.search_db_dir = $WORKDIR/appdata" >> configs.txt
 echo "cgcms.search_db_nucl = $WORKDIR/appdata/nucl.fna" >> configs.txt
@@ -164,7 +164,7 @@ echo "cgcms.static_dir = $CGCMSDIR/static/$APPNAME/genomes" >> configs.txt
 echo "cgcms.temp_dir = $WORKDIR/temp" >> configs.txt
 echo "plugins.antismash.antismash_ref = $WORKDIR/ref_data/ref_antismash.txt" >> configs.txt
 echo "plugins.ecis_screen.ecis_hmm = $CGCMSDIR/external_tools/eCIS-screen/eCIS.hmm" >> configs.txt
-echo "plugins.fama.fama_dir	$CGCMSDIR/external_tools/fama/py" >> configs.txt
+echo "plugins.fama.fama_dir = $CGCMSDIR/external_tools/fama/py" >> configs.txt
 echo "plugins.fama.fama_config = $CGCMSDIR/external_tools/fama/config.ini" >> configs.txt
 echo "plugins.fama.fama_cazy_lib = $CGCMSDIR/external_refdata/fama/cazy2/collection_functions.txt" >> configs.txt
 echo "plugins.fama.fama_nitrate_lib = $CGCMSDIR/external_refdata/fama/nitrogen11/fama_nitrogen-cycle_v.11.0_functions_thresholds.tsv" >> configs.txt
