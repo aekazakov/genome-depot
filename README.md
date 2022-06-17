@@ -15,10 +15,14 @@ Compararive genomic content management system
 
 6. NCBI-BLAST
 
-7. Jbrowse genome browser v. 1. (https://jbrowse.org/jbrowse1.html)
+7. Perl
 
-In Ubuntu-based distibutions, you can install Muscle, HMMER and NCBI-BLAST+ from package repository:
-sudo apt install muscle hmmer ncbi-blast+
+8. zlib1g-dev package
+
+In Ubuntu-based distibutions, you can install the dependencies using the APT package repository:
+sudo apt install apache2 mysql-server muscle hmmer ncbi-blast+ build-essential zlib1g-dev
+
+9. Jbrowse genome browser v. 1.16.11 (https://jbrowse.org/jbrowse1.html). You can find installation instructions here: https://jbrowse.org/docs/installation.html#download-jbrowse-minified-release
 
 
 ## Installation

@@ -30,6 +30,15 @@ source $CONDA
 [ -d "$WORKDIR/temp/eggnog" ] || mkdir "$WORKDIR/temp/eggnog"
 
 cd "$CGCMSDIR/external_tools"
+# Install Jbrowse v.1.16.11
+curl -L -O https://github.com/GMOD/jbrowse/releases/download/1.16.11-release/JBrowse-1.16.11.zip
+unzip JBrowse-1.16.11.zip
+mv JBrowse-1.16.11 jbrowse
+rm JBrowse-1.16.11.zip
+cd jbrowse
+./setup.sh
+cd "$CGCMSDIR/external_tools"
+
 # Install eggnog-mapper
 if ! { conda env list | grep 'cgcms-emapper'; } >/dev/null 2>&1; then
 	echo "Installing EggNOG mapper"
@@ -98,11 +107,11 @@ if ! { conda env list | grep 'cgcms-fama'; } >/dev/null 2>&1; then
 	echo "Installing Fama"
 	conda create -y -n cgcms-fama python=3.8
 	conda activate cgcms-fama
-	conda install -y diamond 
+	conda install -y diamond krona
 	git clone https://github.com/novichkov-lab/fama.git
 	cd fama
 	pip install -r requirements.txt
-	/bin/sh install_reference_data_cgcms.sh
+	/bin/sh install_reference_data_cgcms.sh "$CGCMSDIR/external_refdata/"
 	conda deactivate
 	cd "$CGCMSDIR/external_tools"
 fi
@@ -128,9 +137,9 @@ if ! [ -f "$CGCMSDIR/external_refdata/pfam/Pfam-A.hmm" ]; then
 	echo "Downloading PFAM HMMs"
 	[ -d "$CGCMSDIR/external_refdata/pfam" ] || mkdir "$CGCMSDIR/external_refdata/pfam"
 	cd "$CGCMSDIR/external_refdata/pfam"
-    curl -LJO -q http://iseq.lbl.gov/mydocs/cgcms_downloads/pfam.tar.gz
-	tar xvf pfam.tar.gz
-	rm pfam.tar.gz
+    curl -LJO -q http://iseq.lbl.gov/mydocs/cgcms_downloads/pfam35.tar.gz
+	tar xvf pfam35.tar.gz
+	rm pfam35.tar.gz
 	hmmpress Pfam-A.hmm
 fi
 if ! [ -f "$CGCMSDIR/external_refdata/tigrfam/TIGRFAM.HMM" ]; then
@@ -151,17 +160,20 @@ if [ -f "configs.txt" ]; then
 fi
 cp configs.txt.template configs.txt
 echo "cgcms.conda_path = $CONDA" >> configs.txt
+echo "cgcms.temp_dir = $WORKDIR/temp" >> configs.txt
+echo "cgcms.static_dir = $CGCMSDIR/static/$APPNAME/genomes" >> configs.txt
 echo "cgcms.eggnog-mapper.data_dir = $CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7" >> configs.txt
 echo "cgcms.eggnog-mapper.dmnd_db = $CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7/eggnog_proteins.dmnd" >> configs.txt
 echo "cgcms.eggnog_outdir = $WORKDIR/temp/eggnog" >> configs.txt
 echo "cgcms.eggnog_taxonomy = $WORKDIR/ref_data/eggnog_taxonomy_rules.txt" >> configs.txt
 echo "cgcms.json_dir = $CGCMSDIR/static/$APPNAME/genomes/json" >> configs.txt
 echo "cgcms.poem_command = $CGCMSDIR/external_tools/POEM_py3k/bin/run_poem_cgcms.sh" >> configs.txt
+echo "cgcms.prepare_refseqs_command = $CGCMSDIR/external_tools/jbrowse/bin/prepare-refseqs.pl" >> configs.txt
+echo "cgcms.flatfile_to_json_command = $CGCMSDIR/external_tools/jbrowse/bin/flatfile-to-json.pl" >> configs.txt
+echo "cgcms.generate_names_command = $CGCMSDIR/external_tools/jbrowse/bin/generate-names.pl" >> configs.txt
 echo "cgcms.search_db_dir = $WORKDIR/appdata" >> configs.txt
 echo "cgcms.search_db_nucl = $WORKDIR/appdata/nucl.fna" >> configs.txt
 echo "cgcms.search_db_prot = $WORKDIR/appdata/prot.faa" >> configs.txt
-echo "cgcms.static_dir = $CGCMSDIR/static/$APPNAME/genomes" >> configs.txt
-echo "cgcms.temp_dir = $WORKDIR/temp" >> configs.txt
 echo "plugins.antismash.antismash_ref = $WORKDIR/ref_data/ref_antismash.txt" >> configs.txt
 echo "plugins.ecis_screen.ecis_hmm = $CGCMSDIR/external_tools/eCIS-screen/eCIS.hmm" >> configs.txt
 echo "plugins.fama.fama_dir = $CGCMSDIR/external_tools/fama/py" >> configs.txt
