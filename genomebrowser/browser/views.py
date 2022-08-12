@@ -1,12 +1,15 @@
 import csv
+import time
+import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 from django.http import Http404
 from .models import *
-from django.views import generic
+from django.views import View, generic
 from django.db.models import Q
 from django.core.files.storage import default_storage
+from django.urls import reverse
 from browser.seqsearch import run_protein_search, run_nucleotide_search
 from browser.comparative_analysis import get_scribl
 from browser.conserved_regulon import build_conserved_regulon
@@ -888,6 +891,75 @@ def nucleotide_search(request):
         context['searchresult'] = result
     return render(request, 'browser/nucleotidesearch.html', context)
 
+
+class NsearchResultView(View):
+    
+    
+    def post(self,request):
+        sequence = request.POST.get("sequence")
+        print('Sequence sent:', sequence)
+        context = {'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')}
+        print('REQUEST1')
+        for key, val in request.POST.items():
+            context[key] = val
+            print(key, val)
+        return render(request,'browser/nucleotidesearchajax.html', context)
+
+    def get(self,request):
+        return render(request,'browser/nucleotidesearchajax.html')
+    
+    @staticmethod
+    def ajax_view(request):
+        start_time = time.time()
+        result = []
+        print('REQUEST2')
+        for key, val in request.POST.items():
+            print(key, val)
+        sequence = request.POST.get("sequence")
+        params = {'sequence': request.POST.get("sequence"), 'evalue': request.POST.get("evalue"), 'hitstoshow': request.POST.get("hitstoshow")}
+        #sequence = 'ATGACGATGCACCCGGCAGCACCTCGAACTCCGCACTGGCGCTGCTTGCACCGGCTGGCATGGAGCCTGTCCTGCGCTGCCCTGTTGCCGCTCGCTGCACTGGCGCAGGACGTACCGTCCCGCGCCGTCACGCCGGTGTCCGCAGCGTCGCCGCCGCGCCAGTCGCAGGACGACGCCTGGTGGACCGGGCCGATGCTGGCGAACTCCGCCGCCACCCTGCCGCGCGGCCACGTCCTGATCGAGCCTTACGTCTACGACGTGTCCTCGCCGCACGCCGACGGCTACGGTTCGCTCACCTACATGCTCTACGGCCTCACCGACCGGCTGACGGTCGGCCTGATGCCGGTGCTGGGCTACAACCGCATGGATGGCCCGGGCGACAGCAGCGGGATCGGGCTGGGCGACGTCAGCGTGCAGGCGCAGTACCGGCTGACCGATGTGCCGGCGGGCAGTTCGCGGCCCACGGTCTCGCTGCAACTGCAGGAAACCCTGCCGACCGGCAAGTACGACCGGCTGGGCCGGCGACCCGGCAACGGCCTGGGCAGCGGCGCCACCACCACTACGCTGCAGGTCAACACGCAGACGTATTTCTGGTTGTCCAACGGCCGCATCCTGCGCATGCGCTTCAACGTGGCGCAATCATTCTCGACGCGGGCACGGGTCGAGGACATCAGCGTCTACGGCACCCCGGACGGCTTTCGCGGGCACGCCCGGCCGGGGCGTTCGTTCTTCGTCAATGCGGCCTGGGAGTACAGCCTCAGCCAGCGCTGGGTGCTGGCGCTCGACCTCACCTACCGGCGCAGCCACGGTGCCCGCGTGCGCGACGACGACCTCAATGGCGTGCCTGCCTTGCGTCTGGACGGCCGCTCCAGCGAGGCGTTCGGCTTTGCCCCGGCCATCGAGTACAGCTGGAGTCCGCGGCTCGGCGTGCTGTTCGGCACCCGCGTGATCACCGGCGGGCACAACACCGCGACCACGATCACGCCGGCGGTGGCCTTCAACTACGTGCACTGA'
+        print('Sequence received:', sequence)
+        sleep_timer = 1
+        print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        time.sleep(sleep_timer)
+        hits, searchcontext, query_len = run_nucleotide_search(params)
+        if hits:
+            result.append('<table><thead><tr><th>Target contig (click to see hit)</th><th>Genome</th><th>%identity</th><th>Alignment length</th><th>%Query coverage</th><th>E-value</th><th>Bit-score</th></tr></thead><tbody>')
+            for row in hits:
+                row=row.split('\t')
+#                if row[0] not in result:
+#                    result[row[0]] = []
+                contig_name, genome_name = row[1].split('|')
+                genome_name = genome_name.split('[')[0]
+                print('Search for contig', contig_name, 'in genome', genome_name)
+                target = Contig.objects.select_related('genome', 'genome__taxon').get(contig_id = contig_name, genome__name = genome_name)
+                ani = float(row[2])
+                strand = '+'
+                start = row[8]
+                end = row[9]
+                unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
+                query_cov = (query_len - unaligned_part) * 100.0 / query_len
+                if int(row[7]) < int(row[6]):
+                    strand = '-'
+#                hit = [contig_name + ': (' + strand + 'strand) ' + start + '..' + end,
+#                        target, '{:.2f}'.format(float(row[2])), row[3], '{:.1f}'.format(query_cov), row[10], row[11], start, end]
+                hit = '<tr><td align=\"left\"><a href=\"' + reverse('genomedetails', args=(target.genome.name,)) + '?contig=' + target.contig_id + '&start=' + start + '&end=' + end + '\">' + contig_name + ': (' + strand + 'strand) ' + start + '..' + end + '</a></td><td align="left">' + target.genome.name + ' [' + target.genome.taxon.name + ']</td><td>' + '{:.2f}'.format(float(row[2])) + '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) + '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
+                result.append(hit)
+            result.append('</tbody></table>')
+        else:
+            result = ['<h5>No hits found.</h5>']
+        context = {"searchresult":'\n'.join(result),"searchcontext":searchcontext,"query_len":query_len,"time":time.time()-start_time}
+        print(context)
+        data = json.dumps(context)
+        return HttpResponse(data,content_type="application/json")
+
+
+def nucleotidesearchform(request):
+#    if "submit" in request.POST:
+#        sequence = request.POST.get("sequence")
+#        print('Sequence1:', sequence)
+#        return NsearchResultView.as_view(request) # redirect("nucleotidesearchajax")
+    return render(request,'browser/nucleotidesearchform.html')
 
 def cregulon_view(request):
     """

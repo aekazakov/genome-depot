@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+{% load my_tags %}
+{% load static %}
+
+{% block script-header %}
+{% endblock %}
+
+{% block title %}<div class="logo"><h2>Sequence search with AJAX</h2></div>{% endblock %}
+
+{% block content %}
+    <section id="two" class="wrapper style3">
+    <div class="inner">
+	    <header class="align-center">
+		<form action="{% url 'nucleotidesearchajax' %}" method="post">
+		    {% csrf_token %}
+		    <div>
+			<textarea name="sequence" id="sequence" placeholder="Enter one nucleotide sequence in FASTA format..." rows="8"></textarea>
+			<label for="evalue">Choose E-value:</label>
+			<select id="evalue" name="evalue">
+			    <option value="0.00000000000000000001">10e-20</option>
+			    <option value="0.0000000001">10e-10</option>
+			    <option value="0.00000001">10e-8</option>
+			    <option value="0.000001">10e-6</option>
+			    <option value="0.0001" selected="selected">10e-4</option>
+			    <option value="0.01">0.01</option>
+			    <option value="1.0">1.0</option>
+			    <option value="10.0">10.0</option>
+			</select>
+			<label for="hitstoshow">Results to show:</label>
+			<select id="hitstoshow" name="hitstoshow">
+			    <option value="10">10</option>
+			    <option value="20">20</option>
+			    <option value="50">50</option>
+			    <option value="100" selected="selected">100</option>
+			    <option value="500">500</option>
+			    <option value="1000">1000</option>
+			</select>
+		    </div>
+		    <input type="submit" value="Start search">
+		</form>
+	    </header>
+	</div>
+    </section>
+
+{% endblock %}
+

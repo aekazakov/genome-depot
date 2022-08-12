@@ -184,3 +184,20 @@ python manage.py update_annotations -i genomes.txt
 
 
 ## TODO: Genome import from the admin interface
+
+
+
+
+# Image Credits
+
+All images courtesy of Unsplash (https://unsplash.com).
+
+- Jonathan Pie
+    https://unsplash.com/@r3dmax?photo=3l3RwQdHRHg
+    https://unsplash.com/@r3dmax?photo=1hpE3fROU0I
+    https://unsplash.com/@r3dmax?photo=3N5ccOE3wGg
+    https://unsplash.com/@r3dmax?photo=-3h8OXvt4-0
+    https://unsplash.com/@r3dmax?photo=7FfG8zcPcXU
+    https://unsplash.com/@r3dmax?photo=EvKBHBGgaUo
+    https://unsplash.com/@r3dmax?photo=8I49k45G-3A
+    https://unsplash.com/@r3dmax?photo=iokiwAq05UU

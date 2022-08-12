@@ -10,7 +10,19 @@ from browser.models import Config
 def _verify_alphabet(sequence, alphabet):
     alphabet = set(alphabet) 
     return all(letter in alphabet for letter in sequence)
-    
+
+def validate_params(params):
+    result = {}
+    if isinstance(params,str):
+        result['sequence'] = params
+        result['evalue'] = '0.0001'
+        result['hitstoshow'] = '100'
+    else:
+        result = params
+        # TODO: actual validation
+    return result
+
+        
 def run_protein_search(query):
     search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
@@ -74,8 +86,10 @@ def run_protein_search(query):
         result = result[:100]
     return result, searchcontext, query_len
 
-
-def run_nucleotide_search(query):
+def run_nucleotide_search(params):
+    params = validate_params(params)
+    query = params['sequence']
+    
     search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     DNA_ALPHABET = 'GATCRYWSMKHBVDN'
     log_file = os.path.join(search_dir, 'search.log')
@@ -105,10 +119,10 @@ def run_nucleotide_search(query):
         return result, searchcontext, 0
     args = [
         'megablast',
-        '-a', '6',
-        '-b', '100',
+        '-a', '2',
+        '-b', params['hitstoshow'],
         '-D', '3',
-        '-e', '0.001',
+        '-e', params['evalue'],
         '-f', 'T',
         '-d', blast_db
         ]

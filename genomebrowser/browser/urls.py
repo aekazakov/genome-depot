@@ -42,6 +42,9 @@ urlpatterns = [
     path('comparative/', views.comparative_view, name='comparative'),
     path('cregulon/', views.cregulon_view, name='cregulon'),
     path('help/', views.show_help, name='help'),
+    path('nuclsearchform/',views.nucleotidesearchform,name="nuclsearchform"),
+    path('nucleotidesearchajax/',views.NsearchResultView.as_view(),name="nucleotidesearchajax"),
+    path('loading/',views.NsearchResultView.ajax_view,name="loading"),
 
 ]
 handler404 = views.handler404

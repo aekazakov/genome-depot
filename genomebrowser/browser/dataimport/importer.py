@@ -1156,7 +1156,6 @@ class Importer(object):
                     row = [contig.contig_id, source, 'operon', str(operon.start), str(operon.end), '.', strand,
                               '0', '; '.join(column9)]
                     outfile.write(('\t').join(row) + '\n')
-                    
         return result
         
     def export_jbrowse_data(self):
@@ -1283,11 +1282,6 @@ class Importer(object):
                 raise CalledProcessError(proc.returncode, proc.args)
         else:
             print(self.config['cgcms.search_db_prot'], ' is missing or empty. Sequence database was not created.')
-
-#    def append_eggnog_stored_data(self, new_eggnog_data):
-#        with open(self.config['genomes.eggnog_output_stored'], 'a') as outfile:
-#            for line in new_eggnog_data:
-#                outfile.write(line)
         
     def delete_search_databases(self):
         for filename in os.listdir(self.config['cgcms.search_db_dir']):
