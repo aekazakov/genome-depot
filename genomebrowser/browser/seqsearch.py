@@ -23,7 +23,10 @@ def validate_params(params):
     return result
 
         
-def run_protein_search(query):
+def run_protein_search(params):
+    params = validate_params(params)
+    query = params['sequence']
+
     search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
     log_file = os.path.join(search_dir, 'search.log')
@@ -52,10 +55,8 @@ def run_protein_search(query):
         'blastp',
         '-db',
         blast_db,
-        '-max_target_seqs',
-        '50',
-        '-evalue',
-        '0.00001',
+        '-max_target_seqs', params['hitstoshow'],
+        '-evalue', params['evalue'],
         '-matrix=PAM30',
         '-outfmt',
         '6'

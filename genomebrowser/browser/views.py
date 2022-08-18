@@ -893,8 +893,7 @@ def nucleotide_search(request):
 
 
 class NsearchResultView(View):
-    
-    
+
     def post(self,request):
         sequence = request.POST.get("sequence")
         print('Sequence sent:', sequence)
@@ -903,10 +902,10 @@ class NsearchResultView(View):
         for key, val in request.POST.items():
             context[key] = val
             print(key, val)
-        return render(request,'browser/nucleotidesearchajax.html', context)
+        return render(request,'browser/proteinsearchajax.html', context)
 
     def get(self,request):
-        return render(request,'browser/nucleotidesearchajax.html')
+        return render(request,'browser/proteinsearchajax.html')
     
     @staticmethod
     def ajax_view(request):
@@ -919,7 +918,7 @@ class NsearchResultView(View):
         params = {'sequence': request.POST.get("sequence"), 'evalue': request.POST.get("evalue"), 'hitstoshow': request.POST.get("hitstoshow")}
         #sequence = 'ATGACGATGCACCCGGCAGCACCTCGAACTCCGCACTGGCGCTGCTTGCACCGGCTGGCATGGAGCCTGTCCTGCGCTGCCCTGTTGCCGCTCGCTGCACTGGCGCAGGACGTACCGTCCCGCGCCGTCACGCCGGTGTCCGCAGCGTCGCCGCCGCGCCAGTCGCAGGACGACGCCTGGTGGACCGGGCCGATGCTGGCGAACTCCGCCGCCACCCTGCCGCGCGGCCACGTCCTGATCGAGCCTTACGTCTACGACGTGTCCTCGCCGCACGCCGACGGCTACGGTTCGCTCACCTACATGCTCTACGGCCTCACCGACCGGCTGACGGTCGGCCTGATGCCGGTGCTGGGCTACAACCGCATGGATGGCCCGGGCGACAGCAGCGGGATCGGGCTGGGCGACGTCAGCGTGCAGGCGCAGTACCGGCTGACCGATGTGCCGGCGGGCAGTTCGCGGCCCACGGTCTCGCTGCAACTGCAGGAAACCCTGCCGACCGGCAAGTACGACCGGCTGGGCCGGCGACCCGGCAACGGCCTGGGCAGCGGCGCCACCACCACTACGCTGCAGGTCAACACGCAGACGTATTTCTGGTTGTCCAACGGCCGCATCCTGCGCATGCGCTTCAACGTGGCGCAATCATTCTCGACGCGGGCACGGGTCGAGGACATCAGCGTCTACGGCACCCCGGACGGCTTTCGCGGGCACGCCCGGCCGGGGCGTTCGTTCTTCGTCAATGCGGCCTGGGAGTACAGCCTCAGCCAGCGCTGGGTGCTGGCGCTCGACCTCACCTACCGGCGCAGCCACGGTGCCCGCGTGCGCGACGACGACCTCAATGGCGTGCCTGCCTTGCGTCTGGACGGCCGCTCCAGCGAGGCGTTCGGCTTTGCCCCGGCCATCGAGTACAGCTGGAGTCCGCGGCTCGGCGTGCTGTTCGGCACCCGCGTGATCACCGGCGGGCACAACACCGCGACCACGATCACGCCGGCGGTGGCCTTCAACTACGTGCACTGA'
         print('Sequence received:', sequence)
-        sleep_timer = 1
+        sleep_timer = 0
         print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         time.sleep(sleep_timer)
         hits, searchcontext, query_len = run_nucleotide_search(params)
@@ -955,11 +954,61 @@ class NsearchResultView(View):
 
 
 def nucleotidesearchform(request):
-#    if "submit" in request.POST:
-#        sequence = request.POST.get("sequence")
-#        print('Sequence1:', sequence)
-#        return NsearchResultView.as_view(request) # redirect("nucleotidesearchajax")
     return render(request,'browser/nucleotidesearchform.html')
+
+
+class PsearchResultView(View):
+
+    def post(self,request):
+        sequence = request.POST.get("sequence")
+        print('Sequence sent:', sequence)
+        context = {'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')}
+        print('REQUEST1')
+        for key, val in request.POST.items():
+            context[key] = val
+            print(key, val)
+        return render(request,'browser/proteinsearchajax.html', context)
+
+    def get(self,request):
+        return render(request,'browser/proteinsearchajax.html')
+    
+    @staticmethod
+    def ajax_view(request):
+        start_time = time.time()
+        result = []
+        print('REQUEST2')
+        for key, val in request.POST.items():
+            print(key, val)
+        sequence = request.POST.get("sequence")
+        params = {'sequence': request.POST.get("sequence"), 'evalue': request.POST.get("evalue"), 'hitstoshow': request.POST.get("hitstoshow")}
+        #sequence = 'MTKQVQEAYIVAATRTPVGKAPRGVFRNTRPDDMLAHVIRAVMAQAPGIDPHQIGDVIIGCAMPEAEQGMNVARIGLLLAGLPDTVPGVTVNRFCSSGLQSVAMAADRIRLGLDDLMLAGGTESMSMVPMMGHKIAMNPAIFNDENIGIAYGMGITAENVAKQWKVSREQQDAFSVESHRRALAAQAAGEFNDEISPFALDDHYPNLATRGIVTDSRRIDSDEGPRAGTTMEVLAKLKTVFRNGQFGGTVTAGNSSQMSDGAGAVLLASERAVKEYNLQPLARFVGFSVAGVPPEVMGIGPKEAIPKALKQAGLNRDQLDWIELNEAFAAQALAVMGDLGLDPDKVNPLGGAIALGHPLGATGAVRIATLVHGMRRRKQKYGMVTMCIGTGMGAAGIFEAL'
+        print('Sequence received:', sequence)
+        sleep_timer = 0
+        print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        time.sleep(sleep_timer)
+        hits, searchcontext, query_len = run_protein_search(params)
+
+        if hits:
+            result.append('<table><thead><tr><th>Target gene</th><th>Genome</th><th>%identity</th><th>Alignment length</th><th>%Query coverage</th><th>E-value</th><th>Bit-score</th></tr></thead><tbody>')
+            for row in hits:
+                row=row.split('\t')
+                unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
+                query_cov = (query_len - unaligned_part) * 100.0 / query_len
+                genes = Gene.objects.select_related('protein', 'genome', 'genome__taxon').filter(protein__protein_hash = row[1])
+                for target in genes:
+                    hit = '<tr><td align=\"left\"><a href=\"' + reverse('genedetails', args=(target.genome.name, target.locus_tag)) + '\">' + target.locus_tag + '</a></td><td align="left">' + target.genome.name + ' [' + target.genome.taxon.name + ']</td><td>' + '{:.1f}'.format(float(row[2])) + '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) + '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
+                    result.append(hit)
+            result.append('</tbody></table>')
+        else:
+            result = ['<h5>No hits found.</h5>']
+        context = {"searchresult":'\n'.join(result),"searchcontext":searchcontext,"query_len":query_len,"time":time.time()-start_time}
+        print(context)
+        data = json.dumps(context)
+        return HttpResponse(data,content_type="application/json")
+
+
+def proteinsearchform(request):
+    return render(request,'browser/proteinsearchform.html')
 
 def cregulon_view(request):
     """
@@ -990,6 +1039,69 @@ def comparative_view(request):
         context = {'gene': gene, 'ortholog_group':og, 'scribl':scribl, 'tree_canvas':tree_canvas, 'tree_newick':tree_newick, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count}
 
     return render(request, 'browser/scribl.html', context)
+
+
+class ComparativeView(View):
+
+    def get(self,request):
+        locus_tag = request.GET.get('locus_tag')
+        genome = request.GET.get('genome')
+        og_id = request.GET.get('og')
+        print('REQUEST1')
+        print('Request parameters:', og_id, genome, locus_tag)
+        context = {'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')}
+        for key, val in request.GET.items():
+            context[key] = val
+        try:
+            gene = Gene.objects.select_related('protein', 'genome__strain', 'genome__sample', 'contig').get(locus_tag=locus_tag, genome__name=genome)
+            og = Ortholog_group.objects.get(id=og_id)
+        except Gene.DoesNotExist:
+            raise Http404('Gene not found')
+        except Ortholog_group.DoesNotExist:
+            raise Http404('Ortholog group not found')
+        context['gene'] = gene
+        context['ortholog_group'] = og
+        return render(request,'browser/scriblajax.html', context)
+
+    @staticmethod
+    def ajax_view(request):
+        start_time = time.time()
+
+        print('REQUEST2')
+        for key, val in request.GET.items():
+            print(key, val)
+
+        # Sleep timer for testing to imitate long-running task
+        sleep_timer = 0
+        print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        time.sleep(sleep_timer)
+
+        context = {}
+        locus_tag = request.GET.get('locus_tag')
+        genome = request.GET.get('genome')
+        og_id = request.GET.get('og')
+
+        try:
+            gene = Gene.objects.select_related('protein', 'genome__strain', 'genome__sample', 'contig').get(locus_tag=locus_tag, genome__name=genome)
+            og = Ortholog_group.objects.get(id=og_id)
+        except Gene.DoesNotExist:
+            raise Http404('Gene not found')
+        except Ortholog_group.DoesNotExist:
+            raise Http404('Ortholog group not found')
+        scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count = get_scribl(gene, og, request)
+        
+        if og_gene_count == 1:
+            #context = {'gene': gene, 'ortholog_group':og, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count, 'scribl_message':''}
+            scribl='<script type="text/javascript">\nalert("Comparative plot cannot be created for only one genome");</script>'
+            context = {'scribl':scribl, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count, "time":time.time()-start_time}
+        else:
+            #context = {'gene': gene, 'ortholog_group':og, 'scribl':scribl, 'tree_canvas':tree_canvas, 'tree_newick':tree_newick, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count}
+            scribl='<script type="text/javascript">\nfunction draw(canvasName) {\nvar canvas = document.getElementById(canvasName);\nvar parent = document.getElementById("scribl-container");\nvar ctx = canvas.getContext("2d");\ncanvas.width = parent.offsetWidth;\n' + scribl + '\nchart.draw();\nvar img = canvas.toDataURL("image/png");\ndocument.getElementById("pngexport").href = img;\n}\n</script>'
+            plot_gene_count -= 1
+            context = {'scribl':scribl, 'tree_canvas':tree_canvas, 'tree_newick':tree_newick, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count,"time":time.time()-start_time}
+        #print(context)
+        data = json.dumps(context)
+        return HttpResponse(data,content_type="application/json")
 
     
 def export_csv(request):

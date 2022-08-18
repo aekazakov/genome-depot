@@ -19,7 +19,7 @@
 				<label id="hits"></label>
 			    </div>
 		    <label id="run-time">Search time: </label>
-		    <p><a href="{% url 'nuclsearchform' %}">New search</a>
+		    <p><a href="{% url 'proteinsearchform' %}">New search</a>
 		    <div id ="searchcontext" class="error box"></div>
 	    </header>
 	</div>
@@ -29,7 +29,7 @@
 <script>
     $(document).ready(function(){
         $.ajax({
-            url: {% url 'loading' %},
+            url: {% url 'loadingprot' %},
 	    type: "POST",
 	    datatype: 'json',
 	    data: {'sequence': "{{ sequence|escapejs }}", 'csrfmiddlewaretoken': "{{ csrfmiddlewaretoken }}", 'evalue': "{{ evalue }}", 'hitstoshow': "{{ hitstoshow }}" }
@@ -42,6 +42,4 @@
         });
     });
 </script>
-
 {% endblock %}
-

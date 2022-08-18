@@ -1,4 +1,4 @@
-@charset "UTF-8";
+	@charset "UTF-8";
 @import url(font-awesome.min.css);
 @import url("https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700");
 
@@ -4612,6 +4612,10 @@
 		width: 80em;
 	}
 
+	#comparativeplot{
+		display: none;
+	}
+
 	.toyplot {
 		float: left;
 		padding-top: 0px;
@@ -4628,3 +4632,17 @@
 	.tdbreak {
 		word-break: break-all;
 	}
+
+	.regulonlabel {
+		writing-mode: vertical-rl;
+		text-orientation: sideways-right;
+	}
+	
+	.filledcell {
+		background-color: #FFCC99;
+	}
+
+	#search-result-area {
+		display: none;
+	}
+

@@ -39,12 +39,17 @@ urlpatterns = [
     path('transporters/', views.TcSearchResultsView.as_view(), name='transporters'),
     path('cazy/', views.CazySearchResultsView.as_view(), name='cazy'),
     path('cogs/', views.CogSearchResultsView.as_view(), name='cogs'),
-    path('comparative/', views.comparative_view, name='comparative'),
+    path('comparative_old/', views.comparative_view, name='comparativeold'),
+    path('comparative/', views.ComparativeView.as_view(), name='comparative'),
+    path('loadingscribl/',views.ComparativeView.ajax_view,name="loadingscribl"),
     path('cregulon/', views.cregulon_view, name='cregulon'),
     path('help/', views.show_help, name='help'),
     path('nuclsearchform/',views.nucleotidesearchform,name="nuclsearchform"),
     path('nucleotidesearchajax/',views.NsearchResultView.as_view(),name="nucleotidesearchajax"),
+    path('proteinsearchform/',views.proteinsearchform,name="proteinsearchform"),
+    path('proteinsearchajax/',views.PsearchResultView.as_view(),name="proteinsearchajax"),
     path('loading/',views.NsearchResultView.ajax_view,name="loading"),
+    path('loadingprot/',views.PsearchResultView.ajax_view,name="loadingprot"),
 
 ]
 handler404 = views.handler404
