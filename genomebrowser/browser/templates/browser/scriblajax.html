@@ -79,41 +79,43 @@
 				<p class="align-center">Genomic neighborhood of <span id="plot_gene_count"></span> genes most similar to {{ gene.locus_tag }}</p>
 			</header>
 			<form action="{% url 'comparative' %}" method="get">
-			    <div>
-				<div class="row uniform">
-				    <div class="4u 12u$(small)">
-					<div class="select-wrapper">
-					    <label for="size">Locus size:</label>
-					    <select id="size" name="size">
-						<option value="5">5k</option>
-						<option value="10">10k</option>
-						<option value="20">20k</option>
-						<option value="40">40k</option>
-						<option value="60">60k</option>
-						<option value="80">80k</option>
-						<option value="100">100k</option>
-					    </select>
-					</div>
+			    <div class="row uniform">
+				<div class="2u 12u$(xsmall)">
+				    <div class="select-wrapper">
+					<select id="size" name="size">
+					    <option value="5">5k</option>
+					    <option value="10">10k</option>
+					    <option value="20">20k</option>
+					    <option value="40">40k</option>
+					    <option value="60">60k</option>
+					    <option value="80">80k</option>
+					    <option value="100">100k</option>
+					</select>
 				    </div>
-				    <div class="4u 12u$(small)">
-					<div class="select-wrapper">
-					    <label for="lines">Max. number of homologs:</label>
-					    <select id="lines" name="lines">
-						<option value="10">10</option>
-						<option value="25">25</option>
-						<option value="50">50</option>
-						<option value="75">75</option>
-						<option value="100">100</option>
-						<option value="200">200</option>
-					    </select>
-					</div>
+				</div>
+				<div class="2u 12u$(xsmall)">
+				    <label for="size">Locus size</label>
+				</div>
+				<div class="2u 12u$(xsmall)">
+				    <div class="select-wrapper">
+					<select id="lines" name="lines">
+					    <option value="10">10</option>
+					    <option value="25">25</option>
+					    <option value="50">50</option>
+					    <option value="75">75</option>
+					    <option value="100">100</option>
+					    <option value="200">200</option>
+					</select>
 				    </div>
-				     <input type="hidden" name="genome" value="{{ gene.genome.name }}" /> 
-				     <input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}" /> 
-				     <input type="hidden" name="og" value="{{ ortholog_group.id }}" /> 
-				    <div class="4u 12u$(small)">
-					<input type="submit" value="Refresh">
-				    </div>
+				</div>
+				<div class="3u 12u$(xsmall)">
+				    <label for="lines">Max. number of homologs</label>
+				    <input type="hidden" name="genome" value="{{ gene.genome.name }}" /> 
+				    <input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}" /> 
+				    <input type="hidden" name="og" value="{{ ortholog_group.id }}" /> 
+				</div>
+				<div class="2u 12u$(xsmall)">
+				    <input type="submit" value="Refresh">
 				</div>
 			    </div>
 			</form>
