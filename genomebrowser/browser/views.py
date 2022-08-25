@@ -945,7 +945,7 @@ class NsearchResultView(View):
                 hit = '<tr><td align=\"left\"><a href=\"' + reverse('genomedetails', args=(target.genome.name,)) + '?contig=' + target.contig_id + '&start=' + start + '&end=' + end + '\">' + contig_name + ': (' + strand + 'strand) ' + start + '..' + end + '</a></td><td align="left">' + target.genome.name + ' [' + target.genome.taxon.name + ']</td><td>' + '{:.2f}'.format(float(row[2])) + '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) + '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
                 result.append(hit)
             result.append('</tbody></table>')
-        else:
+        elif searchcontext == '':
             result = ['<h5>No hits found.</h5>']
         context = {"searchresult":'\n'.join(result),"searchcontext":searchcontext,"query_len":query_len,"time":time.time()-start_time}
         print(context)
@@ -999,7 +999,7 @@ class PsearchResultView(View):
                     hit = '<tr><td align=\"left\"><a href=\"' + reverse('genedetails', args=(target.genome.name, target.locus_tag)) + '\">' + target.locus_tag + '</a></td><td align="left">' + target.genome.name + ' [' + target.genome.taxon.name + ']</td><td>' + '{:.1f}'.format(float(row[2])) + '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) + '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
                     result.append(hit)
             result.append('</tbody></table>')
-        else:
+        elif searchcontext == '':
             result = ['<h5>No hits found.</h5>']
         context = {"searchresult":'\n'.join(result),"searchcontext":searchcontext,"query_len":query_len,"time":time.time()-start_time}
         print(context)

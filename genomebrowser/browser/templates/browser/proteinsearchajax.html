@@ -29,7 +29,7 @@
 <script>
     $(document).ready(function(){
         $.ajax({
-            url: {% url 'loadingprot' %},
+            url: "{% url 'loadingprot' %}",
 	    type: "POST",
 	    datatype: 'json',
 	    data: {'sequence': "{{ sequence|escapejs }}", 'csrfmiddlewaretoken': "{{ csrfmiddlewaretoken }}", 'evalue': "{{ evalue }}", 'hitstoshow': "{{ hitstoshow }}" }

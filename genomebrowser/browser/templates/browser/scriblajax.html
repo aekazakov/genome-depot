@@ -99,7 +99,7 @@
 <script>
     $(document).ready(function(){
         $.ajax({
-            url: {% url 'loadingscribl' %},
+            url: "{% url 'loadingscribl' %}",
 	    type: "GET",
 	    datatype: 'json',
 	    data: {'csrfmiddlewaretoken': "{{ csrfmiddlewaretoken }}", 'locus_tag': "{{ locus_tag }}", 'genome': "{{ genome }}", 'og': "{{ og }}" }

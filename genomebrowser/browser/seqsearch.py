@@ -4,6 +4,7 @@ from datetime import datetime
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 from subprocess import Popen, PIPE, CalledProcessError, STDOUT
+from django.core.exceptions import SuspiciousOperation
 from browser.models import Config
 
 
@@ -18,20 +19,29 @@ def validate_params(params):
         result['evalue'] = '0.0001'
         result['hitstoshow'] = '100'
     else:
-        result = params
-        # TODO: actual validation
+        result['sequence'] = params['sequence']
+        result['evalue'] = str(float(params['evalue']))
+        if result['evalue'] not in ['1e-20', '1e-10', '1e-08', '1e-06', '0.0001', '0.01', '1.0', '10.0']:
+            raise SuspiciousOperation("Unacceptable value '%s' for e-value parameter." % result['evalue'])
+        result['hitstoshow'] = str(int(params['hitstoshow']))
+        if result['hitstoshow'] not in ['10', '20', '50', '100', '500', '1000']:
+            raise SuspiciousOperation("Unacceptable value '%s' for hitstoshow parameter." % result['hitstoshow'])
     return result
 
         
 def run_protein_search(params):
-    params = validate_params(params)
+    result = []
+    try:
+        params = validate_params(params)
+    except SuspiciousOperation as e:
+        searchcontext = str(e)
+        return result, searchcontext, 0
     query = params['sequence']
 
     search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
     log_file = os.path.join(search_dir, 'search.log')
     blast_db = os.path.join(search_dir, 'blast_prot')
-    result = []
     searchcontext = ''
     with open(log_file, 'a') as log:
         log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] New BLASTP search started.\n')
@@ -88,14 +98,18 @@ def run_protein_search(params):
     return result, searchcontext, query_len
 
 def run_nucleotide_search(params):
-    params = validate_params(params)
+    result = []
+    try:
+        params = validate_params(params)
+    except SuspiciousOperation as e:
+        searchcontext = str(e)
+        return result, searchcontext, 0
     query = params['sequence']
     
     search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     DNA_ALPHABET = 'GATCRYWSMKHBVDN'
     log_file = os.path.join(search_dir, 'search.log')
     blast_db = os.path.join(search_dir, 'blast_nucl')
-    result = []
     searchcontext = ''
 
     with open(log_file, 'a') as log:
