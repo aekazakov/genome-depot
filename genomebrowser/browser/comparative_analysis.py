@@ -93,9 +93,8 @@ def get_gradients():
     return '\'rgb(204, 193, 208\')'
 
 
-def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group, request):
+def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group, request, locus_size):
     result = []
-    locus_size = 10000
     if gene.strand == 1:
         if reverse_gene:
             strand = '-'
@@ -388,8 +387,8 @@ def collect_genes(tree, taxon2genes, visited_taxa, taxon):
 
 
 def get_scribl(start_gene, eggnog_og, request):
-    locus_size = 10000
-    genelist_size = 50
+    locus_size = int(request.GET.get('size')) * 1000 #10000
+    genelist_size = int(request.GET.get('lines'))  #10
     gene_uid = 0
     track_uid = 0
     scribl = []
@@ -411,8 +410,8 @@ def get_scribl(start_gene, eggnog_og, request):
     scribl.append('\t\tchart.scale.pretty = false;')
     scribl.append('\t\tchart.scale.min = -50;')
     scribl.append('\t\tchart.scale.max = ' + str(locus_size) +';')
-    scribl.append('\t\tchart.tick.major.size = 500;')
-    scribl.append('\t\tchart.tick.minor.size = 50;')
+    scribl.append('\t\tchart.tick.major.size = ' + str(locus_size / 10) + ';')
+    scribl.append('\t\tchart.tick.minor.size = ' + str(locus_size / 100) + ';')
     scribl.append('\t\tchart.tick.major.color = "#c7c7c7";')
     scribl.append('\t\tchart.tick.minor.color = "white";')
     scribl.append('\t\tchart.scale.font.color = "#c7c7c7";')
@@ -491,7 +490,7 @@ def get_scribl(start_gene, eggnog_og, request):
                 eggnog2color[group] = get_color(len(eggnog2color))
             gene_color = eggnog2color[group]
             gene_uid += 1
-            scribl += add_gene(locus_member, gene_uid, track_uid, offset, reverse, gene_color, group, request)
+            scribl += add_gene(locus_member, gene_uid, track_uid, offset, reverse, gene_color, group, request, locus_size)
 
     return '\n'.join(scribl), tree_canvas, tree_newick, og_gene_count, plot_gene_count
 

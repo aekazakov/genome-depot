@@ -71,7 +71,7 @@
 			    <span>EggNOG Orthologs (click to open comparative plot)</span>
 			    <h5> 
 			    {% for ortholog_group in protein.ortholog_groups.all %}
-				<a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a>
+				<a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}&size=10&lines=50">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a>
 			    {% endfor %}
 			    </h5>
 			{% endif %}
@@ -189,7 +189,7 @@
 			<h2>Sequence analysis tools</h2>
 		    </header>
 			<form method="post" action="https://www.ebi.ac.uk/Tools/hmmer/search/hmmscan" enctype="multipart/form-data" name="PfamForm" id="PfamForm"><input type="hidden" name="seq" value="&gt;{{ gene.locus_tag }}&#10;{{ protein.sequence }}"  /> <input type="hidden" name="hmmdb" value="pfam"  /> <input type="hidden" name="E" value="1"  /> <input type="hidden" name="domE" value="1"  /> <input type="submit" name=".submit" style="display: none;" id="PfamButton" /></form>
-			<form method="post" action="http://microbesonline.org/cgi-bin/seqsearch.cgi" enctype="multipart/form-data" name="MoBlastForm" id="MoBlastForm"><input type="hidden" name="query" value="&gt;{{ gene.locus_tag }}&#10;{{ protein.sequence }}"  /> <input type="hidden" name="hmmdb" value="pfam"  /> <input type="hidden" name="E" value="1"  /> <input type="hidden" name="qtype" value="protein"  /> <input type="submit" name=".submit" style="display: none;" id="MoBlastButton" /></form>
+			<form method="post" action="http://microbesonline.org/cgi-bin/seqsearch.cgi" enctype="multipart/form-data" name="MoBlastForm" id="MoBlastForm"><input type="hidden" name="query" value="&gt;{{ gene.locus_tag }}&#10;{{ protein.sequence }}"  /> <input type="hidden" name="qtype" value="protein"  /> <input type="submit" name=".submit" style="display: none;" id="MoBlastButton" /></form>
 			<h5>
 			    <a href="https://fit.genomics.lbl.gov/cgi-bin/mySeqSearch.cgi?query={{ protein.sequence }}" target="blank_">Fitness BLAST search (homologs of this protein in Fitness Browser)</a>
 			</h5>

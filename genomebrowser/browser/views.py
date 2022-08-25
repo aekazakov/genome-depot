@@ -9,6 +9,7 @@ from .models import *
 from django.views import View, generic
 from django.db.models import Q
 from django.core.files.storage import default_storage
+from django.core.exceptions import SuspiciousOperation
 from django.urls import reverse
 from browser.seqsearch import run_protein_search, run_nucleotide_search
 from browser.comparative_analysis import get_scribl
@@ -1043,13 +1044,27 @@ def comparative_view(request):
 
 class ComparativeView(View):
 
+    @staticmethod
+    def verify_parameters(size, lines):
+        try:
+            if int(size) not in [5, 10, 20, 40, 60, 80, 100]:
+                raise SuspiciousOperation('Unacceptable value for locus size: ' + size)
+            if int(lines) not in [10, 25, 50, 75, 100, 200]:
+                raise SuspiciousOperation('Unacceptable value for line number: ' + lines)
+        except Exception as e:
+            raise SuspiciousOperation(str(e))
+            
+             
+        
     def get(self,request):
         locus_tag = request.GET.get('locus_tag')
         genome = request.GET.get('genome')
         og_id = request.GET.get('og')
+        ComparativeView.verify_parameters(request.GET.get('size'), request.GET.get('lines'))
+        
         print('REQUEST1')
-        print('Request parameters:', og_id, genome, locus_tag)
-        context = {'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')}
+        print('Request parameters:', og_id, genome, locus_tag, request.GET.get('size'), request.GET.get('lines'))
+        context = {}
         for key, val in request.GET.items():
             context[key] = val
         try:
@@ -1070,7 +1085,8 @@ class ComparativeView(View):
         print('REQUEST2')
         for key, val in request.GET.items():
             print(key, val)
-
+            
+        ComparativeView.verify_parameters(request.GET.get('size'), request.GET.get('lines'))
         # Sleep timer for testing to imitate long-running task
         sleep_timer = 0
         print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
@@ -1096,10 +1112,10 @@ class ComparativeView(View):
             context = {'scribl':scribl, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count, "time":time.time()-start_time}
         else:
             #context = {'gene': gene, 'ortholog_group':og, 'scribl':scribl, 'tree_canvas':tree_canvas, 'tree_newick':tree_newick, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count}
-            scribl='<script type="text/javascript">\nfunction draw(canvasName) {\nvar canvas = document.getElementById(canvasName);\nvar parent = document.getElementById("scribl-container");\nvar ctx = canvas.getContext("2d");\ncanvas.width = parent.offsetWidth;\n' + scribl + '\nchart.draw();\nvar img = canvas.toDataURL("image/png");\ndocument.getElementById("pngexport").href = img;\n}\n</script>'
+            scribl='<script type="text/javascript">\nfunction draw(canvasName) {\nvar canvas = document.getElementById(canvasName);\nvar parent = document.getElementById("scribl-container");\nvar ctx = canvas.getContext("2d");\n' + scribl + '\nchart.draw();\nvar img = canvas.toDataURL("image/png");\ndocument.getElementById("pngexport").href = img;\n}\n</script>'
             plot_gene_count -= 1
             context = {'scribl':scribl, 'tree_canvas':tree_canvas, 'tree_newick':tree_newick, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count,"time":time.time()-start_time}
-        #print(context)
+        # print(context)
         data = json.dumps(context)
         return HttpResponse(data,content_type="application/json")
 
