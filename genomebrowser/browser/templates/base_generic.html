@@ -1,4 +1,5 @@
 {% load static %}
+{% block top %}
 <!DOCTYPE HTML>
 <!--
 	Hielo by TEMPLATED
@@ -37,6 +38,7 @@
 	{% endblock %}
 
 	</head>
+{% endblock %}
 	{% block body-tag %}
 	<body>
 	{% endblock %}
@@ -79,6 +81,7 @@
 				</div>
 			</footer>
 	{% endblock %}
+	{% block final %}
 		<!-- Scripts -->
 			<script src="{% static 'assets/js/jquery.min.js' %}"></script>
 			<script src="{% static 'assets/js/jquery.scrollex.min.js' %}"></script>
@@ -89,3 +92,4 @@
 
 	</body>
 </html>
+	{% endblock %}

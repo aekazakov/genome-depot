@@ -41,6 +41,71 @@ class AnnotationSearchResultsView(generic.ListView):
         return object_list
 
 
+class AnnotationSearchResultsSubView(generic.ListView):
+    context_object_name = 'annotationlist'
+    template_name = 'browser/annotation_list_subpage.html'
+    paginate_by = 50
+
+    def get_context_data(self,**kwargs):
+        context = super(AnnotationSearchResultsSubView,self).get_context_data(**kwargs)
+        context['searchcontext'] = 'Search results for "' + self.request.GET.get('annotation_query') + '"'
+        return context
+
+    def get_queryset(self):
+        annotation_query = self.request.GET.get('annotation_query')
+        genome = self.request.GET.get('genome')
+        if genome:
+            object_list = Annotation.objects.filter(
+                (Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)) & Q(gene_id__genome__name=genome)
+            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon')
+        else:
+            object_list = Annotation.objects.filter(
+                Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)
+            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon')
+        return object_list
+
+
+class AnnotationSearchResultsAjaxView(View):
+    def get(self,request):
+        context = {} #super(AnnotationSearchResultsAjaxView,self).get_context_data(**kwargs)
+        #annotation_query = self.request.GET.get('annotation_query')
+        if self.request.GET.get('annotation_query'):
+            context['searchcontext'] = 'Search results for "' + self.request.GET.get('annotation_query') + '"'
+        print('REQUEST1')
+        print('Request parameters:', request.GET.get('annotation_query'), request.GET.get('genome'))
+        for key, val in request.GET.items():
+            print(key, val)
+            context[key] = val
+        return render(request,'browser/annotation_list_ajax.html', context)
+
+    @staticmethod
+    def ajax_view(request):
+        start_time = time.time()
+
+        print('REQUEST2')
+        for key, val in request.GET.items():
+            print(key, val)
+            
+        # Sleep timer for testing to imitate long-running task
+        sleep_timer = 0
+        print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        time.sleep(sleep_timer)
+
+        context = {}
+        #genome = request.GET.get('genome')
+        #annotation_query = request.GET.get('query')
+        sub_view = AnnotationSearchResultsSubView()
+        sub_view.setup(request)
+        sub_response = sub_view.dispatch(request)
+        sub_response.render()
+        context['searchcontext'] = 'Search results for "' + request.GET.get('annotation_query') + '"'
+        context['searchresult'] = sub_response.content.decode('utf-8')
+        context['time'] = time.time()-start_time
+        #print(context['searchresult'])
+        data = json.dumps(context)
+        return HttpResponse(data,content_type="application/json")
+
+
 class StrainListView(generic.ListView):
     model = Strain
     context_object_name = 'strainlist'
@@ -903,10 +968,10 @@ class NsearchResultView(View):
         for key, val in request.POST.items():
             context[key] = val
             print(key, val)
-        return render(request,'browser/proteinsearchajax.html', context)
+        return render(request,'browser/nucleotidesearchajax.html', context)
 
     def get(self,request):
-        return render(request,'browser/proteinsearchajax.html')
+        return render(request,'browser/nucleotidesearchajax.html')
     
     @staticmethod
     def ajax_view(request):
@@ -915,10 +980,10 @@ class NsearchResultView(View):
         print('REQUEST2')
         for key, val in request.POST.items():
             print(key, val)
-        sequence = request.POST.get("sequence")
+        #sequence = request.POST.get("sequence")
         params = {'sequence': request.POST.get("sequence"), 'evalue': request.POST.get("evalue"), 'hitstoshow': request.POST.get("hitstoshow")}
-        #sequence = 'ATGACGATGCACCCGGCAGCACCTCGAACTCCGCACTGGCGCTGCTTGCACCGGCTGGCATGGAGCCTGTCCTGCGCTGCCCTGTTGCCGCTCGCTGCACTGGCGCAGGACGTACCGTCCCGCGCCGTCACGCCGGTGTCCGCAGCGTCGCCGCCGCGCCAGTCGCAGGACGACGCCTGGTGGACCGGGCCGATGCTGGCGAACTCCGCCGCCACCCTGCCGCGCGGCCACGTCCTGATCGAGCCTTACGTCTACGACGTGTCCTCGCCGCACGCCGACGGCTACGGTTCGCTCACCTACATGCTCTACGGCCTCACCGACCGGCTGACGGTCGGCCTGATGCCGGTGCTGGGCTACAACCGCATGGATGGCCCGGGCGACAGCAGCGGGATCGGGCTGGGCGACGTCAGCGTGCAGGCGCAGTACCGGCTGACCGATGTGCCGGCGGGCAGTTCGCGGCCCACGGTCTCGCTGCAACTGCAGGAAACCCTGCCGACCGGCAAGTACGACCGGCTGGGCCGGCGACCCGGCAACGGCCTGGGCAGCGGCGCCACCACCACTACGCTGCAGGTCAACACGCAGACGTATTTCTGGTTGTCCAACGGCCGCATCCTGCGCATGCGCTTCAACGTGGCGCAATCATTCTCGACGCGGGCACGGGTCGAGGACATCAGCGTCTACGGCACCCCGGACGGCTTTCGCGGGCACGCCCGGCCGGGGCGTTCGTTCTTCGTCAATGCGGCCTGGGAGTACAGCCTCAGCCAGCGCTGGGTGCTGGCGCTCGACCTCACCTACCGGCGCAGCCACGGTGCCCGCGTGCGCGACGACGACCTCAATGGCGTGCCTGCCTTGCGTCTGGACGGCCGCTCCAGCGAGGCGTTCGGCTTTGCCCCGGCCATCGAGTACAGCTGGAGTCCGCGGCTCGGCGTGCTGTTCGGCACCCGCGTGATCACCGGCGGGCACAACACCGCGACCACGATCACGCCGGCGGTGGCCTTCAACTACGTGCACTGA'
-        print('Sequence received:', sequence)
+        #params['sequence'] = '>test\nATGACGATGCACCCGGCAGCACCTCGAACTCCGCACTGGCGCTGCTTGCACCGGCTGGCATGGAGCCTGTCCTGCGCTGCCCTGTTGCCGCTCGCTGCACTGGCGCAGGACGTACCGTCCCGCGCCGTCACGCCGGTGTCCGCAGCGTCGCCGCCGCGCCAGTCGCAGGACGACGCCTGGTGGACCGGGCCGATGCTGGCGAACTCCGCCGCCACCCTGCCGCGCGGCCACGTCCTGATCGAGCCTTACGTCTACGACGTGTCCTCGCCGCACGCCGACGGCTACGGTTCGCTCACCTACATGCTCTACGGCCTCACCGACCGGCTGACGGTCGGCCTGATGCCGGTGCTGGGCTACAACCGCATGGATGGCCCGGGCGACAGCAGCGGGATCGGGCTGGGCGACGTCAGCGTGCAGGCGCAGTACCGGCTGACCGATGTGCCGGCGGGCAGTTCGCGGCCCACGGTCTCGCTGCAACTGCAGGAAACCCTGCCGACCGGCAAGTACGACCGGCTGGGCCGGCGACCCGGCAACGGCCTGGGCAGCGGCGCCACCACCACTACGCTGCAGGTCAACACGCAGACGTATTTCTGGTTGTCCAACGGCCGCATCCTGCGCATGCGCTTCAACGTGGCGCAATCATTCTCGACGCGGGCACGGGTCGAGGACATCAGCGTCTACGGCACCCCGGACGGCTTTCGCGGGCACGCCCGGCCGGGGCGTTCGTTCTTCGTCAATGCGGCCTGGGAGTACAGCCTCAGCCAGCGCTGGGTGCTGGCGCTCGACCTCACCTACCGGCGCAGCCACGGTGCCCGCGTGCGCGACGACGACCTCAATGGCGTGCCTGCCTTGCGTCTGGACGGCCGCTCCAGCGAGGCGTTCGGCTTTGCCCCGGCCATCGAGTACAGCTGGAGTCCGCGGCTCGGCGTGCTGTTCGGCACCCGCGTGATCACCGGCGGGCACAACACCGCGACCACGATCACGCCGGCGGTGGCCTTCAACTACGTGCACTGA'
+        print('Sequence received:', params['sequence'])
         sleep_timer = 0
         print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         time.sleep(sleep_timer)
@@ -1053,8 +1118,6 @@ class ComparativeView(View):
                 raise SuspiciousOperation('Unacceptable value for line number: ' + lines)
         except Exception as e:
             raise SuspiciousOperation(str(e))
-            
-             
         
     def get(self,request):
         locus_tag = request.GET.get('locus_tag')

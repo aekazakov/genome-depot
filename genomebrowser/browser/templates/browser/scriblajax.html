@@ -155,6 +155,10 @@
             $('#scriblscript').append(data["scribl"])
             $('#comparativeplot').show();
 	    draw('canvas');
+        }).fail(function(data){
+            $('#loading-bar-area').remove();
+            $('#comparative').html('<div class="error box">Internal server error</div>')
+            $('#comparativeplot').show();
         });
     });
 </script>

@@ -225,7 +225,7 @@ class Protein(models.Model):
 
 
 class Gene(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, db_index=True)
     locus_tag = models.CharField(max_length=50, db_index=True)
     contig = models.ForeignKey(Contig, on_delete=models.SET_NULL, blank = True, null = True)
     type = models.CharField(max_length=20)

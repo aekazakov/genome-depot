@@ -39,6 +39,10 @@
             $('#hits').append(data["searchresult"])
             $('#searchcontext').append(data["searchcontext"])
             $('#search-result-area').show();
+        }).fail(function(data){
+            $('#loading-bar-area').remove();
+            $('#searchcontext').append('Internal server error')
+            $('#search-result-area').show();
         });
     });
 </script>
