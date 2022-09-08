@@ -1,4 +1,11 @@
+import time
 from django.test import TestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 from browser.dataimport.importer import Importer
 # Create your tests here.
@@ -38,3 +45,28 @@ class ImporterTestCase(TestCase):
     def test_importer(self):
         self.importer.import_genomes('/mnt/data2/ENIGMA/genomes/dev/genomes.txt')
         self.assertEqual(len(self.importer.inputgenomes), 6)
+
+
+class BrowserTestCase(StaticLiveServerTestCase):
+    fixtures = ['testdata.json']
+    
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.selenium = WebDriver()
+        cls.selenium.implicitly_wait(10)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+        
+    def test_search_page(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/textsearch/'))
+        text_input = self.selenium.find_element('name', 'annotation_query')
+        text_input.send_keys('dnaa')
+        self.selenium.find_element('name', 'annotation_query').send_keys(Keys.RETURN)
+        # time.sleep(10)
+        element = WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "table-wrapper")))
+        print(element)
+        assert 'LRK44_RS00005' in self.selenium.page_source
