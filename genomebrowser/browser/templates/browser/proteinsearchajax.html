@@ -16,7 +16,7 @@
 	<div class="inner" id="search-result-area">
 	    <header class="align-center">
 			    <div class="table-wrapper">
-				<label id="hits"></label>
+				<div id="hits"></div>
 			    </div>
 		    <label id="run-time">Search time: </label>
 		    <p><a href="{% url 'proteinsearchform' %}">New search</a>
@@ -29,7 +29,7 @@
 <script>
     $(document).ready(function(){
         $.ajax({
-            url: "{% url 'loadingprot' %}",
+            url: "{% url 'loadingprotsearch' %}",
 	    type: "POST",
 	    datatype: 'json',
 	    data: {'sequence': "{{ sequence|escapejs }}", 'csrfmiddlewaretoken': "{{ csrfmiddlewaretoken }}", 'evalue': "{{ evalue }}", 'hitstoshow': "{{ hitstoshow }}" }
