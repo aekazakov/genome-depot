@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.landing, name='index'),
+    path('', views.startpage, name='index'),
     path('textsearch/', views.textsearch, name='textsearch'),
     path('genome/<str:name>', views.genome_detail, name='genomedetails'),
     path('sample/<str:sample_id>', views.sample_detail, name='sampledetails'),
@@ -22,7 +22,6 @@ urlpatterns = [
     path('genomes/', views.GenomeListView.as_view(), name='genome_list'),
     path('genes/', views.GeneListView.as_view(), name='gene_list'),
     path('searchgene/', views.GeneSearchResultsView.as_view(), name='searchgene'),
-    path('searchannotation_old/', views.AnnotationSearchResultsView.as_view(), name='searchannotation_old'),
     path('searchannotation/', views.AnnotationSearchResultsAjaxView.as_view(), name='searchannotation'),
     path('loadingtextsearch/',views.AnnotationSearchResultsAjaxView.ajax_view,name="loadingtextsearch"),
     path('export/', views.export_csv, name='export'),
@@ -30,9 +29,7 @@ urlpatterns = [
     path('searchgenome/', views.GenomeSearchResultsView.as_view(), name='searchgenome'),
     path('searchstrain/', views.StrainSearchResultsView.as_view(), name='searchstrain'),
     path('searchsample/', views.StrainSearchResultsView.as_view(), name='searchsample'),
-#    path('protsearch/', views.protein_search, name='proteinsearch'),
     path('seqsearch', views.protein_search_external, name='proteinsearchexternal'),
-#    path('nuclsearch/', views.nucleotide_search, name='nucleotidesearch'),
     path('gos/', views.GoSearchResultsView.as_view(), name='gos'),
     path('kos/', views.KoSearchResultsView.as_view(), name='kos'),
     path('pathways/', views.KpSearchResultsView.as_view(), name='kps'),
@@ -41,7 +38,6 @@ urlpatterns = [
     path('transporters/', views.TcSearchResultsView.as_view(), name='transporters'),
     path('cazy/', views.CazySearchResultsView.as_view(), name='cazy'),
     path('cogs/', views.CogSearchResultsView.as_view(), name='cogs'),
-    path('comparative_old/', views.comparative_view, name='comparativeold'),
     path('comparative/', views.ComparativeView.as_view(), name='comparative'),
     path('loadingscribl/',views.ComparativeView.ajax_view,name="loadingscribl"),
     path('cregulon/', views.cregulon_view, name='cregulon'),

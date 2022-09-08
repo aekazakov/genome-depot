@@ -17,30 +17,6 @@ from browser.conserved_regulon import build_conserved_regulon
 
 # Create your views here.
 
-class AnnotationSearchResultsView(generic.ListView):
-    context_object_name = 'annotationlist'
-    template_name = 'annotation_list.html'
-    paginate_by = 50
-
-    def get_context_data(self,**kwargs):
-        context = super(AnnotationSearchResultsView,self).get_context_data(**kwargs)
-        context['searchcontext'] = 'Search results for "' + self.request.GET.get('annotation_query') + '"'
-        return context
-
-    def get_queryset(self):
-        annotation_query = self.request.GET.get('annotation_query')
-        genome = self.request.GET.get('genome')
-        if genome:
-            object_list = Annotation.objects.filter(
-                (Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)) & Q(gene_id__genome__name=genome)
-            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon')
-        else:
-            object_list = Annotation.objects.filter(
-                Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)
-            ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon')
-        return object_list
-
-
 class AnnotationSearchResultsSubView(generic.ListView):
     context_object_name = 'annotationlist'
     template_name = 'browser/annotation_list_subpage.html'
@@ -71,10 +47,10 @@ class AnnotationSearchResultsAjaxView(View):
         #annotation_query = self.request.GET.get('annotation_query')
         if self.request.GET.get('annotation_query'):
             context['searchcontext'] = 'Search results for "' + self.request.GET.get('annotation_query') + '"'
-        print('REQUEST1')
-        print('Request parameters:', request.GET.get('annotation_query'), request.GET.get('genome'))
+        # print('REQUEST1')
+        # print('Request parameters:', request.GET.get('annotation_query'), request.GET.get('genome'))
         for key, val in request.GET.items():
-            print(key, val)
+            # print(key, val)
             context[key] = val
         return render(request,'browser/annotation_list_ajax.html', context)
 
@@ -82,14 +58,14 @@ class AnnotationSearchResultsAjaxView(View):
     def ajax_view(request):
         start_time = time.time()
 
-        print('REQUEST2')
-        for key, val in request.GET.items():
-            print(key, val)
+        # print('REQUEST2')
+        # for key, val in request.GET.items():
+        #     print(key, val)
             
         # Sleep timer for testing to imitate long-running task
-        sleep_timer = 0
-        print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
-        time.sleep(sleep_timer)
+        # sleep_timer = 0
+        # print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        # time.sleep(sleep_timer)
 
         context = {}
         #genome = request.GET.get('genome')
@@ -651,12 +627,9 @@ def textsearch(request):
     return HttpResponse(template.render(context, request))
 
 
-def landing(request):
+def startpage(request):
     template = loader.get_template('browser/landing.html')
-#    num_strains = Strain.objects.all().count()
     num_genomes = Genome.objects.all().count()
-#    num_samples = Sample.objects.all().count()
-#    context = {'num_strains':num_strains, 'num_genomes':num_genomes, 'num_samples':num_samples}
     context = {'num_genomes':num_genomes}
     return HttpResponse(template.render(context, request))
 
@@ -668,10 +641,6 @@ def show_help(request):
 
 
 def genome_detail(request, name):
-#    if request.GET.get('name'):
-#        genome_name = request.GET.get('name')
-#    else:
-#        raise Http404('No genome name provided')
     try:
         genome = Genome.objects.get(name = name)
     except Genome.DoesNotExist:
@@ -877,30 +846,6 @@ def genomes_index(request):
     return HttpResponse(template.render(context, request))
 
 
-def protein_search(request):
-    context = {}
-    if request.POST.get("sequence"):
-        result = {}
-        sequence = request.POST.get("sequence")
-        hits, searchcontext, query_len = run_protein_search(sequence)
-        if searchcontext != '':
-            context['searchcontext'] = searchcontext
-        for row in hits:
-            row=row.split('\t')
-            if row[0] not in result:
-                result[row[0]] = []
-            unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
-            query_cov = (query_len - unaligned_part) * 100.0 / query_len
-            genes = Gene.objects.select_related('protein', 'genome', 'genome__taxon').filter(protein__protein_hash = row[1])
-            # Generate hit description
-            for target in genes:
-                hit = [target.genome.name, target.locus_tag, target.genome.taxon.name,
-                       target.function, '{:.1f}'.format(float(row[2])), row[3], '{:.1f}'.format(query_cov), row[10], row[11]]
-                result[row[0]].append(hit)
-        context['searchresult'] = result
-    return render(request, 'browser/proteinsearch.html', context)
-
-
 def protein_search_external(request):
     context = {}
     if request.GET.get("sequence"):
@@ -927,39 +872,7 @@ def protein_search_external(request):
     return render(request, 'browser/proteinsearch.html', context)
 
 
-def nucleotide_search(request):
-    context = {}
-    if request.POST.get("sequence"):
-        result = {}
-        sequence = request.POST.get("sequence")
-        hits, searchcontext, query_len = run_nucleotide_search(sequence)
-        if searchcontext != '':
-            context['searchcontext'] = searchcontext
-        for row in hits:
-            row=row.split('\t')
-            if row[0] not in result:
-                result[row[0]] = []
-            contig_name, genome_name = row[1].split('|')
-            genome_name = genome_name.split('[')[0]
-            print('Search for contig', contig_name, 'in genome', genome_name)
-            target = Contig.objects.select_related('genome', 'genome__taxon').get(contig_id = contig_name, genome__name = genome_name)
-            ani = float(row[2])
-            strand = '+'
-            start = row[8]
-            end = row[9]
-            unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
-            query_cov = (query_len - unaligned_part) * 100.0 / query_len
-            if int(row[7]) < int(row[6]):
-                strand = '-'
-            hit = [contig_name + ': (' + strand + 'strand) ' + start + '..' + end,
-                    target, '{:.2f}'.format(float(row[2])), row[3], '{:.1f}'.format(query_cov), row[10], row[11], start, end]
-            result[row[0]].append(hit)
-        context['searchresult'] = result
-    return render(request, 'browser/nucleotidesearch.html', context)
-
-
 class NsearchResultView(View):
-
     def post(self,request):
         sequence = request.POST.get("sequence")
         print('Sequence sent:', sequence)
@@ -1086,27 +999,6 @@ def cregulon_view(request):
     return render(request, 'browser/cregulon.html', context)
 
     
-def comparative_view(request):
-    context = {}
-    locus_tag = request.GET.get('locus_tag')
-    genome = request.GET.get('genome')
-    og_id = request.GET.get('og')
-    try:
-        gene = Gene.objects.select_related('protein', 'genome__strain', 'genome__sample', 'contig').get(locus_tag=locus_tag, genome__name=genome)
-        og = Ortholog_group.objects.get(id=og_id)
-    except Gene.DoesNotExist:
-        raise Http404('Gene not found')
-    except Ortholog_group.DoesNotExist:
-        raise Http404('Ortholog group not found')
-    scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count = get_scribl(gene, og, request)
-    if og_gene_count == 1:
-        context = {'gene': gene, 'ortholog_group':og, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count}
-    else:
-        context = {'gene': gene, 'ortholog_group':og, 'scribl':scribl, 'tree_canvas':tree_canvas, 'tree_newick':tree_newick, 'og_gene_count':og_gene_count, 'plot_gene_count':plot_gene_count}
-
-    return render(request, 'browser/scribl.html', context)
-
-
 class ComparativeView(View):
 
     @staticmethod
