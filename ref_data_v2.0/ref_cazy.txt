@@ -1,0 +1,168 @@
+AA10	AA10	AA10 (formerly CBM33) proteins are copper-dependent lytic polysaccharide monooxygenases (LPMOs); some proteins have been shown to act on chitin, others on cellulose; 
+CBM1	CBM1	Modules of approx. 40 residues found almost exclusively in fungi. The cellulose-binding function has been demonstrated in many cases, and appears to be mediated by three aromatic residues separated by about 10.4 angstrom and which form a flat surface. The only non-fungal occurence of CBM1 is in an algal non-hydrolytic polysaccharide-binding protein which is composed of four repeated CBM1 modules. Binding to chitin has been demonstrated in one case.
+CBM15	CBM15	Binding to xylan and xylooligosaccharides has been demonstrated in the case of Xyn10C of Cellvibrio mixtus.
+CBM18	CBM18	Modules of approx. 40 residues. The chitin-binding function has been demonstrated in many cases. These modules are found attached to a number of chitinase catalytic domains, but also in non-catalytic proteins either in isolation or as multiple repeats.
+CBM20	CBM20	The granular starch-binding function has been demonstrated in several cases. Interact strongly with cyclodextrins. Often designated as starch-binding domains (SBD).
+CBM42	CBM42	Modules of approx. 160 residues found mostly at the C-terminus of GH54 catalytic domains. Binding to arabinofuranose (present in arabinoxylan) has been demonstrated.
+CBM48	CBM48	Modules of approx. 100 residues with glycogen-binding function, appended to GH13 modules. Also found in the beta subunit (glycogen-binding) of AMP-activated protein kinases (AMPK)
+CBM5	CBM5	Modules of approx. 60 residues found in bacterial enzymes. Chitin-binding described in several cases. Distantly related to the CBM12 family.
+CBM50	CBM50	Modules of approx. 50 residues found attached to various enzymes from families GH18, GH19, GH23, GH24, GH25 and GH73, i.e. enzymes cleaving either chitin or peptidoglycan. Binding to chitopentaose demonstrated in the case of Pteris ryukyuensis chitinase A [Ohnuma T et al. (2008) J. Biol. Chem. 283:5178-87 (PMID: 18083709)]. CBM50 modules are also found in a multitude of other enzymes targeting the petidoglycan such as peptidases and amidases. These enzymes are not reported in the list below.
+CBM6	CBM6	Modules of approx. 120 residues. The cellulose-binding function has been demonstrated in one case on amorphous cellulose and beta-1,4-xylan. Some of these modules also bind beta-1,3-glucan, beta-1,3-1,4-glucan, and beta-1,4-glucan.
+CBM73	CBM73	Modules of approx 65 residues found on various enzymes active of chitin. Chitin-binding function demonstrated for the Cellvibrio japonicus CjLPMO10A protein.
+CE1	CE1	acetyl xylan esterase (EC 3.1.1.72); cinnamoyl esterase (EC 3.1.1.-); feruloyl esterase (EC 3.1.1.73); carboxylesterase (EC 3.1.1.1); S-formylglutathione hydrolase (EC 3.1.2.12)
+GH1	GH1	beta-glucosidase (EC 3.2.1.21); beta-galactosidase (EC 3.2.1.23); beta-mannosidase (EC 3.2.1.25); beta-glucuronidase (EC 3.2.1.31); beta-D-fucosidase (EC 3.2.1.38); phlorizin hydrolase (EC 3.2.1.62); exo-beta-1,4-glucanase (EC 3.2.1.74); 6-phospho-beta-galactosidase (EC 3.2.1.85); 6-phospho-beta-glucosidase (EC 3.2.1.86); strictosidine beta-glucosidase (EC 3.2.1.105); lactase (EC 3.2.1.108); amygdalin beta-glucosidase (EC 3.2.1.117); prunasin beta-glucosidase (EC 3.2.1.118); raucaffricine beta-glucosidase (EC 3.2.1.125); thioglucosidase (EC 3.2.1.147); beta-primeverosidase (EC 3.2.1.149); isoflavonoid 7-O-beta-apiosyl-beta-glucosidase (EC 3.2.1.161); hydroxyisourate hydrolase (EC 3.-.-.-); beta-glycosidase (EC 3.2.1.-)
+GH101	GH101	endo-alpha-N-acetylgalactosaminidase (EC 3.2.1.97)
+GH102	GH102	peptidoglycan lytic transglycosylase (EC 3.2.1.-)
+GH103	GH103	peptidoglycan lytic transglycosylase (EC 3.2.1.-)
+GH105	GH105	unsaturated rhamnogalacturonyl hydrolase (EC 3.2.1.-)
+GH116	GH116	acid beta-glucosidase (EC 3.2.1.45); beta-glucosidase (EC 3.2.1.21); beta-xylosidase (EC 3.2.1.37)
+GH12	GH12	endoglucanase (EC 3.2.1.4); xyloglucan hydrolase (EC 3.2.1.151); beta-1,3-1,4-glucanase (EC 3.2.1.73); xyloglucan endotransglycosylase (EC 2.4.1.207)
+GH121	GH121	beta-L-arabinobiosidase (EC 3.2.1.-)
+GH127	GH127	beta-L-arabinofuranosidase (EC 3.2.1.185); 3-C-carboxy-5-deoxy-L-xylose (aceric acid) hydrolase (EC 3.2.1.-)
+GH13	GH13	alpha-amylase (EC 3.2.1.1); pullulanase (EC 3.2.1.41); cyclomaltodextrin glucanotransferase (EC 2.4.1.19); cyclomaltodextrinase (EC 3.2.1.54); trehalose-6-phosphate hydrolase (EC 3.2.1.93); oligo-alpha-glucosidase (EC 3.2.1.10); maltogenic amylase (EC 3.2.1.133); neopullulanase (EC 3.2.1.135); alpha-glucosidase (EC 3.2.1.20); maltotetraose-forming alpha-amylase (EC 3.2.1.60); isoamylase (EC 3.2.1.68); glucodextranase (EC 3.2.1.70); maltohexaose-forming alpha-amylase (EC 3.2.1.98); maltotriose-forming alpha-amylase (EC 3.2.1.116); branching enzyme (EC 2.4.1.18); trehalose synthase (EC 5.4.99.16); 4-alpha-glucanotransferase (EC 2.4.1.25); maltopentaose-forming alpha-amylase (EC 3.2.1.-) ; amylosucrase (EC 2.4.1.4) ; sucrose phosphorylase (EC 2.4.1.7); malto-oligosyltrehalose trehalohydrolase (EC 3.2.1.141); isomaltulose synthase (EC 5.4.99.11); amino acid transporter.
+GH130	GH130	beta-1,4-mannosylglucose phosphorylase (EC 2.4.1.281); beta-1,4-mannooligosaccharide phosphorylase (EC 2.4.1.319); beta-1,4-mannosyl-N-acetyl-glucosamine phosphorylase (EC 2.4.1.320); beta-1,2-mannobiose phosphorylase (EC 2.4.1.-); beta-1,2-oligomannan phosphorylase (EC 2.4.1.-); beta-1,2-mannosidase (EC 3.2.1.-)
+GH14	GH14	beta-amylase (EC 3.2.1.2)
+GH15	GH15	glucoamylase (EC 3.2.1.3); glucodextranase (EC 3.2.1.70); alpha,alpha-trehalase (EC 3.2.1.28)
+GH16	GH16	xyloglucan:xyloglucosyltransferase (EC 2.4.1.207); keratan-sulfate endo-1,4-beta-galactosidase (EC 3.2.1.103); endo-1,3-beta-glucanase (EC 3.2.1.39); endo-1,3(4)-beta-glucanase (EC 3.2.1.6); licheninase (EC 3.2.1.73); beta-agarase (EC 3.2.1.81); kappa;-carrageenase (EC 3.2.1.83); xyloglucanase (EC 3.2.1.151)
+GH17	GH17	glucan endo-1,3-beta-glucosidase (EC 3.2.1.39); glucan 1,3-beta-glucosidase (EC 3.2.1.58); licheninase (EC 3.2.1.73); beta-1,3-glucanosyltransglycosylase (EC 2.4.1.-).
+GH18	GH18	chitinase (EC 3.2.1.14); endo-beta-N-acetylglucosaminidase (EC 3.2.1.96); xylanase inhibitor; concanavalin B; narbonin
+GH19	GH19	chitinase (EC 3.2.1.14).
+GH2	GH2	beta-galactosidase (EC 3.2.1.23) ; beta-mannosidase (EC 3.2.1.25); beta-glucuronidase (EC 3.2.1.31); mannosylglycoprotein endo-beta-mannosidase (EC 3.2.1.152); exo-beta-glucosaminidase (EC 3.2.1.165)
+GH20	GH20	beta-hexosaminidase (EC 3.2.1.52); lacto-N-biosidase (EC 3.2.1.140); beta-1,6-N-acetylglucosaminidase) (EC 3.2.1.-); beta-6-SO3-N-acetylglucosaminidase (EC 3.2.1.-)
+GH23	GH23	lysozyme type G (EC 3.2.1.17); peptidoglycan lyase (EC 4.2.2.-) also known in the literature as peptidoglycan lytic transglycosylase
+GH26	GH26	beta-mannanase (EC 3.2.1.78); beta-1,3-xylanase (EC 3.2.1.32)
+GH27	GH27	alpha-galactosidase (EC 3.2.1.22); alpha-N-acetylgalactosaminidase (EC 3.2.1.49); isomalto-dextranase (EC 3.2.1.94); beta-L-arabinopyranosidase (EC 3.2.1.88)
+GH28	GH28	polygalacturonase (EC 3.2.1.15); exo-polygalacturonase (EC 3.2.1.67); exo-polygalacturonosidase (EC 3.2.1.82); rhamnogalacturonase (EC 3.2.1.-); endo-xylogalacturonan hydrolase (EC 3.2.1.-); rhamnogalacturonan alpha-L-rhamnopyranohydrolase (EC 3.2.1.40)
+GH29	GH29	alpha-L-fucosidase (EC 3.2.1.51)
+GH3	GH3	beta-glucosidase (EC 3.2.1.21); xylan 1,4-beta-xylosidase (EC 3.2.1.37); beta-N-acetylhexosaminidase (EC 3.2.1.52); glucan 1,3-beta-glucosidase (EC 3.2.1.58); glucan 1,4-beta-glucosidase (EC 3.2.1.74); exo-1,3-1,4-glucanase (EC 3.2.1.-); alphalpha-L-arabinofuranosidase (EC 3.2.1.55).
+GH30	GH30	glucosylceramidase (EC 3.2.1.45); beta-1,6-glucanase (EC 3.2.1.75); beta-xylosidase (EC 3.2.1.37); beta-fucosidase (EC 3.2.1.38); beta-glucosidase (3.2.1.21); endo-beta-1,6-galactanase (EC:3.2.1.164)
+GH31	GH31	alpha-glucosidase (EC 3.2.1.20); alpha-1,3-glucosidase (EC 3.2.1.84); sucrase-isomaltase (EC 3.2.1.48) (EC 3.2.1.10); alpha-xylosidase (EC 3.2.1.-); alpha-glucan lyase (EC 4.2.2.13); isomaltosyltransferase (EC 2.4.1.-).
+GH32	GH32	invertase (EC 3.2.1.26); endo-inulinase (EC 3.2.1.7); beta-2,6-fructan 6-levanbiohydrolase (EC 3.2.1.64); endo-levanase (EC 3.2.1.65); exo-inulinase (EC 3.2.1.80); fructan beta-(2,1)-fructosidase/1-exohydrolase (EC 3.2.1.153); fructan beta-(2,6)-fructosidase/6-exohydrolase (EC 3.2.1.154); sucrose:sucrose 1-fructosyltransferase (EC 2.4.1.99); fructan:fructan 1-fructosyltransferase (EC 2.4.1.100); sucrose:fructan 6-fructosyltransferase (EC 2.4.1.10); fructan:fructan 6G-fructosyltransferase (EC 2.4.1.243); levan fructosyltransferase (EC 2.4.1.-)
+GH33	GH33	sialidase or neuraminidase (EC 3.2.1.18); trans-sialidase (EC 2.4.1.-); 2-keto-3-deoxynononic acid sialidase (EC 3.2.1.-)
+GH36	GH36	alpha-galactosidase (EC 3.2.1.22); alpha-N-acetylgalactosaminidase (EC 3.2.1.49); stachyose synthase (EC 2.4.1.67); raffinose synthase (EC 2.4.1.82)
+GH37	GH37	alpha,alpha-trehalase (EC 3.2.1.28).
+GH38	GH38	alpha-mannosidase (EC 3.2.1.24) ; mannosyl-oligosaccharide alpha-1,3-1,6-mannosidase (EC 3.2.1.114); mannosyl-oligosaccharide alpha-1,3-mannosidase (EC 3.2.1.-)
+GH39	GH39	alpha-L-iduronidase (EC 3.2.1.76); beta-xylosidase (EC 3.2.1.37).
+GH4	GH4	maltose-6-phosphate glucosidase (EC 3.2.1.122); alpha-glucosidase (EC 3.2.1.20); alpha-galactosidase (EC 3.2.1.22); 6-phospho-beta-glucosidase (EC 3.2.1.86); alpha-glucuronidase (EC 3.2.1.139).
+GH43	GH43	beta-xylosidase (EC 3.2.1.37); beta-1,3-xylosidase (EC 3.2.1.-); alpha-L-arabinofuranosidase (EC 3.2.1.55); arabinanase (EC 3.2.1.99); xylanase (EC 3.2.1.8); galactan 1,3-beta-galactosidase  (EC 3.2.1.145)
+GH47	GH47	alpha-mannosidase (EC 3.2.1.113)
+GH48	GH48	endoglucanase (EC 3.2.1.4); chitinase (EC 3.2.1.14); cellobiohydrolase (EC 3.2.1.91); endo-processive cellulases (EC 3.2.1.-); [reducing end] cellobiohydrolase (3.2.1.-)
+GH5	GH5	chitosanase (EC 3.2.1.132); beta-mannosidase (EC 3.2.1.25); Cellulase (EC 3.2.1.4); glucan 1,3-beta-glucosidase (EC 3.2.1.58); licheninase (EC 3.2.1.73); glucan endo-1,6-beta-glucosidase (EC 3.2.1.75); mannan endo-beta-1,4-mannosidase (EC 3.2.1.78); endo-beta-1,4-xylanase (EC 3.2.1.8); cellulose beta-1,4-cellobiosidase (EC 3.2.1.91); beta-1,3-mannanase (EC 3.2.1.-); xyloglucan-specific endo-beta-1,4-glucanase (EC 3.2.1.151); mannan transglycosylase (EC 2.4.1.-); endo-beta-1,6-galactanase (EC 3.2.1.164)
+GH51	GH51	alpha-L-arabinofuranosidase (EC 3.2.1.55); endoglucanase (EC 3.2.1.4)
+GH52	GH52	beta-xylosidase (EC 3.2.1.37).
+GH54	GH54	alpha-L-arabinofuranosidase (EC 3.2.1.55); beta-xylosidase (EC 3.2.1.37).
+GH57	GH57	alpha-amylase (EC 3.2.1.1); 4-alpha-glucanotransferase (EC 2.4.1.25); alpha-galactosidase (EC 3.2.1.22); amylopullulanase (EC 3.2.1.41); branching enzyme (EC 2.4.1.18)
+GH59	GH59	galactocerebrosidase (EC 3.2.1.46)
+GH6	GH6	endoglucanase (EC 3.2.1.4); cellobiohydrolase (EC 3.2.1.91)
+GH63	GH63	processing alpha-glucosidase (EC 3.2.1.106); alpha-1,3-glucosidase (EC 3.2.1.84); alpha-glucosidase (EC 3.2.1.20)
+GH65	GH65	alpha,alpha-trehalase (EC 3.2.1.28); maltose phosphorylase (EC 2.4.1.8); trehalose phosphorylase (EC 2.4.1.64); kojibiose phosphorylase (EC 2.4.1.230); trehalose-6-phosphate phosphorylase (EC 2.4.1.-);
+GH66	GH66	cycloisomaltooligosaccharide glucanotransferase (EC 2.4.1.-); dextranase (EC 3.2.1.11).
+GH68	GH68	levansucrase (EC 2.4.1.10); beta-fructofuranosidase (EC 3.2.1.26); inulosucrase (EC 2.4.1.9).
+GH7	GH7	endo-beta-1,4-glucanase (EC 3.2.1.4); [reducing end-acting] cellobiohydrolase (EC 3.2.1.-); chitosanase (EC 3.2.1.132); endo-beta-1,3-1,4-glucanase (EC 3.2.1.73)
+GH73	GH73	peptidoglycan hydrolase with endo-beta-N-acetylglucosaminidase specificity  (EC 3.2.1.-)
+GH74	GH74	endoglucanase (EC 3.2.1.4); oligoxyloglucan reducing end-specific cellobiohydrolase (EC 3.2.1.150); xyloglucanase (EC 3.2.1.151)
+GH76	GH76	alpha-1,6-mannanase (EC 3.2.1.101)
+GH77	GH77	amylomaltase or 4-alpha-glucanotransferase (EC 2.4.1.25)
+GH79	GH79	beta-glucuronidase (EC 3.2.1.31); beta-4-O-methyl-glucuronidase (EC 3.2.1.-); heparanase (EC 3.2.1.-); baicalin beta-glucuronidase (EC 3.2.1.167)
+GH8	GH8	chitosanase (EC 3.2.1.132); cellulase (EC 3.2.1.4); licheninase (EC 3.2.1.73); endo-1,4-beta-xylanase (EC 3.2.1.8); reducing-end-xylose releasing exo-oligoxylanase (EC 3.2.1.156)
+GH82	GH82	Iota;-carrageenase (EC 3.2.1.157)
+GH84	GH84	N-acetyl beta-glucosaminidase (EC 3.2.1.52); hyaluronidase (EC 3.2.1.35)
+GH88	GH88	d-4,5 unsaturated beta-glucuronyl hydrolase (EC 3.2.1.-)
+GH9	GH9	endoglucanase (EC 3.2.1.4); cellobiohydrolase (EC 3.2.1.91); beta-glucosidase (EC 3.2.1.21); exo-beta-glucosaminidase (EC 3.2.1.165)
+GH94	GH94	cellobiose phosphorylase (EC 2.4.1.20);  cellodextrin phosphorylase (EC 2.4.1.49);  chitobiose phosphorylase (EC 2.4.1.-); cyclic beta-1,2-glucan synthase (EC 2.4.1.-)
+GH95	GH95	alpha-1,2-L-fucosidase (EC 3.2.1.63); alpha-L-fucosidase (EC 3.2.1.51)
+GH97	GH97	alpha-glucosidase (EC 3.2.1.20); alpha-galactosidase (EC 3.2.1.22)
+GH99	GH99	glycoprotein endo-alpha-1,2-mannosidase (EC 3.2.1.130)
+GT1	GT1	UDP-glucuronosyltransferase (EC 2.4.1.17); 2-hydroxyacylsphingosine 1-beta-galactosyltransferase (EC 2.4.1.45); N-acylsphingosine galactosyltransferase (EC 2.4.1.47); flavonol 3-O-glucosyltransferase (EC 2.4.1.91); indole-3-acetate beta-glucosyltransferase (EC 2.4.1.121); sterol glucosyltransferase (EC 2.4.1.173); ecdysteroid UDP-glucosyltransferase (EC 2.4.1.-); zeaxanthin glucosyltransferase (EC 2.4.1.-); zeatin O-beta-glucosyltransferase (EC 2.4.1.203); zeatin O-beta-xylosyltransferase (EC 2.4.2.40); limonoid glucosyltransferase (EC 2.4.1.210); sinapate 1-glucosyltransferase (EC 2.4.1.120); anthocyanin 3-O-galactosyltransferase (EC 2.4.1.-); anthocyanin 5-O-glucosyltransferase (EC 2.4.1.-); anthocyanidin 3-O-glucosyltransferase (EC 2.4.1.115); dTDP-beta-2-deoxy-L-fucose: alpha-L-2-deoxyfucosyltransferase (EC 2.4.1.-); UDP-beta-L-rhamnose: alpha-L-rhamnosyltransferase (EC 2.4.1.-); UDP-glucose: 4-hydroxybenzoate 4-O-beta-glucosyltransferase (EC 2.4.1.194); flavonol L-rhamnosyltransferase (EC 2.4.1.159); salicylic acid beta-glucosyltransferase (EC 2.4.1.-)
+GT10	GT10	galactoside alpha-1,3/1,4-L-fucosyltransferase (EC 2.4.1.65); galactoside alpha-1,3-L-fucosyltransferase (EC 2.4.1.152); glycoprotein alpha-1,3-L-fucosyltransferase (EC 2.4.1.214)
+GT11	GT11	GDP-L-Fuc: galactoside alpha-1,2-L-fucosyltransferase (EC 2.4.1.69); GDP-L-Fuc: beta-LacNac alpha-1,3-L-fucosyltransferase (EC 2.4.1.-)
+GT12	GT12	[N-acetylneuraminyl]-galactosylglucosylceramide N-acetylgalactosaminyltransferase (EC 2.4.1.92).
+GT13	GT13	alpha-1,3-mannosyl-glycoprotein beta-1,2-N-acetylglucosaminyltransferase (EC 2.4.1.101)
+GT14	GT14	beta-1,3-galactosyl-O-glycosyl-glycoprotein beta-1,6-N-acetylglucosaminyltransferase (EC 2.4.1.102); N-acetyllactosaminide beta-1,6-N-acetylglucosaminyltransferase (EC 2.4.1.150); protein O-beta-xylosyltransferase (EC 2.4.2.26)
+GT15	GT15	glycolipid 2-alpha-mannosyltransferase (EC 2.4.1.131); GDP-Man: alpha-1,2-mannosyltransferase (EC 2.4.1.-).
+GT17	GT17	beta-1,4-mannosyl-glycoprotein beta-1,4-N-acetylglucosaminyltransferase (EC 2.4.1.144).
+GT19	GT19	lipid-A-disaccharide synthase (EC 2.4.1.182).
+GT2	GT2	cellulose synthase (EC 2.4.1.12); chitin synthase (EC 2.4.1.16); dolichyl-phosphate beta-D-mannosyltransferase (EC 2.4.1.83); dolichyl-phosphate beta-glucosyltransferase (EC 2.4.1.117); N-acetylglucosaminyltransferase (EC 2.4.1.-); N-acetylgalactosaminyltransferase (EC 2.4.1.-); hyaluronan synthase (EC 2.4.1.212); chitin oligosaccharide synthase (EC 2.4.1.-); beta-1,3-glucan synthase (EC 2.4.1.34); beta-1,4-mannan synthase (EC 2.4.1.-); beta-mannosylphosphodecaprenol-mannooligosaccharide alpha-1,6-mannosyltransferase (EC 2.4.1.199); alpha-1,3-L-rhamnosyltransferase (EC 2.4.1.-)
+GT20	GT20	alpha,alpha-trehalose-phosphate synthase [UDP-forming] (EC 2.4.1.15)
+GT21	GT21	UDP-Glc: ceramide beta-glucosyltransferase (EC 2.4.1.80).
+GT22	GT22	Dol-P-Man alpha-mannosyltransferase (EC 2.4.1.-)
+GT23	GT23	N-acetyl-beta-D-glucosaminide alpha-1,6-L-fucosyltransferase (EC 2.4.1.68)
+GT25	GT25	lipopolysaccharide beta-1,4-galactosyltransferase (EC 2.4.1.-); beta-1,3-glucosyltransferase (EC 2.4.1.-); beta-1,2-glucosyltransferase (EC 2.4.1.-); beta-1,2-galactosyltransferase (EC 2.4.1.-)
+GT26	GT26	UDP-ManNAcA: beta-N-acetyl mannosaminuronyltransferase (EC 2.4.1.-); UDP-ManNAc: beta-N-acetyl-mannosaminyltransferase (EC 2.4.1.-); UDP-Glc: beta-1,4-glucosyltransferase (EC 2.4.1.-).
+GT27	GT27	polypeptide alpha-N-acetylgalactosaminyltransferase (EC 2.4.1.41)
+GT28	GT28	1,2-diacylglycerol 3-beta-galactosyltransferase (EC 2.4.1.46); 1,2-diacylglycerol 3-beta-glucosyltransferase (EC 2.4.1.157);  UDP-GlcNAc: Und-PP-MurAc-pentapeptide beta-N-acetylglucosaminyltransferase (EC 2.4.1.227).
+GT29	GT29	sialyltransferase (EC 2.4.99.-); beta-galactoside alpha-2,6-sialyltransferase (EC 2.4.99.1); alpha-N-acetylgalactosaminide alpha-2,6-sialyltransferase (EC 2.4.99.3); beta-galactoside alpha-2,3-sialyltransferase (EC 2.4.99.4); N-acetyllactosaminide alpha-2,3-sialyltransferase (EC 2.4.99.6); (alpha-N-acetyl-neuraminyl-2,3-beta-galactosyl-1,3)-N-acetylgalactosaminide alpha-2,6-sialyltransferase (EC 2.4.99.7);  alpha-N-acetyl-neuraminide alpha-2,8-sialyltransferase (EC 2.4.99.8); lactosylceramide alpha-2,3-sialyltransferase (EC 2.4.99.9).
+GT3	GT3	glycogen synthase (EC 2.4.1.11).
+GT30	GT30	CMP-beta-KDO: alpha-3-deoxy-D-manno-octulosonic-acid (KDO) transferase (EC 2.4.99.-).
+GT31	GT31	N-acetyllactosaminide beta-1,3-N-acetylglucosaminyltransferase (EC 2.4.1.149); Glycoprotein-N-acetylgalactosamine 3-beta-galactosyltransferase (EC 2.4.1.122); fucose-specific beta-1,3-N-acetylglucosaminyltransferase (EC 2.4.1.-); globotriosylceramide beta-1,3-GalNAc transferase (EC 2.4.1.79); chondroitin synthase (beta-1,3-GlcUA and beta-1,4-GalNAc transferase (EC 2.4.1.175); chondroitin beta-1,3-glucuronyltransferase (EC 2.4.1.226); chondroitin beta-1,4-N-acetylgalactosaminyltransferase (EC 2.4.1.-).
+GT32	GT32	alpha-1,6-mannosyltransferase (EC 2.4.1.-); alpha-1,4-N-acetylglucosaminyltransferase (EC 2.4.1.-); alpha-1,4-N-acetylgalactosaminyltransferase (EC 2.4.1.-);
+GT34	GT34	UDP-Gal: galactomannan alpha-1,6-galactosyltransferase (EC 2.4.1.-); UDP-Xyl: xyloglucan alpha-1,6-xylosyltransferase (EC 2.4.2.39); alpha-1,2-galactosyltransferase (EC 2.4.1.-)
+GT35	GT35	glycogen or starch phosphorylase (EC 2.4.1.1).
+GT39	GT39	Dol-P-Man: protein alpha-mannosyltransferase (EC 2.4.1.109)
+GT4	GT4	sucrose synthase (EC 2.4.1.13); sucrose-phosphate synthase (EC 2.4.1.14); alpha-glucosyltransferase (EC 2.4.1.52); lipopolysaccharide N-acetylglucosaminyltransferase (EC 2.4.1.56); GDP-Man alpha-mannosyltransferase (EC 2.4.1.-); 1,2-diacylglycerol 3-glucosyltransferase (EC 2.4.1.157);  diglucosyl diacylglycerol synthase (EC 2.4.1.208); digalactosyldiacylglycerol synthase (EC 2.4.1.141); trehalose phosphorylase (EC 2.4.1.231); phosphatidylinositol alpha-mannosyltransferase (EC 2.4.1.57); UDP-Gal alpha-galactosyltransferase (EC 2.4.1.-); UDP-Xyl alpha-xylosyltransferase (EC 2.4.2.-)
+GT41	GT41	UDP-GlcNAc: peptide beta-N-acetylglucosaminyltransferase (EC 2.4.1.94)
+GT43	GT43	beta-glucuronyltransferase (EC 2.4.1.135); UDP-Xyl: xylan  beta-1,4-xylosyltransferase (EC 2.4.2.-)
+GT47	GT47	heparan beta-glucuronyltransferase (EC 2.4.1.225); xyloglucan beta-galactosyltransferase (EC 2.4.1.-); heparan synthase (EC 2.4.1.-); arabinan alphalpha-L-arabinosyltransferase (EC 2.4.2.-).
+GT5	GT5	UDP-Glc: glycogen glucosyltransferase (EC 2.4.1.11); ADP-Glc: starch glucosyltransferase (EC 2.4.1.21); NDP-Glc: starch glucosyltransferase (EC 2.4.1.242); UDP-Glc: alpha-1,3-glucan synthase (EC 2.4.1.183) UDP-Glc: alpha-1,4-glucan synthase (EC 2.4.1.-)
+GT51	GT51	murein polymerase (EC 2.4.1.129).
+GT52	GT52	alpha-2,3-sialyltransferase (EC 2.4.99.4); alpha-glucosyltransferase (EC 2.4.1.-)
+GT56	GT56	TDP-Fuc4NAc: lipid II Fuc4NAc transferase (EC 2.4.1.-)
+GT6	GT6	alpha-1,3-galactosyltransferase (EC 2.4.1.87); alpha-1,3 N-acetylgalactosaminyltransferase (EC 2.4.1.40); alpha-galactosyltransferase (EC 2.4.1.37); globoside alpha-N-acetylgalactosaminyltransferase (EC 2.4.1.88).
+GT60	GT60	UDP-GlcNAc: polypeptide alpha-N-acetylglucosaminyltransferase (EC 2.4.1.-); UDP-GlcNAc: hydroxyproline polypeptide alpha-N-acetylglucosaminyltransferase (EC 2.4.1.-)
+GT62	GT62	alpha-1,2-mannosyltransferase (EC 2.4.1.-); alpha-1,6-mannosyltransferase (EC 2.4.1.-)
+GT66	GT66	Dol-PP-alpha-oligosaccharide: protein beta-oligosaccharyltransferase (EC 2.4.1.119)
+GT7	GT7	lactose synthase (EC 2.4.1.22); beta-N-acetylglucosaminyl-glycopeptide beta-1,4-galactosyltransferase (EC 2.4.1.38); N-acetyllactosamine synthase (EC 2.4.1.90); beta-1,4-N-acetylglucosaminyltransferase (EC 2.4.1.-); xylosylprotein beta-4-galactosyltransferase (EC 2.4.1.133)
+GT70	GT70	UDP-GlcA: beta-glucuronosyltransferase (EC 2.4.1.17)
+GT71	GT71	alpha-mannosyltransferase (EC 2.4.1.-)
+GT73	GT73	CMP-beta-KDO: alpha-3-deoxy-D-manno-octulosonic-acid (KDO) transferase (EC 2.4.99.-).
+GT75	GT75	UDP-Glc: self-glucosylating beta-glucosyltransferase (EC 2.4.1.-)
+GT76	GT76	Dol-P-Man: alpha-1,6-mannosyltransferase (EC 2.4.1.-)
+GT77	GT77	alpha-xylosyltransferase (EC 2.4.2.39); alpha-1,3-galactosyltransferase (EC 2.4.1.37); arabinosyltransferase (EC 2.4.2.-)
+GT78	GT78	GDP-Man: alpha-mannosyltransferase (mannosylglycerate synthase) (EC 2.4.1.-)
+GT8	GT8	lipopolysaccharide alpha-1,3-galactosyltransferase (EC 2.4.1.44);  UDP-Glc: (glucosyl)lipopolysaccharide alpha-1,2-glucosyltransferase (EC 2.4.1.-); lipopolysaccharide glucosyltransferase 1 (EC 2.4.1.58); glycogenin glucosyltransferase (EC 2.4.1.186); inositol 1-alpha-galactosyltransferase (galactinol synthase) (EC 2.4.1.123); homogalacturonan alpha-1,4-galacturonosyltransferase (EC 2.4.1.43); UDP-GlcA: xylan alpha-glucuronyltransferase (EC 2.4.1.-)
+GT80	GT80	beta-galactoside alpha-2,6-sialyltransferase (EC 2.4.99.1); beta-galactoside alpha-2,3-sialyltransferase (EC 2.4.99.4)
+GT81	GT81	NDP-Glc: glucosyl-3-phosphoglycerate synthase (EC 2.4.1.-); NDP-Man: mannosyl-3-phosphoglycerate synthase (EC 2.4.1.-);
+GT82	GT82	UDP-GalNAc: beta-1,4-N-acetylgalactosaminyltransferase (EC 2.4.1.-)
+GT84	GT84	cyclic beta-1,2-glucan synthase (EC 2.4.1.-);
+GT85	GT85	beta-D-arabinofuranosyl monophosphoryldecaprenol: galactan alpha-D-arabinofuranosyltransferase (EC 2.4.2.-)
+GT87	GT87	polyprenol-P-Man: alpha-1,2-mannosyltransferase (EC 2.4.1.-)
+GT89	GT89	beta-D-arabinofuranosyl-1-monophosphoryldecaprenol : arabinan beta-1,2-arabinofuranosyltransferase (EC 2.4.2.-)
+GT9	GT9	lipopolysaccharide N-acetylglucosaminyltransferase (EC 2.4.1.56); heptosyltransferase (EC 2.4.-.-).
+GT90	GT90	UDP-Xyl: (mannosyl) glucuronoxylomannan/galactoxylomannan beta-1,2-xylosyltransferase (EC 2.4.2.-)
+PL11	PL11	rhamnogalacturonan lyase (EC 4.2.2.-); exo-unsaturated rhamnogalacturonan lyase (EC 4.2.2.-)
+PL12	PL12	heparin-sulfate lyase (EC 4.2.2.8)
+PL13	PL13	heparin lyase  (EC 4.2.2.7)
+PL21	PL21	heparin lyase (EC 4.2.2.7); heparin-sulfate lyase (EC 4.2.2.8); acharan-sulfate lyase (EC 4.2.2.-)
+PL4	PL4	rhamnogalacturonan lyase (EC 4.2.2.-).
+PL6	PL6	alginate lyase (EC 4.2.2.3); chondroitinase B (EC 4.2.2.4).
+PL8	PL8	hyaluronate lyase (EC 4.2.2.1); chondroitin AC lyase (EC 4.2.2.5); xanthan lyase (EC 4.2.2.12); chondroitin ABC lyase (EC 4.2.2.20)
+AA13	AA13	Family built after Vu et al. Proc. Natl. Acad. Sci. USA (2014) 111:13822-7 (PMID 25201969);	AA13 proteins are copper-dependent lytic polysaccharide monooxygenases (LPMOs); cleavage of starch with oxidation of C-1 at the site of cleavage has been demonstrated for the LPMO encoded by gene NCU08746 from Neurospora crassa
+AA9	AA9	AA9 (formerly GH61). The enzymes in this family were originally classified as a glycoside hydrolases (GH61) based on very weak endo-1,4-b-D-glucanase activity in one family member. They are now reclassified in the AA category of CAZy. AA9 (formerly GH61) proteins are copper-dependent lytic polysaccharide monooxygenases (LPMOs); cleavage of cellulose chains with oxidation of various carbons (C-1, C-4 and C-6) has been reported several times in the literature
+CE10	CE10	arylesterase (EC 3.1.1.-);  carboxyl esterase (EC 3.1.1.3); acetylcholinesterase (EC 3.1.1.7); cholinesterase (EC 3.1.1.8); sterol esterase (EC 3.1.1.13); brefeldin A esterase (EC 3.1.1.-)
+CBM39	CBM39	Formerly known as X67 modules.	Modules generally found at the N-terminus of a GH16 module (itself frequently lacking a catalytic machinery) and more seldomly in isolation. The beta-1,3-glucan binding function has been demonstrated, along with binding to lipopolysaccharide and lipoteichoic acid.
+CBM43	CBM43	Formerly known as X8 modules.	Modules of approx. 90-100 residues found at the C-terminus of GH17 or GH72 enzymatic modules and also sometimes isolated. CBM43 modules sometimes carry a C-terminal membrane anchor. The beta-1,3-glucan binding function has been demonstrated with the olive pollen protein Ole e 10.
+GT16	GT16	alpha-1,6-mannosyl-glycoprotein beta-1,2-N-acetylglucosaminyltransferase (EC 2.4.1.143).
+GT18	GT18	alpha-1,3(6)-mannosylglycoprotein beta-1,6-N-acetyl-glucosaminyltransferase (EC 2.4.1.155).
+GT24	GT24	Distant similarity to family GT8	UDP-Glc: glycoprotein alpha-glucosyltransferase (EC 2.4.1.-).
+GT33	GT33	GDP-Man: chitobiosyldiphosphodolichol beta-mannosyltransferase (EC 2.4.1.142).
+GT36	GH94	cellobiose phosphorylase (EC 2.4.1.20);  cellodextrin phosphorylase (EC 2.4.1.49);  chitobiose phosphorylase (EC 2.4.1.-); cyclic beta-1,2-glucan synthase (EC 2.4.1.-)
+GT37	GT37	galactoside 2-L-fucosyltransferase (EC 2.4.1.69)
+GT40	GT40	These enzymes use UDP-galactofuranose as donor	beta-1,3-galactofuranosyltransferases (EC 2.4.1.-)
+GT64	GT64	The long animal heparan synthases are made of two domains. The N-terminal domain, which adds b-1,4-GlcA residues, belongs to family GT47 while the C-terminal domain, which adds a-1,4-GlcNAc residues, belongs to family GT64. The plant homologs have a single domain.	UDP-GlcNAc: heparan alpha-N-acetylhexosaminyltransferase (EC 2.4.1.224)
+GT48	GT48	1,3-beta-glucan synthase (EC 2.4.1.34)
+GT49	GT49	beta-1,3-N-acetylglucosaminyltransferase (EC 2.4.1.-).
+GT50	GT50	These enzymes use dolichol-P-mannose as the sugar donor.	Dol-P-Man alpha-1,4-mannosyltransferase (EC 2.4.1.-)
+GT54	GT54	UDP-GlcNAc: alpha-1,3-D-mannoside beta-1,4-N-acetylglucosaminyltransferase (EC 2.4.1.145)
+GT57	GT57	These enzymes use dolichol-P-glucose as the sugar donor.	Dol-P-Glc: alpha-1,3-glucosyltransferase (EC 2.4.1.-)
+GT58	GT58	These enzymes use dolichol-P-mannose as the sugar donor.	Dol-P-Man: dolichol pyrophosphate-mannose alpha-1,3-mannosyltransferase (EC 2.4.1.130); Dol-P-Man: dolichol pyrophosphate-Man5GlcNAc2 alpha-1,2-mannosyltransferase (EC 2.4.1.130)
+GT59	GT59	These enzymes use dolichol-P-glucose as the sugar donor.	Dol-P-Glc: Glc2Man9GlcNAc2-PP-Dol alpha-1,2-glucosyltransferase (EC 2.4.1.-)
+GT61	GT61	beta-1,2-xylosyltransferase (EC 2.4.2.38)
+GT67	GT67	Activity shown by Dobson et al. (2003) J Biol Chem. 278:15523-15531	UDP-Gal: phosphoglycan betalpha-1,3 galactosyltransferase 1 (SCG1) (EC 2.4.1.-)
+GT68	GT68	Distantly related to families GT65, GT23, GT11; created after reading Martinez-Dunker et al. (2003) Glycobiology 13:1C-5C	GDP-Fuc: protein O-alpha-fucosyltransferase (EC 2.4.1.-)
+GT65	GT65	Distantly related to families GT68, GT23, GT11	GDP-Fuc: protein O-alpha-fucosyltransferase (EC 2.4.1.-)
+GT69	GT69	Created after reading Sommer et al. (2003) J. Biol. Chem. 278:47724-47730.	GDP-Man: alpha-1,3-mannosyltransferase (EC 2.4.1.-)
+GT79	GT79	Created after reading Goswami et al. Glycobiology (2006) 16, 230-236 (PMID: 16272216)	GDP-D-Ara: phosphoglycan alpha-1,2-D-arabinopyranosyltransferase 1 (EC 2.4.2.-)
+GT91	GT91	Created from Mille et al. (2008) J Biol Chem. 283, 9724-9736 (PMID: 18234669)	beta-1,2-mannosyltransferase (EC 2.4.1.-)
+GT92	GT92	Created from Tiz et al. (2009) J. Biol. Chem., 284(52):36223-33 (PMID:19858195)	UDP-Gal: N-glycan core alpha-1,6-fucoside beta-1,4-galactosyltransferase (EC 2.4.1.-); UDP-Gal: beta-galactoside beta-1,4-galactosyltransferase (EC 2.4.1.-)
+GT95	GT95	UDP-beta-L-Araf:hydroxyproline beta-L-arabinofuranosyltransferase (EC 2.4.2.-);
+GT96	GT96	UDP-Gal: peptidyl serine alpha-galactosyltransferase (EC 2.4.1.-)
