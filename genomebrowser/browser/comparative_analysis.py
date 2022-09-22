@@ -243,9 +243,10 @@ def make_protein_tree(proteins):
     newick = io.StringIO()
     Phylo.write(NJTree, newick, 'newick')
     tree = toytree.mtree(newick.getvalue(), tree_format=1)
+    tip_labels = [item.split('|')[0] for item in tree.treelist[0].get_tip_labels()]
     nodes.reverse()
     print('Node IDs', node_ids)
-    canvas, axes, marks = tree.draw(width=200, height=70 + 56 * len(nodes), fixed_order=node_ids, scalebar=True)
+    canvas, axes, marks = tree.draw(width=200, height=70 + 56 * len(nodes), fixed_order=node_ids, tip_labels=tip_labels, scalebar=True)
     canvas.style['background-color'] = 'white'
     canvas.style['padding-top'] = '60px'
     tree_canvas = toyplot.html.tostring(canvas)
@@ -279,7 +280,7 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
     sorted_proteins = sort_proteins(proteins, pivot_gene.protein.protein_hash)
     gene2protein = defaultdict(list)
     gene_count = 0
-    tree_proteins = [(pivot_gene.id, pivot_gene.protein.sequence, pivot_gene.locus_tag)]
+    tree_proteins = [(pivot_gene.id, pivot_gene.protein.sequence, pivot_gene.locus_tag + '|' + pivot_gene.genome.name)]
     for protein_hash in sorted_proteins:
         if gene_count >= genelist_size:
             break
@@ -288,7 +289,7 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
             if gene.id == pivot_gene.id:
                 continue
             #ret_genes.append(gene)
-            tree_proteins.append((gene.id, proteins[protein_hash], gene.locus_tag))
+            tree_proteins.append((gene.id, proteins[protein_hash], gene.locus_tag + '|' + gene.genome.name))
             gene_count += 1
             if gene_count >= genelist_size:
                 break

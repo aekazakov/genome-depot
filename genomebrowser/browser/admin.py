@@ -261,7 +261,7 @@ admin.site.register(Tc_family, TcFamilyAdmin)
 class OrthologGroupAdmin(admin.ModelAdmin):
     list_display = ['eggnog_id', 'taxon']
     ordering = ['eggnog_id']
-    search_fields = ['eggnog_id', 'taxon']
+    search_fields = ['eggnog_id', 'taxon__name']
     autocomplete_fields = ('taxon', )
     
 admin.site.register(Ortholog_group, OrthologGroupAdmin)

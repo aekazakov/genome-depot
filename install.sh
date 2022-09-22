@@ -210,6 +210,6 @@ echo "secrets.json created."
 #Installing dependencies in the virtual environment
 echo "Installing python dependencies in cgcms-venv virtual environment"
 source "$CGCMSDIR/cgcms-venv/bin/activate"
-pip install "django==3.2.6" django_admin_shortcuts django_cors_headers django_q django_debug_toolbar openpyxl parasail biopython toytree urllib3 mysqlclient --no-cache-dir
+pip install "django==3.2.6" django_admin_shortcuts django_cors_headers django_q django_debug_toolbar openpyxl "parasail==1.2.4" biopython toytree urllib3 mysqlclient --no-cache-dir
 deactivate
 echo "Edit secrets.json and genomebrowser/settings.py before running \"python manage.py configure_cgcsms -i configs.txt\""
