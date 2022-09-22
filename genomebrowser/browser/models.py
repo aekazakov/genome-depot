@@ -242,7 +242,7 @@ class Gene(models.Model):
 
 
 class Regulon(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, db_index=True)
     regulators = models.ManyToManyField(Gene)
     genome = models.ForeignKey(Genome, on_delete=models.CASCADE)
     description = models.TextField()
@@ -273,10 +273,10 @@ class Site(models.Model):
 
 class Annotation(models.Model):
     gene_id = models.ForeignKey(Gene, on_delete=models.CASCADE)
-    source = models.CharField(max_length=30)
+    source = models.CharField(max_length=30, db_index=True)
     url = models.CharField(max_length=300)
-    key = models.CharField(max_length=30)
-    value = models.CharField(max_length=50)
+    key = models.CharField(max_length=30, db_index=True)
+    value = models.CharField(max_length=50, db_index=True)
     note = models.TextField()
 
     def __str__(self):
