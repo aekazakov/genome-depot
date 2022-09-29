@@ -321,26 +321,54 @@ class Importer(object):
                                 full_name = '',
                                 description = '')
                 self.sample_instances[sample_id] = sample
-                
+
     def prepare_taxonomy_data(self):
-        taxonomy_ids = set()
         for strain_id, strain in self.strain_instances.items():
             taxon_id = strain.taxon.taxonomy_id
-            taxonomy_ids.add(taxon_id)
             parent_id = self.taxonomy[taxon_id]['parent']
-            while parent_id != '1':
-                taxonomy_ids.add(parent_id)
-                parent_id = self.taxonomy[parent_id]['parent']
-        saved_taxa = set([taxon.taxonomy_id for taxon in Taxon.objects.all()])
-        for taxon_id in taxonomy_ids:
-            if taxon_id not in saved_taxa:
+            try:
+                taxon = Taxon.objects.get(taxonomy_id = taxon_id)
+            except Taxon.DoesNotExist:
                 taxon = Taxon(taxonomy_id=taxon_id,
                     eggnog_taxid=self.taxonomy[taxon_id]['eggnog_taxid'],
                     name=self.taxonomy[taxon_id]['name'],
                     rank=self.taxonomy[taxon_id]['rank'],
-                    parent_id=self.taxonomy[taxon_id]['parent']
+                    parent_id=parent_id
                     )
-                self.taxon_instances[taxon_id] = taxon
+                taxon.save()
+
+            while parent_id != '1':
+                try:
+                    taxon = Taxon.objects.get(taxonomy_id = taxon_id)
+                except Taxon.DoesNotExist:
+                    taxon = Taxon(taxonomy_id=parent_id,
+                        eggnog_taxid=self.taxonomy[parent_id]['eggnog_taxid'],
+                        name=self.taxonomy[parent_id]['name'],
+                        rank=self.taxonomy[parent_id]['rank'],
+                        parent_id=self.taxonomy[parent_id]['parent']
+                        )
+                    taxon.save()
+                parent_id = self.taxonomy[parent_id]['parent']
+                
+    # def prepare_taxonomy_data(self):
+        # taxonomy_ids = set()
+        # for strain_id, strain in self.strain_instances.items():
+            # taxon_id = strain.taxon.taxonomy_id
+            # taxonomy_ids.add(taxon_id)
+            # parent_id = self.taxonomy[taxon_id]['parent']
+            # while parent_id != '1':
+                # taxonomy_ids.add(parent_id)
+                # parent_id = self.taxonomy[parent_id]['parent']
+        # saved_taxa = set([taxon.taxonomy_id for taxon in Taxon.objects.all()])
+        # for taxon_id in taxonomy_ids:
+            # if taxon_id not in saved_taxa:
+                # taxon = Taxon(taxonomy_id=taxon_id,
+                    # eggnog_taxid=self.taxonomy[taxon_id]['eggnog_taxid'],
+                    # name=self.taxonomy[taxon_id]['name'],
+                    # rank=self.taxonomy[taxon_id]['rank'],
+                    # parent_id=self.taxonomy[taxon_id]['parent']
+                    # )
+                # self.taxon_instances[taxon_id] = taxon
     
     def process_protein(self, sequence, protein_name):
         #protein_hash = hex(mmh3.hash128(sequence))[2:]
