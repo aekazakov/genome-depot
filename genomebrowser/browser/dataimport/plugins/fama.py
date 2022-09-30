@@ -85,6 +85,7 @@ def preprocess(annotator, genomes, working_dir):
                                     '--prot'
                   ]) + '\n')
         outfile.write('conda deactivate\n')
+    return fama_script
 
 def run(script_path):
     """
