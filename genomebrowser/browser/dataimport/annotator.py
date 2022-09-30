@@ -119,6 +119,7 @@ class Annotator(object):
         """Creates PFAM domain mappings for proteins in the database.
         The genome_ids parameter is a list of genome ids that would be included in hmmsearch search
         """
+        batch_size=10000
         # export proteins as FASTA
         print('Exporting proteins')
         self.export_proteins(genome_ids)
@@ -135,6 +136,7 @@ class Annotator(object):
         ref_hmm = self.read_hmm_reference(self.config['ref.pfam_hmm_list'])
         # create Annotations
         print('Creating annotations')
+        annotations_written = 0
         for hit in hits:
             protein = self.proteins[hit['protein_hash']]
             for gene in protein.gene_set.all():
@@ -146,10 +148,15 @@ class Annotator(object):
                         value=hit['hmm_id'],
                         note=hit['hmm_id'] + ' (' + ref_hmm[hit['hmm_id']]['acc'] + '): ' + ref_hmm[hit['hmm_id']]['desc'] + '. E-value: ' + hit['evalue'] + '. Coordinates: ' + ';'.join(hit['coords'])
                         ))
+                    if len(self.annotations) >= batch_size:
+                        Annotation.objects.bulk_create(self.annotations, batch_size=batch_size)
+                        annotations_written += len(self.annotations)
+                        self.annotations = []
         # write Annotations
         print('Writing annotations')
-        Annotation.objects.bulk_create(self.annotations, batch_size=10000)
-        print(len(self.annotations), 'annotations created for PFAM')
+        Annotation.objects.bulk_create(self.annotations, batch_size=batch_size)
+        annotations_written += len(self.annotations)
+        print(annotations_written, 'annotations created for PFAM domains')
         self.annotations = []
         
     def update_pfam_domains(self, genome_ids=None):
@@ -177,6 +184,7 @@ class Annotator(object):
         self._create_tigrfam_domains()
     
     def _create_tigrfam_domains(self, genome_ids=None):
+        batch_size=10000
         print('Exporting proteins')
         self.export_proteins(genome_ids)
         # run hmmscan
@@ -192,6 +200,7 @@ class Annotator(object):
         ref_hmm = self.read_hmm_reference(self.config['ref.tigrfam_hmm_list'])
         # create Annotations
         print('Creating annotations')
+        annotations_written = 0
         for hit in hits:
             protein = self.proteins[hit['protein_hash']]
             for gene in protein.gene_set.all():
@@ -203,10 +212,15 @@ class Annotator(object):
                         value=hit['hmm_id'],
                         note=hit['hmm_id'] + ': ' + ref_hmm[hit['hmm_id']]['desc'] + '. E-value: ' + hit['evalue'] + '. Coordinates: ' + ';'.join(hit['coords'])
                         ))
+                    if len(self.annotations) >= batch_size:
+                        Annotation.objects.bulk_create(self.annotations, batch_size=batch_size)
+                        annotations_written += len(self.annotations)
+                        self.annotations = []
         # write Annotations
         print('Writing annotations')
         Annotation.objects.bulk_create(self.annotations, batch_size=10000)
-        print(len(self.annotations), 'annotations created for TIGRFAM')
+        annotations_written += len(self.annotations)
+        print(annotations_written, 'annotations created for TIGRFAM families')
         self.annotations = []
     
     def make_fitbrowser_annotations(self, strain, org_name, protein_path):
@@ -276,6 +290,8 @@ class Annotator(object):
     def import_annotations(self, lines):
         """ This function adds gene annotations from a list of lines. 
         If an anotation already exists, the existing copy will be preserved (annotation is considered identical if, for the same gene, it has same source, key and value)"""
+        batch_size=10000
+        annotations_written = 0
         for line in lines:
             if line.startswith('#'):
                 continue
@@ -300,10 +316,15 @@ class Annotator(object):
                     print('Annotation added', locus_tag, genome_name, source, key, value)
                 except Gene.DoesNotExist:
                     print('Gene not found', locus_tag, genome_name)
+            if len(self.annotations) >= batch_size:
+                Annotation.objects.bulk_create(self.annotations, batch_size=batch_size)
+                annotations_written += len(self.annotations)
+                self.annotations = []
         # write Annotations
         print('Writing annotations')
         Annotation.objects.bulk_create(self.annotations, batch_size=10000)
-        print(len(self.annotations), 'annotations written')
+        annotations_written += len(self.annotations)
+        print(annotations_written, 'annotations written')
         self.annotations = []
 
     def add_regulons(self, lines):

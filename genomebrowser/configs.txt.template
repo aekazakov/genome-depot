@@ -12,4 +12,5 @@ plugins.phispy.conda_env = cgcms-phispy
 plugins.phispy.threads = 9
 plugins.phispy.evalue_threshold = 0.0001
 plugins.ecis_screen.conda_env = cgcms-ecis-screen
+plugins.fama.conda_env = cgcms-fama
 strains.metadata_file = 

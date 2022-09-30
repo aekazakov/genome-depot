@@ -66,11 +66,11 @@ def preprocess(annotator, genomes, working_dir):
 
     fama_script = os.path.join(working_dir, 'run_fama.sh')
     
-    with open(amrfinder_script, 'w') as outfile:
+    with open(fama_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
         outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
         outfile.write('conda activate ' + annotator.config['plugins.fama.conda_env'] + '\n')
-        for collection in collections:
+        for collection in FAMA_REFERENCE:
             fama_project_file = os.path.join(working_dir, 'project_' + collection + '.ini')
             outfile.write(' '.join(['python', os.path.join(annotator.config['plugins.fama.fama_dir'], 'fama_prepare.py'),
                   '-c', annotator.config['plugins.fama.fama_config'],
