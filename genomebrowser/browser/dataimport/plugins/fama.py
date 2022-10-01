@@ -105,7 +105,7 @@ def run(script_path):
         raise CalledProcessError(proc.returncode, proc.args)
 
 
-def postprocess(annotator, genomes, project_files, working_dir):
+def postprocess(annotator, genomes, working_dir):
     """
         Finds Fama output file and creates file with annotations for upload into DB
     """
