@@ -87,16 +87,13 @@ def postprocess(annotator, genomes, working_dir):
     with open(output_file, 'w') as outfile:
         outfile.write('#Gene\tGenome\tSoure\tURL\tKey\tValue\tNote\n')
         for genome in sorted(genomes.keys()):
-            gbk_filename = genomes[genome].split('/')[-1]
-            gbk_id = gbk_filename.split('.')[0]
             antismash_dir = os.path.join(working_dir, 'out', genome)
-            for dirname in os.listdir(antismash_dir):
-                subdir = os.path.join(antismash_dir, dirname)
-                if not os.path.isdir(subdir):
-                    continue
-                for filename in os.listdir(subdir):
-                    if 'region'  in filename:
-                        outfile.write(get_genes(genome, os.path.join(subdir, filename), antismash_ref))
+            if not os.path.exists(antismash_dir):
+                print('Antismash output directory not found:', antismash_dir)
+                continue
+            for filename in os.listdir(antismash_dir):
+                if 'region' in filename:
+                    outfile.write(get_genes(genome, os.path.join(antismash_dir, filename), antismash_ref))
 
     _cleanup(working_dir)
     return output_file

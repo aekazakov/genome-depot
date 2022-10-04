@@ -54,7 +54,7 @@ def preprocess(annotator, genomes, working_dir):
             outfile.write(' '.join(['amrfinder', '--threads', annotator.config['plugins.amrfinder.threads'],
                                     '-p', input_fasta_files[genome],
                                     '-o', os.path.join(output_dir, genome + '.amrfinder.tsv'),
-                                    '--log', os.path.join(working_dir, 'log.txt')]) + '\n')
+                                    '--log', os.path.join(working_dir, genome + '_log.txt')]) + '\n')
         outfile.write('conda deactivate\n')
     return amrfinder_script
 
@@ -97,7 +97,7 @@ def postprocess(annotator, genomes, working_dir):
                                   'Type/subclass',
                                   function,
                                   description]) + '\n')
-    _cleanup(working_dir)
+    #_cleanup(working_dir)
     return output_file
 
 
@@ -109,7 +109,7 @@ def _export_proteins(genome, output_dir):
         print(genome, 'not found')
         raise
     genes = Gene.objects.filter(genome__id = genome_id).select_related('protein')
-    out_path = os.path.join(output_dir, str(genome_id) + '.faa')
+    out_path = os.path.join(output_dir, str(genome.name) + '.faa')
     with open(out_path, 'w') as outfile:
         for gene in genes:
             if gene.protein is not None:
