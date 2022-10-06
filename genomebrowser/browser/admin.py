@@ -278,7 +278,7 @@ admin.site.register(Eggnog_description, EggnogDescriptionAdmin)
 class StrainMetadataAdmin(admin.ModelAdmin):
     list_display = ['strain', 'key', 'source']
     ordering = ['strain', 'key']
-    search_fields = ['strain', 'key', 'source']
+    search_fields = ['strain__strain_id', 'key', 'source']
     autocomplete_fields = ('strain',)
 
     def get_urls(self):
@@ -310,7 +310,7 @@ admin.site.register(Strain_metadata, StrainMetadataAdmin)
 class SampleMetadataAdmin(admin.ModelAdmin):
     list_display = ['sample', 'key', 'source']
     ordering = ['sample', 'key']
-    search_fields = ['sample', 'key', 'source']
+    search_fields = ['sample__sample_id', 'key', 'source']
     autocomplete_fields = ('sample',)
 
     def get_urls(self):

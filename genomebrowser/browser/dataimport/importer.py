@@ -339,7 +339,7 @@ class Importer(object):
 
             while parent_id != '1':
                 try:
-                    taxon = Taxon.objects.get(taxonomy_id = taxon_id)
+                    taxon = Taxon.objects.get(taxonomy_id = parent_id)
                 except Taxon.DoesNotExist:
                     taxon = Taxon(taxonomy_id=parent_id,
                         eggnog_taxid=self.taxonomy[parent_id]['eggnog_taxid'],
