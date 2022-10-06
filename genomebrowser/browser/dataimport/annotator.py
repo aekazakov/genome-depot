@@ -434,7 +434,7 @@ class Annotator(object):
                 if strain_id == '' or strain_id is None:
                     continue
                 for j, cell in enumerate(row[1:]):
-                    if cell != '' and cell is not None:
+                    if cell != '' and cell != 'None' and cell is not None:
                         metadata_imported[strain_id][xlsx_header[j]] = ('User-defined data', 'javascript:alert(\'No external link.\');', str(cell))
         
         # Download from isolates.genomics.lbl.gov 

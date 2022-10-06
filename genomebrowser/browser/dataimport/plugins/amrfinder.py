@@ -97,7 +97,7 @@ def postprocess(annotator, genomes, working_dir):
                                   'Type/subclass',
                                   function,
                                   description]) + '\n')
-    #_cleanup(working_dir)
+    _cleanup(working_dir)
     return output_file
 
 
@@ -109,7 +109,7 @@ def _export_proteins(genome, output_dir):
         print(genome, 'not found')
         raise
     genes = Gene.objects.filter(genome__id = genome_id).select_related('protein')
-    out_path = os.path.join(output_dir, str(genome.name) + '.faa')
+    out_path = os.path.join(output_dir, str(genome_id) + '.faa')
     with open(out_path, 'w') as outfile:
         for gene in genes:
             if gene.protein is not None:

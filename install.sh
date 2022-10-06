@@ -73,6 +73,7 @@ if ! { conda env list | grep 'cgcms-amrfinder'; } >/dev/null 2>&1; then
 	conda create -y -n cgcms-amrfinder python=3.8
 	conda activate cgcms-amrfinder
 	conda install -y -c bioconda -c conda-forge ncbi-amrfinderplus
+	amrfinder -u
 	conda deactivate
 	cd "$CGCMSDIR/external_tools"
 fi
