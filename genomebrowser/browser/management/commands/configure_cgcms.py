@@ -2,7 +2,7 @@ import os
 from django.core.management.base import BaseCommand
 from browser.models import Config
 from browser.dataimport.importer import Importer
-from genomebrowser.settings import STATIC_URL
+from genomebrowser.settings import BASE_URL
 
 class Command(BaseCommand):
     help = 'Imports config settings from file'
@@ -35,6 +35,6 @@ class Command(BaseCommand):
             with open(tracklist_file, 'w') as outfile:
                 with open(tracklist_template, 'r') as infile:
                     for line in infile:
-                        outfile.write(line.replace('https://example.com/', STATIC_URL))
+                        outfile.write(line.replace('https://example.com/', BASE_URL))
         else:
             raise ValueError('Parameters file not found.')
