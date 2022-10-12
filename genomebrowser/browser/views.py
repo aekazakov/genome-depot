@@ -245,7 +245,7 @@ class GeneSearchResultsView(generic.ListView):
                 context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to KEGG Ortholog groups containing "' + self.request.GET.get('ko_query') + '"'
             elif self.request.GET.get('kp_query'):
                 context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to KEGG pathways containing "' + self.request.GET.get('kp_query') + '"'
-                if self.kegg_map_url:
+                if self.kegg_map_url is not None:
                     context['external'] = self.kegg_map_url
             elif self.request.GET.get('kr_query'):
                 context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to KEGG reactions containing "' + self.request.GET.get('kr_query') + '"'
@@ -360,6 +360,7 @@ class GeneSearchResultsView(generic.ListView):
                 ).values('kegg_id')
                 proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_pathways__kegg_id__in=kp_ids).values('protein_hash')]
                 object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon', 'protein').prefetch_related('protein__kegg_orthologs')
+                self.kegg_map_url = None
                 if kp_ids.count() == 1:
                     print(kp_ids[0]['kegg_id'])
                     kegg_map_url = 'https://www.kegg.jp/pathway/' + kp_ids[0]['kegg_id'] + '+'
