@@ -245,6 +245,8 @@ class GeneSearchResultsView(generic.ListView):
                 context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to KEGG Ortholog groups containing "' + self.request.GET.get('ko_query') + '"'
             elif self.request.GET.get('kp_query'):
                 context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to KEGG pathways containing "' + self.request.GET.get('kp_query') + '"'
+                if self.kegg_map_url:
+                    context['external'] = self.kegg_map_url
             elif self.request.GET.get('kr_query'):
                 context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to KEGG reactions containing "' + self.request.GET.get('kr_query') + '"'
             elif self.request.GET.get('ec_query'):
@@ -356,7 +358,18 @@ class GeneSearchResultsView(generic.ListView):
                 kp_ids = Kegg_pathway.objects.filter(
                     Q(kegg_id__icontains=kp_query) | Q(description__icontains=kp_query)
                 ).values('kegg_id')
-                proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_pathways__kegg_id__in=kp_ids).values('protein_hash')]
+                proteins = Protein.objects.filter(kegg_pathways__kegg_id__in=kp_ids).prefetch_related('kegg_orthologs')
+                if kp_ids.count() == 1:
+                    print(kp_ids[0]['kegg_id'])
+                    kegg_map_url = 'https://www.kegg.jp/pathway/' + kp_ids[0]['kegg_id'] + '+'
+                    print(kegg_map_url)
+                    ko_ids = set()
+                    for protein in proteins:
+                        for ko in protein.kegg_orthologs.all():
+                            ko_ids.add(ko.kegg_id)
+                    if ko_ids:
+                        self.kegg_map_url = kegg_map_url + '+'.join(sorted(list(ko_ids)))
+                proteins = [protein.protein_hash for protein in proteins]
                 object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             elif kr_query:
                 kr_ids = Kegg_reaction.objects.filter(
