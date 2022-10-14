@@ -40,7 +40,18 @@ cd jbrowse
 cd "$CGCMSDIR/external_tools"
 
 # Install eggnog-mapper
-if ! { conda env list | grep 'cgcms-emapper'; } >/dev/null 2>&1; then
+if conda env list | grep 'cgcms-emapper'; >/dev/null 2>&1
+then
+	conda activate cgcms-emapper
+	if ! { emapper.py -v --data_dir "$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7" | grep 'emapper-2.1.7'; }>/dev/null 2>&1; then
+		echo 'Conda environment cgcms-emapper exists but eggnog-mapper v2.1.7 was not properly installed. Remove the environment and restart CGCMS installation script.'
+		conda deactivate
+		exit 1
+	else
+		echo 'EggNOG-mapper v.2.1.7 found'
+	fi
+	conda deactivate
+else
 	echo "Installing EggNOG mapper"
 	conda create -y -n cgcms-emapper python=3.8
 	conda activate cgcms-emapper
@@ -57,7 +68,19 @@ if ! [ -d "$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7" ]; then
 	conda deactivate
 fi
 # Install poem_py3
-if ! { conda env list | grep 'cgcms-poem'; } >/dev/null 2>&1; then
+if conda env list | grep 'cgcms-poem' >/dev/null 2>&1; then
+	echo "Found cgcms-poem environment"
+	conda activate cgcms-poem
+	if [ -f "$CGCMSDIR/external_tools/POEM_py3k/bin/run_poem_cgcms.sh" ]
+	then
+		echo "POEM_py3k found"
+	else
+		echo 'Conda environment cgcms-poem exists but POEM_py3k was not properly installed. Remove the environment and restart CGCMS installation script.'
+		conda deactivate
+		exit 1
+	fi
+	conda deactivate
+else
 	echo "Installing POEM_py3"
 	conda create -y -n cgcms-poem python=3.7
 	conda activate cgcms-poem
@@ -68,7 +91,20 @@ if ! { conda env list | grep 'cgcms-poem'; } >/dev/null 2>&1; then
 	cd "$CGCMSDIR/external_tools"
 fi
 #Install amrfinder
-if ! { conda env list | grep 'cgcms-amrfinder'; } >/dev/null 2>&1; then
+if conda env list | grep 'cgcms-amrfinder' >/dev/null 2>&1
+then
+	echo "Found cgcms-amrfinder environment"
+	conda activate cgcms-amrfinder
+	if amrfinder --version|grep "3.10.30" >/dev/null 2>&1
+	then
+	echo "AMRFinder found"
+	else
+	echo 'Conda environment cgcms-amrfinder exists but AMRFinder was not properly installed. Remove the environment and restart CGCMS installation script.'
+	conda deactivate
+	exit 1
+	fi
+	conda deactivate
+else
 	echo "Installing AMRFinder"
 	conda create -y -n cgcms-amrfinder python=3.8
 	conda activate cgcms-amrfinder
@@ -78,7 +114,20 @@ if ! { conda env list | grep 'cgcms-amrfinder'; } >/dev/null 2>&1; then
 	cd "$CGCMSDIR/external_tools"
 fi
 # Install antismash
-if ! { conda env list | grep 'cgcms-antismash'; } >/dev/null 2>&1; then
+if conda env list | grep 'cgcms-antismash' >/dev/null 2>&1
+then
+    echo "Found cgcms-antismash environment"
+    conda activate cgcms-antismash
+    if antismash -h|grep "antiSMASH 6.1.1" >/dev/null 2>&1
+    then
+	echo "antiSMASH 6.1.1 found"
+    else
+	echo 'Conda environment cgcms-antismash exists but antiSMASH was not properly installed. Remove the environment and restart CGCMS installation script.'
+	conda deactivate
+	exit 1
+	fi
+	conda deactivate
+else
 	echo "Installing AntiSMASH"
 	conda create -y -n cgcms-antismash python=3.8
 	conda activate cgcms-antismash
@@ -87,7 +136,20 @@ if ! { conda env list | grep 'cgcms-antismash'; } >/dev/null 2>&1; then
 	cd "$CGCMSDIR/external_tools"
 fi
 # Install ecis-screen
-if ! { conda env list | grep 'cgcms-ecis-screen'; } >/dev/null 2>&1; then
+if conda env list | grep 'cgcms-ecis-screen' >/dev/null 2>&1
+then
+	echo "Found cgcms-ecis-screen environment"
+	conda activate cgcms-ecis-screen
+    if $CGCMSDIR/external_tools/eCIS-screen/HMMsearch_genomesII_fast.pl 2>&1 | grep "Pipeline for screening" >/dev/null 2>&1
+	then
+	echo "eCIS-screen found"
+	else
+	echo 'Conda environment cgcms-ecis-screen exists but eCIS-screen was not properly installed. Remove the environment and restart CGCMS installation script.'
+	conda deactivate
+	exit 1
+	fi
+	conda deactivate
+else
 	echo "Installing eCIS-screen"
 	conda create -y -n cgcms-ecis-screen
 	conda activate cgcms-ecis-screen
@@ -104,7 +166,20 @@ if ! { conda env list | grep 'cgcms-ecis-screen'; } >/dev/null 2>&1; then
 	cd "$CGCMSDIR/external_tools"
 fi
 # Install Fama
-if ! { conda env list | grep 'cgcms-fama'; } >/dev/null 2>&1; then
+if conda env list | grep 'cgcms-fama' >/dev/null 2>&1
+then
+    echo "Found cgcms-fama environment"
+    conda activate cgcms-fama
+    if python $CGCMSDIR/external_tools/fama/py/fama.py | grep "usage: fama.py" >/dev/null 2>&1
+    then
+	echo "Fama found"
+    else
+	echo 'Conda environment cgcms-fama exists but Fama was not properly installed. Remove the environment and restart CGCMS installation script.'
+	conda deactivate
+	exit 1
+    fi
+    conda deactivate
+else
 	echo "Installing Fama"
 	conda create -y -n cgcms-fama python=3.8
 	conda activate cgcms-fama
@@ -117,7 +192,20 @@ if ! { conda env list | grep 'cgcms-fama'; } >/dev/null 2>&1; then
 	cd "$CGCMSDIR/external_tools"
 fi
 # Install phispy
-if ! { conda env list | grep 'cgcms-phispy'; } >/dev/null 2>&1; then
+if conda env list | grep 'cgcms-phispy' >/dev/null 2>&1
+then
+    echo "Found cgcms-phispy environment"
+    conda activate cgcms-phispy
+    if phispy -v | grep "4.2.21" >/dev/null 2>&1
+    then
+	echo "PhiSpy 4.2.21 found"
+    else
+	echo 'Conda environment cgcms-phispy exists but PhiSpy 4.2.21 was not properly installed. Remove the environment and restart CGCMS installation script.'
+	conda deactivate
+	exit 1
+    fi
+    conda deactivate
+else
 	echo "Installing Phispy"
 	conda create -y -n cgcms-phispy python=3.8
 	conda activate cgcms-phispy
@@ -153,7 +241,7 @@ if ! [ -f "$CGCMSDIR/external_refdata/tigrfam/TIGRFAM.HMM" ]; then
 	hmmpress TIGRFAM.HMM
 fi
 
-echo "Activate virtual environment $CGCMSDIR/cgcms-venv  and install Django before running CGCMS"
+echo "Activate virtual environment $CGCMSDIR/cgcms-venv and install Django before running CGCMS"
 cd "$WORKDIR/genomebrowser"
 if [ -f "configs.txt" ]; then
 	cp configs.txt configs.txt~
