@@ -30,14 +30,16 @@ source $CONDA
 [ -d "$WORKDIR/temp/eggnog" ] || mkdir "$WORKDIR/temp/eggnog"
 
 cd "$CGCMSDIR/external_tools"
-# Install Jbrowse v.1.16.11
-curl -L -O https://github.com/GMOD/jbrowse/releases/download/1.16.11-release/JBrowse-1.16.11.zip
-unzip JBrowse-1.16.11.zip
-mv JBrowse-1.16.11 jbrowse
-rm JBrowse-1.16.11.zip
-cd jbrowse
-./setup.sh
-cd "$CGCMSDIR/external_tools"
+if ! [ -d "$CGCMSDIR/external_tools/jbrowse" ]; then
+    # Install Jbrowse v.1.16.11
+    curl -L -O https://github.com/GMOD/jbrowse/releases/download/1.16.11-release/JBrowse-1.16.11.zip
+    unzip JBrowse-1.16.11.zip
+    mv JBrowse-1.16.11 jbrowse
+    rm JBrowse-1.16.11.zip
+    cd jbrowse
+    ./setup.sh
+    cd "$CGCMSDIR/external_tools"
+fi
 
 # Install eggnog-mapper
 if conda env list | grep 'cgcms-emapper'; >/dev/null 2>&1
@@ -214,7 +216,7 @@ else
 	cd "$CGCMSDIR/external_tools"
 fi
 # Download HMM libraries
-if ! [ -f "$CGCMSDIR/external_refdata/phispy/pVOGs.hmm" ]; then
+if ! [ -f "$CGCMSDIR/external_refdata/phispy/pvogs.hmm" ]; then
 	echo "Downloading pVOG HMMs"
 	[ -d "$CGCMSDIR/external_refdata/phispy" ] || mkdir "$CGCMSDIR/external_refdata/phispy"
 	cd "$CGCMSDIR/external_refdata/phispy"
