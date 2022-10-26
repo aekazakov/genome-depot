@@ -393,6 +393,7 @@ class Importer(object):
             location = location[11:-1]
         location = location.replace('>','')
         location = location.replace('<','')
+        location = location.replace('order(','join(')
         if location.startswith('join('):
             location = location[5:-1]
             segments = location.split(',')
