@@ -165,7 +165,6 @@ map01062	map01062	Biosynthesis of terpenoids and steroids
 map01100	map01100	Metabolic pathways
 map01110	map01110	Biosynthesis of secondary metabolites
 map01120	map01120	Microbial metabolism in diverse environments
-map01130	map01110	Biosynthesis of secondary metabolites
 map01200	map01200	Carbon metabolism
 map01210	map01210	2-Oxocarboxylic acid metabolism
 map01212	map01212	Fatty acid metabolism
@@ -437,3 +436,4 @@ map05412	map05412	Arrhythmogenic right ventricular cardiomyopathy (ARVC)
 map05414	map05414	Dilated cardiomyopathy (DCM)
 map05416	map05416	Viral myocarditis
 map05418	map05418	Fluid shear stress and atherosclerosis
+map01130	map01110	Biosynthesis of secondary metabolites

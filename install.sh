@@ -29,6 +29,15 @@ source $CONDA
 [ -d "$WORKDIR/temp" ] || mkdir "$WORKDIR/temp"
 [ -d "$WORKDIR/temp/eggnog" ] || mkdir "$WORKDIR/temp/eggnog"
 
+# Download taxonomy data
+if ! [ -f "$WORKDIR/ref_data/ref_taxonomy.txt" ]; then
+	echo "Downloading taxonomy data"
+	cd "$WORKDIR/ref_data"
+    curl -LJO -q http://iseq.lbl.gov/mydocs/cgcms_downloads/ref_taxonomy.txt.gz
+	gunzip ref_taxonomy.txt.gz
+fi
+
+# Download JBrowse
 cd "$CGCMSDIR/external_tools"
 if ! [ -d "$CGCMSDIR/external_tools/jbrowse" ]; then
     # Install Jbrowse v.1.16.11
