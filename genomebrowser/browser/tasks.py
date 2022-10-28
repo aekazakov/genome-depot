@@ -4,7 +4,6 @@ import os
 import sys
 import shutil
 import uuid
-import zipfile
 from django.conf import settings
 from django.core.mail import mail_admins, send_mail
 from browser.dataimport.importer import Importer, download_ncbi_assembly
@@ -28,29 +27,17 @@ def test_task_impl(request, genome_names):
     return 'Genomes:' + genome_names
 
 def import_genomes_impl(args):
-    lines, email, zip_file = args
+    lines, email = args
     print ('Asynchronous task received. Starting import.')
-    lines_import = []
     temp_dir = Config.objects.get(param='cgcms.temp_dir').value
-    upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
-    if zip_file is None:
-        zip_content = {}
-    else:
-        zip_content = handle_zip_upload(zip_file, upload_dir)
-    print('Zip archive', zip_content)
-    for line in lines:
-        row = line.split('\t')
-        if row[0] in zip_content:
-            row[0] = os.path.join(zip_content[row[0]])
-        elif row[0] == '' and row[-1].startswith('NCBI:'):
-            row[0] = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'), email, upload_dir)
-        elif not os.path.exists(row[0]):
-            print(row[0], 'not found')
-        lines_import.append('\t'.join(row))
-    print(lines)
-    importer = Importer()
     try:
-        result = importer.import_genomes(lines_import)
+        upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
+        for line in lines:
+            row = line.split('\t')
+            if row[0] == '' and row[-1].startswith('NCBI:'):
+                row[0] = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'), email, upload_dir)
+        importer = Importer()
+        result = importer.import_genomes(lines)
         subject = 'CGCMS task finished successfuly'
         message = f'"Import Genomes" task finished successfuly at {settings.BASE_URL}'
         mail_admins(subject, message)
@@ -195,17 +182,3 @@ def import_regulon_impl(lines):
         message = f'CGCMS "Import regulon" task at {settings.BASE_URL} finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, {sys.exc_info()[2].tb_frame.f_code.co_filename}:{sys.exc_info()[2].tb_lineno}'
         mail_admins(subject, message)
         raise
-
-def handle_zip_upload(zipf, upload_dir):
-    result = {}
-    if not os.path.exists(upload_dir):
-        os.mkdir(upload_dir)
-    with zipfile.ZipFile(zipf, "r", zipfile.ZIP_STORED) as openzip:
-        filelist = openzip.infolist()
-        for member in filelist:
-            if member.is_dir():
-                continue
-            openzip.extract(member.filename, path=upload_dir)
-            result[str(member.filename)] = os.path.join(upload_dir, member.filename)
-    return result
-

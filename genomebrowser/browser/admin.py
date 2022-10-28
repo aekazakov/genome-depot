@@ -1,7 +1,10 @@
 import os
 import csv
+import uuid
 import shutil
 import datetime
+import zipfile
+from pathlib import Path
 from django import forms
 from django.contrib import admin
 from django.urls import path
@@ -92,27 +95,32 @@ class GenomeAdmin(admin.ModelAdmin):
             print(request.FILES)
             tsv_file = request.FILES["tsv_file"]
             zip_file = None
-#            zip_content = {}
-#            temp_dir = Config.objects.get(param='cgcms.temp_dir').value
-#            upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
-#            if 'zip_file' in request.FILES:
-#                print(upload_dir)
-#                zip_file = request.FILES["zip_file"]
-#                zip_content = handle_zip_upload(zip_file, upload_dir)
+            zip_content = {}
+            temp_dir = Config.objects.get(param='cgcms.temp_dir').value
+            upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
+            if 'zip_file' in request.FILES:
+                print(upload_dir)
+                Path(upload_dir).mkdir(parents=True, exist_ok=True)
+                os.chmod(upload_dir, 0o777)
+                zip_file = request.FILES["zip_file"]
+                zip_content = handle_zip_upload(zip_file, upload_dir)
             lines = []
-#            print('Zip archive', {})
             for line in tsv_file:
                 line = line.decode()
                 lines.append(line)
-#                row = line.split('\t')
-#                if row[0] in zip_content:
-#                    row[0] = os.path.join(zip_content[row[0]])
-#                elif row[0] == '' and row[-1].startswith('NCBI:'):
-#                    row[0] = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'), request.POST['download_email'], upload_dir)
-#                elif not os.path.exists(row[0]):
-#                    print(row[0], 'not found')
-#                lines.append('\t'.join(row))
-            task_name = async_import_genomes(lines, request.POST['download_email'], zip_file)
+                row = line.split('\t')
+                if row[0].startswith('#'):
+                    pass
+                elif row[0] in zip_content:
+                    row[0] = zip_content[row[0]]
+                elif row[0] == '' and row[-1].startswith('NCBI:'):
+                    pass
+                    # Assembly will be downloaded from NCBI later
+                    #row[0] = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'), request.POST['download_email'], upload_dir)
+                elif not os.path.exists(row[0]):
+                    print(row[0], 'not found')
+                lines.append('\t'.join(row))
+            task_name = async_import_genomes(lines, request.POST['download_email'])
             # Do some staff
             self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
             return redirect("..")
@@ -495,4 +503,16 @@ def clusters_view(request):
     return render(
         request, "admin/clusters.html", context
     )
+
+def handle_zip_upload(zipf, upload_dir):
+    result = {}
+    with zipfile.ZipFile(zipf, "r", zipfile.ZIP_STORED) as openzip:
+        filelist = openzip.infolist()
+        for member in filelist:
+            if member.is_dir():
+                continue
+            openzip.extract(member.filename, path=upload_dir)
+            result[str(member.filename)] = os.path.join(upload_dir, member.filename)
+            os.chmod(os.path.join(upload_dir, member.filename), 0o777)
+    return result
 

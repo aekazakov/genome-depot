@@ -545,7 +545,7 @@ class Importer(object):
                     contig_sequence = gbk_record.sequence
                     genome_sequence.append(contig_sequence)
                     contig_id = gbk_record.locus
-                    contig_name = gbk_record.accession
+                    contig_name = gbk_record.accession[0]
                     nucl_seq_uid = '>' + contig_id + '|' + genome_id
                     if nucl_seq_uid not in strored_seq_uids:
                         nucl_db_file_handle.write('>' + contig_id + '|' + genome_id + '\n' + ''.join(contig_sequence) + '\n')
