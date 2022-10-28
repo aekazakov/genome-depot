@@ -11,7 +11,7 @@ from django.contrib import messages
 # Import your models here
 from browser.models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog
 from browser.dataimport.importer import Importer
-from browser.async_tasks import test_async_task, async_import_genomes, async_delete_genomes, async_import_sample_metadata, async_import_sample_descriptions, async_update_strain_metadata, async_import_annotations, async_import_regulon
+from browser.async_tasks import test_async_task, async_import_genomes, async_delete_genomes, async_update_static_files, async_import_sample_metadata, async_import_sample_descriptions, async_update_strain_metadata, async_import_annotations, async_import_regulon
 from django_q.models import OrmQ
 from django_q.monitor import Stat
 
@@ -41,6 +41,11 @@ def delete_genomes(self, request, queryset):
     task_id = async_delete_genomes(request, queryset)
     messages.info(request, "Selected genomes are being deleted. Check queued task list for progress.")
 
+@admin.action(description = 'Update static files and re-build search databases')
+def update_static_files(self, request, queryset):
+    task_id = async_update_static_files(request, queryset)
+    messages.info(request, "Static files for selected genomes are being re-created. Check queued task list for progress.")
+
 def count_tasks(request):
     return str(OrmQ.objects.all().count())
 
@@ -56,7 +61,8 @@ class GenomeAdmin(admin.ModelAdmin):
     change_list_template = 'admin/genome_change_list.html'
     #actions = [delete_genome]
     actions = [test_task,
-               delete_genomes]
+               delete_genomes,
+               update_static_files]
     list_display = ['name', 'taxon', 'strain', 'sample', 'size', 'contigs']
     list_filter = (('strain', admin.EmptyFieldListFilter), ('sample', admin.EmptyFieldListFilter))
     ordering = ['name']
@@ -77,6 +83,7 @@ class GenomeAdmin(admin.ModelAdmin):
         my_urls = [
             path('add/', self.import_genomes),
             path('delete-genomes/', self.delete_genomes),
+            path('update-static/', self.update_static_files),
         ]
         return my_urls + urls
 
@@ -119,6 +126,10 @@ class GenomeAdmin(admin.ModelAdmin):
         
     def delete_genomes(self, request, queryset):
         self.message_user(request, "You asked for removal of " + str(len(queryset)) + " genomes")
+        return redirect("..")
+
+    def update_static_files(self, request, queryset):
+        self.message_user(request, "You asked for re-creating static files of " + str(len(queryset)) + " genomes")
         return redirect("..")
 
     def get_actions(self, request):

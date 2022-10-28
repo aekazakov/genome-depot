@@ -71,6 +71,7 @@ class Importer(object):
             Try to create directories for static files. 
         """
         Path(self.config['cgcms.temp_dir']).mkdir(parents=True, exist_ok=True)
+        Path(self.config['cgcms.eggnog_outdir']).mkdir(parents=True, exist_ok=True)
         Path(self.config['cgcms.static_dir']).mkdir(parents=True, exist_ok=True)
         Path(self.config['cgcms.static_dir'] + '/gbff').mkdir(parents=True, exist_ok=True)
         Path(self.config['cgcms.json_dir']).mkdir(parents=True, exist_ok=True)

@@ -1,7 +1,7 @@
 import time
 from django.utils import timezone
 from django_q.tasks import async_task, result
-from browser.tasks import test_task_impl, import_genomes_impl, delete_genomes_impl, import_sample_metadata_impl, import_sample_descriptions_impl, update_strain_metadata_impl, import_annotations_impl, import_regulon_impl
+from browser.tasks import test_task_impl, import_genomes_impl, delete_genomes_impl, update_static_files_impl, import_sample_metadata_impl, import_sample_descriptions_impl, update_strain_metadata_impl, import_annotations_impl, import_regulon_impl
 
 def test_async_task(request, queryset):
     timeout = 60
@@ -31,10 +31,17 @@ def async_import_genomes(lines, email, zip_file):
     return task_id
 
 def async_delete_genomes(request, queryset):
-    genomes = [item.name for item in queryset]
+    genomes = [item.id for item in queryset]
     timestamp = str(timezone.now())
     task_name = 'delete-genomes-' + timestamp.replace(' ', '_')
     task_id = async_task(delete_genomes_impl, genomes, task_name=task_name, sync=False)
+    return task_name
+
+def async_update_static_files(request, queryset):
+    genomes = [item.name for item in queryset]
+    timestamp = str(timezone.now())
+    task_name = 'update-static-' + timestamp.replace(' ', '_')
+    task_id = async_task(update_static_files_impl, genomes, task_name=task_name, sync=False)
     return task_name
 
 def async_import_sample_metadata(lines):
