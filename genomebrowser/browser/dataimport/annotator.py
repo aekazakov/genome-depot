@@ -321,8 +321,8 @@ class Annotator(object):
                 annotations_written += len(self.annotations)
                 self.annotations = []
         # write Annotations
-        print('Writing annotations')
-        Annotation.objects.bulk_create(self.annotations, batch_size=10000)
+        if self.annotations:
+            Annotation.objects.bulk_create(self.annotations, batch_size=10000)
         annotations_written += len(self.annotations)
         print(annotations_written, 'annotations written')
         self.annotations = []

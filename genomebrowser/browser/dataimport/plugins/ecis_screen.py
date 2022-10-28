@@ -98,28 +98,29 @@ def postprocess(annotator, genomes, working_dir):
                     accessions[genome + '_' + accession] = genome
 
     with open(output_file, 'w') as outfile:
-        with open(os.path.join(working_dir, 'ecis-screen_summary.txt'), 'r') as infile:
-            header = infile.readline().rstrip('\n\r').split('\t')
-            for line in infile:
-                row = line.rstrip('\n\r').split('\t')
-                try:
-                    genome = accessions[row[0]]
-                except KeyError:
-                    print ('Unable to find genome name for sequence ID ' + row[0])
-                    raise
-                for ind, genes in enumerate(row):
-                    if ind == 0:
-                        continue
-                    if genes == '-':
-                        continue
-                    family = header[ind]
-                    description = family + ' subunit of extracellular contractile injection system (eCIS).'
-                    for locus_tag in genes.split(','):
-                        outfile.write('\t'.join([locus_tag, genome, 'eCIS-screen',
-                                      'https://github.com/ipb-jianyang/eCIS-screen',
-                                      'eCIS gene',
-                                      family,
-                                      description]) + '\n')
+        if os.path.exists(os.path.join(working_dir, 'ecis-screen_summary.txt')):
+            with open(os.path.join(working_dir, 'ecis-screen_summary.txt'), 'r') as infile:
+                header = infile.readline().rstrip('\n\r').split('\t')
+                for line in infile:
+                    row = line.rstrip('\n\r').split('\t')
+                    try:
+                        genome = accessions[row[0]]
+                    except KeyError:
+                        print ('Unable to find genome name for sequence ID ' + row[0])
+                        raise
+                    for ind, genes in enumerate(row):
+                        if ind == 0:
+                            continue
+                        if genes == '-':
+                            continue
+                        family = header[ind]
+                        description = family + ' subunit of extracellular contractile injection system (eCIS).'
+                        for locus_tag in genes.split(','):
+                            outfile.write('\t'.join([locus_tag, genome, 'eCIS-screen',
+                                          'https://github.com/ipb-jianyang/eCIS-screen',
+                                          'eCIS gene',
+                                          family,
+                                          description]) + '\n')
     _cleanup(working_dir)
     return output_file
 

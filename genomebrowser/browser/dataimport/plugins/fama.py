@@ -131,6 +131,8 @@ def postprocess(annotator, genomes, working_dir):
     with open(output_file, 'w') as outfile:
         for collection in FAMA_REFERENCE:
             fama_output = os.path.join(working_dir, collection, 'all_proteins.list.txt')
+            if not os.path.exists(fama_output):
+                continue
             with open(fama_output, 'r') as infile:
                 infile.readline()
                 for line in infile:
