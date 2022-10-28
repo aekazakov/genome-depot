@@ -458,6 +458,8 @@ class Importer(object):
         if locus_tag == '' and old_locus_tag != '':
             locus_tag = old_locus_tag # Just in case
         feature_uid = ' '.join([genome_id, contig_id, str(start), str(end), str(strand)])
+        if locus_tag == '':
+            locus_tag = '_'.join([contig_id, str(start), str(end), str(strand)]) # Ugly but working
         if feature_uid in self.gene_data:
             if feature.key != 'gene' and self.gene_data[feature_uid]['type'] != 'pseudogene':
                 if pseudogene:
@@ -1275,6 +1277,7 @@ class Importer(object):
         if os.path.exists(dest_dir):
             shutil.rmtree(dest_dir)
         shutil.copytree(temp_dir, dest_dir)
+        print('Copy', temp_dir, 'to', dest_dir)
         if os.path.exists(os.path.join(self.config['cgcms.json_dir'], 'trackList.json')):
             shutil.copyfile(os.path.join(self.config['cgcms.json_dir'], 'trackList.json'), os.path.join(self.config['cgcms.json_dir'], genome, 'trackList.json'))
         shutil.rmtree(temp_dir)

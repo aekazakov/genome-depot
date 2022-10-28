@@ -2,8 +2,10 @@
 # Functions should be called from async_tasks.py
 import os
 import sys
+import gzip
 import shutil
 import uuid
+from Bio import GenBank
 from django.conf import settings
 from django.core.mail import mail_admins, send_mail
 from browser.dataimport.importer import Importer, download_ncbi_assembly
@@ -48,20 +50,37 @@ def import_genomes_impl(args):
         raise
     return result
 
-def update_static_files_impl(genome_ids):
+def update_static_files_impl(genome_names):
     '''
         Deletes and re-creates Jbrowse static files for an input list of genome IDs, then deletes and re-creates search databases.
     '''
     importer = Importer()
-    for genome_id in genome_ids:
-        genome = Genome.objects.filter(id=genome_id)
-        if genome is not None:
-            self.inputgenomes[genome.name]['strain'] = genome.strain.strain_id
-            self.inputgenomes[genome.name]['sample'] = genome.sample.sample_id
-            self.inputgenomes[genome.name]['gbk'] = genome.gbk_filepath
-            self.inputgenomes[genome.name]['url'] = genome.external_url
-            self.inputgenomes[genome.name]['external_id'] = genome.external_id
     try:
+        for genome_name in genome_names:
+            genome = Genome.objects.get(name=genome_name)
+            if genome is not None:
+                if genome.strain:
+                    importer.inputgenomes[genome.name]['strain'] = genome.strain.strain_id
+                else:
+                    importer.inputgenomes[genome.name]['strain'] = ''
+                if genome.sample:
+                    importer.inputgenomes[genome.name]['sample'] = genome.sample.sample_id
+                else:
+                    importer.inputgenomes[genome.name]['sample'] = ''
+                importer.inputgenomes[genome.name]['gbk'] = genome.gbk_filepath
+                importer.inputgenomes[genome.name]['url'] = genome.external_url
+                importer.inputgenomes[genome.name]['external_id'] = genome.external_id
+            genome_fasta = os.path.join(importer.config['cgcms.temp_dir'], genome_name + '.contigs.fasta')
+            gbk_file = genome.gbk_filepath
+            if gbk_file.endswith('.gz'):
+                gbk_handle = gzip.open(gbk_file, 'rt')
+            else:
+                gbk_handle = open(gbk_file, 'r')
+            parser = GenBank.parse(gbk_handle)
+            with open(genome_fasta, 'w') as outfile:
+                for gbk_record in parser:
+                    outfile.write('>' + gbk_record.locus + '\n' + ''.join(gbk_record.sequence) + '\n')
+            gbk_handle.close()
         importer.export_jbrowse_data()
         importer.export_proteins()
         importer.export_contigs()
@@ -69,8 +88,6 @@ def update_static_files_impl(genome_ids):
         shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_nucl'])), importer.config['cgcms.search_db_nucl'])
         shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_prot'])), importer.config['cgcms.search_db_prot'])
         importer.create_search_databases()
-        for genome in genome_names:
-            shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'], genome))
         os.remove(importer.config['cgcms.search_db_nucl'])
         os.remove(importer.config['cgcms.search_db_prot'])
         subject = 'CGCMS task finished successfuly'

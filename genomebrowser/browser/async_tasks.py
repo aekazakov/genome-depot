@@ -27,11 +27,10 @@ def async_import_genomes(lines, email):
     for item in lines:
         print(item)
     task_id = async_task(import_genomes_impl, (lines, email), task_name=task_name, sync=False)
-#    print(task_id + ' submitted')
     return task_id
 
 def async_delete_genomes(request, queryset):
-    genomes = [item.id for item in queryset]
+    genomes = [item.name for item in queryset]
     timestamp = str(timezone.now())
     task_name = 'delete-genomes-' + timestamp.replace(' ', '_')
     task_id = async_task(delete_genomes_impl, genomes, task_name=task_name, sync=False)
