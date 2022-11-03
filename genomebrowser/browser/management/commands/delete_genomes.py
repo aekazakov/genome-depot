@@ -15,6 +15,7 @@ class Command(BaseCommand):
         if not os.path.exists(genomes_file):
             raise CommandError(genomes_file + ' not found')
         print('Deleting genomes...')
+        importer = Importer()
         with open(genomes_file, 'r') as infile:
             for line in infile:
                 genome_name = line.rstrip('\n\r')
@@ -31,7 +32,6 @@ class Command(BaseCommand):
                 if os.path.exists(os.path.join(importer.config['cgcms.json_dir'], genome_name)):
                     shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'], genome_name))
                 genome_set.delete()
-        importer = Importer()
         print('Deleting proteins not linked to genes...')
         Protein.objects.filter(gene=None).delete()
         print('Deleting strains not linked to genomes...')
