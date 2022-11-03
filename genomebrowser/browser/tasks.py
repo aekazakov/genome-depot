@@ -38,8 +38,25 @@ def import_genomes_impl(args):
             row = line.split('\t')
             if row[0] == '' and row[-1].startswith('NCBI:'):
                 row[0] = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'), email, upload_dir)
-        importer = Importer()
-        result = importer.import_genomes(lines)
+        genome_import_batch_size = 0
+        genome_import_batch_limit = 1000
+        genome_import_batch = []
+        genome_batch_count = 0
+        for line in lines: 
+            genome_import_batch_size += 1
+            genome_import_batch.append(line)
+            if genome_import_batch_size == genome_import_batch_limit:
+                genome_batch_count += 1
+                print('Importing genome batch', genome_batch_count)
+                importer = Importer()
+                result = importer.import_genomes(genome_import_batch)
+                genome_import_batch_size = 0
+                genome_import_batch = []
+        if genome_import_batch:
+            genome_batch_count += 1
+            print('Importing genome batch', genome_batch_count)
+            importer = Importer()
+            result = importer.import_genomes(genome_import_batch)
         subject = 'CGCMS task finished successfuly'
         message = f'"Import Genomes" task finished successfuly at {settings.BASE_URL}'
         mail_admins(subject, message)

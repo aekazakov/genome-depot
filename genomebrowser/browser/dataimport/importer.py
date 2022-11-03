@@ -718,7 +718,7 @@ class Importer(object):
             else:
                 ref_items = self.protein_data[protein_hash][mapping_id].split(',')
             for ref_item in ref_items:
-                if ref_item == '':
+                if ref_item == '' or ref_item == '-':
                     continue
                 if mapping_id == 'eggnog.KEGG_ko' and ref_item.startswith('ko:'):
                     ref_item = ref_item[3:]
@@ -983,6 +983,9 @@ class Importer(object):
             if 'protein_hash' in gene_entry:
                 gene_instance.protein = protein_ids[gene_entry['protein_hash']]
             if 'function' in gene_entry:
+                if len(gene_entry['function']) > 249:
+                    print('Function too long:', gene_entry['function'])
+                    gene_entry['function'] = gene_entry['function'][:246] + '...'
                 gene_instance.function = gene_entry['function']
             gene_instances.append(gene_instance)
         Gene.objects.bulk_create(gene_instances, batch_size=1000)
