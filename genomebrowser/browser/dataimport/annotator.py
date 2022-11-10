@@ -143,7 +143,7 @@ class Annotator(object):
                 if genome_ids is None or gene.genome.id in genome_ids:
                     self.annotations.append(Annotation(gene_id=gene,
                         source='Pfam database',
-                        url='https://pfam.xfam.org/family/' + ref_hmm[hit['hmm_id']]['acc'],
+                        url='https://www.ebi.ac.uk/interpro/entry/pfam/' + ref_hmm[hit['hmm_id']]['acc'],
                         key='Pfam domain',
                         value=hit['hmm_id'],
                         note=hit['hmm_id'] + ' (' + ref_hmm[hit['hmm_id']]['acc'] + '): ' + ref_hmm[hit['hmm_id']]['desc'] + '. E-value: ' + hit['evalue'] + '. Coordinates: ' + ';'.join(hit['coords'])

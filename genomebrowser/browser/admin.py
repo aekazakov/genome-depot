@@ -107,6 +107,7 @@ class GenomeAdmin(admin.ModelAdmin):
             lines = []
             for line in tsv_file:
                 line = line.decode()
+                line = line.rstrip('\n\r')
                 lines.append(line)
                 row = line.split('\t')
                 if row[0].startswith('#'):
