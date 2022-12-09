@@ -1,50 +1,28 @@
-{% extends "base_generic.html" %}
 {% load my_tags %}
-{% load static %}
-
-{% block script-header %}
-{% endblock %}
-
-{% block title %}<div class="logo"><h2>CAZymes</h2></div>{% endblock %}
-
-{% block content %}
-			<section id="two" class="wrapper style3">
-				<div class="inner">
-					<header class="align-center">
-					    <form action="{% url 'cazy' %}" method="get">
-					      <input name="query" type="text" placeholder="Search CAZymes by name or CAZYfam ID...">
-					    </form>
-					    {% if searchcontext %}
-						<h4>{{ searchcontext }}</h4>
-					    {% endif %}
-					</header>
-
-{% if annotationlist %}
+{% if genelist %}
 			<div class="table-wrapper">
 				<table>
 					<thead>
 						<tr>
-							<th>CAZy family</th>
-							<th>Description</th>
+							<th>Gene ID</th>
+							<th>Name</th>
+							<th>Genome</th>
+							<th>Function</th>
 						</tr>
 					</thead>
 					<tbody>
-    {% for item in annotationlist %}
+    {% for gene in genelist %}
 					    <tr>
-						    <td><a href="{% url 'searchgene' %}?type=cazy_id&query={{ item.cazy_id }}">{{ item.cazy_id }}</a></td>
-						    <td>{{ item.description }}</td>
+						    <td><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a></td>
+						    <td>{{ gene.name }}</td>
+						    <td>{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]</td>
+						    <td>{{ gene.function }}</td>
 					    </tr>
     {% endfor %}
 					</tbody>
 				</table>
 			</div>
-{% else %}
-    <div class="align-center">
-	<header><p>No CAZy families found.</p></header>
-    </div>
-{% endif %}
 
-  
     {% if is_paginated %}
         <div>
 	    <span>
@@ -67,8 +45,20 @@
 	    </span>
         </div>
     {% endif %}
-			    </div>
-			</section>
 
-{% endblock %}
 
+    {% if searchcontext %}
+	<div class="align-center">
+	    <p><a href="{% url 'export' %}?{{ request.META.QUERY_STRING }}">Export gene list as tab-separated text file</a></p></p>
+	</div>
+	<div class="align-center">
+	    <p><a href="{% url 'exportfasta' %}?{{ request.META.QUERY_STRING }}">Export protein sequences as FASTA file</a></p></p>
+	</div>
+    {% endif %}
+
+
+{% else %}
+    <div class="align-center">
+	<header><p>No annotations found.</p></header>
+    </div>
+{% endif %}

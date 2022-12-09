@@ -15,6 +15,7 @@
 				{% else %}
 				    <form action="{% url 'searchgene' %}" method="get">
 				      <input name="query" type="text" placeholder="Quick search by gene name or locus tag...">
+				      <input type="hidden" name="type" id="type" value="gene">
 				    </form>
 				{% endif %}
 				{% if external %}

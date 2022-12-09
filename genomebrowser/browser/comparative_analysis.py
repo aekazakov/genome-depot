@@ -436,6 +436,8 @@ def get_scribl(start_gene, eggnog_og, request):
         scribl.append('\t\tlane' + str(track_uid) + ' = track' + str(track_uid) + '.addLane();')
         middle_point = (gene.end + gene.start) / 2
         offset = int(middle_point - locus_size / 2)
+        taxon_name = gene.genome.taxon.name
+        taxon_name = taxon_name.replace("'", "")
         if reverse:
             display_start = offset - locus_size
             if display_start < 1:
@@ -443,7 +445,7 @@ def get_scribl(start_gene, eggnog_og, request):
             display_end = offset
             if display_end > gene.contig.size:
                 display_end = gene.contig.size
-            scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' [' + gene.genome.taxon.name + '] ' +
+            scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' [' + taxon_name + '] ' +
                 gene.contig.contig_id + ': complement(' + str(display_start) + '..' + str(display_end) + ')\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
 #            if gene.genome.strain is not None:
 #                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.strain.full_name + '] ' +
@@ -458,7 +460,7 @@ def get_scribl(start_gene, eggnog_og, request):
             display_end = offset + locus_size
             if display_end > gene.contig.size:
                 display_end = gene.contig.size
-            scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' [' + gene.genome.taxon.name + '] ' +
+            scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' [' + taxon_name + '] ' +
                 gene.contig.contig_id + ': ' + str(display_start) + '..' + str(display_end) + '\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
 #            if gene.genome.strain is not None:
 #                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.strain.full_name + '] ' +

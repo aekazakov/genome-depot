@@ -31,7 +31,7 @@
 					<tbody>
     {% for item in annotationlist %}
 					    <tr>
-						    <td><a href="{% url 'searchgene' %}?cog={{ item.cog_id }}">{{ item.cog_id }}</a></td>
+						    <td><a href="{% url 'searchgene' %}?type=cog&query={{ item.cog_id }}">{{ item.cog_id }}</a></td>
 						    <td>{{ item.description }}</td>
 					    </tr>
     {% endfor %}

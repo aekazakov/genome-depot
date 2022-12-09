@@ -201,6 +201,157 @@ class GeneListView(generic.ListView):
         return Gene.objects.none()
 
 
+class GeneSearchResultsSubView(generic.ListView):
+    context_object_name = 'genelist'
+    template_name = 'browser/gene_list_subpage.html'
+    paginate_by = 50
+
+    def get_context_data(self,**kwargs):
+        context = super(GeneSearchResultsSubView,self).get_context_data(**kwargs)
+        if self.request.GET.get('genome'):
+            searchcontext, external = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'), self.request.GET.get('genome'))
+        else:
+            searchcontext, external = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'))
+        context['searchcontext'] = searchcontext
+        if external != '':
+            context['external'] = external
+        return context
+
+    def get_queryset(self):
+        query = self.request.GET.get('query')
+        genome = self.request.GET.get('genome')
+        query_type = self.request.GET.get('type')
+        if query_type == 'gene':
+            if genome:
+                object_list = Gene.objects.filter(genome__name=genome).filter(
+                    Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
+                ).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(
+                    Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
+                ).order_by('locus_tag').select_related('genome', 'genome__taxon')
+        elif query_type == 'og':
+            proteins = [item['protein_hash'] for item in Protein.objects.filter(ortholog_groups__id=query).values('protein_hash')]
+            if genome:
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+
+        elif query_type == 'ko_id':
+            proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_orthologs__kegg_id=query).values('protein_hash')]
+            if genome:
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+        elif query_type == 'kp_id':
+            proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_pathways__kegg_id=query).values('protein_hash')]
+            if genome:
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+        elif query_type == 'kr_id':
+            proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_reactions__kegg_id=query).values('protein_hash')]
+            if genome:
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+        elif query_type == 'ec_id':
+            proteins = [item['protein_hash'] for item in Protein.objects.filter(ec_numbers__ec_number=query).values('protein_hash')]
+            if genome:
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+        elif query_type == 'tc_id':
+            proteins = [item['protein_hash'] for item in Protein.objects.filter(tc_families__tc_id=query).values('protein_hash')]
+            if genome:
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+        elif query_type == 'cazy_id':
+            proteins = [item['protein_hash'] for item in Protein.objects.filter(cazy_families__cazy_id=query).values('protein_hash')]
+            if genome:
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+        elif query_type == 'cog_id':
+            proteins = [item['protein_hash'] for item in Protein.objects.filter(cog_classes__cog_id=query).values('protein_hash')]
+            if genome:
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+        elif query_type == 'go_id':
+            proteins = [item['protein_hash'] for item in Protein.objects.filter(go_terms__go_id=query).values('protein_hash')]
+            if genome:
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+        elif genome:
+            if query_type == 'ko':
+                ko_ids = Kegg_ortholog.objects.filter(
+                    Q(kegg_id__icontains=query) | Q(description__icontains=query)
+                ).values('kegg_id')
+                proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_orthologs__kegg_id__in=ko_ids).values('protein_hash')]
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            elif query_type == 'kp':
+                kp_ids = Kegg_pathway.objects.filter(
+                    Q(kegg_id__icontains=query) | Q(description__icontains=query)
+                ).values('kegg_id')
+                proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_pathways__kegg_id__in=kp_ids).values('protein_hash')]
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon', 'protein').prefetch_related('protein__kegg_orthologs')
+                self.kegg_map_url = None
+                if kp_ids.count() == 1:
+                    print(kp_ids[0]['kegg_id'])
+                    kegg_map_url = 'https://www.kegg.jp/pathway/' + kp_ids[0]['kegg_id'] + '+'
+                    print(kegg_map_url)
+                    ko_ids = set()
+                    for gene in object_list:
+                        for ko in gene.protein.kegg_orthologs.all():
+                            ko_ids.add(ko.kegg_id)
+                    if ko_ids:
+                        self.kegg_map_url = kegg_map_url + '+'.join(sorted(list(ko_ids)))
+            elif query_type == 'kr':
+                kr_ids = Kegg_reaction.objects.filter(
+                    Q(kegg_id__icontains=query) | Q(description__icontains=query)
+                ).values('kegg_id')
+                proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_reactions__kegg_id__in=kr_ids).values('protein_hash')]
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            elif query_type == 'ec':
+                ec_ids = Ec_number.objects.filter(
+                    Q(ec_number__icontains=query) | Q(description__icontains=query)
+                ).values('ec_number')
+                proteins = [item['protein_hash'] for item in Protein.objects.filter(ec_numbers__ec_number__in=ec_ids).values('protein_hash')]
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            elif query_type == 'tc':
+                tc_ids = Tc_family.objects.filter(
+                    Q(tc_id__icontains=query) | Q(description__icontains=query)
+                ).values('tc_id')
+                proteins = [item['protein_hash'] for item in Protein.objects.filter(tc_families__tc_id__in=tc_ids).values('protein_hash')]
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            elif query_type == 'cazy':
+                cazy_ids = Cazy_family.objects.filter(
+                    Q(cazy_id__icontains=query) | Q(description__icontains=query)
+                ).values('cazy_id')
+                proteins = [item['protein_hash'] for item in Protein.objects.filter(cazy_families__cazy_id__in=cazy_ids).values('protein_hash')]
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            elif query_type == 'cog':
+                cog_ids = Cog_class.objects.filter(
+                    Q(cog_id__icontains=query) | Q(description__icontains=query)
+                ).values('cog_id')
+                proteins = [item['protein_hash'] for item in Protein.objects.filter(cog_classes__cog_id__in=cog_ids).values('protein_hash')]
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            elif query_type == 'go':
+                go_ids = Go_term.objects.filter(
+                    Q(go_id__icontains=query) | Q(description__icontains=query)
+                ).values('go_id')
+                proteins = [item['protein_hash'] for item in Protein.objects.filter(go_terms__go_id__in=go_ids).values('protein_hash')]
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
+            else:
+                object_list = Gene.objects.filter(genome__name=genome).order_by('locus_tag').select_related('genome', 'genome__taxon')
+        else:
+            object_list = Gene.objects.none()
+        return object_list
+
+
 class GeneSearchResultsView(generic.ListView):
     model = Gene
     context_object_name = 'genelist'
@@ -412,6 +563,55 @@ class GeneSearchResultsView(generic.ListView):
         else:
             object_list = Gene.objects.none()
         return object_list
+
+
+class GeneSearchResultsAjaxView(View):
+    def get(self,request):
+        context = {}
+        if self.request.GET.get('genome'):
+            searchcontext, external = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'), self.request.GET.get('genome'))
+        else:
+            searchcontext, external = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'))
+        context['searchcontext'] = searchcontext
+        if external != '':
+            context['external'] = external
+
+        print('REQUEST1')
+        print('Request parameters:', request.GET.get('annotation_query'), request.GET.get('genome'))
+        for key, val in request.GET.items():
+            print(key, val)
+            context[key] = val
+        return render(request,'browser/gene_list_ajax.html', context)
+
+    @staticmethod
+    def ajax_view(request):
+        start_time = time.time()
+
+        print('REQUEST2')
+        for key, val in request.GET.items():
+            print(key, val)
+            
+        # Sleep timer for testing to imitate long-running task
+        # sleep_timer = 0
+        # print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        # time.sleep(sleep_timer)
+
+        context = {}
+        #genome = request.GET.get('genome')
+        #annotation_query = request.GET.get('query')
+        sub_view = GeneSearchResultsSubView()
+        sub_view.setup(request)
+        sub_response = sub_view.dispatch(request)
+        sub_response.render()
+        if request.GET.get('genome'):
+            context['searchcontext'] = generate_gene_search_context(request.GET.get('query'), request.GET.get('type'), request.GET.get('genome'))
+        else:
+            context['searchcontext'] = generate_gene_search_context(request.GET.get('query'), request.GET.get('type'))
+        context['searchresult'] = sub_response.content.decode('utf-8')
+        context['time'] = time.time()-start_time
+        #print(context['searchresult'])
+        data = json.dumps(context)
+        return HttpResponse(data,content_type="application/json")
 
 
 class GenomeSearchResultsView(generic.ListView):
@@ -1456,3 +1656,56 @@ def export_fasta(request):
 def handler404(request, exception):
     return render(request, '404.html', status=404)
     
+def generate_gene_search_context(query, query_type, genome=None):
+    searchcontext = ''
+    external = ''
+    if genome is None:
+        if query_type=='gene':
+            searchcontext = 'Search results for "' + query + '"'
+        elif query_type=='og':
+            eggnog_og = Ortholog_group.objects.get(id=query)
+            searchcontext = 'Genes from Ortholog Group ' + eggnog_og.eggnog_id + '[' + eggnog_og.taxon.name + ']'
+        elif query_type=='ko_id':
+            searchcontext = 'Genes from KEGG Ortholog Group ' + query
+            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
+        elif query_type=='kp_id':
+            searchcontext = 'Genes from KEGG pathway ' + query
+            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
+        elif query_type=='kr_id':
+            searchcontext = 'Genes from KEGG reaction ' + query
+            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
+        elif query_type=='ec_id':
+            searchcontext = 'Genes with EC number ' + query
+            external = 'https://www.kegg.jp/dbget-bin/www_bget?ec:' + query
+        elif query_type=='tc_id':
+            searchcontext = 'Genes from TCDB family ' + query
+            external = 'http://www.tcdb.org/search/result.php?tc=' + query + '#' + query
+        elif query_type=='cazy_id':
+            searchcontext = 'Genes from CAZy family ' + query
+            external = 'http://www.cazy.org/' + query + '.html'
+        elif query_type=='cog_id':
+            searchcontext = 'Genes from COG class ' + query
+            external = 'https://ftp.ncbi.nih.gov/pub/COG/COG2014/static/lists/list' + query + '.html'
+        elif query_type=='go_id':
+            searchcontext = 'Genes assigned to GO term ' + query
+            external = 'https://www.ebi.ac.uk/QuickGO/search/' + query
+    else:
+        if query_type=='ko':
+            searchcontext = 'Genes from genome ' + genome + ' assigned to KEGG Ortholog groups containing "' + query + '"'
+        elif query_type=='kp':
+            searchcontext = 'Genes from genome ' + genome + ' assigned to KEGG pathways containing "' + query + '"'
+        elif query_type=='kr':
+            searchcontext = 'Genes from genome ' + genome + ' assigned to KEGG reactions containing "' + query + '"'
+        elif query_type=='ec':
+            searchcontext = 'Genes from genome ' + genome + ' assigned to EC numbers containing "' + query + '"'
+        elif query_type=='tc':
+            searchcontext = 'Genes from genome ' + genome + ' assigned to TCDB families containing "' + query + '"'
+        elif query_type=='cazy':
+            searchcontext = 'Genes from genome ' + genome + ' assigned to CAZy families containing "' + query + '"'
+        elif query_type=='cog':
+            searchcontext = 'Genes from genome ' + genome + ' assigned to COG class containing "' + query + '"'
+        elif query_type=='go':
+            searchcontext = 'Genes from genome ' + genome + ' assigned to GO term containing "' + query + '"'
+        elif query_type=='gene':
+            searchcontext = 'Genes from genome ' + genome
+    return searchcontext, external

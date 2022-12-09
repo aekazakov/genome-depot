@@ -110,38 +110,47 @@
 			<form action="{% url 'searchgene' %}" method="get">
 			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
 			    <label>By gene name of function<input name="query" type="text" placeholder="Enter gene ID, name or function ..."></label>
+			    <input name="type" type="hidden" id="type" value = "gene">
 			</form>
 			<form action="{% url 'searchgene' %}" method="get">
 			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By KEGG Ortholog group<input name="ko_query" type="text" placeholder="Enter KEGG ortholog ID or name..."></label>
+			    <label>By KEGG Ortholog group<input name="query" type="text" placeholder="Enter KEGG ortholog ID or name..."></label>
+			    <input name="type" type="hidden" id="type" value = "ko">
 			</form>
 			<form action="{% url 'searchgene' %}" method="get">
 			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By KEGG pathway<input name="kp_query" type="text" placeholder="Enter KEGG pathway ID or name..."></label>
+			    <label>By KEGG pathway<input name="query" type="text" placeholder="Enter KEGG pathway ID or name..."></label>
+			    <input name="type" type="hidden" id="type" value = "kp">
 			</form>
 			<form action="{% url 'searchgene' %}" method="get">
 			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By KEGG reaction<input name="kr_query" type="text" placeholder="Enter KEGG reaction ID or name..."></label>
+			    <label>By KEGG reaction<input name="query" type="text" placeholder="Enter KEGG reaction ID or name..."></label>
+			    <input name="type" type="hidden" id="type" value = "kr">
 			</form>
 			<form action="{% url 'searchgene' %}" method="get">
 			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By enzymatic activity<input name="ec_query" type="text" placeholder="Enter EC number or enzyme name..."></label>
+			    <label>By enzymatic activity<input name="query" type="text" placeholder="Enter EC number or enzyme name..."></label>
+			    <input name="type" type="hidden" id="type" value = "ec">
 			</form>
 			<form action="{% url 'searchgene' %}" method="get">
 			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By transporter family<input name="tc_query" type="text" placeholder="Enter TCDB family ID or name..."></label>
+			    <label>By transporter family<input name="query" type="text" placeholder="Enter TCDB family ID or name..."></label>
+			    <input name="type" type="hidden" id="type" value = "tc">
 			</form>
 			<form action="{% url 'searchgene' %}" method="get">
 			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By CAZy family<input name="cazy_query" type="text" placeholder="Enter CAZy family ID or name..."></label>
+			    <label>By CAZy family<input name="query" type="text" placeholder="Enter CAZy family ID or name..."></label>
+			    <input name="type" type="hidden" id="type" value = "cazy">
 			</form>
 			<form action="{% url 'searchgene' %}" method="get">
 			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By COG class<input name="cog_query" type="text" placeholder="Enter COG class name..."></label>
+			    <label>By COG class<input name="query" type="text" placeholder="Enter COG class name..."></label>
+			    <input name="type" type="hidden" id="type" value = "cog">
 			</form>
 			<form action="{% url 'searchgene' %}" method="get">
 			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By GO term<input name="go_query" type="text" placeholder="Enter GO term ID or name..."></label>
+			    <label>By GO term<input name="query" type="text" placeholder="Enter GO term ID or name..."></label>
+			    <input name="type" type="hidden" id="type" value = "go">
 			</form>
 			<form action="{% url 'searchannotation' %}" method="get">
 			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>

@@ -1,5 +1,5 @@
 import time
-from django.test import TestCase
+from django.test import TransactionTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,9 +10,11 @@ from selenium.webdriver.common.keys import Keys
 from browser.dataimport.importer import Importer
 # Create your tests here.
 
-class ImporterTestCase(TestCase):
+class ImporterTestCase(TransactionTestCase):
+    fixtures = ['testdata.json']
+    
     def setUp(self):
-        self.importer = Importer('/mnt/data2/ENIGMA/genomes/dev/config.ini')
+        self.importer = Importer()
 
     def test_find_taxonomic_order(self):
         """Taxonomic order correctly identified"""
@@ -31,20 +33,25 @@ class ImporterTestCase(TestCase):
 
     def test_generate_strain_data(self):
         """Read GBK file and return correct strain data"""
-        p_aeruginosa = self.importer.generate_strain_data('/mnt/data2/Bacteriocins/genomes/Pseudomonas_aeruginosa_PAO1.gb', 'PAO1')
+        p_aeruginosa = self.importer.generate_strain_data('/mnt/data2/Bacteriocins/genomes/Pseudomonas_aeruginosa_PAO1.gb', 'PAO1', '')
         self.assertEqual(p_aeruginosa.strain_id, 'PAO1')
         self.assertEqual(p_aeruginosa.full_name, 'Pseudomonas aeruginosa PAO1')
         self.assertEqual(p_aeruginosa.taxon.taxonomy_id, '208964')
         self.assertEqual(p_aeruginosa.order, 'Pseudomonadales')
-        isolate = self.importer.generate_strain_data('/mnt/data2/ENIGMA/genome_files/genbank/DP16D-E2.genome.gbff.gz', 'DP16D-E2')
+        isolate = self.importer.generate_strain_data('/mnt/data2/ENIGMA/genome_files/genbank/DP16D-E2.genome.gbff.gz', 'DP16D-E2', '')
         self.assertEqual(isolate.strain_id, 'DP16D-E2')
         self.assertEqual(isolate.full_name, 'Environmental isolate DP16D-E2')
         self.assertEqual(isolate.taxon.taxonomy_id, '48479')
         self.assertEqual(isolate.order, 'Unknown')
 
     def test_importer(self):
-        self.importer.import_genomes('/mnt/data2/ENIGMA/genomes/dev/genomes.txt')
-        self.assertEqual(len(self.importer.inputgenomes), 6)
+        lines = []
+        with open('/mnt/data2/CGCMS/test_data/test_genome_import.txt', 'r') as infile:
+            for line in infile:
+                lines.append(line.rstrip('\n\r'))
+        result = self.importer.import_genomes(lines)
+        self.assertEqual(len(self.importer.inputgenomes), 1)
+        self.assertEqual(result, 'Done!')
 
 
 class BrowserTestCase(StaticLiveServerTestCase):
@@ -64,9 +71,9 @@ class BrowserTestCase(StaticLiveServerTestCase):
     def test_search_page(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/textsearch/'))
         text_input = self.selenium.find_element('name', 'annotation_query')
-        text_input.send_keys('dnaa')
+        text_input.send_keys('tetracycline')
         self.selenium.find_element('name', 'annotation_query').send_keys(Keys.RETURN)
         # time.sleep(10)
         element = WebDriverWait(self.selenium, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "table-wrapper")))
         print(element)
-        assert 'LRK44_RS00005' in self.selenium.page_source
+        assert 'I6K11_00030' in self.selenium.page_source

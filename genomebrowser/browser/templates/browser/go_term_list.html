@@ -32,7 +32,7 @@
 					<tbody>
     {% for item in annotationlist %}
 					    <tr>
-						    <td><a href="{% url 'searchgene' %}?go={{ item.go_id }}">[{{ item.go_id }}]</a></td>
+						    <td><a href="{% url 'searchgene' %}?type=go_id&query={{ item.go_id }}">[{{ item.go_id }}]</a></td>
 						    <td>{{item.go_namespace}}</td>
 						    <td>{{item.description }}</td>
 					    </tr>
