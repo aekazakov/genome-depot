@@ -1230,10 +1230,28 @@ class ComparativeView(View):
     @staticmethod
     def verify_parameters(size, lines):
         try:
+            if size is None:
+                raise SuspiciousOperation('"size" parameter is missing')
+
+            try:
+                size = int(size)
+            except TypeError:
+                raise SuspiciousOperation("Unacceptable value '%s' for size parameter." % size)
+                
             if int(size) not in [5, 10, 20, 40, 60, 80, 100]:
-                raise SuspiciousOperation('Unacceptable value for locus size: ' + size)
+                raise SuspiciousOperation("Unacceptable value for locus size: '%s'" % size)
+                
+            if lines is None:
+                raise SuspiciousOperation('"lines" parameter is missing')
+                
+            try:
+                lines = int(lines)
+            except TypeError:
+                raise SuspiciousOperation("Unacceptable value '%s' for lines number." % lines)
+                
             if int(lines) not in [10, 25, 50, 75, 100, 200]:
-                raise SuspiciousOperation('Unacceptable value for line number: ' + lines)
+                raise SuspiciousOperation("Unacceptable value for lines number: '%s'" % lines)
+                
         except Exception as e:
             raise SuspiciousOperation(str(e))
         
@@ -1241,7 +1259,11 @@ class ComparativeView(View):
         locus_tag = request.GET.get('locus_tag')
         genome = request.GET.get('genome')
         og_id = request.GET.get('og')
-        ComparativeView.verify_parameters(request.GET.get('size'), request.GET.get('lines'))
+
+        try:
+            ComparativeView.verify_parameters(request.GET.get('size'), request.GET.get('lines'))
+        except SuspiciousOperation as e:
+            return render(request, '404.html', {'searchcontext': str(e)})
         
         print('REQUEST1')
         print('Request parameters:', og_id, genome, locus_tag, request.GET.get('size'), request.GET.get('lines'))
@@ -1266,8 +1288,11 @@ class ComparativeView(View):
         print('REQUEST2')
         for key, val in request.GET.items():
             print(key, val)
+        try:
+            ComparativeView.verify_parameters(request.GET.get('size'), request.GET.get('lines'))
+        except SuspiciousOperation as e:
+            return render(request, '404.html', {'searchcontext': str(e)})
             
-        ComparativeView.verify_parameters(request.GET.get('size'), request.GET.get('lines'))
         # Sleep timer for testing to imitate long-running task
         sleep_timer = 0
         print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
