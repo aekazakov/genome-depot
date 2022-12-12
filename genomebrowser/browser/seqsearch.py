@@ -21,12 +21,27 @@ def validate_params(params):
     else:
         result['sequence'] = params['sequence']
         try:
-            result['evalue'] = str(float(params['evalue']))
+            evalue = params['evalue']
+        except KeyError:
+            raise SuspiciousOperation("e-value parameter is missing")
+        if evalue is None:
+            raise SuspiciousOperation("e-value parameter is missing")
+        try:
+            result['evalue'] = str(float(evalue))
         except TypeError:
             raise SuspiciousOperation("Unacceptable value '%s' for e-value parameter." % result['evalue'])
         if result['evalue'] not in ['1e-20', '1e-10', '1e-08', '1e-06', '0.0001', '0.01', '1.0', '10.0']:
             raise SuspiciousOperation("Unacceptable value '%s' for e-value parameter." % result['evalue'])
-        result['hitstoshow'] = str(int(params['hitstoshow']))
+        try:
+            hitstoshow = params['hitstoshow']
+        except KeyError:
+            raise SuspiciousOperation("hitstoshow parameter is missing")
+        if hitstoshow is None:
+            raise SuspiciousOperation("e-value parameter is missing")
+        try:
+            result['hitstoshow'] = str(int(hitstoshow))
+        except TypeError:
+            raise SuspiciousOperation("Unacceptable value '%s' for hitstoshow parameter." % result['hitstoshow'])
         if result['hitstoshow'] not in ['10', '20', '50', '100', '500', '1000']:
             raise SuspiciousOperation("Unacceptable value '%s' for hitstoshow parameter." % result['hitstoshow'])
     return result

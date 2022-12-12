@@ -24,13 +24,18 @@ class AnnotationSearchResultsSubView(generic.ListView):
 
     def get_context_data(self,**kwargs):
         context = super(AnnotationSearchResultsSubView,self).get_context_data(**kwargs)
-        context['searchcontext'] = 'Search results for "' + self.request.GET.get('annotation_query') + '"'
+        if self.request.GET.get('annotation_query'):
+            context['searchcontext'] = 'Search results for "' + self.request.GET.get('annotation_query') + '"'
+        else:
+            context['searchcontext'] = 'Query string is empty'
         return context
 
     def get_queryset(self):
         annotation_query = self.request.GET.get('annotation_query')
         genome = self.request.GET.get('genome')
-        if genome:
+        if not annotation_query:
+            object_list = Annotation.objects.none()
+        elif genome:
             object_list = Annotation.objects.filter(
                 (Q(source__icontains=annotation_query) | Q(value__icontains=annotation_query) | Q(note__icontains=annotation_query)) & Q(gene_id__genome__name=genome)
             ).order_by('gene_id__locus_tag').select_related('gene_id', 'gene_id__genome', 'gene_id__genome__taxon')
@@ -47,6 +52,8 @@ class AnnotationSearchResultsAjaxView(View):
         #annotation_query = self.request.GET.get('annotation_query')
         if self.request.GET.get('annotation_query'):
             context['searchcontext'] = 'Search results for "' + self.request.GET.get('annotation_query') + '"'
+        else:
+            context['searchcontext'] = 'Query string is empty'
         # print('REQUEST1')
         # print('Request parameters:', request.GET.get('annotation_query'), request.GET.get('genome'))
         for key, val in request.GET.items():
@@ -897,7 +904,7 @@ def strain_detail(request, strain_id):
             metadata.append(metadata_entries[source])
         print(metadata)
     except Strain.DoesNotExist:
-        raise Http404('Strain not found: ' + strain_id)
+        return render(request, '404.html', {'searchcontext': 'Sample not found: ' + strain_id})
     return render(request, 'browser/strain.html', {'strain': strain, 'genomes':genomes, 'metadata':metadata})
 
 
@@ -919,7 +926,7 @@ def sample_detail(request, sample_id):
             metadata.append(metadata_entries[source])
         print(metadata)
     except Sample.DoesNotExist:
-        raise Http404('Sample not found: ' + sample_id)
+        return render(request, '404.html', {'searchcontext': 'Sample not found: ' + sample_id})
     return render(request, 'browser/sample.html', {'sample': sample, 'genomes':genomes, 'metadata':metadata})
 
 
@@ -1139,6 +1146,9 @@ class NsearchResultView(View):
             result.append('</tbody></table>')
         elif searchcontext == '':
             result = ['<h5>No hits found.</h5>']
+        else:
+            context = {"searchcontext":searchcontext}
+            return render(request,'404.html', context)
         context = {"searchresult":'\n'.join(result),"searchcontext":searchcontext,"query_len":query_len,"time":time.time()-start_time}
         print(context)
         data = json.dumps(context)
@@ -1193,6 +1203,9 @@ class PsearchResultView(View):
             result.append('</tbody></table>')
         elif searchcontext == '':
             result = ['<h5>No hits found.</h5>']
+        else:
+            context = {"searchcontext":searchcontext}
+            return render(request,'404.html', context)
         context = {"searchresult":'\n'.join(result),"searchcontext":searchcontext,"query_len":query_len,"time":time.time()-start_time}
         print(context)
         data = json.dumps(context)
