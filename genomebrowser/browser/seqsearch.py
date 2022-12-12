@@ -20,7 +20,10 @@ def validate_params(params):
         result['hitstoshow'] = '100'
     else:
         result['sequence'] = params['sequence']
-        result['evalue'] = str(float(params['evalue']))
+        try:
+            result['evalue'] = str(float(params['evalue']))
+        except TypeError:
+            raise SuspiciousOperation("Unacceptable value '%s' for e-value parameter." % result['evalue'])
         if result['evalue'] not in ['1e-20', '1e-10', '1e-08', '1e-06', '0.0001', '0.01', '1.0', '10.0']:
             raise SuspiciousOperation("Unacceptable value '%s' for e-value parameter." % result['evalue'])
         result['hitstoshow'] = str(int(params['hitstoshow']))

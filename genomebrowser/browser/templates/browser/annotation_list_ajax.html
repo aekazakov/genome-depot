@@ -16,7 +16,7 @@
 			{% if searchcontext %}
 			    <h4>{{ searchcontext }}</h4>
 			{% else %}
-			    <form action="{% url 'searchannotationajax' %}" method="get">
+			    <form action="{% url 'searchannotation' %}" method="get">
 			      <input name="annotation_query" type="text" placeholder="Search genes by annotation...">
 			    </form>
 			{% endif %}
