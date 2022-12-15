@@ -17,7 +17,7 @@
 					    </header>
 					    <p>
 						<form action="{% url 'searchgene' %}" method="get">
-						    <input name="query" type="text" placeholder="Enter gene ID, name or function ...">
+						    <input name="query" id="gene-query" type="text" placeholder="Enter gene ID, name or function ...">
 						    <input name="type" type="hidden" id="type" value = "gene">
 						</form>
 					    </p>
@@ -26,7 +26,7 @@
 					    </header>
 					    <p>
 						<form action="{% url 'searchannotation' %}" method="get">
-						    <input name="annotation_query" type="text" placeholder="Text search in gene annotations...">
+						    <input name="annotation_query" id="annotation-query" type="text" placeholder="Text search in gene annotations...">
 						</form>
 					    </p>
 					    <header class="align-center">
@@ -37,7 +37,7 @@
 					<div class="row 200%">
 					    <div class="search left 6u">
 						<form action="{% url 'kos' %}" method="get">
-						  <input name="query" type="text" placeholder="Search KEGG orthologs by name or KO ID...">
+						  <input name="query" id="ko-query" type="text" placeholder="Search KEGG orthologs by name or KO ID...">
 						</form>
 					    </div>
 					    <div class="search right 6u">
@@ -48,7 +48,7 @@
 					<div class="row 200%">
 					    <div class="search left 6u">
 						<form action="{% url 'kps' %}" method="get">
-						  <input name="query" type="text" placeholder="Search KEGG pathways by name or KEGG ID...">
+						  <input name="query" id="kp-query" type="text" placeholder="Search KEGG pathways by name or KEGG ID...">
 						</form>
 					    </div>
 					    <div class="search right 6u">
@@ -59,7 +59,7 @@
 					<div class="row 200%">
 					    <div class="search left 6u">
 						<form action="{% url 'krs' %}" method="get">
-						  <input name="query" type="text" placeholder="Search KEGG reactions by name or KEGG ID...">
+						  <input name="query" id="kr-query" type="text" placeholder="Search KEGG reactions by name or KEGG ID...">
 						</form>
 					    </div>
 					    <div class="search right 6u">
@@ -70,7 +70,7 @@
 					<div class="row 200%">
 					    <div class="search left 6u">
 						<form action="{% url 'enzymes' %}" method="get">
-						  <input name="query" type="text" placeholder="Search enzymes by name or EC number...">
+						  <input name="query" id="ec-query" type="text" placeholder="Search enzymes by name or EC number...">
 						</form>
 					    </div>
 					    <div class="search right 6u">
@@ -81,7 +81,7 @@
 					<div class="row 200%">
 					    <div class="search left 6u">
 						<form action="{% url 'transporters' %}" method="get">
-						  <input name="query" type="text" placeholder="Search transporters by name or TCDB family...">
+						  <input name="query" id="tc-query" type="text" placeholder="Search transporters by name or TCDB family...">
 						</form>
 					    </div>
 					    <div class="search right 6u">
@@ -92,7 +92,7 @@
 					<div class="row 200%">
 					    <div class="search left 6u">
 						<form action="{% url 'cazy' %}" method="get">
-						  <input name="query" type="text" placeholder="Search CAZymes by name or CAZYfam ID...">
+						  <input name="query" id="cazy-query" type="text" placeholder="Search CAZymes by name or CAZYfam ID...">
 						</form>
 					    </div>
 					    <div class="search right 6u">
@@ -103,7 +103,7 @@
 					<div class="row 200%">
 					    <div class="search left 6u">
 						<form action="{% url 'cogs' %}" method="get">
-						  <input name="query" type="text" placeholder="Search COG classes by name...">
+						  <input name="query" id="cog-query" type="text" placeholder="Search COG classes by name...">
 						</form>
 					    </div>
 					    <div class="search right 6u">
@@ -114,7 +114,7 @@
 					<div class="row 200%">
 					    <div class="search left 6u">
 						<form action="{% url 'gos' %}" method="get">
-						  <input name="query" type="text" placeholder="Search GO terms by name...">
+						  <input name="query" id="go-query" type="text" placeholder="Search GO terms by name...">
 						</form>
 					    </div>
 					    <div class="search right 6u">

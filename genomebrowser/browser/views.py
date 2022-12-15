@@ -18,11 +18,17 @@ from browser.conserved_regulon import build_conserved_regulon
 # Create your views here.
 
 class AnnotationSearchResultsSubView(generic.ListView):
+    '''
+        Sub-page for AJAX-based view of annotation search result
+    '''
     context_object_name = 'annotationlist'
     template_name = 'browser/annotation_list_subpage.html'
     paginate_by = 50
 
     def get_context_data(self,**kwargs):
+        '''
+            Generates context string
+        '''
         context = super(AnnotationSearchResultsSubView,self).get_context_data(**kwargs)
         if self.request.GET.get('annotation_query'):
             context['searchcontext'] = 'Search results for "' + self.request.GET.get('annotation_query') + '"'
@@ -31,6 +37,9 @@ class AnnotationSearchResultsSubView(generic.ListView):
         return context
 
     def get_queryset(self):
+        '''
+            Generates Annotation queryset
+        '''
         annotation_query = self.request.GET.get('annotation_query')
         genome = self.request.GET.get('genome')
         if not annotation_query:
@@ -47,22 +56,29 @@ class AnnotationSearchResultsSubView(generic.ListView):
 
 
 class AnnotationSearchResultsAjaxView(View):
+    '''
+        AJAX-based view for annotation search results
+    '''
     def get(self,request):
+        '''
+            Takes a GET request and returns a webpage that will send AJAX request
+        '''
         context = {} #super(AnnotationSearchResultsAjaxView,self).get_context_data(**kwargs)
-        #annotation_query = self.request.GET.get('annotation_query')
         if self.request.GET.get('annotation_query'):
             context['searchcontext'] = 'Search results for "' + self.request.GET.get('annotation_query') + '"'
         else:
             context['searchcontext'] = 'Query string is empty'
-        # print('REQUEST1')
-        # print('Request parameters:', request.GET.get('annotation_query'), request.GET.get('genome'))
         for key, val in request.GET.items():
-            # print(key, val)
             context[key] = val
         return render(request,'browser/annotation_list_ajax.html', context)
 
     @staticmethod
     def ajax_view(request):
+        '''
+            Takes AJAX request, creates sub-page (AnnotationSearchResultsSubView) and sends it back as JSON
+            
+            For the testing of long-running tasks, uncomment sleep_timer=0 and set the number of seconds to delay the AJAX response
+        '''
         start_time = time.time()
 
         # print('REQUEST2')
@@ -75,8 +91,6 @@ class AnnotationSearchResultsAjaxView(View):
         # time.sleep(sleep_timer)
 
         context = {}
-        #genome = request.GET.get('genome')
-        #annotation_query = request.GET.get('query')
         sub_view = AnnotationSearchResultsSubView()
         sub_view.setup(request)
         sub_response = sub_view.dispatch(request)
@@ -84,12 +98,14 @@ class AnnotationSearchResultsAjaxView(View):
         context['searchcontext'] = 'Search results for "' + request.GET.get('annotation_query') + '"'
         context['searchresult'] = sub_response.content.decode('utf-8')
         context['time'] = time.time()-start_time
-        #print(context['searchresult'])
         data = json.dumps(context)
         return HttpResponse(data,content_type="application/json")
 
 
 class StrainListView(generic.ListView):
+    '''
+        Class-based list view of Strain. Displays a table of strains.
+    '''
     model = Strain
     context_object_name = 'strainlist'
     paginate_by = 50
@@ -99,6 +115,9 @@ class StrainListView(generic.ListView):
 
 
 class SampleListView(generic.ListView):
+    '''
+        Class-based list view of Sample. Displays a table of samples.
+    '''
     model = Sample
     context_object_name = 'samplelist'
     paginate_by = 50
@@ -108,6 +127,9 @@ class SampleListView(generic.ListView):
 
 
 class GenomeListView(generic.ListView):
+    '''
+        Class-based list view of Genome. Displays a table of genomes.
+    '''
     model = Genome
     context_object_name = 'genomelist'
     paginate_by = 50
@@ -117,6 +139,9 @@ class GenomeListView(generic.ListView):
 
 
 class OperonListView(generic.ListView):
+    '''
+        Class-based list view of Operon. Displays a table of operons.
+    '''
     model = Operon
     template_name = 'operon_list.html'
     context_object_name = 'operonlist'
@@ -143,6 +168,9 @@ class OperonListView(generic.ListView):
 
         
 class SiteListView(generic.ListView):
+    '''
+        Class-based list view of Site. Displays a table of sites.
+    '''
     model = Site
     template_name = 'site_list.html'
     context_object_name = 'sitelist'
@@ -170,6 +198,9 @@ class SiteListView(generic.ListView):
 
 
 class RegulonListView(generic.ListView):
+    '''
+        Class-based list view of Regulon. Displays a table of regulons.
+    '''
     model = Regulon
     template_name = 'regulon_list.html'
     context_object_name = 'regulonlist'
@@ -197,6 +228,9 @@ class RegulonListView(generic.ListView):
 
 
 class GeneListView(generic.ListView):
+    '''
+        Class-based list view of Gene. Displays a table of genes.
+    '''
     model = Gene
     template_name = 'gene_list.html'
     context_object_name = 'genelist'
@@ -209,11 +243,17 @@ class GeneListView(generic.ListView):
 
 
 class GeneSearchResultsSubView(generic.ListView):
+    '''
+        Sub-page for AJAX-based view of gene search result
+    '''
     context_object_name = 'genelist'
     template_name = 'browser/gene_list_subpage.html'
     paginate_by = 50
 
     def get_context_data(self,**kwargs):
+        '''
+            Generates context string
+        '''
         context = super(GeneSearchResultsSubView,self).get_context_data(**kwargs)
         if self.request.GET.get('genome'):
             searchcontext, external = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'), self.request.GET.get('genome'))
@@ -225,6 +265,9 @@ class GeneSearchResultsSubView(generic.ListView):
         return context
 
     def get_queryset(self):
+        '''
+            Generates Gene queryset
+        '''
         query = self.request.GET.get('query')
         genome = self.request.GET.get('genome')
         query_type = self.request.GET.get('type')
@@ -243,7 +286,6 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
             else:
                 object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-
         elif query_type == 'ko_id':
             proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_orthologs__kegg_id=query).values('protein_hash')]
             if genome:
@@ -359,221 +401,14 @@ class GeneSearchResultsSubView(generic.ListView):
         return object_list
 
 
-class GeneSearchResultsView(generic.ListView):
-    model = Gene
-    context_object_name = 'genelist'
-    paginate_by = 50
-
-    def get_context_data(self,**kwargs):
-        context = super(GeneSearchResultsView,self).get_context_data(**kwargs)
-        if self.request.GET.get('query'):
-            context['searchcontext'] = 'Search results for "' + self.request.GET.get('query') + '"'
-        elif self.request.GET.get('og'):
-            eggnog_og = Ortholog_group.objects.get(id=self.request.GET.get('og'))
-            context['searchcontext'] = 'Genes from Ortholog Group ' + eggnog_og.eggnog_id + '[' + eggnog_og.taxon.name + ']'
-        elif self.request.GET.get('ko'):
-            context['searchcontext'] = 'Genes from KEGG Ortholog Group ' + self.request.GET.get('ko')
-            context['external'] = 'https://www.kegg.jp/dbget-bin/www_bget?' + self.request.GET.get('ko')
-        elif self.request.GET.get('kp'):
-            context['searchcontext'] = 'Genes from KEGG pathway ' + self.request.GET.get('kp')
-            context['external'] = 'https://www.kegg.jp/dbget-bin/www_bget?' + self.request.GET.get('kp')
-        elif self.request.GET.get('kr'):
-            context['searchcontext'] = 'Genes from KEGG reaction ' + self.request.GET.get('kr')
-            context['external'] = 'https://www.kegg.jp/dbget-bin/www_bget?' + self.request.GET.get('kr')
-        elif self.request.GET.get('ec'):
-            context['searchcontext'] = 'Genes with EC number ' + self.request.GET.get('ec')
-            context['external'] = 'https://www.kegg.jp/dbget-bin/www_bget?ec:' + self.request.GET.get('ec')
-        elif self.request.GET.get('tc'):
-            #tc_id = Tc_family.objects.get(id=self.request.GET.get('tc')).tc_id
-            context['searchcontext'] = 'Genes from TCDB family ' + self.request.GET.get('tc')
-            context['external'] = 'http://www.tcdb.org/search/result.php?tc=' + self.request.GET.get('tc') + '#' + self.request.GET.get('tc')
-        elif self.request.GET.get('cazy'):
-            context['searchcontext'] = 'Genes from CAZy family ' + self.request.GET.get('cazy')
-            context['external'] = 'http://www.cazy.org/' + self.request.GET.get('cazy') + '.html'
-        elif self.request.GET.get('cog'):
-            context['searchcontext'] = 'Genes from COG class ' + self.request.GET.get('cog')
-            context['external'] = 'https://ftp.ncbi.nih.gov/pub/COG/COG2014/static/lists/list' + self.request.GET.get('cog') + '.html'
-        elif self.request.GET.get('go'):
-            context['searchcontext'] = 'Genes assigned to GO term ' + self.request.GET.get('go')
-            context['external'] = 'https://www.ebi.ac.uk/QuickGO/search/' + self.request.GET.get('go')
-        elif self.request.GET.get('genome'):
-            print(self.request.GET)
-            genome = self.request.GET.get('genome')
-            if self.request.GET.get('ko_query'):
-                context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to KEGG Ortholog groups containing "' + self.request.GET.get('ko_query') + '"'
-            elif self.request.GET.get('kp_query'):
-                context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to KEGG pathways containing "' + self.request.GET.get('kp_query') + '"'
-                if self.kegg_map_url is not None:
-                    context['external'] = self.kegg_map_url
-            elif self.request.GET.get('kr_query'):
-                context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to KEGG reactions containing "' + self.request.GET.get('kr_query') + '"'
-            elif self.request.GET.get('ec_query'):
-                context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to EC numbers containing "' + self.request.GET.get('ec_query') + '"'
-            elif self.request.GET.get('tc_query'):
-                context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to TCDB families containing "' + self.request.GET.get('tc_query') + '"'
-            elif self.request.GET.get('cazy_query'):
-                context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to CAZy families containing "' + self.request.GET.get('cazy_query') + '"'
-            elif self.request.GET.get('cog_query'):
-                context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to COG class containing "' + str(self.request.GET.get('cog_query')) + '"'
-            elif self.request.GET.get('go_query'):
-                context['searchcontext'] = 'Genes from genome ' + genome + ' assigned to GO term containing "' + str(self.request.GET.get('go_query')) + '"'
-            else:
-                context['searchcontext'] = 'Genes from genome ' + genome
-        return context
-
-    def get_queryset(self):
-        query = self.request.GET.get('query')
-        genome = self.request.GET.get('genome')
-        og = self.request.GET.get('og')
-        ko = self.request.GET.get('ko')
-        kp = self.request.GET.get('kp')
-        kr = self.request.GET.get('kr')
-        ec = self.request.GET.get('ec')
-        tc = self.request.GET.get('tc')
-        cazy = self.request.GET.get('cazy')
-        cog = self.request.GET.get('cog')
-        go = self.request.GET.get('go')
-        og_query = self.request.GET.get('og_query')
-        ko_query = self.request.GET.get('ko_query')
-        kp_query = self.request.GET.get('kp_query')
-        kr_query = self.request.GET.get('kr_query')
-        ec_query = self.request.GET.get('ec_query')
-        tc_query = self.request.GET.get('tc_query')
-        cazy_query = self.request.GET.get('cazy_query')
-        cog_query = self.request.GET.get('cog_query')
-        go_query = self.request.GET.get('go_query')
-        if query:
-            if genome:
-                object_list = Gene.objects.filter(genome__name=genome).filter(
-                    Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
-                ).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(
-                    Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
-                ).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        elif og:
-            proteins = [item['protein_hash'] for item in Protein.objects.filter(ortholog_groups__id=og).values('protein_hash')]
-            if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        elif ko:
-            proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_orthologs__kegg_id=ko).values('protein_hash')]
-            if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        elif kp:
-            proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_pathways__kegg_id=kp).values('protein_hash')]
-            if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        elif kr:
-            proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_reactions__kegg_id=kr).values('protein_hash')]
-            if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        elif ec:
-            proteins = [item['protein_hash'] for item in Protein.objects.filter(ec_numbers__ec_number=ec).values('protein_hash')]
-            if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        elif tc:
-            proteins = [item['protein_hash'] for item in Protein.objects.filter(tc_families__tc_id=tc).values('protein_hash')]
-            if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        elif cazy:
-            proteins = [item['protein_hash'] for item in Protein.objects.filter(cazy_families__cazy_id=cazy).values('protein_hash')]
-            if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        elif cog:
-            proteins = [item['protein_hash'] for item in Protein.objects.filter(cog_classes__cog_id=cog).values('protein_hash')]
-            if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        elif go:
-            proteins = [item['protein_hash'] for item in Protein.objects.filter(go_terms__go_id=go).values('protein_hash')]
-            if genome:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        elif genome:
-            if ko_query:
-                ko_ids = Kegg_ortholog.objects.filter(
-                    Q(kegg_id__icontains=ko_query) | Q(description__icontains=ko_query)
-                ).values('kegg_id')
-                proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_orthologs__kegg_id__in=ko_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            elif kp_query:
-                kp_ids = Kegg_pathway.objects.filter(
-                    Q(kegg_id__icontains=kp_query) | Q(description__icontains=kp_query)
-                ).values('kegg_id')
-                proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_pathways__kegg_id__in=kp_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon', 'protein').prefetch_related('protein__kegg_orthologs')
-                self.kegg_map_url = None
-                if kp_ids.count() == 1:
-                    print(kp_ids[0]['kegg_id'])
-                    kegg_map_url = 'https://www.kegg.jp/pathway/' + kp_ids[0]['kegg_id'] + '+'
-                    print(kegg_map_url)
-                    ko_ids = set()
-                    for gene in object_list:
-                        for ko in gene.protein.kegg_orthologs.all():
-                            ko_ids.add(ko.kegg_id)
-                    if ko_ids:
-                        self.kegg_map_url = kegg_map_url + '+'.join(sorted(list(ko_ids)))
-            elif kr_query:
-                kr_ids = Kegg_reaction.objects.filter(
-                    Q(kegg_id__icontains=kr_query) | Q(description__icontains=kr_query)
-                ).values('kegg_id')
-                proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_reactions__kegg_id__in=kr_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            elif ec_query:
-                ec_ids = Ec_number.objects.filter(
-                    Q(ec_number__icontains=ec_query) | Q(description__icontains=ec_query)
-                ).values('ec_number')
-                proteins = [item['protein_hash'] for item in Protein.objects.filter(ec_numbers__ec_number__in=ec_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            elif tc_query:
-                tc_ids = Tc_family.objects.filter(
-                    Q(tc_id__icontains=tc_query) | Q(description__icontains=tc_query)
-                ).values('tc_id')
-                proteins = [item['protein_hash'] for item in Protein.objects.filter(tc_families__tc_id__in=tc_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            elif cazy_query:
-                cazy_ids = Cazy_family.objects.filter(
-                    Q(cazy_id__icontains=cazy_query) | Q(description__icontains=cazy_query)
-                ).values('cazy_id')
-                proteins = [item['protein_hash'] for item in Protein.objects.filter(cazy_families__cazy_id__in=cazy_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            elif cog_query:
-                cog_ids = Cog_class.objects.filter(
-                    Q(cog_id__icontains=cog_query) | Q(description__icontains=cog_query)
-                ).values('cog_id')
-                proteins = [item['protein_hash'] for item in Protein.objects.filter(cog_classes__cog_id__in=cog_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            elif go_query:
-                go_ids = Go_term.objects.filter(
-                    Q(go_id__icontains=go_query) | Q(description__icontains=go_query)
-                ).values('go_id')
-                proteins = [item['protein_hash'] for item in Protein.objects.filter(go_terms__go_id__in=go_ids).values('protein_hash')]
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon')
-            else:
-                object_list = Gene.objects.filter(genome__name=genome).order_by('locus_tag').select_related('genome', 'genome__taxon')
-        else:
-            object_list = Gene.objects.none()
-        return object_list
-
-
 class GeneSearchResultsAjaxView(View):
+    '''
+        AJAX-based view for gene search results
+    '''
     def get(self,request):
+        '''
+            Takes a GET request and returns a webpage that will send AJAX request
+        '''
         context = {}
         if self.request.GET.get('genome'):
             searchcontext, external = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'), self.request.GET.get('genome'))
@@ -583,29 +418,26 @@ class GeneSearchResultsAjaxView(View):
         if external != '':
             context['external'] = external
 
-        print('REQUEST1')
-        print('Request parameters:', request.GET.get('annotation_query'), request.GET.get('genome'))
+        # copy request paramters into context
         for key, val in request.GET.items():
-            print(key, val)
             context[key] = val
         return render(request,'browser/gene_list_ajax.html', context)
 
     @staticmethod
     def ajax_view(request):
+        '''
+            Takes AJAX request, creates sub-page (GeneSearchResultsSubView) and sends it back as JSON
+            
+            For the testing of long-running tasks, uncomment sleep_timer=0 and set the number of seconds to delay the AJAX response
+        '''
         start_time = time.time()
 
-        print('REQUEST2')
-        for key, val in request.GET.items():
-            print(key, val)
-            
         # Sleep timer for testing to imitate long-running task
         # sleep_timer = 0
         # print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         # time.sleep(sleep_timer)
 
         context = {}
-        #genome = request.GET.get('genome')
-        #annotation_query = request.GET.get('query')
         sub_view = GeneSearchResultsSubView()
         sub_view.setup(request)
         sub_response = sub_view.dispatch(request)
@@ -616,12 +448,15 @@ class GeneSearchResultsAjaxView(View):
             context['searchcontext'] = generate_gene_search_context(request.GET.get('query'), request.GET.get('type'))
         context['searchresult'] = sub_response.content.decode('utf-8')
         context['time'] = time.time()-start_time
-        #print(context['searchresult'])
         data = json.dumps(context)
         return HttpResponse(data,content_type="application/json")
 
 
 class GenomeSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in genome names.
+    '''
+    # TODO: add search in taxon names
     model = Genome
     context_object_name = 'genomelist'
     paginate_by = 50
@@ -642,6 +477,9 @@ class GenomeSearchResultsView(generic.ListView):
 
 
 class StrainSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in strain names full names or taxonomic orders.
+    '''
     model = Strain
     context_object_name = 'strainlist'
     paginate_by = 50
@@ -664,6 +502,9 @@ class StrainSearchResultsView(generic.ListView):
 
 
 class KoSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in KEGG Orthologs.
+    '''
     model = Kegg_ortholog
     context_object_name = 'annotationlist'
     paginate_by = 50
@@ -687,6 +528,9 @@ class KoSearchResultsView(generic.ListView):
 
 
 class KpSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in KEGG pathways.
+    '''
     model = Kegg_pathway
     context_object_name = 'annotationlist'
     paginate_by = 50
@@ -709,6 +553,9 @@ class KpSearchResultsView(generic.ListView):
 
 
 class KrSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in KEGG reactions.
+    '''
     model = Kegg_reaction
     context_object_name = 'annotationlist'
     paginate_by = 50
@@ -731,6 +578,9 @@ class KrSearchResultsView(generic.ListView):
 
 
 class EcSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in EC numbers and descriptions.
+    '''
     model = Ec_number
     context_object_name = 'annotationlist'
     paginate_by = 50
@@ -753,6 +603,9 @@ class EcSearchResultsView(generic.ListView):
 
 
 class TcSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in TCDB numbers and descriptions.
+    '''
     model = Tc_family
     context_object_name = 'annotationlist'
     paginate_by = 50
@@ -775,6 +628,9 @@ class TcSearchResultsView(generic.ListView):
 
 
 class CazySearchResultsView(generic.ListView):
+    '''
+        Returns results of search in CAZy identifiers and descriptions.
+    '''
     model = Cazy_family
     context_object_name = 'annotationlist'
     paginate_by = 50
@@ -797,6 +653,9 @@ class CazySearchResultsView(generic.ListView):
 
 
 class GoSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in GO terms.
+    '''
     model = Go_term
     context_object_name = 'annotationlist'
     paginate_by = 50
@@ -820,6 +679,9 @@ class GoSearchResultsView(generic.ListView):
 
 
 class CogSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in COG classes.
+    '''
     model = Cog_class
     context_object_name = 'annotationlist'
     paginate_by = 50
@@ -842,25 +704,34 @@ class CogSearchResultsView(generic.ListView):
 
 
 def textsearch(request):
+    '''
+        Displays web-page with text search forms
+    '''
     template = loader.get_template('browser/textsearch.html')
     context={}
     return HttpResponse(template.render(context, request))
 
-
 def startpage(request):
+    '''
+        Displays home page
+    '''
     template = loader.get_template('browser/landing.html')
     num_genomes = Genome.objects.all().count()
     context = {'num_genomes':num_genomes}
     return HttpResponse(template.render(context, request))
 
-
 def show_help(request):
+    '''
+        Displays help page
+    '''
     template = loader.get_template('browser/help.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
-
 def genome_detail(request, name):
+    '''
+        Displays genome page.
+    '''
     try:
         genome = Genome.objects.get(name = name)
     except Genome.DoesNotExist:
@@ -885,8 +756,10 @@ def genome_detail(request, name):
         context['viewer_end'] = str(display_end)
     return render(request, 'browser/genome.html', context)
 
-
 def strain_detail(request, strain_id):
+    '''
+        Displays strain page.
+    '''
     try:
         strain = Strain.objects.get(strain_id = strain_id)
         genomes = Genome.objects.filter(strain=strain).order_by('name')
@@ -907,8 +780,10 @@ def strain_detail(request, strain_id):
         return render(request, '404.html', {'searchcontext': 'Sample not found: ' + strain_id})
     return render(request, 'browser/strain.html', {'strain': strain, 'genomes':genomes, 'metadata':metadata})
 
-
 def sample_detail(request, sample_id):
+    '''
+        Displays sample page.
+    '''
     try:
         sample = Sample.objects.get(sample_id = sample_id)
         genomes = Genome.objects.filter(sample=sample).order_by('name')
@@ -929,8 +804,10 @@ def sample_detail(request, sample_id):
         return render(request, '404.html', {'searchcontext': 'Sample not found: ' + sample_id})
     return render(request, 'browser/sample.html', {'sample': sample, 'genomes':genomes, 'metadata':metadata})
 
-
 def gene_detail(request, genome, locus_tag):
+    '''
+        Displays gene page.
+    '''
     try:
         gene = Gene.objects.select_related(
             'genome', 'genome__taxon', 'protein', 'operon'
@@ -955,8 +832,10 @@ def gene_detail(request, genome, locus_tag):
         raise Http404('Gene not found')
     return render(request, 'browser/gene.html', context)
 
-
 def operon_detail(request, name, genome=None):
+    '''
+        Displays operon page.
+    '''
     try:
         operon = Operon.objects.select_related('contig', 'genome').get(name=name)
         genes = Gene.objects.filter(operon = operon.id).select_related('contig', 'genome', 'genome__strain')
@@ -978,8 +857,10 @@ def operon_detail(request, name, genome=None):
         raise Http404('Operon not found')
     return render(request, 'browser/operon.html', context)
 
-
 def site_detail(request, genome, name):
+    '''
+        Displays site page.
+    '''
     try:
         site = Site.objects.select_related(
             'genome', 'genome__strain', 'contig'
@@ -1000,8 +881,10 @@ def site_detail(request, genome, name):
         raise Http404('Site not found')
     return render(request, 'browser/site.html', context)
 
-
 def regulon_detail(request, genome, name):
+    '''
+        Displays regulon page.
+    '''
     try:
         regulon = Regulon.objects.select_related(
             'genome', 'genome__strain'
@@ -1021,8 +904,10 @@ def regulon_detail(request, genome, name):
     print([x.name for x in sites])
     return render(request, 'browser/regulon.html', context)
 
-
 def gene_byname(request):
+    '''
+        Displays gene page.
+    '''
     if request.GET.get('genome') and request.GET.get('locus'):
         genome_name = request.GET.get('genome')
         locus_tag = request.GET.get('locus')
@@ -1054,19 +939,10 @@ def gene_byname(request):
         raise Http404('More than one gene was found')
     return render(request, 'browser/gene.html', context)
 
-
-def genomes_index(request):
-    template = loader.get_template('browser/genomes.html')
-    strains = Strain.objects.order_by('strain_id')
-    genomes = Genome.objects.order_by('name')
-    context = {
-        'strains': strains,
-        'genomes': genomes,
-    }
-    return HttpResponse(template.render(context, request))
-
-
 def protein_search_external(request):
+    '''
+        Returns protein search results for external query (from Fitness browser etc.).
+    '''
     context = {}
     if request.GET.get("sequence"):
         result = {}
@@ -1093,33 +969,48 @@ def protein_search_external(request):
 
 
 class NsearchResultView(View):
+    '''
+        AJAX-based view for nucleotide similarity search
+    '''
     def post(self,request):
+        '''
+            Takes a POST request and returns a webpage that will send AJAX request
+        '''
         sequence = request.POST.get("sequence")
-        print('Sequence sent:', sequence)
+        #print('Sequence sent:', sequence)
         context = {'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')}
-        print('REQUEST1')
+        #print('REQUEST1')
         for key, val in request.POST.items():
             context[key] = val
-            print(key, val)
+            #print(key, val)
         return render(request,'browser/nucleotidesearchajax.html', context)
 
     def get(self,request):
+        '''
+            Displays nucleotide sequence search form
+        '''
         return render(request,'browser/nucleotidesearchajax.html')
     
     @staticmethod
     def ajax_view(request):
+        '''
+            Takes AJAX request, calls run_nucleotide_search and sends formatted results back as JSON
+            
+            For the testing of long-running tasks, uncomment sleep_timer=0 and set the number of seconds to delay the AJAX response
+        '''
         start_time = time.time()
         result = []
-        print('REQUEST2')
-        for key, val in request.POST.items():
-            print(key, val)
+        #print('REQUEST2')
+        #for key, val in request.POST.items():
+        #    print(key, val)
         #sequence = request.POST.get("sequence")
         params = {'sequence': request.POST.get("sequence"), 'evalue': request.POST.get("evalue"), 'hitstoshow': request.POST.get("hitstoshow")}
+        # Test sequence
         #params['sequence'] = '>test\nATGACGATGCACCCGGCAGCACCTCGAACTCCGCACTGGCGCTGCTTGCACCGGCTGGCATGGAGCCTGTCCTGCGCTGCCCTGTTGCCGCTCGCTGCACTGGCGCAGGACGTACCGTCCCGCGCCGTCACGCCGGTGTCCGCAGCGTCGCCGCCGCGCCAGTCGCAGGACGACGCCTGGTGGACCGGGCCGATGCTGGCGAACTCCGCCGCCACCCTGCCGCGCGGCCACGTCCTGATCGAGCCTTACGTCTACGACGTGTCCTCGCCGCACGCCGACGGCTACGGTTCGCTCACCTACATGCTCTACGGCCTCACCGACCGGCTGACGGTCGGCCTGATGCCGGTGCTGGGCTACAACCGCATGGATGGCCCGGGCGACAGCAGCGGGATCGGGCTGGGCGACGTCAGCGTGCAGGCGCAGTACCGGCTGACCGATGTGCCGGCGGGCAGTTCGCGGCCCACGGTCTCGCTGCAACTGCAGGAAACCCTGCCGACCGGCAAGTACGACCGGCTGGGCCGGCGACCCGGCAACGGCCTGGGCAGCGGCGCCACCACCACTACGCTGCAGGTCAACACGCAGACGTATTTCTGGTTGTCCAACGGCCGCATCCTGCGCATGCGCTTCAACGTGGCGCAATCATTCTCGACGCGGGCACGGGTCGAGGACATCAGCGTCTACGGCACCCCGGACGGCTTTCGCGGGCACGCCCGGCCGGGGCGTTCGTTCTTCGTCAATGCGGCCTGGGAGTACAGCCTCAGCCAGCGCTGGGTGCTGGCGCTCGACCTCACCTACCGGCGCAGCCACGGTGCCCGCGTGCGCGACGACGACCTCAATGGCGTGCCTGCCTTGCGTCTGGACGGCCGCTCCAGCGAGGCGTTCGGCTTTGCCCCGGCCATCGAGTACAGCTGGAGTCCGCGGCTCGGCGTGCTGTTCGGCACCCGCGTGATCACCGGCGGGCACAACACCGCGACCACGATCACGCCGGCGGTGGCCTTCAACTACGTGCACTGA'
-        print('Sequence received:', params['sequence'])
-        sleep_timer = 0
-        print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
-        time.sleep(sleep_timer)
+        #print('Sequence received:', params['sequence'])
+        #sleep_timer = 0
+        #print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        #time.sleep(sleep_timer)
         hits, searchcontext, query_len = run_nucleotide_search(params)
         if hits:
             result.append('<table><thead><tr><th>Target contig (click to see hit)</th><th>Genome</th><th>%identity</th><th>Alignment length</th><th>%Query coverage</th><th>E-value</th><th>Bit-score</th></tr></thead><tbody>')
@@ -1156,38 +1047,55 @@ class NsearchResultView(View):
 
 
 def nucleotidesearchform(request):
+    '''
+        Displays nucleotide sequence search form
+    '''
     return render(request,'browser/nucleotidesearchform.html')
 
 
 class PsearchResultView(View):
-
+    '''
+        AJAX-based view for protein similarity search
+    '''
     def post(self,request):
-        sequence = request.POST.get("sequence")
-        print('Sequence sent:', sequence)
+        '''
+            Takes a POST request and returns a webpage that will send AJAX request
+        '''
+        #sequence = request.POST.get("sequence")
+        #print('Sequence sent:', sequence)
         context = {'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')}
-        print('REQUEST1')
+        #print('REQUEST1')
         for key, val in request.POST.items():
             context[key] = val
-            print(key, val)
+            #print(key, val)
         return render(request,'browser/proteinsearchajax.html', context)
 
     def get(self,request):
+        '''
+            Displays protein sequence search form
+        '''
         return render(request,'browser/proteinsearchajax.html')
     
     @staticmethod
     def ajax_view(request):
+        '''
+            Takes AJAX request, calls run_protein_search and sends formatted results back as JSON
+            
+            For the testing of long-running tasks, uncomment sleep_timer=0 and set the number of seconds to delay the AJAX response
+        '''
         start_time = time.time()
         result = []
-        print('REQUEST2')
-        for key, val in request.POST.items():
-            print(key, val)
-        sequence = request.POST.get("sequence")
+        #print('REQUEST2')
+        #for key, val in request.POST.items():
+        #    print(key, val)
+        #sequence = request.POST.get("sequence")
         params = {'sequence': request.POST.get("sequence"), 'evalue': request.POST.get("evalue"), 'hitstoshow': request.POST.get("hitstoshow")}
-        #sequence = 'MTKQVQEAYIVAATRTPVGKAPRGVFRNTRPDDMLAHVIRAVMAQAPGIDPHQIGDVIIGCAMPEAEQGMNVARIGLLLAGLPDTVPGVTVNRFCSSGLQSVAMAADRIRLGLDDLMLAGGTESMSMVPMMGHKIAMNPAIFNDENIGIAYGMGITAENVAKQWKVSREQQDAFSVESHRRALAAQAAGEFNDEISPFALDDHYPNLATRGIVTDSRRIDSDEGPRAGTTMEVLAKLKTVFRNGQFGGTVTAGNSSQMSDGAGAVLLASERAVKEYNLQPLARFVGFSVAGVPPEVMGIGPKEAIPKALKQAGLNRDQLDWIELNEAFAAQALAVMGDLGLDPDKVNPLGGAIALGHPLGATGAVRIATLVHGMRRRKQKYGMVTMCIGTGMGAAGIFEAL'
-        print('Sequence received:', sequence)
-        sleep_timer = 0
-        print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
-        time.sleep(sleep_timer)
+        # Test sequence
+        #params['sequence'] = 'MTKQVQEAYIVAATRTPVGKAPRGVFRNTRPDDMLAHVIRAVMAQAPGIDPHQIGDVIIGCAMPEAEQGMNVARIGLLLAGLPDTVPGVTVNRFCSSGLQSVAMAADRIRLGLDDLMLAGGTESMSMVPMMGHKIAMNPAIFNDENIGIAYGMGITAENVAKQWKVSREQQDAFSVESHRRALAAQAAGEFNDEISPFALDDHYPNLATRGIVTDSRRIDSDEGPRAGTTMEVLAKLKTVFRNGQFGGTVTAGNSSQMSDGAGAVLLASERAVKEYNLQPLARFVGFSVAGVPPEVMGIGPKEAIPKALKQAGLNRDQLDWIELNEAFAAQALAVMGDLGLDPDKVNPLGGAIALGHPLGATGAVRIATLVHGMRRRKQKYGMVTMCIGTGMGAAGIFEAL'
+        #print('Sequence received:', sequence)
+        #sleep_timer = 0
+        #print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        #time.sleep(sleep_timer)
         hits, searchcontext, query_len = run_protein_search(params)
 
         if hits:
@@ -1207,12 +1115,15 @@ class PsearchResultView(View):
             context = {"searchcontext":searchcontext}
             return render(request,'404.html', context)
         context = {"searchresult":'\n'.join(result),"searchcontext":searchcontext,"query_len":query_len,"time":time.time()-start_time}
-        print(context)
+        #print(context)
         data = json.dumps(context)
         return HttpResponse(data,content_type="application/json")
 
 
 def proteinsearchform(request):
+    '''
+        Displays protein sequence search form
+    '''
     return render(request,'browser/proteinsearchform.html')
 
 def cregulon_view(request):
@@ -1226,9 +1137,14 @@ def cregulon_view(request):
 
     
 class ComparativeView(View):
-
+    '''
+        AJAX-based view for comparative gene plot page
+    '''
     @staticmethod
     def verify_parameters(size, lines):
+        '''
+            Parameters validation
+        '''
         try:
             if size is None:
                 raise SuspiciousOperation('"size" parameter is missing')
@@ -1256,6 +1172,9 @@ class ComparativeView(View):
             raise SuspiciousOperation(str(e))
         
     def get(self,request):
+        '''
+            Displays a page that will send AJAX request
+        '''
         locus_tag = request.GET.get('locus_tag')
         genome = request.GET.get('genome')
         og_id = request.GET.get('og')
@@ -1265,8 +1184,8 @@ class ComparativeView(View):
         except SuspiciousOperation as e:
             return render(request, '404.html', {'searchcontext': str(e)})
         
-        print('REQUEST1')
-        print('Request parameters:', og_id, genome, locus_tag, request.GET.get('size'), request.GET.get('lines'))
+        #print('REQUEST1')
+        #print('Request parameters:', og_id, genome, locus_tag, request.GET.get('size'), request.GET.get('lines'))
         context = {}
         for key, val in request.GET.items():
             context[key] = val
@@ -1285,18 +1204,18 @@ class ComparativeView(View):
     def ajax_view(request):
         start_time = time.time()
 
-        print('REQUEST2')
-        for key, val in request.GET.items():
-            print(key, val)
+        #print('REQUEST2')
+        #for key, val in request.GET.items():
+        #    print(key, val)
         try:
             ComparativeView.verify_parameters(request.GET.get('size'), request.GET.get('lines'))
         except SuspiciousOperation as e:
             return render(request, '404.html', {'searchcontext': str(e)})
             
         # Sleep timer for testing to imitate long-running task
-        sleep_timer = 0
-        print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
-        time.sleep(sleep_timer)
+        #sleep_timer = 0
+        #print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        #time.sleep(sleep_timer)
 
         context = {}
         locus_tag = request.GET.get('locus_tag')
@@ -1327,6 +1246,9 @@ class ComparativeView(View):
 
     
 def export_csv(request):
+    '''
+        Returns list of genes in CSV format
+    '''
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/tab-separated-values')
     response['Content-Disposition'] = 'attachment; filename="export.tab"'
@@ -1511,6 +1433,9 @@ def export_csv(request):
     return response
 
 def export_fasta(request):
+    '''
+        Returns protein sequences in FASTA format
+    '''
     response = HttpResponse(content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="export.faa"'
 
@@ -1692,9 +1617,15 @@ def export_fasta(request):
     return response
     
 def handler404(request, exception):
+    '''
+        Returns 404 page
+    '''
     return render(request, '404.html', status=404)
     
 def generate_gene_search_context(query, query_type, genome=None):
+    '''
+        Generates search context string and external link for various query types
+    '''
     searchcontext = ''
     external = ''
     if genome is None:

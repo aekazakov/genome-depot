@@ -2,6 +2,9 @@ from django.db import models
 
 # Create your models here.
 class ChangeLog(models.Model):
+    '''
+        Logs genome creation, change and deletion events.
+    '''
     data = models.TextField(null=False, blank=True)
     action = models.CharField(max_length=16, null=False, blank=True)  # saved or deleted
     timestamp = models.DateTimeField(null=False, blank=True)
@@ -12,6 +15,9 @@ class ChangeLog(models.Model):
 
 
 class Config(models.Model):
+    '''
+        Stores CGCMS configuration parameters.
+    '''
     param = models.CharField(max_length=255, unique=True)
     value = models.CharField(max_length=255)
 
@@ -20,6 +26,9 @@ class Config(models.Model):
 
 
 class Taxon(models.Model):
+    '''
+        Stores taxonomic data
+    '''
     taxonomy_id = models.CharField(max_length=10, unique=True, db_index=True)
     eggnog_taxid = models.CharField(max_length=10, blank=True, null=True)
     rank = models.CharField(max_length=20)
@@ -35,6 +44,9 @@ class Taxon(models.Model):
 
 
 class Strain(models.Model):
+    '''
+        Stores strain data
+    '''
     strain_id = models.CharField(max_length=100, unique=True, db_index=True)
     full_name = models.CharField(max_length=200)
     order = models.CharField(max_length=100)
@@ -45,6 +57,9 @@ class Strain(models.Model):
 
 
 class Sample(models.Model):
+    '''
+        Stores metagenomic samples.
+    '''
     sample_id = models.CharField(max_length=100, unique=True)
     full_name = models.CharField(max_length=200)
     description = models.CharField(max_length=250)
@@ -54,6 +69,9 @@ class Sample(models.Model):
 
 
 class Strain_metadata(models.Model):
+    '''
+        Stores strain metadata.
+    '''
     strain = models.ForeignKey(Strain, on_delete=models.CASCADE)
     source = models.CharField(max_length=30)
     url = models.CharField(max_length=250)
@@ -65,6 +83,9 @@ class Strain_metadata(models.Model):
 
 
 class Sample_metadata(models.Model):
+    '''
+        Stores sample metadata
+    '''
     sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
     source = models.CharField(max_length=30)
     url = models.CharField(max_length=250)
@@ -76,6 +97,9 @@ class Sample_metadata(models.Model):
 
 
 class Genome(models.Model):
+    '''
+        Stores genomes
+    '''
     name = models.CharField(max_length=200, unique=True, db_index=True)
     description = models.TextField()
     strain = models.ForeignKey(Strain, on_delete=models.CASCADE, blank = True, null = True)
@@ -95,6 +119,9 @@ class Genome(models.Model):
 
 
 class Contig(models.Model):
+    '''
+        Strores contigs
+    '''
     contig_id = models.CharField(max_length=100)
     name = models.CharField(max_length=250)
     size = models.IntegerField()
@@ -105,6 +132,9 @@ class Contig(models.Model):
 
 
 class Operon(models.Model):
+    '''
+        Stores operons
+    '''
     name = models.CharField(max_length=250)
     start = models.IntegerField()
     end = models.IntegerField()
@@ -120,6 +150,9 @@ class Operon(models.Model):
 
 
 class Cog_class(models.Model):
+    '''
+        Stores COG classes
+    '''
     cog_id = models.CharField(max_length=1, unique=True)
     description = models.CharField(max_length=80)
 
@@ -128,6 +161,9 @@ class Cog_class(models.Model):
 
 
 class Kegg_reaction(models.Model):
+    '''
+        Stores KEGG reactions
+    '''
     kegg_id = models.CharField(max_length=10, unique=True)
     description = models.TextField()
 
@@ -136,6 +172,9 @@ class Kegg_reaction(models.Model):
 
 
 class Kegg_pathway(models.Model):
+    '''
+        Stores KEGG pathways
+    '''
     kegg_id = models.CharField(max_length=10, unique=True)
     description = models.CharField(max_length=200)
 
@@ -144,6 +183,9 @@ class Kegg_pathway(models.Model):
 
 
 class Kegg_ortholog(models.Model):
+    '''
+        Stores KEGG orthology groups
+    '''
     kegg_id = models.CharField(max_length=10, unique=True)
     description = models.TextField()
 
@@ -152,6 +194,9 @@ class Kegg_ortholog(models.Model):
 
 
 class Go_term(models.Model):
+    '''
+        Stores Gene Onthology terms
+    '''
     go_id = models.CharField(max_length=12, unique=True)
     go_namespace = models.CharField(max_length=50)
     description = models.TextField()
@@ -161,6 +206,9 @@ class Go_term(models.Model):
 
 
 class Cazy_family(models.Model):
+    '''
+        Stores CAZY families
+    '''
     cazy_id = models.CharField(max_length=12, unique=True)
     description = models.TextField()
 
@@ -169,6 +217,9 @@ class Cazy_family(models.Model):
 
 
 class Ec_number(models.Model):
+    '''
+        Stores EC enzyme classification
+    '''
     ec_number = models.CharField(max_length=12, unique=True)
     description = models.TextField()
 
@@ -177,6 +228,9 @@ class Ec_number(models.Model):
 
 
 class Tc_family(models.Model):
+    '''
+        Stores TCDB transporter families
+    '''
     tc_id = models.CharField(max_length=15, unique=True)
     description = models.TextField()
 
@@ -185,6 +239,9 @@ class Tc_family(models.Model):
 
 
 class Ortholog_group(models.Model):
+    '''
+        Stores EggNOG families
+    '''
     eggnog_id = models.CharField(max_length=15, db_index=True)
     taxon = models.ForeignKey(Taxon, on_delete=models.SET_NULL, blank = True, null = True)
 
@@ -196,6 +253,9 @@ class Ortholog_group(models.Model):
 
 
 class Eggnog_description(models.Model):
+    '''
+        Stores EggNOG descriptions
+    '''
     fingerprint = models.CharField(max_length=32, unique=True)
     description = models.TextField()
 
@@ -204,6 +264,9 @@ class Eggnog_description(models.Model):
 
 
 class Protein(models.Model):
+    '''
+        Stores proteins
+    '''
     name = models.CharField(max_length=100)
     length = models.IntegerField()
     protein_hash = models.CharField(max_length=32, unique=True, db_index=True)
@@ -225,6 +288,9 @@ class Protein(models.Model):
 
 
 class Gene(models.Model):
+    '''
+        Stores genes
+    '''
     name = models.CharField(max_length=50, db_index=True)
     locus_tag = models.CharField(max_length=50, db_index=True)
     contig = models.ForeignKey(Contig, on_delete=models.SET_NULL, blank = True, null = True)
@@ -242,6 +308,9 @@ class Gene(models.Model):
 
 
 class Regulon(models.Model):
+    '''
+        Stores regulons
+    '''
     name = models.CharField(max_length=50, db_index=True)
     regulators = models.ManyToManyField(Gene)
     genome = models.ForeignKey(Genome, on_delete=models.CASCADE)
@@ -252,6 +321,9 @@ class Regulon(models.Model):
 
 
 class Site(models.Model):
+    '''
+        Stores binding sites
+    '''
     name = models.CharField(max_length=50)
     type = models.CharField(max_length=20)
     start = models.IntegerField()
@@ -272,6 +344,9 @@ class Site(models.Model):
 
 
 class Annotation(models.Model):
+    '''
+        Stores custom gene annotations
+    '''
     gene_id = models.ForeignKey(Gene, on_delete=models.CASCADE)
     source = models.CharField(max_length=30, db_index=True)
     url = models.CharField(max_length=300)
@@ -281,5 +356,3 @@ class Annotation(models.Model):
 
     def __str__(self):
         return self.source + ': ' + self.value
-
-

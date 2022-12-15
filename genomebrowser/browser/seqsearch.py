@@ -9,10 +9,17 @@ from browser.models import Config
 
 
 def _verify_alphabet(sequence, alphabet):
+    '''
+        Checks if sequence contains illegal symbols
+    '''
     alphabet = set(alphabet) 
     return all(letter in alphabet for letter in sequence)
 
 def validate_params(params):
+    '''
+        Validates search parameters received from user.
+        Raises SuspiciousOperation exception if the validation fails.
+    '''
     result = {}
     if isinstance(params,str):
         result['sequence'] = params
@@ -48,35 +55,31 @@ def validate_params(params):
 
         
 def run_protein_search(params):
+    '''
+        Runs BLASTP search for protein sequence in params.
+    '''
     result = []
     try:
         params = validate_params(params)
     except SuspiciousOperation as e:
         searchcontext = str(e)
+        print('Parameters:', params)
         return result, searchcontext, 0
     query = params['sequence']
 
     search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
-    #log_file = os.path.join(search_dir, 'search.log')
     blast_db = os.path.join(search_dir, 'blast_prot')
     searchcontext = ''
-    #with open(log_file, 'a') as log:
-    #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] New BLASTP search started.\n')
-    #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Query sequence:\"'+ query + '\"\n')
     query_lines = query.split('\n')
     seq_record = SeqRecord(Seq(''.join([x.rstrip('\n\r') for x in query_lines[1:]])), id=query_lines[0][1:].rstrip('\r\n'))
     if not _verify_alphabet(seq_record.seq.upper(), PROTEIN_ALPHABET):
         searchcontext = 'Wrong protein sequence format. FASTA header and valid sequence required.'
-        #with open(log_file, 'a') as log:
-        #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Wrong sequence format.\n')
         return result, searchcontext, 0
     sequence = str(seq_record.seq)
     sequence_id = str(seq_record.id)
     if not sequence:
         searchcontext = 'Wrong sequence format. FASTA header and valid sequence required.'
-        #with open(log_file, 'a') as log:
-        #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Wrong sequence format.\n')
         return result, searchcontext, 0
     query_len = len(seq_record)
     args = [
@@ -89,14 +92,11 @@ def run_protein_search(params):
         '-outfmt',
         '6'
         ]
-    #with open(log_file, 'a') as log:
-    #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Run BLASTP with args:\"'+ ' '.join(args) + '\"\n')
     with Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
         blastoutput, err = p.communicate(query.strip())
     if p.returncode != 0:
-        #with open(log_file, 'a') as log:
-        #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] BLASTP finished with error:\n'+ ' '.join(err) + '\n')
         searchcontext = 'BLASTP finished with error:\n' + '\n'.join(err)
+        print('BLASTP finished with error. Parameters:', params, '\n'.join(err))
         return result, searchcontext, 0
     for line in blastoutput.split('\n'):
         if line.startswith('#'):
@@ -109,37 +109,31 @@ def run_protein_search(params):
         result.append('\t'.join(row))
     if not result:
         searchcontext = 'No hits found'
-    #with open(log_file, 'a') as log:
-    #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] BLASTP finished. ' + str(len(result)) + ' hits found.\n')
     if len(result) > 100:
         result = result[:100]
     return result, searchcontext, query_len
 
 def run_nucleotide_search(params):
+    '''
+        Runs Megablast search for nucleotide sequence in params.
+    '''
     result = []
     try:
         params = validate_params(params)
     except SuspiciousOperation as e:
         searchcontext = str(e)
+        print('Parameters:', params)
         return result, searchcontext, 0
     query = params['sequence']
     
     search_dir = Config.objects.get(param='cgcms.search_db_dir').value
     DNA_ALPHABET = 'GATCRYWSMKHBVDN'
-    #log_file = os.path.join(search_dir, 'search.log')
     blast_db = os.path.join(search_dir, 'blast_nucl')
     searchcontext = ''
-
-    #with open(log_file, 'a') as log:
-    #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] New megablast search started.\n')
-    #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Query sequence:\"'+ query + '\"\n')
-
     query_lines = query.split('\n')
     seq_record = SeqRecord(Seq(''.join([x.rstrip('\n\r') for x in query_lines[1:]])), id=query_lines[0][1:].rstrip('\r\n'))
     if not _verify_alphabet(seq_record.seq.upper(), DNA_ALPHABET):
         searchcontext = 'Wrong nucleotide sequence format. FASTA header and valid sequence required. Multiple entries not supported.'
-        #with open(log_file, 'a') as log:
-        #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Wrong sequence format.\n')
         return result, searchcontext, 0
     sequence = str(seq_record.seq)
     sequence_id = str(seq_record.id)
@@ -147,8 +141,6 @@ def run_nucleotide_search(params):
 
     if not sequence:
         searchcontext = 'Wrong sequence format. FASTA header and sequence required. Multiple entries not supported.'
-        #with open(log_file, 'a') as log:
-        #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Wrong sequence format.\n')
         return result, searchcontext, 0
     args = [
         'megablast',
@@ -159,14 +151,11 @@ def run_nucleotide_search(params):
         '-f', 'T',
         '-d', blast_db
         ]
-    #with open(log_file, 'a') as log:
-    #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Run megablast with args:\"'+ ' '.join(args) + '\"\n')
     with Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
         blastoutput, err = p.communicate(query.strip())
     if p.returncode != 0:
-        #with open(log_file, 'a') as log:
-        #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] megablast finished with error:\n'+ ' '.join(err) + '\n')
         searchcontext = 'Megablast finished with error:\n' + '\n'.join(err)
+        print('Megablast finished with error. Parameters:', params, '\n'.join(err))
         return result, searchcontext, 0
     for line in blastoutput.split('\n'):
         if line.startswith('#'):
@@ -179,8 +168,6 @@ def run_nucleotide_search(params):
         result.append('\t'.join(row))
     if not result:
         searchcontext = 'No hits found'
-    #with open(log_file, 'a') as log:
-    #    log.write('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] megablast finished. ' + str(len(result)) + ' hits found.\n')
     if len(result) > 100:
         result = result[:100]
     return result, searchcontext, query_len
