@@ -1615,7 +1615,8 @@ def export_fasta(request):
                 response.write('>' + obj.gene_id.locus_tag + '|' + obj.gene_id.genome.name + ' [' + obj.gene_id.genome.taxon.name + ']\n' + obj.gene_id.protein.sequence + '\n')
     else:
         for gene in object_list:
-            response.write('>' + gene.locus_tag + '|' + gene.genome.name + ' [' + gene.genome.taxon.name + ']\n' + gene.protein.sequence + '\n')
+            if gene.protein:
+                response.write('>' + gene.locus_tag + '|' + gene.genome.name + ' [' + gene.genome.taxon.name + ']\n' + gene.protein.sequence + '\n')
 
     return response
     
