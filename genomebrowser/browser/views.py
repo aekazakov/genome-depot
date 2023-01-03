@@ -149,7 +149,10 @@ class OperonListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        genome = Genome.objects.get(name = self.kwargs['genome'])
+        try:
+            genome = Genome.objects.get(name = self.kwargs['genome'])
+        except Genome.DoesNotExist:
+            raise Http404('Genome ' + self.kwargs['genome'] + ' does not exist')
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + self.request.GET.get('query') + '" in ' + genome.name + ' operons'
@@ -735,7 +738,7 @@ def genome_detail(request, name):
     try:
         genome = Genome.objects.get(name = name)
     except Genome.DoesNotExist:
-        raise Http404('Genome not found: ' + name)
+        raise Http404('Genome ' + name + ' does not exist')
     context = {'genome': genome}
     context['operons'] = Operon.objects.filter(genome=genome).count()
     context['sites'] = Site.objects.filter(genome=genome).count()
