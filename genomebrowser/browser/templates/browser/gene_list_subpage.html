@@ -48,17 +48,11 @@
 
 
     {% if searchcontext %}
+	<div class="align-center" id="waitbox">Please wait...</div>
 	<div class="align-center">
 	    <button type="button" id="ExportTabLink">Export list as tab-separated text</button>
 	    <button type="button" id="ExportFastaLink">Export proteins in FASTA format</button>
 	</div>
-	<div class="align-center">
-	    <p><a href="{% url 'export' %}?{{ request.META.QUERY_STRING }}" >Export gene list as tab-separated text file</a></p></p>
-	</div>
-	<div class="align-center">
-	    <p><a href="{% url 'exportfasta' %}?{{ request.META.QUERY_STRING }}">Export protein sequences as FASTA file</a></p></p>
-	</div>
-	
 	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 	<script>
 	    $('#ExportTabLink').on('click', function () {
@@ -92,7 +86,11 @@
 		    xhrFields: {
 			responseType: 'text'
 		    },
+		    beforeSend: function() {
+			$("#waitbox").show();
+		    },
 		    success: function (data) {
+			$("#waitbox").hide();
 			var a = document.createElement('a');
 			const blob = new Blob([data], {type: "octet/stream"});
 			var url = window.URL.createObjectURL(blob);
@@ -105,7 +103,6 @@
 		    }
 		});
 	    });	
-
 	    $('#ExportFastaLink').on('click', function () {
 		$.ajax({
 		    url: "{% url 'exportfasta' %}",
@@ -137,7 +134,11 @@
 		    xhrFields: {
 			responseType: 'text'
 		    },
+		    beforeSend: function() {
+			$("#waitbox").show();
+		    },
 		    success: function (data) {
+			$("#waitbox").hide();
 			var a = document.createElement('a');
 			const blob = new Blob([data], {type: "octet/stream"});
 			var url = window.URL.createObjectURL(blob);

@@ -1467,6 +1467,7 @@ def export_fasta(request):
     cog_query = request.GET.get('cog_query')
     go_query = request.GET.get('go_query')
     annotation_query = request.GET.get('annotation_query')
+
     if query:
         search_context = ('Query', query)
         if genome:
