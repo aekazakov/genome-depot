@@ -1264,11 +1264,6 @@ def export_csv(request):
     query = request.GET.get('query')
     genome = request.GET.get('genome')
 
-    # Sleep timer for testing to imitate long-running task
-    sleep_timer = 5
-    print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
-    time.sleep(sleep_timer)
-
     if annotation_query:
         search_context = ('Gene annotation query', annotation_query)
         if genome:
