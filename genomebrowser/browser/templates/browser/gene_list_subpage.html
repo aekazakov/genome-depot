@@ -1,4 +1,5 @@
 {% load my_tags %}
+{% load static %}
 {% if genelist %}
 			<div class="table-wrapper">
 				<table>
@@ -48,7 +49,7 @@
 
 
     {% if searchcontext %}
-	<div class="align-center" id="waitbox">Please wait...</div>
+	<div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
 	<div class="align-center">
 	    <button type="button" id="ExportTabLink">Export list as tab-separated text</button>
 	    <button type="button" id="ExportFastaLink">Export proteins in FASTA format</button>
@@ -63,24 +64,6 @@
 			"query": "{{ request.GET.query }}",
 			"type": "{{ request.GET.type }}",
 			"genome": "{{ request.GET.genome }}",
-			"og": "{{ request.GET.og }}",
-			"ko": "{{ request.GET.ko }}",
-			"kp": "{{ request.GET.kp }}",
-			"kr": "{{ request.GET.kr }}",
-			"ec": "{{ request.GET.ec }}",
-			"tc": "{{ request.GET.tc }}",
-			"cazy": "{{ request.GET.cazy }}",
-			"cog": "{{ request.GET.cog }}",
-			"go": "{{ request.GET.go }}",
-			"og_query": "{{ request.GET.og_query }}",
-			"ko_query": "{{ request.GET.ko_query }}",
-			"kp_query": "{{ request.GET.kp_query }}",
-			"kr_query": "{{ request.GET.kr_query }}",
-			"ec_query": "{{ request.GET.ec_query }}",
-			"tc_query": "{{ request.GET.tc_query }}",
-			"cazy_query": "{{ request.GET.cazy_query }}",
-			"cog_query": "{{ request.GET.cog_query }}",
-			"go_query": "{{ request.GET.go_query }}",
 			"annotation_query": "{{ request.GET.annotation_query }}"
 			},
 		    xhrFields: {
@@ -111,24 +94,6 @@
 			"query": "{{ request.GET.query }}",
 			"type": "{{ request.GET.type }}",
 			"genome": "{{ request.GET.genome }}",
-			"og": "{{ request.GET.og }}",
-			"ko": "{{ request.GET.ko }}",
-			"kp": "{{ request.GET.kp }}",
-			"kr": "{{ request.GET.kr }}",
-			"ec": "{{ request.GET.ec }}",
-			"tc": "{{ request.GET.tc }}",
-			"cazy": "{{ request.GET.cazy }}",
-			"cog": "{{ request.GET.cog }}",
-			"go": "{{ request.GET.go }}",
-			"og_query": "{{ request.GET.og_query }}",
-			"ko_query": "{{ request.GET.ko_query }}",
-			"kp_query": "{{ request.GET.kp_query }}",
-			"kr_query": "{{ request.GET.kr_query }}",
-			"ec_query": "{{ request.GET.ec_query }}",
-			"tc_query": "{{ request.GET.tc_query }}",
-			"cazy_query": "{{ request.GET.cazy_query }}",
-			"cog_query": "{{ request.GET.cog_query }}",
-			"go_query": "{{ request.GET.go_query }}",
 			"annotation_query": "{{ request.GET.annotation_query }}"
 			},
 		    xhrFields: {
