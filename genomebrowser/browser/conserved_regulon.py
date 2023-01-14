@@ -58,7 +58,7 @@ def build_conserved_regulon(og_id):
                 if eggnog_group is not None:
                     eggnogs[eggnog_group.id][regulon_label].append('<a href="' + reverse('genedetails', args=(gene.genome.name, gene.locus_tag)) + '" title="' + gene.locus_tag + '">')
                     eggnog_functions[eggnog_group.id][gene.function] = ''
-                    eggnog_labels[eggnog_group.id] = '<a href="' + reverse('searchgene') + "?og=" + str(eggnog_group.id) + '">' + eggnog_group.eggnog_id + '[' + eggnog_group.taxon.name + ']</a>'
+                    eggnog_labels[eggnog_group.id] = '<a href="' + reverse('searchgene') + "?type=og&query=" + str(eggnog_group.id) + '">' + eggnog_group.eggnog_id + '[' + eggnog_group.taxon.name + ']</a>'
                 else:
                     current_id = str(fake_id)
                     fake_id += 1
@@ -84,7 +84,7 @@ def build_conserved_regulon(og_id):
                     if eggnog_group is not None:
                         eggnogs[eggnog_group.id][regulon_label].append('<a href="' + reverse('genedetails', args=(gene.genome.name, gene.locus_tag)) + '" title="' + gene.locus_tag + '">')
                         eggnog_functions[eggnog_group.id][gene.function] = ''
-                        eggnog_labels[eggnog_group.id] = '<a href="' + reverse('searchgene') + "?og=" + str(eggnog_group.id) + '">' + eggnog_group.eggnog_id + '[' + eggnog_group.taxon.name + ']</a>'
+                        eggnog_labels[eggnog_group.id] = '<a href="' + reverse('searchgene') + "?type=og&query=" + str(eggnog_group.id) + '">' + eggnog_group.eggnog_id + '[' + eggnog_group.taxon.name + ']</a>'
                     else:
                         current_id = str(fake_id)
                         fake_id += 1

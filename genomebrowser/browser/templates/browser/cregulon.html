@@ -32,7 +32,7 @@
 				<h5>{{ regulator_og.eggnog_id }} [{{ regulator_og.taxon.name }}] </h5>
 			</div>
 		    <div class="content">
-				<h5><a href="{% url 'searchgene' %}?og={{ regulator_og.id }}">Show all genes in the group {{ regulator_og.eggnog_id }}[{{ regulator_og.taxon.name }}]</a></h5>
+				<h5><a href="{% url 'searchgene' %}?type=og&query={{ regulator_og.id }}">Show all genes in the group {{ regulator_og.eggnog_id }}[{{ regulator_og.taxon.name }}]</a></h5>
 			</div>
 			{% endif %}
 		</div>
