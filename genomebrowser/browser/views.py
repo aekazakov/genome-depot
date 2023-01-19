@@ -1511,6 +1511,8 @@ def generate_gene_search_context(query, query_type, genome=None):
     '''
     searchcontext = ''
     external = ''
+    if query is None:
+        query = ''
     if genome is None:
         if query_type=='gene':
             searchcontext = 'Search results for "' + query + '"'
