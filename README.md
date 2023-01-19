@@ -162,7 +162,7 @@ Now you would be able to open https://your.domain.name/mygenomes in a web browse
 - External ID (someting like "NCBI:GCF_000006945.2")
 
 
-2. Import genomes into database:
+2. Import genomes into database, if input files have been uploaded to the server:
 
 activate virtual environment (source /path/to/virtualenv/bin/activate)
 
@@ -170,22 +170,44 @@ cd cgcms/CGCMS/genomebrowser
 
 python manage.py import_genomes -i genomes.txt
 
+Input file 
 Depending on the number of genomes, this command may run from several hours to several days. After that, you should see the genomes on the web site.
 
+In the process of genome import, CGCMS annotation pipeline runs eggnog-mapper to generate EggNOG, KEGG, GO, EC, TC, CAZy and COG mappings for all proteins annotated in the input file. The pipeline predicts operons with POEM, maps Pfam domains with hmmsearch and generates functional annotations with several annotation tools. 
 
-3. Generate Pfam and TIGRFAM domain mappings (optional):
+
+## Genome import from admin panel
+
+Alternatively, genomes can be imported from admin panel. 
+
+Log into siteURL/admin with username and password you created during installation process.
+
+Click "Import genomes" button and follow the instructions on the page.
+
+
+# Other commands
+
+Note: activate virtual environment (source /path/to/virtualenv/bin/activate) before running any command, then change directory to cd cgcms/CGCMS/genomebrowser
+
+
+1. Command to re-create Pfam and TIGRFAM domain mappings:
 
 python manage.py update_domain_mappings -i genomes.txt
 
 
-4. If have any plug-ins configured, generate additional annotations (optional):
+2. Command to generate functional annotations (if annotation pipeline failed or you added a new tool):
 
 python manage.py update_annotations -i genomes.txt
 
+3. Command to export genomes with CGCMS annotations in genbank format
 
-## TODO: Genome import from the admin interface
+python manage.py export_genomes -g <comma-separated list of genome names> -o <output directory>
 
+4. Command to import regulon data
 
+python manage.py add_regulons -i <path to input file>
+
+The input file for this command is a tab-separated text file with 
 
 
 # Image Credits

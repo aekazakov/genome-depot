@@ -10,6 +10,7 @@ from pathlib import Path
 from Bio import GenBank
 from Bio import Entrez
 from Bio import SeqIO
+from Bio import SeqFeature
 from subprocess import Popen, PIPE, CalledProcessError
 
 from django.db import connection
@@ -1676,9 +1677,13 @@ class Importer(object):
         for genome_id in genome_ids:
             with gzip.open(os.path.join(out_dir, genome_id + '.gbff.gz'), 'wt') as outfile:
                 genome = Genome.objects.get(name = genome_id)
-                genedata = autovivify(2, list)
+                genedata = autovivify(2, list) # Put genes here genedata[contig_id][gene_id] = list of notes
+                operondata = defaultdict(dict) # Put operons here operondata[contig_id][gene_id] = (name, start, end, strand)
+                sitedata = autovivify(2, list) # Put sites here operondata[contig_id][gene_id] = list of (regulon, regulator, start, end, strand)
                 for contig_id in list(Contig.objects.values_list('contig_id', flat=True).filter(genome__name=genome_id)):
-                    for gene in Gene.objects.select_related('protein').prefetch_related('protein__ortholog_groups', 'protein__ortholog_groups__taxon', 'protein__kegg_orthologs', 'protein__kegg_pathways', 'protein__kegg_reactions', 'protein__ec_numbers', 'protein__go_terms', 'protein__tc_families', 'protein__cog_classes', 'protein__cazy_families').filter(genome__name=genome_id, contig__contig_id=contig_id):
+                    operons_seen = {}
+                    sites_seen = set()
+                    for gene in Gene.objects.select_related('protein', 'operon').prefetch_related('protein__ortholog_groups', 'protein__ortholog_groups__taxon', 'protein__kegg_orthologs', 'protein__kegg_pathways', 'protein__kegg_reactions', 'protein__ec_numbers', 'protein__go_terms', 'protein__tc_families', 'protein__cog_classes', 'protein__cazy_families').filter(genome__name=genome_id, contig__contig_id=contig_id):
                         if gene.protein:
                             for item in gene.protein.ortholog_groups.all():
                                 genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] EGGNOG5:' + item.eggnog_id + '[' + item.taxon.name + ']')
@@ -1691,7 +1696,7 @@ class Importer(object):
                             for item in gene.protein.ec_numbers.all():
                                 genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] EC:' + item.ec_number)
                             for item in gene.protein.go_terms.all():
-                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] GO:' + item.go_id)
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] ' + item.go_id)
                             for item in gene.protein.tc_families.all():
                                 genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] TC:' + item.tc_id)
                             for item in gene.protein.cog_classes.all():
@@ -1705,6 +1710,30 @@ class Importer(object):
                                 genedata[contig_id][gene.locus_tag].append('[CGCMS/hmmsearch] TIGRFAM:' + annotation.value)
                             else:
                                 genedata[contig_id][gene.locus_tag].append('[CGCMS/' + annotation.source + '] ' + annotation.source + ':' + annotation.value)
+                        if gene.operon:
+                            if gene.operon.id not in operons_seen:
+                                operondata[contig_id][gene.locus_tag] = (gene.operon.name, gene.operon.start, gene.operon.end, gene.operon.strand)
+                                operons_seen[gene.operon.id] = gene.locus_tag
+                    sites = Site.objects.filter(genome__name=genome_id, contig__contig_id=contig_id).prefetch_related('operons', 'genes', 'regulon__regulators').select_related('regulon')
+                    for site in sites:
+                        if site.id not in sites_seen:
+                            if site.genes:
+                                for gene in site.genes.all()[:1]:
+                                    for regulator in site.regulon.regulators.all():
+                                        sitedata[contig_id][gene.locus_tag].append((site.regulon.name, regulator.locus_tag, site.start, site.end, site.strand))
+                                        sites_seen.add(site.id)
+                            elif site.operons:
+                                for operon in site.operons.all()[:1]:
+                                    if operon.id in operons_seen:
+                                        if site.regulon.regulators:
+                                            for regulator in site.regulon.regulators.all():
+                                                sitedata[contig_id][operons_seen[operon.id]].append((site.regulon.name, regulator.locus_tag, site.start, site.end, site.strand))
+                                                sites_seen.add(site.id)
+                                        else:
+                                            sitedata[contig_id][operons_seen[operon.id]].append((site.regulon.name, 'unknown regulator', site.start, site.end, site.strand))
+                                            sites_seen.add(site.id)
+                                            
+                                         
                 genome_file = genome.gbk_filepath
                 if genome_file.endswith('.gz'):
                     fh = gzip.open(genome_file, 'rt')
@@ -1720,13 +1749,30 @@ class Importer(object):
                                 try:
                                     gene_id = feature.qualifiers['locus_tag'][0]
                                 except KeyError:
-                                    gene_id = '_'.join([accession, str(feature.location.start + 1), str(feature.location.end), str(feature.location.strand)])
+                                    feature_start = str(feature.location.start + 1)
+                                    if feature_start.startswith('>') or feature_start.startswith('<'):
+                                        feature_start = feature_start[1:]
+                                    gene_id = '_'.join([accession, feature_start, str(feature.location.end), str(feature.location.strand)])
                                     print('Using', gene_id, 'instead of locus tag')
                                 if gene_id in genedata[accession]:
                                     if 'note' not in feature.qualifiers:
                                         feature.qualifiers['note'] = []
                                     for ref in genedata[accession][gene_id]:
                                         feature.qualifiers['note'].append(ref)
+                    if accession in operondata:
+                        for gene_id, operon in operondata[accession].items():
+                            operon_feature = SeqFeature.SeqFeature(SeqFeature.FeatureLocation(operon[1], operon[2], strand=operon[3]), type='operon', id=operon[0])
+                            operon_feature.strand = operon_feature.location.strand
+                            operon_feature.qualifiers['operon'] = []
+                            operon_feature.qualifiers['operon'].append(operon[0])
+                            seq_record.features.append(operon_feature)
+                    if accession in sitedata:
+                        for gene_id, site_items in sitedata[accession].items():
+                            for site in site_items:
+                                site_feature = SeqFeature.SeqFeature(SeqFeature.FeatureLocation(site[2], site[3], strand=site[4]), type='site', id=site[0] + '_site_at_' + gene_id)
+                            site_feature.strand = site_feature.location.strand
+                            site_feature.qualifiers['note'].append('Regulon ' + site[0] + '. Binding site of ' + site[1])
+                            seq_record.features.append(site_feature)
                     SeqIO.write(seq_record, outfile, 'genbank')
             print(genome_id, 'exported')
         
