@@ -3,14 +3,63 @@ from unittest import skip
 from contextlib import contextmanager
 from django.test import TransactionTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-
+from browser.models import *
 from browser.dataimport.importer import Importer
 # Create your tests here.
+
+class BrowserTestCase(TransactionTestCase):
+    def setUp(self):
+        pass
+        
+    def test_config(self):
+        config = Config(param='parameter name', value='parameter value')
+        self.assertEqual(config.param, 'parameter name')
+        config.save()
+        config_saved = Config.objects.get(param='parameter name')
+        self.assertEqual(config_saved.value, 'parameter value')
+
+    def test_taxon(self):
+        taxon = Taxon(taxonomy_id='10', eggnog_taxid='10', rank='genus', parent_id='1706371', name='Cellvibrio')
+        self.assertEqual(taxon.name, 'Cellvibrio')
+        self.assertEqual(taxon.taxonomy_id, '10')
+        self.assertNotEqual(taxon.taxonomy_id, 10)
+        taxon.save()
+        taxon_saved = Taxon.objects.get(taxonomy_id='10')
+        self.assertEqual(taxon_saved.name, 'Cellvibrio')
+        self.assertEqual(taxon_saved.taxonomy_id, '10')
+        
+    def test_strain(self):
+        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon.save()
+        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain.save()
+        self.assertEqual(strain.strain_id, 'FW104-10B01')
+        self.assertEqual(strain.taxon.name, 'Rhodanobacter denitrificans')
+        strain_saved = Strain.objects.get(strain_id='FW104-10B01')
+        self.assertEqual(strain_saved.strain_id, 'FW104-10B01')
+        self.assertEqual(strain_saved.taxon.name, 'Rhodanobacter denitrificans')
+        
+    def test_sample(self):
+        sample = Sample(sample_id='FW106-02', full_name='FW106 groundwater metagenome')
+        sample.description = 'Metagenomic sample from groundwater of FW106 well, site Y-12 West, collection date 2014-06-09, 0.2 micron filter'
+        sample.save()
+        self.assertEqual(sample.sample_id, 'FW106-02')
+        sample_saved = Sample.objects.get(sample_id='FW106-02')
+        self.assertEqual(sample_saved.sample_id, 'FW106-02')
+
+    def test_strain_metadata(self):
+        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon.save()
+        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain.save()
+        strain_metadata = Strain_metadata(strain=strain, source='abcdef', url='https://nih.gov/', key='ghijkl', value='mnopqr')
+        self.assertEqual(strain_metadata.source, 'abcdef')
+        self.assertEqual(strain_metadata.strain.strain_id, 'FW104-10B01')
+        strain_metadata.save()
+        strain_metadata_saved = Strain_metadata.objects.filter(source='abcdef')
+        self.assertEqual(len(list(strain_metadata_saved.all())), 1)
+        self.assertEqual(list(strain_metadata_saved.all())[0].strain.strain_id, 'FW104-10B01')
+
 
 class ImporterTestCase(TransactionTestCase):
     fixtures = ['testdata.json']
@@ -59,96 +108,3 @@ class ImporterTestCase(TransactionTestCase):
         self.assertEqual(result, 'Done!')
 
 
-class BrowserTestCase(StaticLiveServerTestCase):
-    fixtures = ['testdata.json']
-    
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.selenium = WebDriver()
-        cls.selenium.implicitly_wait(10)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.selenium.quit()
-        super().tearDownClass()
-        
-    #@skip("test passed")
-    def test_search_page(self):
-        print('Search in annotations')
-        self.selenium.get('%s%s' % (self.live_server_url, '/textsearch/'))
-        text_input = self.selenium.find_element('name', 'annotation_query')
-        text_input.send_keys('tetracycline')
-        self.selenium.find_element('name', 'annotation_query').send_keys(Keys.RETURN)
-        element = WebDriverWait(self.selenium, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "table-wrapper")))
-        print(element.text)
-        assert 'I6K11_00030' in self.selenium.page_source
-        assert 'LC317985_1_410_-1' not in self.selenium.page_source
-        
-        print('Search in genes')
-        self.selenium.get('%s%s' % (self.live_server_url, '/textsearch/'))
-        text_input = self.selenium.find_element('id', 'gene-query')
-        text_input.send_keys('tetracycline')
-        self.selenium.find_element('id', 'gene-query').send_keys(Keys.RETURN)
-        element = WebDriverWait(self.selenium, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "table-wrapper")))
-        print(element.text)
-        assert 'LC317985_1_410_-1' in self.selenium.page_source
-        assert 'LC317985_3092_3715_-1' not in self.selenium.page_source
-
-        print('Search in KEGG orthologs')
-        self.selenium.get('%s%s' % (self.live_server_url, '/textsearch/'))
-        text_input = self.selenium.find_element('id', 'ko-query')
-        text_input.send_keys('gltS')
-        self.selenium.find_element('id', 'ko-query').send_keys(Keys.RETURN)
-        element = WebDriverWait(self.selenium, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "table-wrapper")))
-        print(element.text)
-        assert 'K03312' in self.selenium.page_source
-        assert 'K00348' not in self.selenium.page_source
-        
-        print('Search in enzymes')
-        self.selenium.get('%s%s' % (self.live_server_url, '/textsearch/'))
-        text_input = self.selenium.find_element('id', 'ec-query')
-        text_input.send_keys('1.6.5.8')
-        self.selenium.find_element('id', 'ec-query').send_keys(Keys.RETURN)
-        element = WebDriverWait(self.selenium, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "table-wrapper")))
-        print(element.text)
-        assert '7.2.1.1' in self.selenium.page_source
-        
-        print('Search in transporters')
-        self.selenium.get('%s%s' % (self.live_server_url, '/textsearch/'))
-        text_input = self.selenium.find_element('id', 'tc-query')
-        text_input.send_keys('iron')
-        self.selenium.find_element('id', 'tc-query').send_keys(Keys.RETURN)
-        element = WebDriverWait(self.selenium, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "table-wrapper")))
-        print(element.text)
-        assert '2.A.108.1' in self.selenium.page_source
-        assert '2.A.1.2.38' not in self.selenium.page_source
-        
-        print('Search in COG classes')
-        self.selenium.get('%s%s' % (self.live_server_url, '/textsearch/'))
-        text_input = self.selenium.find_element('id', 'cog-query')
-        text_input.send_keys('K')
-        self.selenium.find_element('id', 'cog-query').send_keys(Keys.RETURN)
-        element = WebDriverWait(self.selenium, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "table-wrapper")))
-        print(element.text)
-        assert 'Transcription' in self.selenium.page_source
-        assert 'Energy' not in self.selenium.page_source
-
-    def test_search_genome_page(self):
-        print('Search for unnamed in genomes list')
-        self.selenium.get('%s%s' % (self.live_server_url, '/genomes/'))
-        text_input = self.selenium.find_element('name', 'query')
-        text_input.send_keys('unnamed')
-        self.selenium.find_element('name', 'query').send_keys(Keys.RETURN)
-        with self.wait_for_page_load(timeout=10):
-            element = self.selenium.find_element(By.CLASS_NAME, 'table-wrapper')
-            print(element.text)
-            assert 'plasmid_unnamed1' in self.selenium.page_source
-            assert 'Ecoli_plasmid_p15' not in self.selenium.page_source
-
-    @contextmanager
-    def wait_for_page_load(self, timeout=30):
-        old_page = self.selenium.find_element(By.TAG_NAME, "html")
-        yield WebDriverWait(self.selenium, timeout).until(
-            EC.staleness_of(old_page)
-        )

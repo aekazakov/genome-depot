@@ -207,7 +207,27 @@ python manage.py export_genomes -g <comma-separated list of genome names> -o <ou
 
 python manage.py add_regulons -i <path to input file>
 
-The input file for this command is a tab-separated text file with 
+The input file for this command is a tab-separated text file with nine columns:
+
+- regulon name
+
+- genome name
+
+- locus tag of regulator 
+
+- locus tag of target gene 
+
+- contig id
+
+- site start
+
+- site end
+
+- site strand (1 or -1)
+
+- site sequence
+
+
 
 
 # Image Credits
