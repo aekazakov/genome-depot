@@ -1761,7 +1761,7 @@ class Importer(object):
                                         feature.qualifiers['note'].append(ref)
                     if accession in operondata:
                         for gene_id, operon in operondata[accession].items():
-                            operon_feature = SeqFeature.SeqFeature(SeqFeature.FeatureLocation(operon[1], operon[2], strand=operon[3]), type='operon', id=operon[0])
+                            operon_feature = SeqFeature.SeqFeature(SeqFeature.FeatureLocation(operon[1] - 1, operon[2], strand=operon[3]), type='operon', id=operon[0])
                             operon_feature.strand = operon_feature.location.strand
                             operon_feature.qualifiers['operon'] = []
                             operon_feature.qualifiers['operon'].append(operon[0])
@@ -1769,7 +1769,7 @@ class Importer(object):
                     if accession in sitedata:
                         for gene_id, site_items in sitedata[accession].items():
                             for site in site_items:
-                                site_feature = SeqFeature.SeqFeature(SeqFeature.FeatureLocation(site[2], site[3], strand=site[4]), type='site', id=site[0] + '_site_at_' + gene_id)
+                                site_feature = SeqFeature.SeqFeature(SeqFeature.FeatureLocation(site[2] - 1, site[3], strand=site[4]), type='site', id=site[0] + '_site_at_' + gene_id)
                             site_feature.strand = site_feature.location.strand
                             site_feature.qualifiers['note'].append('Regulon ' + site[0] + '. Binding site of ' + site[1])
                             seq_record.features.append(site_feature)
