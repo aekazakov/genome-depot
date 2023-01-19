@@ -9,6 +9,7 @@ from collections import defaultdict, OrderedDict
 from pathlib import Path
 from Bio import GenBank
 from Bio import Entrez
+from Bio import SeqIO
 from subprocess import Popen, PIPE, CalledProcessError
 
 from django.db import connection
@@ -34,18 +35,13 @@ class Importer(object):
 
     def __init__(self):
         self.config = {}
-        self.read_config() # configparser.ConfigParser()
-        #print(self.config['Taxonomy']['names_file'])
+        self.read_config()
         self.inputgenomes = defaultdict(dict)
         self.staticfiles = defaultdict(list)
         self.taxonomy, self.taxonomy_id_lookup, self.eggnog_taxonomy_lookup = load_taxonomy(self.config['ref.taxonomy'], self.config['cgcms.eggnog_taxonomy'])
         #self.taxonomy_id_lookup = {}
         self.protein_hash2id = {}
         self.protein_hash2gene = defaultdict(list)
-#        self.load_taxonomy()
-#        if not os.path.exists(self.config['genomes.eggnog_output_stored']):
-#            with open(self.config['genomes.eggnog_output_stored'], 'w') as outfile:
-#                outfile.write('')
         self.eggnog_input_file = os.path.join(self.config['cgcms.temp_dir'], 'eggnog_mapper_input.faa')
         if os.path.exists(self.eggnog_input_file):
             os.remove(self.eggnog_input_file)
@@ -1670,7 +1666,70 @@ class Importer(object):
         self.copy_static_files()
         self.create_search_databases()
         self.cleanup()
-
+        
+    def export_genomes(self, out_dir, genome_ids = []):
+        '''
+            Exports genomes as genbank files
+        '''
+        if not genome_ids:
+            genome_ids = list(Genome.objects.values_list('name', flat=True).distinct())
+        for genome_id in genome_ids:
+            with gzip.open(os.path.join(out_dir, genome_id + '.gbff.gz'), 'wt') as outfile:
+                genome = Genome.objects.get(name = genome_id)
+                genedata = autovivify(2, list)
+                for contig_id in list(Contig.objects.values_list('contig_id', flat=True).filter(genome__name=genome_id)):
+                    for gene in Gene.objects.select_related('protein').prefetch_related('protein__ortholog_groups', 'protein__ortholog_groups__taxon', 'protein__kegg_orthologs', 'protein__kegg_pathways', 'protein__kegg_reactions', 'protein__ec_numbers', 'protein__go_terms', 'protein__tc_families', 'protein__cog_classes', 'protein__cazy_families').filter(genome__name=genome_id, contig__contig_id=contig_id):
+                        if gene.protein:
+                            for item in gene.protein.ortholog_groups.all():
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] EGGNOG5:' + item.eggnog_id + '[' + item.taxon.name + ']')
+                            for item in gene.protein.kegg_orthologs.all():
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] KEGG:' + item.kegg_id)
+                            for item in gene.protein.kegg_pathways.all():
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] KEGG:' + item.kegg_id)
+                            for item in gene.protein.kegg_reactions.all():
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] KEGG:' + item.kegg_id)
+                            for item in gene.protein.ec_numbers.all():
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] EC:' + item.ec_number)
+                            for item in gene.protein.go_terms.all():
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] GO:' + item.go_id)
+                            for item in gene.protein.tc_families.all():
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] TC:' + item.tc_id)
+                            for item in gene.protein.cog_classes.all():
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] COG:' + item.cog_id)
+                            for item in gene.protein.cazy_families.all():
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/eggnog-mapper] CAZy:' + item.cazy_id)
+                        for annotation in Annotation.objects.filter(gene_id=gene):
+                            if annotation.source.startswith('Pfam '):
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/hmmsearch] Pfam:' + annotation.value)
+                            elif annotation.source.startswith('TIGRFAM'):
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/hmmsearch] TIGRFAM:' + annotation.value)
+                            else:
+                                genedata[contig_id][gene.locus_tag].append('[CGCMS/' + annotation.source + '] ' + annotation.source + ':' + annotation.value)
+                genome_file = genome.gbk_filepath
+                if genome_file.endswith('.gz'):
+                    fh = gzip.open(genome_file, 'rt')
+                else:
+                    fh = open(genome_file, 'r')
+                for seq_record in SeqIO.parse(fh, "genbank"):
+                    accession = seq_record.id
+                    if '.' in accession:
+                        accession = accession.split('.')[0]
+                    if accession in genedata:
+                        for feature in seq_record.features:
+                            if feature.type == 'CDS':
+                                try:
+                                    gene_id = feature.qualifiers['locus_tag'][0]
+                                except KeyError:
+                                    gene_id = '_'.join([accession, str(feature.location.start + 1), str(feature.location.end), str(feature.location.strand)])
+                                    print('Using', gene_id, 'instead of locus tag')
+                                if gene_id in genedata[accession]:
+                                    if 'note' not in feature.qualifiers:
+                                        feature.qualifiers['note'] = []
+                                    for ref in genedata[accession][gene_id]:
+                                        feature.qualifiers['note'].append(ref)
+                    SeqIO.write(seq_record, outfile, 'genbank')
+            print(genome_id, 'exported')
+        
 
 def download_ncbi_assembly(assembly_id, email, upload_dir):
     """Download genbank assemblies for a given search term.
@@ -1699,3 +1758,6 @@ def download_ncbi_assembly(assembly_id, email, upload_dir):
     urllib.request.urlretrieve(link, filename=outfile)
     return outfile
     
+def autovivify(levels=1, final=dict):
+    return (defaultdict(final) if levels < 2 else
+            defaultdict(lambda: autovivify(levels - 1, final)))
