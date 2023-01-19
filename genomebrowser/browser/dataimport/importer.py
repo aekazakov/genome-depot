@@ -1773,6 +1773,7 @@ class Importer(object):
                             site_feature.strand = site_feature.location.strand
                             site_feature.qualifiers['note'].append('Regulon ' + site[0] + '. Binding site of ' + site[1])
                             seq_record.features.append(site_feature)
+                    seq_record.features = sorted(seq_record.features, key=lambda x: x.location.start)
                     SeqIO.write(seq_record, outfile, 'genbank')
             print(genome_id, 'exported')
         
