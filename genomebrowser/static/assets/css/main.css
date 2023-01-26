@@ -3121,8 +3121,12 @@
 			position: relative;
 		}
 
-			.wrapper.style3 input, .wrapper.style3 select, .wrapper.style3 textarea {
+			.wrapper.style3 input, .wrapper.style3 textarea {
 				color: #ffffff;
+			}
+
+			.wrapper.style3 select {
+				color: #999999;
 			}
 
 			.wrapper.style3.light input, .wrapper.style3.light select, .wrapper.style3.light textarea {
