@@ -1597,7 +1597,7 @@ def generate_external_link(query, query_type, genome=None):
                 kegg_map_url = 'https://www.kegg.jp/pathway/' + kp_ids[0]['kegg_id'] + '+'
                 print(kegg_map_url)
                 ko_ids = set()
-                for gene in object_list:
+                for gene in gene_list:
                     for ko in gene.protein.kegg_orthologs.all():
                         ko_ids.add(ko.kegg_id)
                 if ko_ids:
