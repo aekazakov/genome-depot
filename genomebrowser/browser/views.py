@@ -259,12 +259,10 @@ class GeneSearchResultsSubView(generic.ListView):
         '''
         context = super(GeneSearchResultsSubView,self).get_context_data(**kwargs)
         if self.request.GET.get('genome'):
-            searchcontext, external = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'), self.request.GET.get('genome'))
+            searchcontext = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'), self.request.GET.get('genome'))
         else:
-            searchcontext, external = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'))
+            searchcontext = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'))
         context['searchcontext'] = searchcontext
-        if external != '':
-            context['external'] = external
         return context
 
     def get_queryset(self):
@@ -351,17 +349,6 @@ class GeneSearchResultsSubView(generic.ListView):
                 ).values('kegg_id')
                 proteins = [item['protein_hash'] for item in Protein.objects.filter(kegg_pathways__kegg_id__in=kp_ids).values('protein_hash')]
                 object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon', 'protein').prefetch_related('protein__kegg_orthologs')
-                self.kegg_map_url = None
-                if kp_ids.count() == 1:
-                    print(kp_ids[0]['kegg_id'])
-                    kegg_map_url = 'https://www.kegg.jp/pathway/' + kp_ids[0]['kegg_id'] + '+'
-                    print(kegg_map_url)
-                    ko_ids = set()
-                    for gene in object_list:
-                        for ko in gene.protein.kegg_orthologs.all():
-                            ko_ids.add(ko.kegg_id)
-                    if ko_ids:
-                        self.kegg_map_url = kegg_map_url + '+'.join(sorted(list(ko_ids)))
             elif query_type == 'kr':
                 kr_ids = Kegg_reaction.objects.filter(
                     Q(kegg_id__icontains=query) | Q(description__icontains=query)
@@ -415,12 +402,10 @@ class GeneSearchResultsAjaxView(View):
         '''
         context = {}
         if self.request.GET.get('genome'):
-            searchcontext, external = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'), self.request.GET.get('genome'))
+            searchcontext = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'), self.request.GET.get('genome'))
         else:
-            searchcontext, external = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'))
+            searchcontext = generate_gene_search_context(self.request.GET.get('query'), self.request.GET.get('type'))
         context['searchcontext'] = searchcontext
-        if external != '':
-            context['external'] = external
 
         # copy request paramters into context
         for key, val in request.GET.items():
@@ -446,10 +431,17 @@ class GeneSearchResultsAjaxView(View):
         sub_view.setup(request)
         sub_response = sub_view.dispatch(request)
         sub_response.render()
+
         if request.GET.get('genome'):
             context['searchcontext'] = generate_gene_search_context(request.GET.get('query'), request.GET.get('type'), request.GET.get('genome'))
+            external = generate_external_link(request.GET.get('query'), request.GET.get('type'), request.GET.get('genome'))
         else:
             context['searchcontext'] = generate_gene_search_context(request.GET.get('query'), request.GET.get('type'))
+            external = generate_external_link(request.GET.get('query'), request.GET.get('type'))
+
+        if external != '':
+            context['external'] = external
+
         context['searchresult'] = sub_response.content.decode('utf-8')
         context['time'] = time.time()-start_time
         data = json.dumps(context)
@@ -1510,7 +1502,6 @@ def generate_gene_search_context(query, query_type, genome=None):
         Generates search context string and external link for various query types
     '''
     searchcontext = ''
-    external = ''
     if query is None:
         query = ''
     if genome is None:
@@ -1521,28 +1512,20 @@ def generate_gene_search_context(query, query_type, genome=None):
             searchcontext = 'Genes from Ortholog Group ' + eggnog_og.eggnog_id + '[' + eggnog_og.taxon.name + ']'
         elif query_type=='ko_id':
             searchcontext = 'Genes from KEGG Ortholog Group ' + query
-            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
         elif query_type=='kp_id':
             searchcontext = 'Genes from KEGG pathway ' + query
-            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
         elif query_type=='kr_id':
             searchcontext = 'Genes from KEGG reaction ' + query
-            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
         elif query_type=='ec_id':
             searchcontext = 'Genes with EC number ' + query
-            external = 'https://www.kegg.jp/dbget-bin/www_bget?ec:' + query
         elif query_type=='tc_id':
             searchcontext = 'Genes from TCDB family ' + query
-            external = 'http://www.tcdb.org/search/result.php?tc=' + query + '#' + query
         elif query_type=='cazy_id':
             searchcontext = 'Genes from CAZy family ' + query
-            external = 'http://www.cazy.org/' + query + '.html'
         elif query_type=='cog_id':
             searchcontext = 'Genes from COG class ' + query
-            external = 'https://ftp.ncbi.nih.gov/pub/COG/COG2014/static/lists/list' + query + '.html'
         elif query_type=='go_id':
             searchcontext = 'Genes assigned to GO term ' + query
-            external = 'https://www.ebi.ac.uk/QuickGO/search/' + query
         elif query_type=='ko':
             searchcontext = 'Genes assigned to KEGG Ortholog groups containing "' + query + '"'
         elif query_type=='kp':
@@ -1578,4 +1561,49 @@ def generate_gene_search_context(query, query_type, genome=None):
             searchcontext = 'Genes from genome ' + genome + ' assigned to GO terms containing "' + query + '"'
         elif query_type=='gene':
             searchcontext = 'Genes from genome ' + genome
-    return searchcontext, external
+    return searchcontext
+
+def generate_external_link(query, query_type, genome=None):
+    '''
+        Generates search context string and external link for various query types
+    '''
+    external = ''
+    if query is None:
+        query = ''
+    if genome is None:
+        if query_type=='ko_id':
+            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
+        elif query_type=='kp_id':
+            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
+        elif query_type=='kr_id':
+            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
+        elif query_type=='ec_id':
+            external = 'https://www.kegg.jp/dbget-bin/www_bget?ec:' + query
+        elif query_type=='tc_id':
+            external = 'http://www.tcdb.org/search/result.php?tc=' + query + '#' + query
+        elif query_type=='cazy_id':
+            external = 'http://www.cazy.org/' + query + '.html'
+        elif query_type=='cog_id':
+            external = 'https://ftp.ncbi.nih.gov/pub/COG/COG2014/static/lists/list' + query + '.html'
+        elif query_type=='go_id':
+            external = 'https://www.ebi.ac.uk/QuickGO/search/' + query
+    else:
+        if query_type=='kp':
+            kp_ids = Kegg_pathway.objects.filter(Q(kegg_id__icontains=query) | Q(description__icontains=query)).values('kegg_id')
+            ext_kegg_map_url = ''
+            if kp_ids.count() == 1:
+                gene_list = Gene.objects.filter(genome__name=genome, protein__kegg_pathways__kegg_id__in=kp_ids).select_related('protein').prefetch_related('protein__kegg_orthologs')
+                print(kp_ids[0]['kegg_id'])
+                kegg_map_url = 'https://www.kegg.jp/pathway/' + kp_ids[0]['kegg_id'] + '+'
+                print(kegg_map_url)
+                ko_ids = set()
+                for gene in object_list:
+                    for ko in gene.protein.kegg_orthologs.all():
+                        ko_ids.add(ko.kegg_id)
+                if ko_ids:
+                    ext_kegg_map_url = kegg_map_url + '+'.join(sorted(list(ko_ids)))
+            if ext_kegg_map_url != '':
+                external = ext_kegg_map_url
+    if external != '':
+        external = '<a href="' + external + '">External link</a>'
+    return external

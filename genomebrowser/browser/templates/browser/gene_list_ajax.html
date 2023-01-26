@@ -15,6 +15,7 @@
 				<header class="align-center">
 			{% if searchcontext %}
 			    <h4>{{ searchcontext }}</h4>
+			    <p id="external"></p>
 			{% else %}
 			    <form action="{% url 'searchgene' %}" method="get">
 			      <input name="query" type="text" placeholder="Quick search by gene name or locus tag...">
@@ -40,6 +41,7 @@
             $('#run-time').append(data["time"].toFixed(2) + ' seconds')
             $('#searchresult').append(data["searchresult"])
             $('#searchcontext').append(data["searchcontext"])
+            $('#external').append(data["external"])
             $('#search-result-area').show();
         }).fail(function(data){
             $('#loading-bar-area').remove();
