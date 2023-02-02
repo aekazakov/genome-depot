@@ -48,7 +48,7 @@
 		    <div class="content">
 			<h5>Size: {{ genome.size }} bp</h5>
 			<h5>Contigs: {{ genome.contigs }}</h5>
-			<h5>Genes: <a href="{% url 'searchgene' %}?genome={{ genome.name }}">{{ genome.genes }} (click to open list)</a></h5>
+			<h5>Genes: <a href="{% url 'searchgene' %}?genome={{ genome.name }}&type=gene">{{ genome.genes }} (click to open list)</a></h5>
 			<h5>Operons: <a href="{% url 'operonlist' genome=genome.name %}">{{ operons }} (click to open list)</a></h5>
 		    {%if sites %}
 			<h5>Sites: <a href="{% url 'sitelist' genome=genome.name %}">{{ sites }} (click to open list)</a></h5>

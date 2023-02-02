@@ -1361,6 +1361,10 @@ def export_csv(request):
         writer.writerow(['Locus tag', 'Name', 'Organism', 'Genome', 'Contig', 'Start', 'End', 'Strand', 'Type', 'Function', 'Annotation_source', 'Annotation_type', 'Annotation_note'])
         for obj in object_list:
             writer.writerow([obj.gene_id.locus_tag, obj.gene_id.name, obj.gene_id.genome.taxon.name, obj.gene_id.genome.name, obj.gene_id.contig.contig_id, str(obj.gene_id.start), str(obj.gene_id.end), str(obj.gene_id.strand), obj.gene_id.type, obj.gene_id.function, obj.source, obj.key, obj.value, obj.note])
+    elif search_context[0] == 'Genome':
+        writer.writerow(['Locus tag', 'Name', 'Organism', 'Genome', 'Contig', 'Start', 'End', 'Strand', 'Type', 'Function'])
+        for gene in object_list:
+            writer.writerow([gene.locus_tag, gene.name, gene.genome.taxon.name, gene.genome.name, gene.contig.contig_id, str(gene.start), str(gene.end), str(gene.strand), gene.type, gene.function])
     else:
         writer.writerow(['Locus tag', 'Name', 'Organism', 'Genome', 'Contig', 'Start', 'End', 'Strand', 'Type', 'Function', search_context[0]])
         for gene in object_list:
