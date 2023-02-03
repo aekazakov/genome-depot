@@ -14,6 +14,7 @@ from Bio import SeqFeature
 from subprocess import Popen, PIPE, CalledProcessError
 
 from django.db import connection
+from django.db.models import Q
 from django.utils import timezone
 
 from browser.models import *
@@ -657,7 +658,8 @@ class Importer(object):
     def parse_eggnog_output(self, eggnog_outfile):
         """Reads eggnog-mapper output. Returns new eggnog annotations to be added into permanent storage"""
         result = []
-        existing_eggnog_annotations = set(Protein.objects.exclude(ortholog_groups=None).values_list('protein_hash', flat=True))
+        #existing_eggnog_annotations = set(Protein.objects.exclude(ortholog_groups=None).values_list('protein_hash', flat=True))
+        existing_eggnog_annotations = Protein.objects.filter(~Q(ortholog_groups=None)).values_list('protein_hash', flat=True)
         
 #        with open(self.config['genomes.eggnog_output_stored'], 'r') as infile:
 #            for line in infile:

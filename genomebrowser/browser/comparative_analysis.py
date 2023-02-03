@@ -67,7 +67,7 @@ def autovivify(levels=1, final=dict):
             defaultdict(lambda: autovivify(levels - 1, final)))
 
 
-def get_color(index):
+def _get_color(index):
     color_index = index%len(COLORS)
     light_color = []
     for rgb_val in COLORS[color_index]:
@@ -80,17 +80,17 @@ def get_color(index):
     return color
     
     
-def get_gradients():
-    gradients = ['setColorGradient(\'rgb(204, 193, 208)\', \'rgb(96, 74, 123)\')',
-        'setColorGradient(\'rgb(122, 145, 198)\', \'rgb(144, 171, 234)\',\'rgb(228,230,255)\',\'rgb(144, 171, 234)\', \'rgb(122, 145, 198)\')',
-        'setColorGradient(\'rgb(215, 228, 189)\', \'rgb(119, 147, 60)\')',
-        'setColorGradient(\'rgb(252, 213, 181)\', \'rgb(228, 108, 10)\')',
-        'setColorGradient(\'rgb(255, 189, 192)\', \'rgb(255, 0, 0)\')',
-        'setColorGradient(\'rgb(232, 227, 155)\', \'rgb(255, 0, 0)\')',
-        'setColorGradient(\'rgb(217, 217, 217)\', \'rgb(38, 38, 38)\')'
-        ]
+#def get_gradients():
+    #gradients = ['setColorGradient(\'rgb(204, 193, 208)\', \'rgb(96, 74, 123)\')',
+        #'setColorGradient(\'rgb(122, 145, 198)\', \'rgb(144, 171, 234)\',\'rgb(228,230,255)\',\'rgb(144, 171, 234)\', \'rgb(122, 145, 198)\')',
+        #'setColorGradient(\'rgb(215, 228, 189)\', \'rgb(119, 147, 60)\')',
+        #'setColorGradient(\'rgb(252, 213, 181)\', \'rgb(228, 108, 10)\')',
+        #'setColorGradient(\'rgb(255, 189, 192)\', \'rgb(255, 0, 0)\')',
+        #'setColorGradient(\'rgb(232, 227, 155)\', \'rgb(255, 0, 0)\')',
+        #'setColorGradient(\'rgb(217, 217, 217)\', \'rgb(38, 38, 38)\')'
+        #]
     
-    return '\'rgb(204, 193, 208\')'
+    #return '\'rgb(204, 193, 208\')'
 
 
 def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group, request, locus_size):
@@ -306,64 +306,64 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
     return ret_genes, len(genes), tree_svg, tree_newick
 
 
-def get_orthologs(eggnog_og, pivot_gene):
-    ''' Returns prioritized list of genes'''
-    result = [pivot_gene]
-    genes = Gene.objects.filter(protein__ortholog_groups__id=eggnog_og.id).select_related('protein', 'genome', 'genome__strain__taxon')
-    protein_ids = list(set([gene.protein.protein_hash for gene in genes]))
+#def get_orthologs(eggnog_og, pivot_gene):
+    #''' Returns prioritized list of genes'''
+    #result = [pivot_gene]
+    #genes = Gene.objects.filter(protein__ortholog_groups__id=eggnog_og.id).select_related('protein', 'genome', 'genome__strain__taxon')
+    #protein_ids = list(set([gene.protein.protein_hash for gene in genes]))
     
-    tree = make_taxonomy_tree([gene.genome.strain.taxon.taxonomy_id for gene in genes], pivot_gene.genome.strain.taxon.taxonomy_id, eggnog_og.taxon.taxonomy_id)
+    #tree = make_taxonomy_tree([gene.genome.strain.taxon.taxonomy_id for gene in genes], pivot_gene.genome.strain.taxon.taxonomy_id, eggnog_og.taxon.taxonomy_id)
 
-    #gene2taxon = {}
-    taxon2genes = autovivify(2, dict)
-    for gene in genes:
-        genome_id = gene.genome.id
-        #gene2taxon[gene.id] = gene.genome.strain.taxon
-        taxon2genes[gene.genome.strain.taxon.taxonomy_id][genome_id][gene.id] = gene
-    eggnog_top_taxon = eggnog_og.taxon
+    ##gene2taxon = {}
+    #taxon2genes = autovivify(2, dict)
+    #for gene in genes:
+        #genome_id = gene.genome.id
+        ##gene2taxon[gene.id] = gene.genome.strain.taxon
+        #taxon2genes[gene.genome.strain.taxon.taxonomy_id][genome_id][gene.id] = gene
+    #eggnog_top_taxon = eggnog_og.taxon
     
-    start_genome = pivot_gene.genome.id
-    start_taxon = pivot_gene.genome.strain.taxon.taxonomy_id
-    visited_taxa = set()
-    # Get genes from start genome
-    for gene_id in sorted(taxon2genes[start_taxon][start_genome].keys()):
-        if gene_id == pivot_gene.id:
-            continue
-        result.append(taxon2genes[start_taxon][start_genome][gene_id])
-    # Get genes from other genomes of the start taxon
-    for genome_id in sorted(taxon2genes[start_taxon].keys()):
-        if genome_id == start_genome:
-            continue
-        for gene_id in sorted(taxon2genes[start_taxon][genome_id].keys()):
-            if taxon2genes[start_taxon][genome_id][gene_id] not in result:
-                result.append(taxon2genes[start_taxon][genome_id][gene_id])
-    visited_taxa.add(start_taxon)
-    # Traverse the tree starting from start taxon:
-    if 'children' in tree[start_taxon]:
-        for child_taxon in sorted(tree[start_taxon]['children']):
-            if child_taxon in visited_taxa:
-                continue
-            child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, child_taxon)
-            visited_taxa = visited_taxa.union(child_visited_taxa)
-            result += child_ordered_genes
+    #start_genome = pivot_gene.genome.id
+    #start_taxon = pivot_gene.genome.strain.taxon.taxonomy_id
+    #visited_taxa = set()
+    ## Get genes from start genome
+    #for gene_id in sorted(taxon2genes[start_taxon][start_genome].keys()):
+        #if gene_id == pivot_gene.id:
+            #continue
+        #result.append(taxon2genes[start_taxon][start_genome][gene_id])
+    ## Get genes from other genomes of the start taxon
+    #for genome_id in sorted(taxon2genes[start_taxon].keys()):
+        #if genome_id == start_genome:
+            #continue
+        #for gene_id in sorted(taxon2genes[start_taxon][genome_id].keys()):
+            #if taxon2genes[start_taxon][genome_id][gene_id] not in result:
+                #result.append(taxon2genes[start_taxon][genome_id][gene_id])
+    #visited_taxa.add(start_taxon)
+    ## Traverse the tree starting from start taxon:
+    #if 'children' in tree[start_taxon]:
+        #for child_taxon in sorted(tree[start_taxon]['children']):
+            #if child_taxon in visited_taxa:
+                #continue
+            #child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, child_taxon)
+            #visited_taxa = visited_taxa.union(child_visited_taxa)
+            #result += child_ordered_genes
 
-    parent_id = tree[start_taxon]['parent']
-    while True:
-        child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, parent_id)
-        visited_taxa = visited_taxa.union(child_visited_taxa)
-        result += child_ordered_genes
-        try:
-            parent_id = tree[parent_id]['parent']
-        except KeyError:
-            print('Parent node not found ', parent_id)
-            parent_id = '1'
-        if parent_id == '1':
-            break
+    #parent_id = tree[start_taxon]['parent']
+    #while True:
+        #child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, parent_id)
+        #visited_taxa = visited_taxa.union(child_visited_taxa)
+        #result += child_ordered_genes
+        #try:
+            #parent_id = tree[parent_id]['parent']
+        #except KeyError:
+            #print('Parent node not found ', parent_id)
+            #parent_id = '1'
+        #if parent_id == '1':
+            #break
 
-    if parent_id == '1':
-        child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, parent_id)
-        result += child_ordered_genes
-    return result
+    #if parent_id == '1':
+        #child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, parent_id)
+        #result += child_ordered_genes
+    #return result
 
 
 def collect_genes(tree, taxon2genes, visited_taxa, taxon):
@@ -419,7 +419,6 @@ def get_scribl(start_gene, eggnog_og, request):
     scribl.append('\t\tchart.laneSizes = 16;')
     scribl.append('\t\tchart.scale.font.size = 12;')
     scribl.append('\t\tchart.scale.size = 20;')
-
     scribl.append('\t\tchart.trackBuffer = 40;')
     
     # Add empty track to make space below scale
@@ -490,7 +489,7 @@ def get_scribl(start_gene, eggnog_og, request):
                 if group == '' and eggnogs:
                     group = eggnogs[0]
             if group not in eggnog2color:
-                eggnog2color[group] = get_color(len(eggnog2color))
+                eggnog2color[group] = _get_color(len(eggnog2color))
             gene_color = eggnog2color[group]
             gene_uid += 1
             scribl += add_gene(locus_member, gene_uid, track_uid, offset, reverse, gene_color, group, request, locus_size)

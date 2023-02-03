@@ -336,6 +336,13 @@ class Annotator(object):
         
         for line in lines:
             regulon_name, genome_name, reg_gene_ids, target_gene_id, contig, start, end, strand, sequence = line.rstrip('\n\r').split('\t')
+            # check if genes exist
+            try:
+                for regulator_id in reg_gene_ids.split(','):
+                    gene = Gene.objects.get(locus_tag=regulator_id, genome__name=genome_name)
+                gene = Gene.objects.get(locus_tag=target_gene_id, genome__name=genome_name)
+            except Gene.DoesNotExist:
+                continue
             regulon_data[genome_name][regulon_name].append((reg_gene_ids, target_gene_id, contig, start, end, strand, sequence))
         print(regulon_data)
         

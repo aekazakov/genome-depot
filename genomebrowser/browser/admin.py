@@ -450,7 +450,7 @@ class RegulonAdmin(admin.ModelAdmin):
             print(request.FILES)
             tsv_file = request.FILES["tsv_file"]
             lines = []
-            for line in csv_file:
+            for line in tsv_file:
                 line = line.decode()
                 print(line)
                 lines.append(line)

@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from django.test import TransactionTestCase
 from django.utils import timezone
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.db.utils import IntegrityError
 from browser.models import *
 from browser.dataimport.importer import Importer
 # Create your tests here.
@@ -294,6 +295,41 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(protein_saved.tc_families.all()[0].tc_id, 'GT99')
         self.assertEqual(protein_saved.ortholog_groups.all()[0].eggnog_id, 'COG001')
         self.assertEqual(protein_saved.eggnog_description.description, 'Test description')
+        # Test for error on incomplete init args
+        protein = Protein(length=100,
+                          taxonomy_id=taxon)
+        protein.save()
+        with self.assertRaises(IntegrityError):
+            protein = Protein(length=100,
+                              protein_hash=hashlib.md5(sequence.encode('utf-8')).hexdigest(),
+                              sequence=sequence,
+                              taxonomy_id=taxon)
+            protein.save()
+        with self.assertRaises(IntegrityError):
+            protein = Protein(name='ProT',
+                              protein_hash=hashlib.md5('AAAAAAAAAAAAAAWWWWWWWWWWWWWWWW'.encode('utf-8')).hexdigest(),
+                              sequence=sequence,
+                              taxonomy_id=taxon)
+            protein.save()
+        with self.assertRaises(IntegrityError):
+            protein = Protein(name='ProT',
+                              length=100,
+                              sequence=sequence,
+                              taxonomy_id=taxon)
+            protein.save()
+        with self.assertRaises(IntegrityError):
+            protein = Protein(name='ProT',
+                              length=100,
+                              protein_hash=hashlib.md5('SSSSSSSSSSSSSTTTTTTTTTTTTTTT'.encode('utf-8')).hexdigest(),
+                              taxonomy_id=taxon)
+            protein.save()
+        with self.assertRaises(IntegrityError):
+            protein = Protein(name='ProT',
+                              length=100,
+                              protein_hash=hashlib.md5('MMMMMMMMMMMMMGGGGGGGGGGGGGGGG'.encode('utf-8')).hexdigest(),
+                              sequence=sequence,
+                              taxonomy_id='0123')
+            protein.save()
 
     def test_gene(self):
         taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
@@ -345,6 +381,17 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(gene_saved.contig.name, 'scaffold0001')
         self.assertEqual(gene_saved.protein.name, 'ProT')
         self.assertEqual(gene_saved.operon.name, 'operon_1')
+        gene = Gene(name='genE',
+                    locus_tag= 'Aaa_0001',
+                    #contig=contig,
+                    type='CDS',
+                    start=10,
+                    end=310,
+                    strand=-1,
+                    genome=genome,
+                    function='hypothetical protein',
+                    protein=protein,
+                    operon=operon)
 
     def test_regulon(self):
         taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
@@ -391,6 +438,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(gene.name, 'genE')
         gene.save()
         regulon = Regulon(name='TesT', genome=genome, description='Test regulon')
+        regulon.save()
         regulon.regulators.add(gene)
         self.assertEqual(regulon.name, 'TesT')
         regulon.save()
@@ -443,10 +491,12 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(gene.name, 'genE')
         gene.save()
         regulon = Regulon(name='TesT', genome=genome, description='Test regulon')
+        regulon.save()
         regulon.regulators.add(gene)
         regulon.save()
 
         site = Site(name='Test site 1', type='TFBS', start=991, end=999, strand=-1, sequence='AAAGGGGTTT', regulon=regulon, genome=genome, contig=contig)
+        site.save()
         site.operons.add(operon)
         site.genes.add(gene)
         self.assertEqual(site.name, 'Test site 1')
@@ -499,9 +549,12 @@ class BrowserTestCase(TransactionTestCase):
         annotation = Annotation(gene_id=gene, source='Personal communication', url='https://nih.gov', key='group', value='group_name', note='Test description')
         self.assertEqual(annotation.value, 'group_name')
         annotation.save()
-        annotation_saved = Gene.objects.get(value='group_name')
-        self.assertEqual(annotation_saved.gene.locus_tag, 'Aaa_0001')
+        annotation_saved = Annotation.objects.get(value='group_name')
+        self.assertEqual(annotation_saved.gene_id.locus_tag, 'Aaa_0001')
         self.assertEqual(annotation_saved.key, 'group')
+        
+    def test_comparative(self):
+        pass
 
 
 class ImporterTestCase(TransactionTestCase):
