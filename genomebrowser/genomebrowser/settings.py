@@ -41,7 +41,7 @@ SECRET_KEY = get_secret('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [get_secret('HOSTNAME'), '127.0.0.1']
+ALLOWED_HOSTS = [get_secret('HOSTNAME'), '127.0.0.1', 'testserver']
 INTERNAL_IPS = ['127.0.0.1',]
 
 

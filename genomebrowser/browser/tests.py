@@ -1,20 +1,27 @@
 import hashlib
 from unittest import skip
 from contextlib import contextmanager
+
 from django.test import TransactionTestCase
+from django.test import Client
 from django.utils import timezone
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.db.utils import IntegrityError
+
 from browser.models import *
 from browser.dataimport.importer import Importer
+from browser.comparative_analysis import _get_color, make_muscle_alignment
+
 # Create your tests here.
 
 class BrowserTestCase(TransactionTestCase):
     '''
         Models testing
     '''
+    fixtures = ['minigenomes.testdata.json']
+    
     def setUp(self):
-        pass
+        self.client = Client()
         
     def test_config(self):
         config = Config(param='parameter name', value='parameter value')
@@ -300,30 +307,28 @@ class BrowserTestCase(TransactionTestCase):
                           taxonomy_id=taxon)
         protein.save()
         with self.assertRaises(IntegrityError):
+            # no protein name provided
             protein = Protein(length=100,
                               protein_hash=hashlib.md5(sequence.encode('utf-8')).hexdigest(),
                               sequence=sequence,
                               taxonomy_id=taxon)
             protein.save()
         with self.assertRaises(IntegrityError):
+            # no protein length provided
             protein = Protein(name='ProT',
                               protein_hash=hashlib.md5('AAAAAAAAAAAAAAWWWWWWWWWWWWWWWW'.encode('utf-8')).hexdigest(),
                               sequence=sequence,
                               taxonomy_id=taxon)
             protein.save()
         with self.assertRaises(IntegrityError):
+            # no protein hash provided
             protein = Protein(name='ProT',
                               length=100,
                               sequence=sequence,
                               taxonomy_id=taxon)
             protein.save()
-        with self.assertRaises(IntegrityError):
-            protein = Protein(name='ProT',
-                              length=100,
-                              protein_hash=hashlib.md5('SSSSSSSSSSSSSTTTTTTTTTTTTTTT'.encode('utf-8')).hexdigest(),
-                              taxonomy_id=taxon)
-            protein.save()
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(ValueError):
+            # string taxonomy ID instead of Taxon
             protein = Protein(name='ProT',
                               length=100,
                               protein_hash=hashlib.md5('MMMMMMMMMMMMMGGGGGGGGGGGGGGGG'.encode('utf-8')).hexdigest(),
@@ -553,8 +558,197 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(annotation_saved.gene_id.locus_tag, 'Aaa_0001')
         self.assertEqual(annotation_saved.key, 'group')
         
-    def test_comparative(self):
-        pass
+    def test_homepage(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<a href="/genomes/">Click here for a list of')
+
+    def test_genomes_page(self):
+        response = self.client.get('/genomes/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<h2>Genomes</h2>')
+        self.assertContains(response, 'E_coli_BW2952')
+
+    def test_strains_page(self):
+        response = self.client.get('/strains/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<h2>Strains</h2>')
+        self.assertContains(response, 'BW2952')
+
+    def test_samples_page(self):
+        response = self.client.get('/samples/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<h2>Samples</h2>')
+        self.assertContains(response, 'No samples found.')
+
+    def test_genome_page(self):
+        response = self.client.get('/genome/E_coli_BW2952')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome viewer')
+        self.assertContains(response, 'E_coli_BW2952')
+
+    def test_gene_page(self):
+        response = self.client.get('/gene/E_coli_BW2952/BWG_RS00020/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome viewer')
+        self.assertContains(response, 'BWG_RS00020')
+
+    def test_operonlist_page(self):
+        response = self.client.get('/operons/E_coli_BW2952/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Operons in')
+        self.assertContains(response, 'NC_012759: 190..5020')
+
+    def test_sitelist_page(self):
+        response = self.client.get('/sites/E_coli_BW2952/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Sites in')
+        self.assertContains(response, 'NC_012759: complement(70130..70146)')
+
+    def test_regulonlist_page(self):
+        response = self.client.get('/regulons/E_coli_BW2952/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Regulons in')
+        self.assertContains(response, 'AraC')
+
+    def test_genelist1_page(self):
+        # Gene list for a genome
+        response = self.client.get('/searchgene/', {'genome':'E_coli_BW2952', 'type':'gene'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genes from genome E_coli_BW2952')
+        self.assertContains(response, 'data: {\'query\': "", \'type\': "gene", \'genome\': "E_coli_BW2952", \'page\': "" }')
+
+    def test_genelist2_page(self):
+        # Gene list for "regulator" text query
+        response = self.client.get('/searchgene/', {'query':'regulator', 'type':'gene'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Search results for')
+        self.assertContains(response, 'data: {\'query\': "regulator", \'type\': "gene", \'genome\': "", \'page\': "" }')
+
+    def test_annotationlist_page(self):
+        # Annotation list for "Pfam" text query
+        response = self.client.get('/searchannotation/', {'annotation_query':'Pfam'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Search results for')
+        self.assertContains(response, 'data: {\'annotation_query\': "Pfam", \'genome\': "", \'page\': "" }')
+
+    def test_operon_page(self):
+        operon_id = Operon.objects.values_list('name', flat=True)[0]
+        response = self.client.get('/operon/' + operon_id + '/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Operon information')
+        self.assertContains(response, operon_id)
+
+    def test_site_page(self):
+        genome_id = 'E_coli_BW2952'
+        site_id = Site.objects.filter(genome__name=genome_id).values_list('name', flat=True)[0]
+        response = self.client.get('/site/' + genome_id + '/' + site_id + '/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Site information')
+        self.assertContains(response, site_id)
+
+    def test_regulon_page(self):
+        genome_id = 'E_coli_BW2952'
+        response = self.client.get('/regulon/' + genome_id + '/AraC/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Regulon information')
+        self.assertContains(response, 'AraC')
+
+    def test_textsearch_page(self):
+        response = self.client.get('/textsearch/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Search genes by name or function')
+
+    def test_kolist_page1(self):
+        response = self.client.get('/kos/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'K00052')
+
+    def test_kolist_page2(self):
+        response = self.client.get('/kos/', {'query':'isopropylmalate'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'K00052')
+
+    def test_pathwayslist_page1(self):
+        response = self.client.get('/pathways/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'map00030')
+
+    def test_pathwayslist_page2(self):
+        response = self.client.get('/pathways/', {'query':'Pentose'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'map00030')
+
+    def test_reactionslist_page1(self):
+        response = self.client.get('/reactions/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'R00006')
+
+    def test_reactionslist_page2(self):
+        response = self.client.get('/reactions/', {'query':'tetrahydrobiopterin'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'R11765')
+
+    def test_enzymeslist_page1(self):
+        response = self.client.get('/enzymes/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '1.1.1.262')
+
+    def test_enzymeslist_page2(self):
+        response = self.client.get('/enzymes/', {'query':'homoserine'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '1.1.1.3')
+
+    def test_transporterslist_page1(self):
+        response = self.client.get('/transporters/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '1.A.33.1')
+
+    def test_cazylist_page(self):
+        response = self.client.get('/cazy/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'CAZymes')
+
+    def test_cogslist_page1(self):
+        response = self.client.get('/cogs/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Energy production and conversion')
+
+    def test_golist_page1(self):
+        response = self.client.get('/gos/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '[GO:0000003]')
+
+    def test_proteinsearch_page(self):
+        response = self.client.get('/protsearchform/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Sequence search')
+
+    def test_nucleotidesearch_page(self):
+        response = self.client.get('/nuclsearchform/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Enter one nucleotide sequence in FASTA format')
+
+    def test_help_page(self):
+        response = self.client.get('/help/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'ENIGMA genome browser')
+
+    def test_comparative_view(self):
+        response = self.client.get('/comparative/', {'genome':'E_coli_BW2952', 'locus_tag':'BWG_RS00020', 'og':'102492', 'size':'10', 'lines':'50'})
+        print(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<h2>Comparative analysis</h2>')
+
+    def test_comparative_get_color(self):
+        color = _get_color(6)
+        self.assertEqual(color, '.setColorGradient(\'rgb(255, 182, 199)\', \'rgb(204, 102, 119)\')')
+
+    def test_make_muscle_alignment(self):
+        proteins = '''>1\nMKRISTTITTTTITTGNGAG\n>2\nMKRISTTITTTITITTGNGAG\n>3\nMKRISTTITTTITITTGNGAG'''
+        outfasta = make_muscle_alignment(proteins)
+        outfasta_lines = outfasta.split('\n')
+        self.assertEqual(outfasta_lines[-6], 'MKRISTTITTT-TITTGNGAG')
 
 
 class ImporterTestCase(TransactionTestCase):

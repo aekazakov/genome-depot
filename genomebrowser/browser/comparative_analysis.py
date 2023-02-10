@@ -138,50 +138,50 @@ def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group,
     return result
 
 
-def make_taxonomy_tree(taxonomy_ids, start_taxon, top_taxon):
-    print('Starting tree creation')
-    tree = defaultdict(dict)
-    root_id = '1'
-    all_taxa = Taxon.objects.all().values('taxonomy_id', 'parent_id')
-    parents = {item['taxonomy_id']:item['parent_id'] for item in all_taxa}
-    children = defaultdict(list)
-    for taxon in all_taxa:
-        if taxon['parent_id'] == '1' and taxon['taxonomy_id'] == '1':
-            continue
-        children[taxon['parent_id']].append(taxon['taxonomy_id'])
-    tree[root_id]['parent'] = parents[root_id]
-    tree[root_id]['children'] = children[root_id]
-    tree[top_taxon]['parent'] = parents[top_taxon]
-    tree[top_taxon]['children'] = children[top_taxon]
-    for taxonomy_id in taxonomy_ids:
-        if taxonomy_id in tree:
-            continue
-        parent_id = parents[taxonomy_id]
-        tree[taxonomy_id]['parent'] = parent_id
-        if taxonomy_id in children:
-            tree[taxonomy_id]['children'] = children[taxonomy_id]
-        while parent_id != root_id:
-            if parent_id in tree:
-                break
-            tree[parent_id]['parent'] = parents[parent_id]
-            tree[parent_id]['children'] = children[parent_id]
-            parent_id = parents[parent_id]
-    print('Tree created')
-    return tree
+#def make_taxonomy_tree(taxonomy_ids, start_taxon, top_taxon):
+    #print('Starting tree creation')
+    #tree = defaultdict(dict)
+    #root_id = '1'
+    #all_taxa = Taxon.objects.all().values('taxonomy_id', 'parent_id')
+    #parents = {item['taxonomy_id']:item['parent_id'] for item in all_taxa}
+    #children = defaultdict(list)
+    #for taxon in all_taxa:
+        #if taxon['parent_id'] == '1' and taxon['taxonomy_id'] == '1':
+            #continue
+        #children[taxon['parent_id']].append(taxon['taxonomy_id'])
+    #tree[root_id]['parent'] = parents[root_id]
+    #tree[root_id]['children'] = children[root_id]
+    #tree[top_taxon]['parent'] = parents[top_taxon]
+    #tree[top_taxon]['children'] = children[top_taxon]
+    #for taxonomy_id in taxonomy_ids:
+        #if taxonomy_id in tree:
+            #continue
+        #parent_id = parents[taxonomy_id]
+        #tree[taxonomy_id]['parent'] = parent_id
+        #if taxonomy_id in children:
+            #tree[taxonomy_id]['children'] = children[taxonomy_id]
+        #while parent_id != root_id:
+            #if parent_id in tree:
+                #break
+            #tree[parent_id]['parent'] = parents[parent_id]
+            #tree[parent_id]['children'] = children[parent_id]
+            #parent_id = parents[parent_id]
+    #print('Tree created')
+    #return tree
 
 
-def make_clustal_alignment(infasta):
-    result = ''
-    args = ['clustalo', '-i', '-']
-    print('Running clustalo')
-    with Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
-        outfasta, err = p.communicate(infasta)
-    print('clustalo finished')
-    if p.returncode != 0:
-        print('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Clustal omega finished with error:\n'+ ' '.join(err) + '\n')
-        return result
-    result = outfasta
-    return result
+#def make_clustal_alignment(infasta):
+    #result = ''
+    #args = ['clustalo', '-i', '-']
+    #print('Running clustalo')
+    #with Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
+        #outfasta, err = p.communicate(infasta)
+    #print('clustalo finished')
+    #if p.returncode != 0:
+        #print('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Clustal omega finished with error:\n'+ ' '.join(err) + '\n')
+        #return result
+    #result = outfasta
+    #return result
 
 
 def make_muscle_alignment(infasta):
@@ -200,14 +200,14 @@ def make_muscle_alignment(infasta):
     return result
 
 
-def sort_nodes(tree, target):
-    result = [target]
-    path = [tree.root] + tree.get_path(target)
-    for node in reversed(path):
-        for leaf in node.get_terminals(order='level'):
-            if leaf.name not in result:
-                result.append(leaf.name)
-    return result
+#def sort_nodes(tree, target):
+#    result = [target]
+#    path = [tree.root] + tree.get_path(target)
+#    for node in reversed(path):
+#        for leaf in node.get_terminals(order='level'):
+#            if leaf.name not in result:
+#                result.append(leaf.name)
+#    return result
 
 
 def make_protein_tree(proteins):
