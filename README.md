@@ -7,7 +7,7 @@ Compararive genomic content management system
 
 2. MySQL server
 
-3. Apache2 web-server 
+3. Apache2 web-server with mod_wsgi
 
 4. Muscle
 
