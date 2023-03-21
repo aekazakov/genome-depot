@@ -144,6 +144,7 @@ sudo systemctl restart apache2
 
 Now you would be able to open https://your.domain.name/mygenomes in a web browser.
 
+Note: If POEM fails to predict operons because versions of keras and tensorflow are not compatible, activate conda cgcms-poem environment and run "pip install tensorflow==1.13.1". 
 
 ## Genome import from the command line
 
