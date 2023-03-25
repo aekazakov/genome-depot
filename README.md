@@ -136,7 +136,7 @@ If test server cannot find static files, check if www-data user can read from th
 
 	Alias /cgcmsstatic /path/to/cgcms/static/
 
-	
+You may have to add "Header always set X-Frame-Options "SAMEORIGIN"" to web server configuration if the embedded genome viewer is not properly displayed.
 
 11. Restart apache2:
 
