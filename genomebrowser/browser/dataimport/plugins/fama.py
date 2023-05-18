@@ -68,6 +68,7 @@ def preprocess(annotator, genomes, working_dir):
     
     with open(fama_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
+        outfile.write('export PATH=' + '/'.join(annotator.config['cgcms.conda_path'].split('/')[:-3]) + '/envs/' + annotator.config['plugins.fama.conda_env'] + '/bin:$PATH\n')
         outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
         outfile.write('conda activate ' + annotator.config['plugins.fama.conda_env'] + '\n')
         for collection in FAMA_REFERENCE:

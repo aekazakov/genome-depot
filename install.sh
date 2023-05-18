@@ -4,6 +4,9 @@ CGCMSDIR=$(dirname "$WORKDIR")
 APPNAME=$(basename "$CGCMSDIR")
 CGCMSDIR=$(dirname "$CGCMSDIR")
 CGCMSDIR=$(dirname "$CGCMSDIR")
+# Deactivate all conda environments (including base) because python virtual environment must not use python installed in conda
+conda deactivate
+conda deactivate
 if ! [ -d "$CGCMSDIR/cgcms-venv" ]; then
 	python3 -m venv "$CGCMSDIR/cgcms-venv"
 fi
@@ -16,7 +19,15 @@ if ! [ -f "$CONDA" ]; then
 		exit
 fi
 echo "Found Conda installation: $CONDADIR"
+#Installing dependencies in the virtual environment
+echo "Installing python dependencies in cgcms-venv virtual environment"
+source "$CGCMSDIR/cgcms-venv/bin/activate"
+pip install "django==3.2.6" django_admin_shortcuts django_cors_headers django_q django_debug_toolbar openpyxl "parasail==1.2.4" biopython toytree urllib3 mysqlclient --no-cache-dir
+deactivate
+
 source $CONDA
+conda config --add channels bioconda
+conda config --add channels conda-forge
 # Create directory structure
 [ -d "$CGCMSDIR/external_tools" ] || mkdir "$CGCMSDIR/external_tools"
 [ -d "$CGCMSDIR/external_refdata" ] || mkdir "$CGCMSDIR/external_refdata"
@@ -51,11 +62,12 @@ if ! [ -d "$CGCMSDIR/external_tools/jbrowse" ]; then
 fi
 
 # Install eggnog-mapper
-if conda env list | grep 'cgcms-emapper'; >/dev/null 2>&1
-then
+if conda env list | grep 'cgcms-emapper' >/dev/null 2>&1; then
 	conda activate cgcms-emapper
 	if ! { emapper.py -v --data_dir "$CGCMSDIR/external_refdata/eggnog-mapper_v2.1.7" | grep 'emapper-2.1.7'; }>/dev/null 2>&1; then
 		echo 'Conda environment cgcms-emapper exists but eggnog-mapper v2.1.7 was not properly installed. Remove the environment and restart CGCMS installation script.'
+		echo 'To remove the environment, run:'
+		echo '   conda remove -n cgcms-emapper --all'
 		conda deactivate
 		exit 1
 	else
@@ -87,6 +99,8 @@ if conda env list | grep 'cgcms-poem' >/dev/null 2>&1; then
 		echo "POEM_py3k found"
 	else
 		echo 'Conda environment cgcms-poem exists but POEM_py3k was not properly installed. Remove the environment and restart CGCMS installation script.'
+		echo 'To remove the environment, run:'
+		echo '   conda remove -n cgcms-poem --all'
 		conda deactivate
 		exit 1
 	fi
@@ -102,17 +116,17 @@ else
 	cd "$CGCMSDIR/external_tools"
 fi
 #Install amrfinder
-if conda env list | grep 'cgcms-amrfinder' >/dev/null 2>&1
-then
+if conda env list | grep 'cgcms-amrfinder' >/dev/null 2>&1; then
 	echo "Found cgcms-amrfinder environment"
 	conda activate cgcms-amrfinder
-	if amrfinder --version|grep "3.10.30" >/dev/null 2>&1
-	then
-	echo "AMRFinder found"
+	if amrfinder --version|grep "3.10.30" >/dev/null 2>&1; then
+		echo "AMRFinder found"
 	else
-	echo 'Conda environment cgcms-amrfinder exists but AMRFinder was not properly installed. Remove the environment and restart CGCMS installation script.'
-	conda deactivate
-	exit 1
+		echo 'Conda environment cgcms-amrfinder exists but AMRFinder was not properly installed. Remove the environment and restart CGCMS installation script.'
+		echo 'To remove the environment, run:'
+		echo '   conda remove -n cgcms-amrfinder --all'
+		conda deactivate
+		exit 1
 	fi
 	conda deactivate
 else
@@ -125,17 +139,17 @@ else
 	cd "$CGCMSDIR/external_tools"
 fi
 # Install antismash
-if conda env list | grep 'cgcms-antismash' >/dev/null 2>&1
-then
+if conda env list | grep 'cgcms-antismash' >/dev/null 2>&1; then
     echo "Found cgcms-antismash environment"
     conda activate cgcms-antismash
-    if antismash -h|grep "antiSMASH 6.1.1" >/dev/null 2>&1
-    then
-	echo "antiSMASH 6.1.1 found"
+    if antismash -h|grep "antiSMASH 6.1.1" >/dev/null 2>&1;     then
+		echo "antiSMASH 6.1.1 found"
     else
-	echo 'Conda environment cgcms-antismash exists but antiSMASH was not properly installed. Remove the environment and restart CGCMS installation script.'
-	conda deactivate
-	exit 1
+		echo 'Conda environment cgcms-antismash exists but antiSMASH was not properly installed. Remove the environment and restart CGCMS installation script.'
+		echo 'To remove the environment, run:'
+		echo '   conda remove -n cgcms-antismash --all'
+		conda deactivate
+		exit 1
 	fi
 	conda deactivate
 else
@@ -147,8 +161,7 @@ else
 	cd "$CGCMSDIR/external_tools"
 fi
 # Install ecis-screen
-if conda env list | grep 'cgcms-ecis-screen' >/dev/null 2>&1
-then
+if conda env list | grep 'cgcms-ecis-screen' >/dev/null 2>&1; then
 	echo "Found cgcms-ecis-screen environment"
 	conda activate cgcms-ecis-screen
     if $CGCMSDIR/external_tools/eCIS-screen/HMMsearch_genomesII_fast.pl 2>&1 | grep "Pipeline for screening" >/dev/null 2>&1
@@ -156,6 +169,8 @@ then
 	echo "eCIS-screen found"
 	else
 	echo 'Conda environment cgcms-ecis-screen exists but eCIS-screen was not properly installed. Remove the environment and restart CGCMS installation script.'
+		echo 'To remove the environment, run:'
+		echo '   conda remove -n cgcms-ecis-screen --all'
 	conda deactivate
 	exit 1
 	fi
@@ -177,8 +192,7 @@ else
 	cd "$CGCMSDIR/external_tools"
 fi
 # Install Fama
-if conda env list | grep 'cgcms-fama' >/dev/null 2>&1
-then
+if conda env list | grep 'cgcms-fama' >/dev/null 2>&1; then
     echo "Found cgcms-fama environment"
     conda activate cgcms-fama
     if python $CGCMSDIR/external_tools/fama/py/fama.py | grep "usage: fama.py" >/dev/null 2>&1
@@ -186,6 +200,8 @@ then
 	echo "Fama found"
     else
 	echo 'Conda environment cgcms-fama exists but Fama was not properly installed. Remove the environment and restart CGCMS installation script.'
+		echo 'To remove the environment, run:'
+		echo '   conda remove -n cgcms-fama --all'
 	conda deactivate
 	exit 1
     fi
@@ -203,17 +219,17 @@ else
 	cd "$CGCMSDIR/external_tools"
 fi
 # Install phispy
-if conda env list | grep 'cgcms-phispy' >/dev/null 2>&1
-then
+if conda env list | grep 'cgcms-phispy' >/dev/null 2>&1; then
     echo "Found cgcms-phispy environment"
     conda activate cgcms-phispy
-    if phispy -v | grep "4.2.21" >/dev/null 2>&1
-    then
-	echo "PhiSpy 4.2.21 found"
+    if phispy -v | grep "4.2.21" >/dev/null 2>&1; then
+		echo "PhiSpy 4.2.21 found"
     else
-	echo 'Conda environment cgcms-phispy exists but PhiSpy 4.2.21 was not properly installed. Remove the environment and restart CGCMS installation script.'
-	conda deactivate
-	exit 1
+		echo 'Conda environment cgcms-phispy exists but PhiSpy 4.2.21 was not properly installed. Remove the environment and restart CGCMS installation script.'
+		echo 'To remove the environment, run:'
+		echo '   conda remove -n cgcms-phispy --all'
+		conda deactivate
+		exit 1
     fi
     conda deactivate
 else
@@ -279,7 +295,7 @@ echo "plugins.ecis_screen.ecis_hmm = $CGCMSDIR/external_tools/eCIS-screen/eCIS.h
 echo "plugins.ecis_screen.ecis-screen_cmd = $CGCMSDIR/external_tools/eCIS-screen/HMMsearch_genomesII_fast.pl" >> configs.txt
 echo "plugins.fama.fama_dir = $CGCMSDIR/external_tools/fama/py" >> configs.txt
 echo "plugins.fama.fama_config = $CGCMSDIR/external_tools/fama/config.ini" >> configs.txt
-echo "plugins.fama.fama_cazy_lib = $CGCMSDIR/external_refdata/fama/cazy2/collection_functions.txt" >> configs.txt
+echo "plugins.fama.fama_cazy_lib = $CGCMSDIR/external_refdata/fama/cazy2/cazy_v2_functions.txt" >> configs.txt
 echo "plugins.fama.fama_nitrate_lib = $CGCMSDIR/external_refdata/fama/nitrogen11/fama_nitrogen-cycle_v.11.0_functions_thresholds.tsv" >> configs.txt
 echo "plugins.fama.fama_universal_lib = $CGCMSDIR/external_refdata/fama/universal1.4/fama_function_thresholds_v.1.4.txt" >> configs.txt
 echo "plugins.phispy.pvog_path = $CGCMSDIR/external_refdata/phispy/pvogs.hmm" >> configs.txt
@@ -308,9 +324,4 @@ echo "    \"STATICFILES_DIR\": \"$WORKDIR/genomebrowser/static\"" >> secrets.jso
 echo "}" >> secrets.json
 echo "secrets.json created."
 
-#Installing dependencies in the virtual environment
-echo "Installing python dependencies in cgcms-venv virtual environment"
-source "$CGCMSDIR/cgcms-venv/bin/activate"
-pip install "django==3.2.6" django_admin_shortcuts django_cors_headers django_q django_debug_toolbar openpyxl "parasail==1.2.4" biopython toytree urllib3 mysqlclient --no-cache-dir
-deactivate
 echo "Edit secrets.json and genomebrowser/settings.py before running \"python manage.py configure_cgcsms -i configs.txt\""
