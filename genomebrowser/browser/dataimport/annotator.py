@@ -21,6 +21,7 @@ from browser.dataimport.plugins.amrfinder import application as amrfinder
 from browser.dataimport.plugins.antismash import application as antismash
 from browser.dataimport.plugins.phispy import application as phispy
 from browser.dataimport.plugins.ecis_screen import application as ecis_screen
+from browser.dataimport.plugins.gapmind import application as gapmind
 """ 
     Various functions for generation and import of gene annotations.
 """
@@ -566,45 +567,60 @@ class Annotator(object):
                 samples[sample_name].save()
                 print('Sample description updated for', sample_name)
 
-    def run_external_tools(self, genomes):
+    def run_external_tools(self, genomes, plugin=None):
         plugins_available = set()
         for param in self.config:
             if param.startswith('plugins.') and self.config[param] != '':
                 plugin = param.split('.')[1]
                 plugins_available.add(plugin)
-                
-        print('Available plugins:', ','.join(list(plugins_available)))
-
+        
+        if plugin is None:
+            print('Available plugins:', ','.join(list(plugins_available)))
+        elif plugin in plugins_available:
+            plugins_available = set()
+            plugins_available.add(plugin)
+        genome_names = list(genomes.keys())
         # Run Fama
         if 'fama' in plugins_available:
             fama_annotations = fama(self, genomes)
             print(fama_annotations, 'ready for upload')
+            Annotation.objects.filter(source='Fama', gene_id__genome__name__in=genome_names).delete()
             self.add_custom_annotations(fama_annotations)
 
         # Run amrfinder
         if 'amrfinder' in plugins_available:
             amrfinder_annotations = amrfinder(self, genomes)
             print(amrfinder_annotations, 'ready for upload')
+            Annotation.objects.filter(source='AMRFinderPlus', gene_id__genome__name__in=genome_names).delete()
             self.add_custom_annotations(amrfinder_annotations)
 
         # Run antiSMASH
         if 'antismash' in plugins_available:
             antismash_annotations = antismash(self, genomes)
             print(antismash_annotations, 'ready for upload')
+            Annotation.objects.filter(source='antiSMASH', gene_id__genome__name__in=genome_names).delete()
             self.add_custom_annotations(antismash_annotations)
         
         # Run PhiSpy
         if 'phispy' in plugins_available:
             phispy_annotations = phispy(self, genomes)
             print(phispy_annotations, 'ready for upload')
+            Annotation.objects.filter(source='pVOGs', gene_id__genome__name__in=genome_names).delete()
             self.add_custom_annotations(phispy_annotations)
 
         # Run eCIS-screen
         if 'ecis_screen' in plugins_available:
             ecis_screen_annotations = ecis_screen(self, genomes)
             print(ecis_screen_annotations, 'ready for upload')
+            Annotation.objects.filter(source='eCIS-screen', gene_id__genome__name__in=genome_names).delete()
             self.add_custom_annotations(ecis_screen_annotations)
     
+        # Run GapMind
+        if 'gapmind' in plugins_available:
+            gapmind_annotations = gapmind(self, genomes)
+            print(gapmind_annotations, 'ready for upload')
+            Annotation.objects.filter(source='GapMind', gene_id__genome__name__in=genome_names).delete()
+            self.add_custom_annotations(gapmind_annotations)
                 
 def autovivify(levels=1, final=dict):
     return (defaultdict(final) if levels < 2 else

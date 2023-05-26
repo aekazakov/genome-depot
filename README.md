@@ -74,15 +74,16 @@ quit
 
 6. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/secrets.json in a text editor. Enter secret key, hostname, database name (like cgcms), database username (like cgcmsuser), database password and URL to static files directory.
 
+7. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/static/jbrowse/jbrowse.conf in a text editor. Find documentDomain parameter, uncomment it and enter hostname.
 
-7. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/configs.txt in a text editor. Check:
+8. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/configs.txt in a text editor. Check:
 
 paths to Jbrowse utilites: prepare-refseqs.pl, flatfile-to-json.pl, generate-names.pl,
 
 path to strain metadata file.
 
 
-8. Activate virtual environment cgcms-venv, change directory to cgcms/app/mygenomes/CGCMS/genomebrowser and run Django configuration commands
+9. Activate virtual environment cgcms-venv, change directory to cgcms/app/mygenomes/CGCMS/genomebrowser and run Django configuration commands
 
 source cgcms/cgcms-venv/bin/activate
 
