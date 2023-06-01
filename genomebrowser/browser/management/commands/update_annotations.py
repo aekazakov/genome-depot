@@ -44,6 +44,6 @@ class Command(BaseCommand):
                             continue
                         filepath, genome_name, _, _, _, _ = line.rstrip('\n\r').split('\t')
                         genomes[genome_name] = Genome.objects.get(name=genome_name).gbk_filepath
-                annotator.run_external_tools(genomes)
+                annotator.run_external_tools(genomes, plugin=tool)
         else:
             raise CommandError('Genomes file ' + options['i'] + ' not found.')

@@ -22,6 +22,7 @@ from browser.dataimport.plugins.antismash import application as antismash
 from browser.dataimport.plugins.phispy import application as phispy
 from browser.dataimport.plugins.ecis_screen import application as ecis_screen
 from browser.dataimport.plugins.gapmind import application as gapmind
+from browser.dataimport.plugins.defensefinder import application as defensefinder
 """ 
     Various functions for generation and import of gene annotations.
 """
@@ -571,12 +572,13 @@ class Annotator(object):
         plugins_available = set()
         for param in self.config:
             if param.startswith('plugins.') and self.config[param] != '':
-                plugin = param.split('.')[1]
-                plugins_available.add(plugin)
+                tool = param.split('.')[1]
+                plugins_available.add(tool)
         
         if plugin is None:
-            print('Available plugins:', ','.join(list(plugins_available)))
+            print('Run all available plugins:', ','.join(list(plugins_available)))
         elif plugin in plugins_available:
+            print('Run only', plugin)
             plugins_available = set()
             plugins_available.add(plugin)
         genome_names = list(genomes.keys())
@@ -621,6 +623,13 @@ class Annotator(object):
             print(gapmind_annotations, 'ready for upload')
             Annotation.objects.filter(source='GapMind', gene_id__genome__name__in=genome_names).delete()
             self.add_custom_annotations(gapmind_annotations)
+
+        # Run DefenseFinder
+        if 'defensefinder' in plugins_available:
+            defensefinder_annotations = defensefinder(self, genomes)
+            print(defensefinder_annotations, 'ready for upload')
+            Annotation.objects.filter(source='DefenseFinder', gene_id__genome__name__in=genome_names).delete()
+            self.add_custom_annotations(defensefinder_annotations)
                 
 def autovivify(levels=1, final=dict):
     return (defaultdict(final) if levels < 2 else

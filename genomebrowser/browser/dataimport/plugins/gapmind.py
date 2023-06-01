@@ -162,7 +162,7 @@ def postprocess(annotator, genomes, working_dir):
                                       pathway + '/' + step,
                                       ref_data[pathway][step] +  ' (' + ref_data[pathway]['pathway'] + ')']) + '\n')
 
-    #_cleanup(working_dir)
+    _cleanup(working_dir)
     return output_file
 
 def _export_proteins(genome, output_dir):
