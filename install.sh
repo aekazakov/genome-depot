@@ -244,8 +244,7 @@ fi
 if conda env list | grep 'cgcms-gapmind' >/dev/null 2>&1; then
     echo "Found cgcms-gapmind environment"
     conda activate cgcms-gapmind
-    cd PaperBLAST
-    if perl bin/gapsearch.pl 2>&1|grep "Usage: gapsearch.pl" /dev/null 2>&1; then
+    if perl "$CGCMSDIR/external_tools/PaperBLAST/bin/gapsearch.pl" 2>&1|grep "Usage: gapsearch.pl" >/dev/null ; then
 		echo "GapMind found"
     else
 		echo 'Conda environment cgcms-gapmind exists but GapMind was not properly installed. Remove the environment and restart CGCMS installation script.'
