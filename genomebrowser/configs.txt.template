@@ -13,4 +13,7 @@ plugins.phispy.threads = 9
 plugins.phispy.evalue_threshold = 0.0001
 plugins.ecis_screen.conda_env = cgcms-ecis-screen
 plugins.fama.conda_env = cgcms-fama
+plugins.gapmind.gapmind_env = cgcms-gapmind
+plugins.gapmind.threads = 8
+plugins.defensefinder.defensefinder_env = cgcms-defensefinder
 strains.metadata_file = 

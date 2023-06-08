@@ -211,7 +211,7 @@ else
 	conda create -y -n cgcms-fama python=3.8
 	conda activate cgcms-fama
 	conda install -y diamond krona
-	git clone https://github.com/novichkov-lab/fama.git
+	git clone https://github.com/aekazakov/fama.git
 	cd fama
 	pip install -r requirements.txt
 	/bin/sh install_reference_data_cgcms.sh "$CGCMSDIR/external_refdata/"
@@ -237,6 +237,55 @@ else
 	conda create -y -n cgcms-phispy python=3.8
 	conda activate cgcms-phispy
 	conda install -y -c bioconda phispy 
+	conda deactivate
+	cd "$CGCMSDIR/external_tools"
+fi
+#Install GapMind
+if conda env list | grep 'cgcms-gapmind' >/dev/null 2>&1; then
+    echo "Found cgcms-gapmind environment"
+    conda activate cgcms-gapmind
+    cd PaperBLAST
+    if perl bin/gapsearch.pl 2>&1|grep "Usage: gapsearch.pl" /dev/null 2>&1; then
+		echo "GapMind found"
+    else
+		echo 'Conda environment cgcms-gapmind exists but GapMind was not properly installed. Remove the environment and restart CGCMS installation script.'
+		echo 'To remove the environment, run:'
+		echo '   conda remove -n cgcms-gapmind --all'
+		conda deactivate
+		exit 1
+    fi
+    conda deactivate
+else
+	echo "Installing GapMind"
+	git clone https://github.com/aekazakov/PaperBLAST.git
+	cd PaperBLAST
+	bash setup.sh
+	cd "$CGCMSDIR/external_tools"
+fi
+#Install DefenseFinder
+if conda env list | grep 'cgcms-defensefinder' >/dev/null 2>&1; then
+    echo "Found cgcms-defensefinder environment"
+    conda activate cgcms-defensefinder
+    if defense-finder run --help|grep "Usage: defense-finder" >/dev/null 2>&1; then
+		echo "DefenseFinder found"
+    else
+		echo 'Conda environment cgcms-defensefinder exists but DefenseFinder was not properly installed. Remove the environment and restart CGCMS installation script.'
+		echo 'To remove the environment, run:'
+		echo '   conda remove -n cgcms-defensefinder --all'
+		conda deactivate
+		exit 1
+    fi
+    conda deactivate
+else
+	echo "Installing DefenseFinder"
+	conda create -y -n cgcms-defensefinder
+	conda activate cgcms-defensefinder
+	mkdir "$CGCMSDIR/external_refdata/defensefinder"
+    mkdir "$CGCMSDIR/external_refdata/defensefinder/data"
+    conda install -y -c bioconda hmmer
+    conda install -y pip
+    pip install mdmparis-defense-finder
+    defense-finder update --models-dir "$CGCMSDIR/external_refdata/defensefinder/data"
 	conda deactivate
 	cd "$CGCMSDIR/external_tools"
 fi
@@ -267,7 +316,6 @@ if ! [ -f "$CGCMSDIR/external_refdata/tigrfam/TIGRFAM.HMM" ]; then
 	rm tigrfam.tar.gz
 	hmmpress TIGRFAM.HMM
 fi
-
 echo "Activate virtual environment $CGCMSDIR/cgcms-venv and install Django before running CGCMS"
 cd "$WORKDIR/genomebrowser"
 if [ -f "configs.txt" ]; then
@@ -299,6 +347,8 @@ echo "plugins.fama.fama_cazy_lib = $CGCMSDIR/external_refdata/fama/cazy2/cazy_v2
 echo "plugins.fama.fama_nitrate_lib = $CGCMSDIR/external_refdata/fama/nitrogen11/fama_nitrogen-cycle_v.11.0_functions_thresholds.tsv" >> configs.txt
 echo "plugins.fama.fama_universal_lib = $CGCMSDIR/external_refdata/fama/universal1.4/fama_function_thresholds_v.1.4.txt" >> configs.txt
 echo "plugins.phispy.pvog_path = $CGCMSDIR/external_refdata/phispy/pvogs.hmm" >> configs.txt
+echo "plugins.gapmind.gapmind_dir = $CGCMSDIR/external_tools/PaperBLAST" >> configs.txt
+echo "plugins.defensefinder.defensefinder_models_dir = $CGCMSDIR/external_refdata/defensefinder/data" >> configs.txt
 echo "ref.cazy_file = $WORKDIR/ref_data/ref_cazy.txt" >> configs.txt
 echo "ref.cog_codes_file = $WORKDIR/ref_data/ref_cog_codes.txt" >> configs.txt
 echo "ref.ec_file = $WORKDIR/ref_data/ref_ec.txt" >> configs.txt
