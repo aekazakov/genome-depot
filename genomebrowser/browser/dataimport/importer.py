@@ -531,6 +531,7 @@ class Importer(object):
                     with gzip.open(gbk_copy, 'wb') as outfile:
                         shutil.copyfileobj(infile, outfile)
                 gbk_handle = open(gbk_file, 'r')
+            print('Reading', gbk_file)
             self.inputgenomes[genome_id]['gbk_filepath'] = gbk_copy
             parser = GenBank.parse(gbk_handle)
             genome_size = 0
