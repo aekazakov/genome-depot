@@ -55,7 +55,7 @@ git clone https://github.com/aekazakov/CGCMS
 
 cd CGSMS
 
-bash install_tools.sh
+bash install.sh
 
 
 4. Create mysql user (for example, cgcmsuser) or use existing mysql account.
