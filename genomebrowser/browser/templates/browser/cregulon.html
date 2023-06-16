@@ -1,156 +1,194 @@
 {% extends "base_generic.html" %}
 {% load static %}
 
-{% block page-title %}<title>Conserved regulon</title>{% endblock %}
+{% block page-title %}<title>Conserved regulon for {{ regulator_og.eggnog_id }} [{{ regulator_og.taxon.name }}]</title>{% endblock %}
+{% block script-header %}
+    <style>#regulons {display:none;}</style>
+    <script>
+    function ToggleRegulons() {
+      document.getElementById("regulons").style.display = "block";
+      document.getElementById("showregulons").style.display = "none";
+    }
+    </script>
+    <script>
+    function HideRegulons() {
+      document.getElementById("regulons").style.display = "none";
+      document.getElementById("showregulons").style.display = "block";
+    }
+    </script>
+    <style>#sites {display:none;}</style>
+    <script>
+    function ToggleSites() {
+      document.getElementById("sites").style.display = "block";
+      document.getElementById("showsites").style.display = "none";
+    }
+    </script>
+    <script>
+    function HideSites() {
+      document.getElementById("sites").style.display = "none";
+      document.getElementById("showsites").style.display = "block";
+    }
+    </script>
+{% endblock %}
 
 {% block title %}<div class="logo"><h2>Conserved regulon</h2></div>{% endblock %}
 
 {% block content %}
     <section id="one" class="wrapper style3">
-	    <div class="inner">
-		<header class="align-center">
-			<h2>Conserved regulon for {{ regulator_og.eggnog_id }} [{{ regulator_og.taxon.name }}]</h2>
-		</header>
-		<div class="row">
-		    <div class="4u align-center">
-			<a class="align-center" href="#sites">Sites</a>
-		    </div>
-		    <div class="4u align-center">
-			<a class="align-center" href="#genes">Genes</a>
-		    </div>
-		    <div class="4u align-center">
-			<a class="align-center" href="#operons">Operons</a>
-		    </div>
-		</div>
-		<hr>
-		<header class="align-center">
-			<p class="align-center">Regulator EggNOG odthologs</p>
-		</header>
-		<div class="grid-style">
-			{% if regulator_og %}
-			<div class="content">
-				<h5>{{ regulator_og.eggnog_id }} [{{ regulator_og.taxon.name }}] </h5>
-			</div>
-		    <div class="content">
-				<h5><a href="{% url 'searchgene' %}?type=og&query={{ regulator_og.id }}">Show all genes in the group {{ regulator_og.eggnog_id }}[{{ regulator_og.taxon.name }}]</a></h5>
-			</div>
-			{% endif %}
-		</div>
-	{% if regulons %}
-		<h2 id="regulons" class="align-center">Regulons</h2>
-		<div class="table-wrapper">
-			<table>
-				<thead>
-					<tr>
-						<th>Regulon</th>
-						<th>Genome</th>
-						<th>Regulators</th>
-						<th>Description</th>
-					</tr>
-				</thead>
-				<tbody>
-		{% for regulon in regulons.all %}
-					<tr>
-					<td><a href="{% url 'regulondetails' genome=regulon.genome.name name=regulon.name %}">{{ regulon.name }}</a></td>
-					<td>{{ regulon.genome.name }}</td>
-					{% if regulon.regulators %}
-					<td>
-					{% for regulator in regulon.regulators.all %}
-						<a href="{% url 'genedetails' genome=regulator.genome.name locus_tag=regulator.locus_tag %}">{{ regulator.locus_tag }}</a><br\>
-					{% endfor %}
-					</td>
-					{% else %}
-					<td>&nbsp;</td>
-					{% endif %}
-					<td>{{ regulon.description }}</td>
-					</tr>
-		{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	{% endif %}
+        <div class="inner">
+        <header class="align-center">
+            <h2>Conserved regulon for {{ regulator_og.eggnog_id }}[{{ regulator_og.taxon.name }}] family</h2>
+        </header>
+        <div class="row">
+            <div class="4u align-center">
+            <a class="align-center" href="#comparative-header">Comparative table</a>
+            </div>
+            <div class="4u align-center">
+            <a class="align-center" href="#regulons">Regulons</a>
+            </div>
+            <div class="4u align-center">
+            <a class="align-center" href="#sites">Sites</a>
+            </div>
+        </div>
+        <hr>
+        <header class="align-center">
+            <p class="align-center">Regulator EggNOG odthologs</p>
+        </header>
+        <div class="grid-style">
+            {% if regulator_og %}
+            <div class="content">
+                {% if regulator_functions %}
+                    <h5><b>Protein functions in the {{ regulator_og.eggnog_id }}[{{ regulator_og.taxon.name }}] family:</b></h5>
+                    {% for item in regulator_functions %}
+                        <h5>{{ item }}</h5>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="content">
+                <h5><a href="{% url 'searchgene' %}?type=og&query={{ regulator_og.id }}">Show all genes in the {{ regulator_og.eggnog_id }}[{{ regulator_og.taxon.name }}] family</a></h5>
+            </div>
+            {% endif %}
+        </div>
+    {% if gene_table_rows %}
+        <header class="align-center">
+            <h2 id="comparative-header" class="align-center">Comparative table</h2>
+        </header>
+        <div class="table-wrapper conserved-regulon-wrapper style3">
+            <table class="conserved-regulon-table style3">
+                <thead>
+                <tr>
+                    <th>Gene family</th>
+                    {% for item in gene_table_header %}
+                        <th class="regulonlabel"><a href="{% url 'regulondetails' genome=item.1 name=item.0 %}" title="{{ item.0 }} regulon in {{ item.1 }}">{{ item.1 }}</a></th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for gene_table_row in gene_table_rows %}
+                <tr>
+                    {% for gene_table_item in gene_table_row %}
+                        {{ gene_table_item |safe }}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
 
-	{% if gene_table_rows %}
-	    <h2 id="operons" class="align-center">Comparative table</h2>
-	    <div class="table-wrapper">
-		<table>
-		    <thead>
-			<tr>
-			    <th>EggNOG family</th>
-			    {% for item in gene_table_header %}
-				<th class="regulonlabel">{{ item }}</th>
-			    {% endfor %}
-			    <th>Function</th>
-			</tr>
-		    </thead>
-		    <tbody>
-			{% for gene_table_row in gene_table_rows %}
-			<tr>
-			    {% for gene_table_item in gene_table_row %}
-				{{ gene_table_item |safe }}
-			    {% endfor %}
-			</tr>
-			{% endfor %}
-		    </tbody>
-		</table>table>
-	    </div>
-	    
-	
+    {% if gene_table %}
+        <h2 id="operons" class="align-center">Comparative table</h2>
+        <div class="table-wrapper">
+        {{ gene_table |safe }}
+        </div>
+    {% endif %}
 
-	{% endif %}
-
-	{% if gene_table %}
-	    <h2 id="operons" class="align-center">Comparative table</h2>
-	    <div class="table-wrapper">
-		{{ gene_table |safe }}
-	    </div>
-	{% endif %}
-
-	{% if sites %}
-		<h2 id="sites" class="align-center">Sites</h2>
-		<div class="table-wrapper">
-			<table>
-				<thead>
-					<tr>
-						<th>Genome</th>
-						<th>Site</th>
-						<th>Position</th>
-						<th>Regulon</th>
-						<th>Sequence</th>
-						<th>Type</th>
-						<th>Target genes and operons</th>
-					</tr>
-				</thead>
-				<tbody>
-		{% for site in sites.all %}
-					<tr>
-						<td>{{ site.genome.name }}</td>
-						<td><a href="{% url 'sitedetails' genome=site.genome.name name=site.name %}">{{ site.name }}</a></td>
-						{% if site.strand == -1 %}
-						    <td>{{ site.contig.contig_id }}: complement({{ site.start }}..{{ site.end }})</td>
-						{% else %}
-						    <td>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</td>
-						{% endif %}
-						<td><a href="{% url 'regulondetails' genome=site.genome.name name=site.regulon.name %}">{{ site.regulon.name }}</a></td>
-						<td>{{ site.sequence }}</td>
-						<td>{{ site.type }}</td>
-						<td>
-						    {%for gene in site.genes.all %}
-							<a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a><br>
-						    {% endfor %}
-						    {%for operon in site.operons.all %}
-							<a href="{% url 'operondetails' name=operon.name %}">{{ operon.name }}</a><br>
-						    {% endfor %}
-						</td>
-					</tr>
-		{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	{% endif %}
+    {% if regulons %}
+        <header class="align-center" id="showregulons">
+            <a onclick="ToggleRegulons()">Show links to regulons</a>
+        </header>
+        <div class="table-wrapper" id="regulons">
+            <h2 id="regulonheader" class="align-center">Regulons <a onclick="HideRegulons()">(hide)</a></h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Regulon</th>
+                        <th>Genome</th>
+                        <th>Regulators</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+        {% for regulon in regulons.all %}
+                    <tr>
+                    <td><a href="{% url 'regulondetails' genome=regulon.genome.name name=regulon.name %}">{{ regulon.name }}</a></td>
+                    <td>{{ regulon.genome.name }}</td>
+                    {% if regulon.regulators %}
+                    <td>
+                    {% for regulator in regulon.regulators.all %}
+                        <a href="{% url 'genedetails' genome=regulator.genome.name locus_tag=regulator.locus_tag %}">{{ regulator.locus_tag }}</a><br\>
+                    {% endfor %}
+                    </td>
+                    {% else %}
+                    <td>&nbsp;</td>
+                    {% endif %}
+                    <td>{{ regulon.description }}</td>
+                    </tr>
+        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
 
 
-		</div>
+    {% if sites %}
+        <header class="align-center" id="showsites">
+            <a onclick="ToggleSites()">Show list of sites</a>
+        </header>
+        <div class="table-wrapper" id="sites">
+            <h2 id="siteheader" class="align-center">Sites <a onclick="HideSites()">(hide)</a></h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Genome</th>
+                        <th>Site</th>
+                        <th>Position</th>
+                        <th>Regulon</th>
+                        <th>Sequence</th>
+                        <th>Type</th>
+                        <th>Target genes and operons</th>
+                    </tr>
+                </thead>
+                <tbody>
+        {% for site in sites.all %}
+                    <tr>
+                        <td>{{ site.genome.name }}</td>
+                        <td><a href="{% url 'sitedetails' genome=site.genome.name name=site.name %}">{{ site.name }}</a></td>
+                        {% if site.strand == -1 %}
+                            <td>{{ site.contig.contig_id }}: complement({{ site.start }}..{{ site.end }})</td>
+                        {% else %}
+                            <td>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</td>
+                        {% endif %}
+                        <td><a href="{% url 'regulondetails' genome=site.genome.name name=site.regulon.name %}">{{ site.regulon.name }}</a></td>
+                        <td>{{ site.sequence }}</td>
+                        <td>{{ site.type }}</td>
+                        <td>
+                            {%for gene in site.genes.all %}
+                            <a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a><br>
+                            {% endfor %}
+                            {%for operon in site.operons.all %}
+                            <a href="{% url 'operondetails' name=operon.name %}">{{ operon.name }}</a><br>
+                            {% endfor %}
+                        </td>
+                    </tr>
+        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+
+        </div>
     </section>
 
 {% endblock %}

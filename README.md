@@ -1,5 +1,5 @@
 # CGCMS
-Compararive genomic content management system
+Compararive genomic content management system is a genome annotation pipeline and web-based genome browser.
 
 ## Prerequisites
 
@@ -166,7 +166,7 @@ Note: If POEM fails to predict operons, and run_poem.sh script throws an error "
 - External ID (someting like "NCBI:GCF_000006945.2")
 
 
-2. Import genomes into database, if input files have been uploaded to the server:
+2. Import genomes into database. If genome files have been uploaded to the server, they can be imported from the command line:
 
 activate virtual environment (source /path/to/virtualenv/bin/activate)
 
@@ -184,10 +184,23 @@ In the process of genome import, CGCMS annotation pipeline runs eggnog-mapper to
 
 Alternatively, genomes can be imported from admin panel. 
 
-Log into siteURL/admin with username and password you created during installation process.
+Start qcluster process:
+
+activate virtual environment (source /path/to/virtualenv/bin/activate)
+
+cd cgcms/CGCMS/genomebrowser
+
+python manage.py qcluster
+
+Log into siteURL/admin with superuser login and password you created during installation process.
 
 Click "Import genomes" button and follow the instructions on the page.
 
+Tab-separated text file is always required.
+
+Zip-archive with genomes may be provided, if genomes haven't been uploaded to server.
+
+For genome download from NCBI ftp, e-mail address should be provided. For security reasons, this e-mail is never stored in the database.
 
 # Other commands
 
