@@ -25,8 +25,9 @@
 					<thead>
 						<tr>
 							<th>Name</th>
-							<th>Taxonomy</th>
+							<th>Tags</th>
 							<th>Source</th>
+							<th>Taxonomy</th>
 							<th>Size</th>
 							<th>Contigs</th>
 							<th>Genes</th>
@@ -36,6 +37,14 @@
     {% for genome in genomelist %}
 					    <tr>
 						    <td><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a></td>
+							{%if genome.tags %}
+								<td>{% for tag in genome.tags.all %}
+									<span class="genometag" style="background-color: rgb({{tag.color}}); color: rgb({{tag.textcolor}})">{{tag.name}}</span>&nbsp;
+								    {% endfor %}
+								</td>
+							{% else %}
+								<td>&nbsp;</td>
+							{% endif %}
 							<td>{{ genome.taxon.name }}</td>
 							{%if genome.strain %}
 								<td>{{ genome.strain.full_name }}</td>

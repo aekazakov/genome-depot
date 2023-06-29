@@ -96,6 +96,19 @@ class Sample_metadata(models.Model):
         return self.source + ': ' + self.value
 
 
+class Tag(models.Model):
+    '''
+        Stores genome tags 
+    '''
+    name = models.CharField(max_length=50, db_index=True)
+    description = models.CharField(max_length=300)
+    color = models.CharField(max_length=11)
+    textcolor = models.CharField(max_length=11)
+
+    def __str__(self):
+        return self.name
+
+
 class Genome(models.Model):
     '''
         Stores genomes
@@ -113,7 +126,11 @@ class Genome(models.Model):
     external_id = models.CharField(max_length=40)
     gbk_filepath = models.CharField(max_length=200)
     taxon = models.ForeignKey(Taxon, on_delete=models.CASCADE, blank = False, null = False)
+    tags = models.ManyToManyField(Tag)
 
+    def get_tags(self):
+        return ", ".join([tag.name for tag in self.tags.all()])
+        
     def __str__(self):
         return self.name
 

@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import messages
 # Import your models here
-from browser.models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog
+from browser.models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog, Tag
 from browser.dataimport.importer import Importer
 from browser.async_tasks import test_async_task, async_import_genomes, async_delete_genomes, async_update_static_files, async_import_sample_metadata, async_import_sample_descriptions, async_update_strain_metadata, async_import_annotations, async_import_regulon
 from django_q.models import OrmQ
@@ -66,7 +66,7 @@ class GenomeAdmin(admin.ModelAdmin):
     actions = [test_task,
                delete_genomes,
                update_static_files]
-    list_display = ['name', 'taxon', 'strain', 'sample', 'size', 'contigs']
+    list_display = ['name', 'taxon', 'strain', 'sample', 'size', 'contigs', 'get_tags']
     list_filter = (('strain', admin.EmptyFieldListFilter), ('sample', admin.EmptyFieldListFilter))
     ordering = ['name']
     search_fields = ['name']
@@ -77,7 +77,8 @@ class GenomeAdmin(admin.ModelAdmin):
         'description',
         ('json_url', 'pub_date'),
         ('external_id', 'external_url'),
-        'gbk_filepath'
+        'gbk_filepath',
+        'tags'
     )
     autocomplete_fields = ('strain', 'sample', 'taxon', )
     
@@ -492,6 +493,14 @@ class ChangeLogAdmin(admin.ModelAdmin):
     ordering = ['timestamp']
 
 admin.site.register(ChangeLog, ChangeLogAdmin)
+
+
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['name', 'description', 'color', 'textcolor']
+    list_filter = ['name']
+    ordering = ['name']
+
+admin.site.register(Tag, TagAdmin)
 
 
 def clusters_view(request):

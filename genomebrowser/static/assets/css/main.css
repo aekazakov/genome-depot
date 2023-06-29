@@ -4739,3 +4739,12 @@
 		display: none;
 	}
 
+	.genometag {
+		border-radius: .5rem;
+		position: relative;
+		padding: 1px 8px;
+		display: inline-block;
+		white-space: nowrap;
+		margin: 3px 3px 3px 3px;
+		text-align: center;
+	}
