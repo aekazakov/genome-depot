@@ -113,8 +113,8 @@ def run_protein_search(params):
         result.append('\t'.join(row))
     if not result:
         searchcontext = 'No hits found'
-    if len(result) > 100:
-        result = result[:100]
+    if len(result) > int(params['hitstoshow']):
+        result = result[:int(params['hitstoshow'])]
     return result, searchcontext, query_len
 
 def run_nucleotide_search(params):
@@ -172,6 +172,6 @@ def run_nucleotide_search(params):
         result.append('\t'.join(row))
     if not result:
         searchcontext = 'No hits found'
-    if len(result) > 100:
-        result = result[:100]
+    if len(result) > int(params['hitstoshow']):
+        result = result[:int(params['hitstoshow'])]
     return result, searchcontext, query_len

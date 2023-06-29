@@ -30,9 +30,7 @@
     }
     </script>
 {% endblock %}
-
 {% block title %}<div class="logo"><h2>Conserved regulon</h2></div>{% endblock %}
-
 {% block content %}
     <section id="one" class="wrapper style3">
         <div class="inner">
@@ -95,14 +93,12 @@
             </table>
         </div>
     {% endif %}
-
     {% if gene_table %}
         <h2 id="operons" class="align-center">Comparative table</h2>
         <div class="table-wrapper">
         {{ gene_table |safe }}
         </div>
     {% endif %}
-
     {% if regulons %}
         <header class="align-center" id="showregulons">
             <a onclick="ToggleRegulons()">Show links to regulons</a>
@@ -139,8 +135,6 @@
             </table>
         </div>
     {% endif %}
-
-
     {% if sites %}
         <header class="align-center" id="showsites">
             <a onclick="ToggleSites()">Show list of sites</a>
@@ -186,9 +180,6 @@
             </table>
         </div>
     {% endif %}
-
-
         </div>
     </section>
-
 {% endblock %}

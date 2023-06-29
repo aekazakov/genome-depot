@@ -13,7 +13,7 @@ Compararive genomic content management system is a genome annotation pipeline an
 
 5. HMMER
 
-6. NCBI-BLAST
+6. NCBI-BLAST (blastp and megablast required)
 
 7. Perl
 
@@ -22,7 +22,7 @@ Compararive genomic content management system is a genome annotation pipeline an
 9. curl
 
 In Ubuntu-based distibutions, you can install the dependencies using the APT package repository:
-sudo apt install apache2 mysql-server muscle hmmer ncbi-blast+ build-essential zlib1g-dev libexpat1-dev python3-dev libmysqlclient-dev curl
+sudo apt install apache2 mysql-server muscle hmmer ncbi-blast+-legacy build-essential zlib1g-dev libexpat1-dev python3-dev libmysqlclient-dev curl
 
 9. Jbrowse genome browser v. 1.16.11 (https://jbrowse.org/jbrowse1.html). You can find installation instructions here: https://jbrowse.org/docs/installation.html#download-jbrowse-minified-release
 
