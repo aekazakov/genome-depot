@@ -39,6 +39,7 @@ urlpatterns = [
     path('transporters/', views.TcSearchResultsView.as_view(), name='transporters'),
     path('cazy/', views.CazySearchResultsView.as_view(), name='cazy'),
     path('cogs/', views.CogSearchResultsView.as_view(), name='cogs'),
+    path('tag/<str:name>', views.tag_detail, name='tagdetails'),
     path('comparative/', views.ComparativeView.as_view(), name='comparative'),
     path('loadingscribl/',views.ComparativeView.ajax_view,name="loadingscribl"),
     path('cregulon/', views.cregulon_view, name='cregulon'),

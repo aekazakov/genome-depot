@@ -11,6 +11,7 @@ from django.urls import path
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.forms.widgets import TextInput
 # Import your models here
 from browser.models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog, Tag
 from browser.dataimport.importer import Importer
@@ -27,13 +28,26 @@ admin.site.index_title = "Welcome to CGCMS administration interface"
 class TsvImportForm(forms.Form):
     tsv_file = forms.FileField()
 
+
 class ExcelImportForm(forms.Form):
     xlsx_file = forms.FileField()
+
 
 class GenomeImportForm(forms.Form):
     tsv_file = forms.FileField()
     zip_file = forms.FileField(required=False, label='Zip archive with genomes in GBFF format (optional)')
     download_email = forms.EmailField(max_length=200, required=False, label='Email for NCBI genome downloads (optional)')
+
+
+class TagModelForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = "__all__"
+        widgets = {
+            "color": TextInput(attrs={"type": "color"}),
+            "textcolor": TextInput(attrs={"type": "color"}),
+        }
+
 
 @admin.action(description = 'Test sync action')
 def test_task(self, request, queryset):
@@ -499,6 +513,7 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ['name', 'description', 'color', 'textcolor']
     list_filter = ['name']
     ordering = ['name']
+    form = TagModelForm
 
 admin.site.register(Tag, TagAdmin)
 

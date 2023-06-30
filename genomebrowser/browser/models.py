@@ -102,8 +102,8 @@ class Tag(models.Model):
     '''
     name = models.CharField(max_length=50, db_index=True)
     description = models.CharField(max_length=300)
-    color = models.CharField(max_length=11)
-    textcolor = models.CharField(max_length=11)
+    color = models.CharField(max_length=7, default="#FFFFFF")
+    textcolor = models.CharField(max_length=7, default="#000000")
 
     def __str__(self):
         return self.name

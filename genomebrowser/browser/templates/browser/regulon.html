@@ -35,12 +35,13 @@
 			    <p class="align-center">Regulon information</p>
 			</header>
 			<span>Genome</span>
-			<h5><a href="{% url 'genomedetails' name=regulon.genome.name %}">{{ regulon.genome.name }}</a> 
+			<h5><a href="{% url 'genomedetails' name=regulon.genome.name %}">{{ regulon.genome.name }}</a>
 			{%if regulon.genome.strain %}
-				[{{ regulon.genome.strain.full_name }}]</h5>
+				[{{ regulon.genome.strain.full_name }}]
 			{% else %}
-				[{{ regulon.genome.sample.full_name }}]</h5>
+				[{{ regulon.genome.sample.full_name }}]
 			{% endif %}
+			{% for tag in regulon.genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</h5>
 			<span>Description</span>
 			<h5>{{ regulon.description }}</a> 
 		    </div>

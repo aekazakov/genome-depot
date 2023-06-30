@@ -24,7 +24,7 @@
 					    <p>Genome assemblies</p>
 					</header>
     {% for genome in genomes %}
-					    <h5 class="align-center"><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> ({{ genome.size }} bp, {{ genome.genes }} genes)</h5>
+					    <h5 class="align-center"><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}({{ genome.size }} bp, {{ genome.genes }} genes)</h5>
     {% endfor %}
 {% else %}
 					    <p>No genomes found.</p>

@@ -46,7 +46,9 @@
                 <p class="align-center">Gene information</p>
             </header>
             <span>Genome</span>
-            <h5><a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]</a></h5>
+            <h5><a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]</a>
+                {% for tag in gene.genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}
+            </h5>
             <span>Position</span>
             {% if gene.strand == "-1" %}
             <h5>{{ gene.contig.contig_id }}: complement({{ gene.start }}..{{ gene.end }})</h5>

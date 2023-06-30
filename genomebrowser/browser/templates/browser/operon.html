@@ -31,7 +31,7 @@
 			    <p class="align-center">Operon information</p>
 			</header>
 			<span>Genome</span>
-			<h5><a href="{% url 'genomedetails' name=operon.genome.name %}">{{ operon.genome.name }} [{{ operon.genome.taxon.name }}]</a></h5>
+			<h5><a href="{% url 'genomedetails' name=operon.genome.name %}">{{ operon.genome.name }} [{{ operon.genome.taxon.name }}]</a>{% for tag in operon.genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</h5>
 			<span>Position</span>
 		    {% if operon.strand == "-1" %}
 			<h5>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</h5>

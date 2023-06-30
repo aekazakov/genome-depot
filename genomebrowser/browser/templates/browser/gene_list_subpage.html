@@ -16,7 +16,7 @@
 					    <tr>
 						    <td><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a></td>
 						    <td>{{ gene.name }}</td>
-						    <td>{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]</td>
+						    <td>{{ gene.genome.name }} [{{ gene.genome.taxon.name }}] {% for tag in gene.genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</td>
 						    <td>{{ gene.function }}</td>
 					    </tr>
     {% endfor %}

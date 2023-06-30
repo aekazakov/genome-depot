@@ -13,7 +13,7 @@
 				{% if searchcontext %}
 				    <h4>{{ searchcontext }}</h4>
 				{% else %}
-				    <h4>Operons in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }} [{{ genome.taxon.name }}]</a></h4>
+				    <h4>Operons in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }} [{{ genome.taxon.name }}]</a>{% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</h4>
 				    <form action="{% url 'operonlist' genome=genome.name %}" method="get">
 				      <input name="query" type="text" placeholder="Quick search in operons by gene name or locus tag...">
 				    </form>
