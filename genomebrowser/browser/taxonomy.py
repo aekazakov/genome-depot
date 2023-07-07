@@ -9,17 +9,28 @@ def generate_sunburst(taxon_id='1'):
     
     labels, parents, values, customdata = get_genomes_taxonomy(taxon_id)
     
-    color_discrete_sequence = ['', '#FFAA00', '#2D5F91','#819FBD','#819FBD','#91D4D2', '#96BEE6', '#C0D8F0','#E8655F','#F1A39F','#48B7B4']
+    maxdepth = -1
+    if taxon_id == '1':
+        maxdepth = 4
+    
+    colors = []
+    color_sequence = ['', '#FFAA00', '#2D5F91','#819FBD','#819FBD','#91D4D2', '#96BEE6', '#C0D8F0','#E8655F','#F1A39F','#48B7B4']
+    for ind, label in enumerate(labels):
+        colors.append(color_sequence[ind%10])
+    
     fig = go.Figure(go.Sunburst(
         ids = labels,
         labels = labels,
         parents = parents,
         values = values,
         customdata = customdata,
-        marker=dict(colors=color_discrete_sequence),
+        marker=dict(colors=colors),
         texttemplate = '<a href="%{customdata[0]}" style="color:black;">%{label}</a>',
         hovertemplate = '%{customdata[1]}<extra></extra>',
         branchvalues = 'total',
+        level = '',
+        maxdepth = maxdepth,
+        
     ))
     fig.update_layout(margin = dict(t = 0, l = 0, r = 0, b = 0), height=800, uniformtext=dict(minsize=10, mode='hide'), paper_bgcolor='rgba(120,120,120,0.1)', plot_bgcolor='rgba(120,120,120,0.1)')
     html = StringIO()
