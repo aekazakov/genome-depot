@@ -1553,7 +1553,7 @@ class Importer(object):
             outfile.write('#!/bin/bash\ndeactivate\n')
             outfile.write('source ' + self.config['cgcms.conda_path'] + '\n')
             outfile.write('conda activate ' + self.config['cgcms.poem.conda_env'] + '\n')
-            outfile.write('bash ' + self.config['cgcms.poem_command'] + ' -f ' + working_dir + ' -a n -p pro\n')
+            outfile.write('bash ' + self.config['cgcms.poem_command'] + ' -f ' + working_dir + ' -a n -p pro >>poem.log\n')
             outfile.write('conda deactivate\n')
             
         cmd = ['/bin/bash', poem_script]
