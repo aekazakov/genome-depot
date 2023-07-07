@@ -1,0 +1,64 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block page-title %}<title>{{ taxon.name }}</title>{% endblock %}
+
+{% block script-header %}
+<script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+{% endblock %}
+
+{% block title %}<div class="logo"><h2>Taxon</h2></div>{% endblock %}
+{% block content %}
+
+    <section id="two" class="wrapper style3">
+	   <div class="inner">
+		<header class="align-center">
+		    <h2>{{ taxon.name }} [{{ taxon.rank }}]</h2>
+		    <h5>NCBI Taxonomy ID: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{ taxon.taxonomy_id }}">{{ taxon.taxonomy_id }}</a></h5>
+		</header>
+		<hr>
+				{% if sunburst %}
+					<div class="align-center">
+					{{ sunburst | safe}}
+					</div>
+				{% endif %}
+		<hr>
+		<div class="grid-style">
+		    <div class="content">
+		    <header class="align-center">
+			<p> Lineage </p>
+		    </header>
+		    {% if lineage %}
+			{% for parent in lineage %}
+			    <div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
+			{% endfor %}
+		    {% endif %}
+			<br>
+{% if strains %}
+			<header class="align-center">
+			    <p>Strains</p>
+			</header>
+    {% for strain in strains %}
+			<h5 class="align-center"><a href="{% url 'straindetails' strain_id=strain.strain_id %}">{{ strain.full_name }}</a></h5>
+    {% endfor %}
+{% else %}
+			<p>No strains found.</p>
+{% endif %}
+		    </div>
+		    <div class="content">
+{% if genomes %}
+			<header class="align-center">
+			    <p>Genome assemblies</p>
+			</header>
+    {% for genome in genomes %}
+			   <h5 class="align-center"><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}({{ genome.size }} bp, {{ genome.genes }} genes)</h5>
+    {% endfor %}
+{% else %}
+			<p>No genomes found.</p>
+{% endif %}
+		    </div>
+		</div>
+	</div>
+    </section>
+
+{% endblock %}
