@@ -3,6 +3,7 @@
 {% load static %}
 
 {% block script-header %}
+<script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
 {% endblock %}
 
 {% block title %}<div class="logo"><h2>Genomes</h2></div>{% endblock %}
@@ -15,9 +16,14 @@
 					      <input name="query" type="text" placeholder="Search genomes by name...">
 					    </form>
 				{% if searchcontext %}
-				    <h4>{{ searchcontext }}</h4>
+					    <h4>{{ searchcontext }}</h4>
 				{% endif %}
 					</header>
+				{% if sunburst %}
+					<div class="align-center">
+					{{ sunburst | safe}}
+					</div>
+				{% endif %}
 
 {% if genomelist %}
 			<div class="table-wrapper">
@@ -92,4 +98,3 @@
 			</section>
 
 {% endblock %}
-

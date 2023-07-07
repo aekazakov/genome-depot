@@ -8,6 +8,7 @@ urlpatterns = [
     path('genome/<str:name>', views.genome_detail, name='genomedetails'),
     path('sample/<str:sample_id>', views.sample_detail, name='sampledetails'),
     path('strain/<str:strain_id>/', views.strain_detail, name='straindetails'),
+    path('taxonomy/<str:taxonomy_id>', views.taxon_detail, name='taxondetails'),
     path('gene/<str:genome>/<str:locus_tag>/', views.gene_detail, name='genedetails'),
     path('operon/<str:genome>/<str:name>/', views.operon_detail, name='operondetails'),
     path('operon/<str:name>/', views.operon_detail, name='operondetails'),

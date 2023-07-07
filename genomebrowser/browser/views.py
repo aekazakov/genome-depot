@@ -14,7 +14,7 @@ from django.urls import reverse
 from browser.seqsearch import run_protein_search, run_nucleotide_search
 from browser.comparative_analysis import get_scribl
 from browser.conserved_regulon import build_conserved_regulon
-
+from browser.taxonomy import generate_sunburst, get_taxon_children
 # Create your views here.
 
 class AnnotationSearchResultsSubView(generic.ListView):
@@ -137,7 +137,14 @@ class GenomeListView(generic.ListView):
     def get_queryset(self):
         return Genome.objects.order_by('name').select_related('strain', 'taxon').prefetch_related('tags')
 
-
+    def get_context_data(self,**kwargs):
+        context = super(GenomeListView,self).get_context_data(**kwargs)
+        sunburst = generate_sunburst()
+        if sunburst:
+            context['sunburst'] = sunburst
+        return context
+        
+        
 class OperonListView(generic.ListView):
     '''
         Class-based list view of Operon. Displays a table of operons.
@@ -711,7 +718,7 @@ def startpage(request):
     '''
         Displays home page
     '''
-    template = loader.get_template('browser/landing.html')
+    template = loader.get_template('browser/index.html')  #('browser/landing.html')
     num_genomes = Genome.objects.all().count()
     context = {'num_genomes':num_genomes}
     return HttpResponse(template.render(context, request))
@@ -738,6 +745,33 @@ def tag_detail(request, name):
         context['genomes'] = genomes
     return render(request, 'browser/genometag.html', context)
     
+def taxon_detail(request, taxonomy_id):
+    '''
+        Displays genome page.
+    '''
+    try:
+        taxon = Taxon.objects.get(taxonomy_id = taxonomy_id)
+        print(taxon.name, 'found')
+    except Taxon.DoesNotExist:
+        print('Taxonomy ID', taxonomy_id, 'not found')
+        raise Http404('Taxon ' + taxonomy_id + ' does not exist')
+    context = {'taxon': taxon}
+    children = get_taxon_children(taxonomy_id)
+    context['genomes'] = Genome.objects.filter(taxon__taxonomy_id__in=children)
+    context['strains'] = Strain.objects.filter(taxon__taxonomy_id__in=children)
+    context['sunburst'] = generate_sunburst(taxonomy_id)
+    lineage = [taxon,]
+    parent_id = taxon.parent_id
+    iteration_count = 0
+    while True:
+        parent_taxon = Taxon.objects.get(taxonomy_id = parent_id)
+        iteration_count += 1
+        if parent_taxon.taxonomy_id == parent_taxon.parent_id or parent_id == '1':
+            break
+        lineage.append(parent_taxon)
+        parent_id = parent_taxon.parent_id
+    context['lineage'] = reversed(lineage)
+    return render(request, 'browser/taxon.html', context)
     
 def genome_detail(request, name):
     '''
@@ -1619,3 +1653,4 @@ def generate_external_link(query, query_type, genome=None):
     if external != '':
         external = '<a href="' + external + '">External link</a>'
     return external
+
