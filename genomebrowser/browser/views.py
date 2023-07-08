@@ -139,9 +139,10 @@ class GenomeListView(generic.ListView):
 
     def get_context_data(self,**kwargs):
         context = super(GenomeListView,self).get_context_data(**kwargs)
-        sunburst = generate_sunburst()
-        if sunburst:
-            context['sunburst'] = sunburst
+        if not 'page_obj' in context or context['page_obj'].number == 1:
+            sunburst = generate_sunburst()
+            if sunburst:
+                context['sunburst'] = sunburst
         return context
         
         
