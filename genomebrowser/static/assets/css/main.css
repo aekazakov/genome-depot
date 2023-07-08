@@ -3114,7 +3114,7 @@
 		.wrapper.style3.light {
 			background-color: #fff;
 			color: #121212;
-			background-size: contain;
+			background-size: cover;
 			background-repeat: no-repeat;
 			background-attachment: fixed;
 			background-position: center;
