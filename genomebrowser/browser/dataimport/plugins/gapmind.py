@@ -54,6 +54,8 @@ def preprocess(annotator, genomes, working_dir):
         outfile.write('cd ' + annotator.config['plugins.gapmind.gapmind_dir'] + '\n')
         
         for genome in sorted(genomes.keys()):
+            if os.path.getsize(input_fasta_files[genome]) == 0:
+                continue
             os.mkdir(os.path.join(output_dir, genome))
             # perl bin/buildorgs.pl -out $TEMPDIR/orgs -orgs 'file:testinput.faa:Test genome'
             outfile.write('\n' + ' '.join(['perl', 'bin/buildorgs.pl', '-out', os.path.join(output_dir, genome, 'orgs'),

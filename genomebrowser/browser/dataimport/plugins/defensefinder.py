@@ -54,6 +54,8 @@ def preprocess(annotator, genomes, working_dir):
         outfile.write('cd ' + working_dir + '\n\n')
         
         for genome in sorted(genomes.keys()):
+            if os.path.getsize(input_fasta_files[genome]) == 0:
+                continue
             genome_dir = os.path.join(output_dir, genome)
             os.mkdir(genome_dir)
             outfile.write(' '.join(['defense-finder', 'run', '--models-dir', annotator.config['plugins.defensefinder.defensefinder_models_dir'],
