@@ -4706,6 +4706,7 @@
 	.tooltip{
 		position: relative;           
 		z-index: 24;
+		color: #121212;
 	}
 
 	.tooltip:hover{

@@ -126,10 +126,10 @@ def build_conserved_regulon(og_id):
         for regulon_label in sorted(list(regulon_labels)):
             if regulon_label in eggnogs[eggnog_id]:
                 tooltip = []
-                for item in eggnogs[eggnog_id][regulon_label]:
-                    tooltip.append('Gene: ' + item[0] + ' [' + item[1] + ']')
+                for index,item in enumerate(eggnogs[eggnog_id][regulon_label]):
+                    tooltip.append(str(index + 1) + '. Gene: <a href="' + reverse('genedetails', args=(item[1], item[0])) + '" title="' + item[0] + ': ' + item[2] + '">' + item[0] + '</a> [' + item[1] + ']')
                     tooltip.append(item[2])
-                table_row.append('<td class="filledcell"><div class="tooltip">' + '<br/>'.join(['<a href="' + reverse('genedetails', args=(item[1], item[0])) + '" title="' + item[0] + ': ' + item[2] + '">'  + str(index + 1) + '</a>' for index, item in enumerate(eggnogs[eggnog_id][regulon_label])]) + '<span>' + '<br/>'.join(tooltip) + '</span></div></td>')
+                table_row.append('<td class="filledcell"><div class="tooltip">' + str(len(eggnogs[eggnog_id][regulon_label])) + '<span>' + '<br/>'.join(tooltip) + '</span></div></td>')
             else:
                 table_row.append('<td>&nbsp;</td>')
         #table_row.append('<td>' + '; '.join(sorted(eggnog_functions[eggnog_id].keys())) + '</td>')
