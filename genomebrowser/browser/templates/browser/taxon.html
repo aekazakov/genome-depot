@@ -21,6 +21,10 @@
 					<div class="align-center">
 					{{ sunburst | safe}}
 					</div>
+				{% else %}
+					<header class="align-center">
+					    <h5>Genomes for {{ taxon.name }} not found in the database.</h5>
+					</header>
 				{% endif %}
 		<hr>
 		<div class="grid-style">
@@ -38,11 +42,13 @@
 			<header class="align-center">
 			    <p>Strains</p>
 			</header>
+			<h5 class="align-center">
     {% for strain in strains %}
-			<h5 class="align-center"><a href="{% url 'straindetails' strain_id=strain.strain_id %}">{{ strain.full_name }}</a></h5>
+			<a href="{% url 'straindetails' strain_id=strain.strain_id %}">{{ strain.full_name }}</a><br>
     {% endfor %}
+			</h5>
 {% else %}
-			<p>No strains found.</p>
+			<p>&nbsp;</p>
 {% endif %}
 		    </div>
 		    <div class="content">
@@ -50,11 +56,15 @@
 			<header class="align-center">
 			    <p>Genome assemblies</p>
 			</header>
+			<h5 class="align-center">
     {% for genome in genomes %}
-			   <h5 class="align-center"><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}({{ genome.size }} bp, {{ genome.genes }} genes)</h5>
+			   <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}({{ genome.size }} bp, {{ genome.genes }} genes)<br>
     {% endfor %}
+			</h5>
 {% else %}
-			<p>No genomes found.</p>
+			<header class="align-center">
+			    <p>Genome assemblies</p>
+			</header>
 {% endif %}
 		    </div>
 		</div>

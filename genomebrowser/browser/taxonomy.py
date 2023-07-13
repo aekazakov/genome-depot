@@ -8,6 +8,8 @@ def generate_sunburst(taxon_id='1'):
     from io import StringIO
     
     labels, parents, values, customdata = get_genomes_taxonomy(taxon_id)
+    if not labels:
+        return ''
     
     maxdepth = -1
     if taxon_id == '1':
@@ -119,7 +121,7 @@ def get_genomes_taxonomy(target_taxon_id):
     
     if len(taxon_counts) == 0:
         # No taxa, nothing to return
-        return [], [], []
+        return [], [], [], []
         
     for taxon in taxon_counts:
         # Hide root node

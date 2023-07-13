@@ -774,10 +774,11 @@ def show_help(request):
     context = {}
     return HttpResponse(template.render(context, request))
 
+'''
 def tag_detail(request, name):
-    '''
-        Displays genome page.
-    '''
+'''
+#        Displays genome page.
+'''
     try:
         genometag = Tag.objects.get(name = name)
     except Tag.DoesNotExist:
@@ -787,6 +788,7 @@ def tag_detail(request, name):
     if genomes:
         context['genomes'] = genomes
     return render(request, 'browser/genometag.html', context)
+'''
 
 class TagView(generic.ListView):
     '''
