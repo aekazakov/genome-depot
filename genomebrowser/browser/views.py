@@ -173,7 +173,7 @@ class GenomeListView(generic.ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        return Genome.objects.order_by('name').select_related('strain', 'taxon').prefetch_related('tags')
+        return Genome.objects.order_by('name').select_related('strain', 'sample', 'taxon').prefetch_related('tags')
 
     def get_context_data(self,**kwargs):
         context = super(GenomeListView,self).get_context_data(**kwargs)
@@ -849,6 +849,18 @@ def genome_detail(request, name):
     context['operons'] = Operon.objects.filter(genome=genome).count()
     context['sites'] = Site.objects.filter(genome=genome).count()
     context['regulons'] = Regulon.objects.filter(genome=genome).count()
+    lineage = [genome.taxon,]
+    parent_id = genome.taxon.parent_id
+    iteration_count = 0
+    while True:
+        parent_taxon = Taxon.objects.get(taxonomy_id = parent_id)
+        iteration_count += 1
+        if parent_taxon.taxonomy_id == parent_taxon.parent_id or parent_id == '1':
+            break
+        lineage.append(parent_taxon)
+        parent_id = parent_taxon.parent_id
+    context['lineage'] = reversed(lineage)
+    
     if request.GET.get('contig'):
         context['highlight_start'] = request.GET.get('start')
         context['highlight_end'] = request.GET.get('end')

@@ -51,12 +51,12 @@
 							{% else %}
 								<td>&nbsp;</td>
 							{% endif %}
-							<td>{{ genome.taxon.name }}</td>
 							{%if genome.strain %}
-								<td>{{ genome.strain.full_name }}</td>
+								<td><a href="{% url 'straindetails' strain_id=genome.strain.strain_id %}">{{ genome.strain.full_name }}</a></td>
 							{% else %}
-								<td>{{ genome.sample.full_name }}</td>
+								<td><a href="{% url 'sampledetails' sample_id=genome.sample.sample_id %}">{{ genome.sample.full_name }}</a></td>
 							{% endif %}
+							<td><a href="{% url 'taxondetails' taxonomy_id=genome.taxon.taxonomy_id %}">{{genome.taxon.name}}</a></td>
 						    <td>{{ genome.size }}</td>
 						    <td>{{ genome.contigs }}</td>
 						    <td>{{ genome.genes }}</td>

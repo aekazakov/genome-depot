@@ -58,7 +58,7 @@
 			</header>
 			<h5 class="align-center">
     {% for genome in genomes %}
-			   <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}({{ genome.size }} bp, {{ genome.genes }} genes)<br>
+			   <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}({{ genome.size }} bp, {{ genome.contigs }} contigs, {{ genome.genes }} genes)<br>
     {% endfor %}
 			</h5>
 {% else %}

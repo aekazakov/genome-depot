@@ -29,40 +29,48 @@
 		<div class="grid-style">
 		{%if genome.strain %}
 		    <div class="content">
-			<h5>Taxonomy: {{ genome.taxon.name }}</h5>
-			<h5>Strain: <a href="{% url 'straindetails' strain_id=genome.strain.strain_id %}">{{ genome.strain.full_name }}</a></h5>
-			<h5>Order: {{ genome.strain.order }}</h5>
-			<h5>Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a></h5>
-			<h5><a href="{% static 'genomes/gbff/' %}{{ genome.name }}.genome.gbff.gz">Download genome</a></h5>
+			Strain: <a href="{% url 'straindetails' strain_id=genome.strain.strain_id %}">{{ genome.strain.full_name }}</a><br><br>
+			Taxonomy:<br>
+			{% if lineage %}
+			    {% for parent in lineage %}
+				<div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
+			    {% endfor %}
+			{% endif %}
 		    </div>
 		{% endif %}
 		{%if genome.sample %}
 		    <div class="content">
-			<h5>Taxonomy: {{ genome.taxon.name }}</h5>
-			<h5>Sample: <a href="{% url 'sampledetails' sample_id=genome.sample.sample_id %}">{{ genome.sample.sample_id }}</a></h5>
-			<h5>Sample name: {{ genome.sample.full_name }}</h5>
-			<h5>Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a></h5>
-			<h5><a href="{% static 'genomes/gbff/' %}{{ genome.name }}.genome.gbff.gz">Download genome</a></h5>
+			Sample: <a href="{% url 'sampledetails' sample_id=genome.sample.sample_id %}">{{ genome.sample.full_name }}</a><br><br>
+			Taxonomy:<br>
+			{% if lineage %}
+			    {% for parent in lineage %}
+				<div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
+			    {% endfor %}
+			{% endif %}
 		    </div>
 		{% endif %}
 		    <div class="content">
-			<h5>Size: {{ genome.size }} bp</h5>
-			<h5>Contigs: {{ genome.contigs }}</h5>
-			<h5>Genes: <a href="{% url 'searchgene' %}?genome={{ genome.name }}&type=gene">{{ genome.genes }} (click to open list)</a></h5>
-			<h5>Operons: <a href="{% url 'operonlist' genome=genome.name %}">{{ operons }} (click to open list)</a></h5>
+			
+			Size: {{ genome.size }} bp<br>
+			Contigs: {{ genome.contigs }}<br>
+			Genes: <a href="{% url 'searchgene' %}?genome={{ genome.name }}&type=gene">{{ genome.genes }} (click to open list)</a><br>
+			Operons: <a href="{% url 'operonlist' genome=genome.name %}">{{ operons }} (click to open list)</a><br>
 		    {%if sites %}
-			<h5>Sites: <a href="{% url 'sitelist' genome=genome.name %}">{{ sites }} (click to open list)</a></h5>
+			Sites: <a href="{% url 'sitelist' genome=genome.name %}">{{ sites }} (click to open list)</a><br>
 		    {% endif %}
 		    {%if regulons %}
-			<h5>Regulons: <a href="{% url 'regulonlist' genome=genome.name %}">{{ regulons }} (click to open list)</a></h5>
+			Regulons: <a href="{% url 'regulonlist' genome=genome.name %}">{{ regulons }} (click to open list)</a><br>
 		    {% endif %}
+			<br>
+			Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a><br>
+			<a href="{% static 'genomes/gbff/' %}{{ genome.name }}.genome.gbff.gz">Download genome source file in GBFF format</a>
 		    </div>
 		</div>
 		<div class="content">
 		    <header class="align-center">
 			<p class="align-center">Description</p>
 		    </header>
-		    <h5>{% for tag in genome.tags.all %}
+		    <h5 class="align-center">{% for tag in genome.tags.all %}
 			<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;
 			{% endfor %}{{ genome.description }}</h5>
 		</div>

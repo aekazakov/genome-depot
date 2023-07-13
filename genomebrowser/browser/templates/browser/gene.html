@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 {% load static %}
 
-{% block page-title %}<title>{{ gene.locus_tag }} gene from {{ gene.genome.name }} genome</title>{% endblock %}
+{% block page-title %}<title>{{ gene.locus_tag }} [{{ gene.genome.name }}]</title>{% endblock %}
 {% block script-header %}
     <style>#proteinsequence {display:none;}</style>
     <script>
@@ -71,15 +71,11 @@
                 <span>Description</span>
                 <h5>{{ protein.eggnog_description.description }}</h5>
             {% endif %}
-            {% if protein.taxonomy_id %}
-                <span>Taxonomy</span>
-                <h5>{{ protein.taxonomy_id.name }} [{{ protein.taxonomy_id.rank }}]</h5>
-            {% endif %}
             {% if protein.ortholog_groups.all %}
-                <span>EggNOG Orthologs (click to open comparative plot)</span>
+                <span>EggNOG families (click to open comparative plot)</span>
                 <h5> 
                 {% for ortholog_group in protein.ortholog_groups.all %}
-                <a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}&size=10&lines=50">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a>
+                <a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}&size=10&lines=50">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a><br>
                 {% endfor %}
                 </h5>
             {% endif %}
