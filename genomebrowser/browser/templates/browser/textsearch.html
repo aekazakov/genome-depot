@@ -1,6 +1,7 @@
 {% extends "base_generic.html" %}
 {% load my_tags %}
 {% load static %}
+{% block page-title %}<title>Text search</title>{% endblock %}
 
 
 {% block script-header %}
@@ -122,6 +123,16 @@
 					    </div>
 					</div>
 					<br/>
+					<div class="content">
+					    <header class="align-center">
+						<h4 class="align-center">Search of taxa by name or taxonomy ID</h4>
+					    </header>
+					    <p>
+						<form action="{% url 'searchtaxon' %}" method="get">
+						    <input name="query" type="text" placeholder="Quick search by taxon name or taxonomy ID...">
+						</form>
+					    </p>
+					</div>
 
 				</div>
 			</section>

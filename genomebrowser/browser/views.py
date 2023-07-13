@@ -2,6 +2,7 @@ import csv
 import time
 import json
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
 from django.http import Http404
@@ -100,6 +101,43 @@ class AnnotationSearchResultsAjaxView(View):
         context['time'] = time.time()-start_time
         data = json.dumps(context)
         return HttpResponse(data,content_type="application/json")
+
+
+class TaxonListView(generic.ListView):
+    '''
+        Class-based list view of Taxon. Displays a table of taxa.
+    '''
+    model = Taxon
+    context_object_name = 'taxalist'
+    paginate_by = 50
+
+    def get_queryset(self):
+        return Taxon.objects.order_by('name')
+
+
+class TaxonSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in strain names full names or taxonomic orders.
+    '''
+    model = Taxon
+    context_object_name = 'taxalist'
+    paginate_by = 50
+
+    def get_context_data(self,**kwargs):
+        context = super(TaxonSearchResultsView,self).get_context_data(**kwargs)
+        if self.request.GET.get('query'):
+            context['searchcontext'] = 'Search results for "' + self.request.GET.get('query') + '"'
+        return context
+
+    def get_queryset(self): # new
+        query = self.request.GET.get('query')
+        if query:
+            object_list = Taxon.objects.filter(
+                Q(name__icontains=query) | Q(taxonomy_id__icontains=query)
+            ).order_by('name')
+        else:
+            object_list = Taxon.objects.none()
+        return object_list
 
 
 class StrainListView(generic.ListView):
@@ -283,13 +321,17 @@ class GeneSearchResultsSubView(generic.ListView):
         print(query, genome, query_type)
         if query_type == 'gene':
             if genome:
-                object_list = Gene.objects.filter(genome__name=genome).filter(
-                    Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
-                ).order_by('locus_tag').select_related('genome', 'genome__taxon').prefetch_related('genome__tags')
+                object_list = Gene.objects.filter(locus_tag__exact=query).filter(genome__name=genome).order_by('locus_tag').select_related('genome', 'genome__taxon').prefetch_related('genome__tags')
+                if not object_list:
+                    object_list = Gene.objects.filter(genome__name=genome).filter(
+                        Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
+                    ).order_by('locus_tag').select_related('genome', 'genome__taxon').prefetch_related('genome__tags')
             else:
-                object_list = Gene.objects.filter(
-                    Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
-                ).order_by('locus_tag').select_related('genome', 'genome__taxon').prefetch_related('genome__tags')
+                object_list = Gene.objects.filter(locus_tag__exact=query).order_by('locus_tag').select_related('genome', 'genome__taxon').prefetch_related('genome__tags')
+                if not object_list:
+                    object_list = Gene.objects.filter(
+                        Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
+                    ).order_by('locus_tag').select_related('genome', 'genome__taxon').prefetch_related('genome__tags')
         elif query_type == 'og':
             proteins = [item['protein_hash'] for item in Protein.objects.filter(ortholog_groups__id=query).values('protein_hash')]
             if genome:
@@ -745,6 +787,25 @@ def tag_detail(request, name):
     if genomes:
         context['genomes'] = genomes
     return render(request, 'browser/genometag.html', context)
+
+class TagView(generic.ListView):
+    '''
+        Returns results of search by tag name.
+    '''
+    model = Tag
+    context_object_name = 'genomes'
+    paginate_by = 50
+    template_name = 'browser/genometag.html'
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['genometag'] = self.genometag
+        return context
+
+    def get_queryset(self): # new
+        self.genometag = get_object_or_404(Tag, name=self.kwargs['name'])
+        object_list = Genome.objects.filter(tags__id=self.genometag.id).order_by('name').select_related('strain', 'taxon').prefetch_related('tags')
+        return object_list
     
 def taxon_detail(request, taxonomy_id):
     '''
