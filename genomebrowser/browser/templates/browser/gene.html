@@ -45,6 +45,10 @@
             <header class="align-center">
                 <p class="align-center">Gene information</p>
             </header>
+            {%if gene.name %}
+                <span>Gene name</span>
+                <h5>{{ gene.name }}</h5>
+            {% endif %}
             <span>Genome</span>
             <h5><a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]</a>
                 {% for tag in gene.genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}

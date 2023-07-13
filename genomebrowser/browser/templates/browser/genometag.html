@@ -48,12 +48,12 @@
 							{% else %}
 								<td>&nbsp;</td>
 							{% endif %}
-							<td>{{ genome.taxon.name }}</td>
 							{%if genome.strain %}
 								<td>{{ genome.strain.full_name }}</td>
 							{% else %}
 								<td>{{ genome.sample.full_name }}</td>
 							{% endif %}
+						    <td>{{ genome.taxon.name }}</td>
 						    <td>{{ genome.size }}</td>
 						    <td>{{ genome.contigs }}</td>
 						    <td>{{ genome.genes }}</td>

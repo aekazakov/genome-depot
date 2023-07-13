@@ -32,7 +32,7 @@
 					<tbody>
     {% for sample in samplelist %}
 					    <tr>
-						    <td><a href="{% url 'sampledetails' sample_id=sample.sample_id %}">{{ sample.sample_id }}</a></td>
+						    <td><a href="{% url 'sampledetails' sample_id=sample.id %}">{{ sample.sample_id }}</a></td>
 						    <td>{{ sample.full_name }}</td>
 						    <td>{{ sample.description }}</td>
 					    </tr>

@@ -316,6 +316,7 @@ class GeneSearchResultsSubView(generic.ListView):
             Generates Gene queryset
         '''
         query = self.request.GET.get('query')
+        query = query.strip()
         genome = self.request.GET.get('genome')
         query_type = self.request.GET.get('type')
         print(query, genome, query_type)
@@ -882,7 +883,7 @@ def strain_detail(request, strain_id):
         Displays strain page.
     '''
     try:
-        strain = Strain.objects.get(strain_id = strain_id)
+        strain = Strain.objects.get(id = strain_id)
         genomes = Genome.objects.filter(strain=strain).order_by('name').prefetch_related('tags')
         strain_metadata = Strain_metadata.objects.filter(strain=strain)
         metadata_entries = {}
@@ -906,7 +907,7 @@ def sample_detail(request, sample_id):
         Displays sample page.
     '''
     try:
-        sample = Sample.objects.get(sample_id = sample_id)
+        sample = Sample.objects.get(id = sample_id)
         genomes = Genome.objects.filter(sample=sample).order_by('name').prefetch_related('tags')
         sample_metadata = Sample_metadata.objects.filter(sample=sample)
         metadata_entries = {}

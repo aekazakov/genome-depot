@@ -32,7 +32,7 @@
 					<tbody>
     {% for strain in strainlist %}
 					    <tr>
-						    <td><a href="{% url 'straindetails' strain_id=strain.strain_id %}">{{ strain.strain_id }}</a></td>
+						    <td><a href="{% url 'straindetails' strain_id=strain.id %}">{{ strain.strain_id }}</a></td>
 						    <td>{{ strain.order }}</td>
 						    <td>{{ strain.full_name }}</td>
 					    </tr>

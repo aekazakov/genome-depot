@@ -11,9 +11,9 @@
 		<header class="align-center">
 		<h2>{{ site.name }} 
 		{%if site.genome.strain %}
-			[<a href="{% url 'straindetails' strain_id=site.genome.strain.strain_id %}">{{ site.genome.strain.full_name }}</a>]
+			[<a href="{% url 'straindetails' strain_id=site.genome.strain.id %}">{{ site.genome.strain.full_name }}</a>]
 		{% else %}
-			[<a href="{% url 'sampledetails' sample_id=site.genome.sample.sample_id %}">{{ site.genome.sample.full_name }}</a>]
+			[<a href="{% url 'sampledetails' sample_id=site.genome.sample.id %}">{{ site.genome.sample.full_name }}</a>]
 		{% endif %}
 		</h2>
 		</header>
