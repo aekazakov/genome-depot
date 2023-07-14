@@ -3,11 +3,15 @@ from collections import defaultdict, Counter
 from django.urls import reverse
 from browser.models import Config, Taxon, Genome
 
-def generate_sunburst(taxon_id='1'):
+def generate_sunburst(taxon_id='1', children = []):
     import plotly.graph_objects as go
     from io import StringIO
     
-    labels, parents, values, customdata = get_genomes_taxonomy(taxon_id)
+    if children:
+        labels, parents, values, customdata = get_genomes_taxonomy(taxon_id, children)
+    else:
+        labels, parents, values, customdata = get_genomes_taxonomy(taxon_id)
+        
     if not labels:
         return ''
     
@@ -60,7 +64,7 @@ def get_taxon_children(taxonomy_id):
     return result
 
     
-def get_genomes_taxonomy(target_taxon_id):
+def get_genomes_taxonomy(target_taxon_id, target_children = []):
     '''
     Returns three lists for sunburst graph generation: list of genome and taxon names, list of parent taxon names, list of genome numbers for each taxon
     
@@ -88,7 +92,10 @@ def get_genomes_taxonomy(target_taxon_id):
             taxon_lookup[item[1]] = item
         children_taxonomy_ids = list(taxon_lookup.keys())
     else:
-        children_taxonomy_ids = get_taxon_children(target_taxon_id)
+        if target_children:
+            children_taxonomy_ids = target_children
+        else:
+            children_taxonomy_ids = get_taxon_children(target_taxon_id)
         genomes = Genome.objects.values_list('name', 'taxon__name', 'taxon__taxonomy_id').filter(taxon__taxonomy_id__in=children_taxonomy_ids)
         for item in Taxon.objects.values_list('name', 'taxonomy_id', 'parent_id', 'rank').filter(taxonomy_id__in=children_taxonomy_ids):
             taxon_lookup[item[1]] = item

@@ -24,6 +24,8 @@ class AnnotationSearchResultsSubView(generic.ListView):
     '''
     context_object_name = 'annotationlist'
     template_name = 'browser/annotation_list_subpage.html'
+    # For testing in synchronous mode, uncomment the template below
+    # template_name = 'browser/annotation_list.html'
     paginate_by = 50
 
     def get_context_data(self,**kwargs):
@@ -196,7 +198,7 @@ class OperonListView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            genome = Genome.objects.get(name = self.kwargs['genome'])
+            genome = Genome.objects.get(name = self.kwargs['genome']).  prefetch_related('tags')
         except Genome.DoesNotExist:
             raise Http404('Genome ' + self.kwargs['genome'] + ' does not exist')
         context['genome'] = genome
@@ -228,7 +230,7 @@ class SiteListView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         genome_name = self.kwargs['genome']
-        genome = Genome.objects.get(name = genome_name)
+        genome = Genome.objects.get(name = genome_name).prefetch_related('tags')
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + self.request.GET.get('query') + '" in ' + genome.name + ' sites'
@@ -258,7 +260,7 @@ class RegulonListView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         genome_name = self.kwargs['genome']
-        genome = Genome.objects.get(name = genome_name)
+        genome = Genome.objects.get(name = genome_name).prefetch_related('tags')
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + self.request.GET.get('query') + '" in ' + genome.name + ' regulons'
@@ -286,8 +288,6 @@ class GeneListView(generic.ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        #return Gene.objects.order_by('locus_tag').select_related('genome__strain')
-        #return Gene.objects.order_by('locus_tag').values('id', 'locus_tag', 'name', 'function', 'genome__strain__full_name')
         return Gene.objects.none()
 
 
@@ -297,6 +297,8 @@ class GeneSearchResultsSubView(generic.ListView):
     '''
     context_object_name = 'genelist'
     template_name = 'browser/gene_list_subpage.html'
+    # For testing in synchronous mode, uncomment the template below
+    # template_name = 'browser/gene_list.html'
     paginate_by = 50
 
     def get_context_data(self,**kwargs):
@@ -715,7 +717,7 @@ class GoSearchResultsView(generic.ListView):
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
-        genome = self.request.GET.get('genome')
+        #genome = self.request.GET.get('genome')
         if query:
             object_list = Go_term.objects.filter(
                 Q(go_id__icontains=query) | Q(description__icontains=query)
@@ -822,9 +824,9 @@ def taxon_detail(request, taxonomy_id):
         raise Http404('Taxon ' + taxonomy_id + ' does not exist')
     context = {'taxon': taxon}
     children = get_taxon_children(taxonomy_id)
-    context['genomes'] = Genome.objects.filter(taxon__taxonomy_id__in=children)
+    context['genomes'] = Genome.objects.filter(taxon__taxonomy_id__in=children).prefetch_related('tags')
     context['strains'] = Strain.objects.filter(taxon__taxonomy_id__in=children)
-    context['sunburst'] = generate_sunburst(taxonomy_id)
+    context['sunburst'] = generate_sunburst(taxonomy_id, children)
     lineage = [taxon,]
     parent_id = taxon.parent_id
     iteration_count = 0
@@ -843,7 +845,7 @@ def genome_detail(request, name):
         Displays genome page.
     '''
     try:
-        genome = Genome.objects.get(name = name)
+        genome = Genome.objects.select_related('taxon', 'strain', 'sample').prefetch_related('tags').get(name = name)
     except Genome.DoesNotExist:
         raise Http404('Genome ' + name + ' does not exist')
     context = {'genome': genome}
@@ -1474,7 +1476,7 @@ def export_csv(request):
             if not query_type:
                 object_list = Gene.objects.none()
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'contig')
 
     if annotation_query:
         writer.writerow(['Locus tag', 'Name', 'Organism', 'Genome', 'Contig', 'Start', 'End', 'Strand', 'Type', 'Function', 'Annotation_source', 'Annotation_type', 'Annotation_note'])
@@ -1520,13 +1522,13 @@ def export_fasta(request):
             if genome:
                 object_list = Gene.objects.filter(genome__name=genome).filter(
                     Q(name__icontains=query) | Q(locus_tag__icontains=query) | Q(function__icontains=query)
-                ).order_by('locus_tag')
+                ).order_by('locus_tag').select_related('genome', 'genome__taxon', 'protein')
             else:
                 object_list = Gene.objects.filter(
                     Q(name__icontains=query) | Q(locus_tag__icontains=query)
-                ).order_by('locus_tag')
+                ).order_by('locus_tag').select_related('genome', 'genome__taxon', 'protein')
         elif genome:
-            object_list = Gene.objects.filter(genome__name=genome).order_by('locus_tag')
+            object_list = Gene.objects.filter(genome__name=genome).order_by('locus_tag').select_related('genome', 'genome__taxon', 'protein')
         else:
             object_list = Gene.objects.none()
     else:
@@ -1594,14 +1596,14 @@ def export_fasta(request):
 
         if genome:
             if not query_type:
-                object_list = Gene.objects.filter(genome__name=genome).order_by('locus_tag')
+                object_list = Gene.objects.filter(genome__name=genome).order_by('locus_tag').select_related('genome', 'genome__taxon', 'protein')
             else:
-                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag')
+                object_list = Gene.objects.filter(genome__name=genome, protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon', 'protein')
         else:
             if not query_type:
                 object_list = Gene.objects.none()
             else:
-                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag')
+                object_list = Gene.objects.filter(protein__protein_hash__in=proteins).order_by('locus_tag').select_related('genome', 'genome__taxon', 'protein')
 
     if annotation_query:
         for obj in object_list:

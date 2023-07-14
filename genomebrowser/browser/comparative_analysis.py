@@ -10,7 +10,7 @@ from Bio import Phylo, AlignIO
 from Bio.Align.Applications import MuscleCommandline
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 import toytree
-import toyplot  #.html
+import toyplot
 
 from django.db.models import Q
 from .models import *
@@ -61,11 +61,9 @@ COLORS = [(51, 34, 136),
 DARK_GREY = '.setColorGradient(\'rgb(119, 119, 119)\', \'rgb(199, 199, 199)\')'
 RED = '.setColorGradient(\'rgb(255, 85, 92)\', \'rgb(220, 5, 12)\')'
 
-
 def autovivify(levels=1, final=dict):
     return (defaultdict(final) if levels < 2 else
             defaultdict(lambda: autovivify(levels - 1, final)))
-
 
 def _get_color(index):
     color_index = index%len(COLORS)
@@ -79,20 +77,6 @@ def _get_color(index):
     color = '.setColorGradient(\'rgb(' + ', '.join([str(x) for x in light_color]) + ')\', \'rgb(' + ', '.join([str(x) for x in COLORS[color_index]]) + ')\')'
     return color
     
-    
-#def get_gradients():
-    #gradients = ['setColorGradient(\'rgb(204, 193, 208)\', \'rgb(96, 74, 123)\')',
-        #'setColorGradient(\'rgb(122, 145, 198)\', \'rgb(144, 171, 234)\',\'rgb(228,230,255)\',\'rgb(144, 171, 234)\', \'rgb(122, 145, 198)\')',
-        #'setColorGradient(\'rgb(215, 228, 189)\', \'rgb(119, 147, 60)\')',
-        #'setColorGradient(\'rgb(252, 213, 181)\', \'rgb(228, 108, 10)\')',
-        #'setColorGradient(\'rgb(255, 189, 192)\', \'rgb(255, 0, 0)\')',
-        #'setColorGradient(\'rgb(232, 227, 155)\', \'rgb(255, 0, 0)\')',
-        #'setColorGradient(\'rgb(217, 217, 217)\', \'rgb(38, 38, 38)\')'
-        #]
-    
-    #return '\'rgb(204, 193, 208\')'
-
-
 def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group, request, locus_size):
     result = []
     if gene.strand == 1:
@@ -137,39 +121,6 @@ def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group,
     result.append('\t\tgene' + str(gene_uid) + '.onClick = function() {window.open("' + gene_url + '", "_blank");};')
     return result
 
-
-#def make_taxonomy_tree(taxonomy_ids, start_taxon, top_taxon):
-    #print('Starting tree creation')
-    #tree = defaultdict(dict)
-    #root_id = '1'
-    #all_taxa = Taxon.objects.all().values('taxonomy_id', 'parent_id')
-    #parents = {item['taxonomy_id']:item['parent_id'] for item in all_taxa}
-    #children = defaultdict(list)
-    #for taxon in all_taxa:
-        #if taxon['parent_id'] == '1' and taxon['taxonomy_id'] == '1':
-            #continue
-        #children[taxon['parent_id']].append(taxon['taxonomy_id'])
-    #tree[root_id]['parent'] = parents[root_id]
-    #tree[root_id]['children'] = children[root_id]
-    #tree[top_taxon]['parent'] = parents[top_taxon]
-    #tree[top_taxon]['children'] = children[top_taxon]
-    #for taxonomy_id in taxonomy_ids:
-        #if taxonomy_id in tree:
-            #continue
-        #parent_id = parents[taxonomy_id]
-        #tree[taxonomy_id]['parent'] = parent_id
-        #if taxonomy_id in children:
-            #tree[taxonomy_id]['children'] = children[taxonomy_id]
-        #while parent_id != root_id:
-            #if parent_id in tree:
-                #break
-            #tree[parent_id]['parent'] = parents[parent_id]
-            #tree[parent_id]['children'] = children[parent_id]
-            #parent_id = parents[parent_id]
-    #print('Tree created')
-    #return tree
-
-
 #def make_clustal_alignment(infasta):
     #result = ''
     #args = ['clustalo', '-i', '-']
@@ -182,7 +133,6 @@ def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group,
         #return result
     #result = outfasta
     #return result
-
 
 def make_muscle_alignment(infasta):
     result = None
@@ -198,17 +148,6 @@ def make_muscle_alignment(infasta):
         return result
     result = outfasta
     return result
-
-
-#def sort_nodes(tree, target):
-#    result = [target]
-#    path = [tree.root] + tree.get_path(target)
-#    for node in reversed(path):
-#        for leaf in node.get_terminals(order='level'):
-#            if leaf.name not in result:
-#                result.append(leaf.name)
-#    return result
-
 
 def make_protein_tree(proteins):
     """
@@ -238,8 +177,6 @@ def make_protein_tree(proteins):
     NJTree.root_with_outgroup(proteins[0][2])
     nodes = [gene_labels[term.name] for term in NJTree.get_terminals(order='postorder')]
     node_ids = [term.name for term in NJTree.get_terminals(order='postorder')]
-    # Draw the phlyogenetic tree using terminal
-    #Phylo.draw_ascii(NJTree)
     newick = io.StringIO()
     Phylo.write(NJTree, newick, 'newick')
     tree = toytree.mtree(newick.getvalue(), tree_format=1)
@@ -251,7 +188,6 @@ def make_protein_tree(proteins):
     canvas.style['padding-top'] = '60px'
     tree_canvas = toyplot.html.tostring(canvas)
     return nodes, tree_canvas, newick.getvalue()
-
 
 def sort_proteins(proteins, query_hash):
     """Sorts proteins by semi-global alignment score"""
@@ -267,7 +203,6 @@ def sort_proteins(proteins, query_hash):
         scores.append((protein_hash,search_result.score))
     result += [x[0] for x in reversed(sorted(scores, key=lambda x: x[1]))]
     return result
-
 
 def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
     ''' Returns list of genes sorted by protein siilarityto the pivot genee'''
@@ -305,15 +240,12 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
         ret_genes.append(genes[int(gene_id)])
     return ret_genes, len(genes), tree_svg, tree_newick
 
-
 #def get_orthologs(eggnog_og, pivot_gene):
     #''' Returns prioritized list of genes'''
     #result = [pivot_gene]
     #genes = Gene.objects.filter(protein__ortholog_groups__id=eggnog_og.id).select_related('protein', 'genome', 'genome__strain__taxon')
     #protein_ids = list(set([gene.protein.protein_hash for gene in genes]))
-    
     #tree = make_taxonomy_tree([gene.genome.strain.taxon.taxonomy_id for gene in genes], pivot_gene.genome.strain.taxon.taxonomy_id, eggnog_og.taxon.taxonomy_id)
-
     ##gene2taxon = {}
     #taxon2genes = autovivify(2, dict)
     #for gene in genes:
@@ -359,12 +291,10 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
             #parent_id = '1'
         #if parent_id == '1':
             #break
-
     #if parent_id == '1':
         #child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, parent_id)
         #result += child_ordered_genes
     #return result
-
 
 def collect_genes(tree, taxon2genes, visited_taxa, taxon):
     print('Visiting ' + taxon)
@@ -386,7 +316,6 @@ def collect_genes(tree, taxon2genes, visited_taxa, taxon):
             visited_taxa = visited_taxa.union(child_visited_taxa)
     return ordered_genes, visited_taxa
 
-
 def get_scribl(start_gene, eggnog_og, request):
     locus_size = int(request.GET.get('size')) * 1000 #10000
     genelist_size = int(request.GET.get('lines'))  #10
@@ -401,7 +330,6 @@ def get_scribl(start_gene, eggnog_og, request):
     plot_gene_count = len(ordered_orthologs)
     #if len(ordered_orthologs) > genelist_size:
     #    ordered_orthologs = ordered_orthologs[:genelist_size]
-
     scribl.append('\t\tcanvas.width = parent.offsetWidth - 201;')
     scribl.append('\t\tcanvas.height = ' + str(50 + 56 * len(ordered_orthologs)) + ';')
     #scribl.append('parent.offsetHeight = ' + str(50 + 55 * len(ordered_orthologs)) + ';')
