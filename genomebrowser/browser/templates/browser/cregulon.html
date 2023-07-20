@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 {% load static %}
 
-{% block page-title %}<title>Conserved regulon for {{ regulator_og.eggnog_id }} [{{ regulator_og.taxon.name }}]</title>{% endblock %}
+{% block page-title %}<title>Conserved regulon for {{ regulator_og.eggnog_id }} [{{ regulator_og.taxon.name }}] protein family</title>{% endblock %}
 {% block script-header %}
     <style>#regulons {display:none;}</style>
     <script>
@@ -35,7 +35,7 @@
     <section id="one" class="wrapper style3">
         <div class="inner">
         <header class="align-center">
-            <h2>Conserved regulon for {{ regulator_og.eggnog_id }}[{{ regulator_og.taxon.name }}] family</h2>
+            <h2>Conserved regulon for {{ regulator_og.eggnog_id }}[{{ regulator_og.taxon.name }}] protein family</h2>
         </header>
         <div class="row">
             <div class="4u align-center">

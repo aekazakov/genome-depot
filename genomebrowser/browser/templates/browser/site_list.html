@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 {% load static %}
 {% load my_tags %}
-
+{% block page-title %}<title>Sites</title>{% endblock %}
 {% block script-header %}
 {% endblock %}
 
@@ -13,7 +13,7 @@
 					    {% if searchcontext %}
 						<h4>{{ searchcontext }}</h4>
 					    {% else %}
-						<h4>Sites in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }} [{{ genome.taxon.name }}]</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color: rgb({{tag.color}})"><a href="{% url 'tagdetails' name=tag.name %}" style="color: rgb({{tag.textcolor}})" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</h4>
+						<h4>Sites in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> [{{ genome.taxon.name }}]</h4>
 						<form action="{% url 'sitelist' genome=genome.name %}" method="get">
 						  <input name="query" type="text" placeholder="Quick search in sites by name of site or regulon...">
 						</form>

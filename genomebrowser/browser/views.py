@@ -198,7 +198,7 @@ class OperonListView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            genome = Genome.objects.get(name = self.kwargs['genome']).  prefetch_related('tags')
+            genome = Genome.objects.prefetch_related('tags').get(name = self.kwargs['genome'])
         except Genome.DoesNotExist:
             raise Http404('Genome ' + self.kwargs['genome'] + ' does not exist')
         context['genome'] = genome
@@ -230,7 +230,7 @@ class SiteListView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         genome_name = self.kwargs['genome']
-        genome = Genome.objects.get(name = genome_name).prefetch_related('tags')
+        genome = Genome.objects.prefetch_related('tags').get(name = genome_name)
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + self.request.GET.get('query') + '" in ' + genome.name + ' sites'
@@ -260,7 +260,7 @@ class RegulonListView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         genome_name = self.kwargs['genome']
-        genome = Genome.objects.get(name = genome_name).prefetch_related('tags')
+        genome = Genome.objects.prefetch_related('tags').get(name = genome_name)
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + self.request.GET.get('query') + '" in ' + genome.name + ' regulons'
