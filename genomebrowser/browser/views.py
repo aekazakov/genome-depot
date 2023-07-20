@@ -180,6 +180,7 @@ class GenomeListView(generic.ListView):
     def get_context_data(self,**kwargs):
         context = super(GenomeListView,self).get_context_data(**kwargs)
         if not 'page_obj' in context or context['page_obj'].number == 1:
+            # Call generate_sunburst without parameters to let it choose the root node
             sunburst = generate_sunburst()
             if sunburst:
                 context['sunburst'] = sunburst
@@ -814,13 +815,13 @@ class TagView(generic.ListView):
     
 def taxon_detail(request, taxonomy_id):
     '''
-        Displays genome page.
+        Displays taxon page.
     '''
     try:
         taxon = Taxon.objects.get(taxonomy_id = taxonomy_id)
-        print(taxon.name, 'found')
+        #print(taxon.name, 'found')
     except Taxon.DoesNotExist:
-        print('Taxonomy ID', taxonomy_id, 'not found')
+        #print('Taxonomy ID', taxonomy_id, 'not found')
         raise Http404('Taxon ' + taxonomy_id + ' does not exist')
     context = {'taxon': taxon}
     children = get_taxon_children(taxonomy_id)

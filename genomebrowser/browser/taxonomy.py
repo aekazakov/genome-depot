@@ -3,10 +3,11 @@ from collections import defaultdict, Counter
 from django.urls import reverse
 from browser.models import Config, Taxon, Genome
 
-def generate_sunburst(taxon_id='1', children = []):
+def generate_sunburst(taxon_id=None, children = []):
+    # If taxon_id is None, it will choose root node as the highest node that have more than one child.
     import plotly.graph_objects as go
     from io import StringIO
-    
+
     if children:
         labels, parents, values, customdata = get_genomes_taxonomy(taxon_id, children)
     else:
@@ -16,11 +17,12 @@ def generate_sunburst(taxon_id='1', children = []):
         return ''
     
     maxdepth = -1
-    if taxon_id == '1':
+    if taxon_id is None:
+        taxon_id = get_root_id(labels, parents)
         maxdepth = 4
     
     colors = []
-    color_sequence = ['', '#FFAA00', '#2D5F91','#819FBD','#819FBD','#91D4D2', '#96BEE6', '#C0D8F0','#E8655F','#F1A39F','#48B7B4']
+    color_sequence = ['#FFAA00', '#2D5F91','#819FBD','#819FBD','#91D4D2', '#96BEE6', '#C0D8F0','#E8655F','#F1A39F','#48B7B4']
     for ind, label in enumerate(labels):
         colors.append(color_sequence[ind%10])
     
@@ -36,7 +38,6 @@ def generate_sunburst(taxon_id='1', children = []):
         branchvalues = 'total',
         level = '',
         maxdepth = maxdepth,
-        
     ))
     fig.update_layout(margin = dict(t = 0, l = 0, r = 0, b = 0), height=800, uniformtext=dict(minsize=10, mode='hide'), paper_bgcolor='rgba(120,120,120,0.1)', plot_bgcolor='rgba(120,120,120,0.1)')
     html = StringIO()
@@ -66,8 +67,13 @@ def get_taxon_children(taxonomy_id):
     
 def get_genomes_taxonomy(target_taxon_id, target_children = []):
     '''
-    Returns three lists for sunburst graph generation: list of genome and taxon names, list of parent taxon names, list of genome numbers for each taxon
+    Returns four lists for sunburst graph generation: list of genomes and taxa names, list of parent taxa names, list of genome counts for each taxon, list of HTML-formaatted strings containing a link to the current element
     
+    Parameters:
+    target_taxon_id (str or None): taxonomy ID of root element. If target_taxon_id is None, place root at the highest level that have more than one child.
+    target_children (list of str): list of taxonomy IDs that must be shown on sunburst graph
+    
+    Steps:
     1. Get list of all genomes with all their taxonomy IDs
     2. Get list of all Taxon objects with their parent ID
     3. Calculate number of genomes
@@ -81,16 +87,20 @@ def get_genomes_taxonomy(target_taxon_id, target_children = []):
     # key: taxonomy id, value: parent id
         
     taxon_counts = Counter()
-    # key: name, value: count
+    # key: name, value: count of children genomes
     children = defaultdict(dict)
     taxon_lookup = {}
     taxon_ranks = {}
+    move_root_down = False
     
-    if target_taxon_id == '1':
+    if target_taxon_id is None:
         genomes = Genome.objects.values_list('name', 'taxon__name', 'taxon__taxonomy_id')
         for item in Taxon.objects.values_list('name', 'taxonomy_id', 'parent_id', 'rank'):
             taxon_lookup[item[1]] = item
         children_taxonomy_ids = list(taxon_lookup.keys())
+        move_root_down = True
+        # Set target_taxon_id to '1' (root node), and move it down later
+        target_taxon_id = '1'
     else:
         if target_children:
             children_taxonomy_ids = target_children
@@ -114,7 +124,7 @@ def get_genomes_taxonomy(target_taxon_id, target_children = []):
             children[parent_id][genome_taxid] = 1
         taxon_counts[genome_taxid] += 1
         parent_lookup[genome_taxid] = parent_id
-        # Add parents
+        # Add all parents of the genome up to the root or target_taxon_id
         while True:
             if parent_id in children_taxonomy_ids:
                 children[parent_id][genome_taxid] = 1
@@ -130,11 +140,27 @@ def get_genomes_taxonomy(target_taxon_id, target_children = []):
         # No taxa, nothing to return
         return [], [], [], []
         
+    # It's time to move root node
+    if move_root_down:
+        remove_nodes= set()
+        new_root_id = target_taxon_id
+        # Going down from current root node, find taxon that has more than one child and call it new root node
+        while True:
+            # Count children that have non-zero genome count, excluding root taxon
+            children_nodes = [item for item in taxon_lookup.values() if item[2] == new_root_id and item[1] in taxon_counts and item[1] != item[2]]
+            if len(children_nodes) == 1:
+                remove_nodes.add(new_root_id)
+                new_root_id = children_nodes[0][1]
+            else:
+                target_taxon_id = new_root_id
+                break
+        for taxon in remove_nodes:
+            del(taxon_counts[taxon])
+        
     for taxon in taxon_counts:
-        # Hide root node
+        # If the root taxon with taxonomy_id '1' is in the list, skip it
         if taxon == '1':
             continue
-        
         labels.append(taxon_lookup[taxon][0])
         customdata.append([reverse('taxondetails', args=(taxon,)), '<br>' + taxon_lookup[taxon][0] + ' [' + taxon_lookup[taxon][3] + ']<br>' + str(taxon_counts[taxon]) + ' genomes'])
         if taxon == target_taxon_id or taxon_lookup[taxon][2] == '1':
@@ -146,3 +172,15 @@ def get_genomes_taxonomy(target_taxon_id, target_children = []):
     
     return labels, parents, values, customdata
 
+def get_root_id(labels, parents):
+    '''
+        Finds root element for sunburst graph.
+        Returns the label for the first element, which parent ID is empty string
+        If no such element, returns '1' (potentially unsafe operation)
+    '''
+    result = '1'
+    for parent_ind, parent in enumerate(parents):
+        if parent == '':
+            result = labels[parent_ind]
+            break
+    return result
