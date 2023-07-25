@@ -1318,6 +1318,8 @@ class ComparativeView(View):
         except Ortholog_group.DoesNotExist:
             raise Http404('Ortholog group not found')
         context['gene'] = gene
+        context['size' + request.GET.get('size')] = '1'
+        context['lines' + request.GET.get('lines')] = '1'
         context['ortholog_group'] = og
         return render(request,'browser/scriblajax.html', context)
 
