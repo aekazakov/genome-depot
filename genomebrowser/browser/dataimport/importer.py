@@ -1155,8 +1155,13 @@ class Importer(object):
         Protein.cog_classes.through.objects.bulk_create(relations, batch_size = 1000, ignore_conflicts=True)
         print('COG classes imported')
     
-    def export_gff(self, genome_id):
-        result = os.path.join(self.config['cgcms.temp_dir'], genome_id + '.gff3')
+    def export_gff(self, genome_id, out_dir = None, feature_type=None):
+        if out_dir is None:
+            out_dir = self.config['cgcms.temp_dir']
+        if feature_type is None:
+            result = os.path.join(out_dir, genome_id + '.gff3')
+        else:
+            result = os.path.join(out_dir, genome_id + '.' + feature_type + '.gff3')
         if 'kbase.us/' in self.inputgenomes[genome_id]['url']:
             source = 'KBase'
         elif 'ncbi.nlm.nih.gov/' in self.inputgenomes[genome_id]['url']:
@@ -1168,28 +1173,31 @@ class Importer(object):
             genes = defaultdict(dict)
             for contig in Contig.objects.filter(genome__name=genome_id).order_by('contig_id'):
                 outfile.write('##sequence-region ' + contig.contig_id + '\n')
-                for gene in Gene.objects.filter(genome__name=genome_id).filter(contig__contig_id=contig.contig_id).order_by('start'):
-                    if gene.strand == 1:
-                        strand = '+'
-                    else:
-                        strand = '-'
-                    column9 = ['ID=' + gene.locus_tag, 'locus_tag='+ gene.locus_tag, 'internal_id=' + gene.genome.name + '/' + gene.locus_tag]
-                    if gene.name != '':
-                        column9.append('name=' + gene.name)
-                    if gene.function != '':
-                        column9.append('product=' + gene.function)
-                    row = [contig.contig_id, source, gene.type, str(gene.start), str(gene.end), '.', strand,
-                              '0', '; '.join(column9)]
-                    outfile.write(('\t').join(row) + '\n')
-                for operon in Operon.objects.filter(genome__name=genome_id).filter(contig__contig_id=contig.contig_id).order_by('start'):
-                    if operon.strand == 1:
-                        strand = '+'
-                    else:
-                        strand = '-'
-                    column9 = ['ID=' + operon.name, 'internal_id=' + operon.genome.name + '/' + operon.name]
-                    row = [contig.contig_id, source, 'operon', str(operon.start), str(operon.end), '.', strand,
-                              '0', '; '.join(column9)]
-                    outfile.write(('\t').join(row) + '\n')
+                if feature_type is None or feature_type != 'operon':
+                    for gene in Gene.objects.filter(genome__name=genome_id).filter(contig__contig_id=contig.contig_id).order_by('start'):
+                        if feature_type is None or feature_type in gene.type:
+                            if gene.strand == 1:
+                                strand = '+'
+                            else:
+                                strand = '-'
+                            column9 = ['ID=' + gene.locus_tag, 'locus_tag='+ gene.locus_tag, 'internal_id=' + gene.genome.name + '/' + gene.locus_tag]
+                            if gene.name != '':
+                                column9.append('name=' + gene.name)
+                            if gene.function != '':
+                                column9.append('product=' + gene.function)
+                            row = [contig.contig_id, source, gene.type, str(gene.start), str(gene.end), '.', strand,
+                                      '0', '; '.join(column9)]
+                            outfile.write(('\t').join(row) + '\n')
+                if feature_type is None or feature_type == 'operon':
+                    for operon in Operon.objects.filter(genome__name=genome_id).filter(contig__contig_id=contig.contig_id).order_by('start'):
+                        if operon.strand == 1:
+                            strand = '+'
+                        else:
+                            strand = '-'
+                        column9 = ['ID=' + operon.name, 'internal_id=' + operon.genome.name + '/' + operon.name]
+                        row = [contig.contig_id, source, 'operon', str(operon.start), str(operon.end), '.', strand,
+                                  '0', '; '.join(column9)]
+                        outfile.write(('\t').join(row) + '\n')
         return result
         
     def export_jbrowse_data(self):

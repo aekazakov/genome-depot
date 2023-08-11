@@ -61,6 +61,29 @@ if ! [ -d "$CGCMSDIR/external_tools/jbrowse" ]; then
     cd "$CGCMSDIR/external_tools"
 fi
 
+# Install samtools and tabix
+cd "$CGCMSDIR/external_tools"
+if conda env list | grep 'cgcms-jbrowse' >/dev/null 2>&1; then
+	conda activate cgcms-jbrowse
+	if ! { samtools version | grep samtools; }>/dev/null 2>&1; then
+		echo 'Conda environment cgcms-jbrowse exists but samtools was not properly installed. Remove the environment and restart CGCMS installation script.'
+		echo 'To remove the environment, run:'
+		echo '   conda remove -n cgcms-jbrowse --all'
+		conda deactivate
+		exit 1
+	else
+		echo 'samtools found'
+	fi
+	conda deactivate
+else
+	echo "Installing samtools and tabix"
+	conda create -y -n cgcms-jbrowse
+	conda activate cgcms-jbrowse
+	conda install -c bioconda samtools
+	conda install -c bioconda tabix
+	conda deactivate
+fi
+
 # Install eggnog-mapper
 if conda env list | grep 'cgcms-emapper' >/dev/null 2>&1; then
 	conda activate cgcms-emapper
