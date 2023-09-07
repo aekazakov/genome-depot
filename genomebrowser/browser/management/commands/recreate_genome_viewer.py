@@ -1,13 +1,6 @@
-import os
-import gzip
-import json
-import shutil
-from Bio import GenBank
-from subprocess import Popen, PIPE, CalledProcessError
 from django.core.management.base import BaseCommand, CommandError
-from browser.models import *
+from browser.models import Genome
 from browser.dataimport.importer import Importer
-from genomebrowser.settings import BASE_URL
 
 class Command(BaseCommand):
     help = 'Deletes and re-creates static files for genome viewer'
@@ -45,6 +38,10 @@ class Command(BaseCommand):
         else:
             importer.inputgenomes[genome_id]['sample'] = genome.sample.sample_id
         
+        
+        importer.export_jbrowse_genome_data(genome_id)
+        
+        '''
         script_rows = ['#!/bin/bash', 
                        'source ' + importer.config['cgcms.conda_path'],
                        'conda activate cgcms-jbrowse'
@@ -154,3 +151,4 @@ class Command(BaseCommand):
         
         # OLD: Generate static files
         # importer.export_jbrowse_genome_data(genome_id)
+        '''

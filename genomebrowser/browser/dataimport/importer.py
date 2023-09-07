@@ -1,6 +1,7 @@
 import os
 import configparser
 import gzip
+import json
 import shutil
 #import mmh3
 import hashlib
@@ -19,6 +20,7 @@ from django.utils import timezone
 
 from browser.models import *
 from genomebrowser.settings import STATIC_URL
+from genomebrowser.settings import BASE_URL
 from browser.dataimport.annotator import Annotator
 from browser.dataimport.taxonomy import load_taxonomy
 
@@ -539,7 +541,7 @@ class Importer(object):
             contig_sizes = []
             genome_sequence = []
             features = OrderedDict()
-            genome_fasta = os.path.join(self.config['cgcms.temp_dir'], genome_id + '.contigs.fasta')
+            genome_fasta = os.path.join(self.config['cgcms.temp_dir'], genome_id, genome_id + '.fna')
             locus_tags = set()
             with open(genome_fasta, 'w') as outfile:
                 for gbk_record in parser:
@@ -1154,6 +1156,32 @@ class Importer(object):
             relations.append(Protein.cog_classes.through(protein=protein_ids[protein_hash], cog_class=reference_data_objects[reference_id]))
         Protein.cog_classes.through.objects.bulk_create(relations, batch_size = 1000, ignore_conflicts=True)
         print('COG classes imported')
+
+    def export_genome_fasta(self, genome_id, out_file = None):
+        '''
+            Generates nucleotide FASTA file for a genome_id
+            out_file(str): output file path (optional)
+            Returns:
+                list of dictionaries with contigs data (name, start, end, size) for Jbrowse generation
+        '''
+        result = []
+        if out_file is None:
+            out_file = os.path.join(self.config['cgcms.temp_dir'], genome_id + '.fna')
+        genome = Genome.objects.get(name=genome_id)
+        gbk_path = genome.gbk_filepath
+        if genome.gbk_filepath.endswith('.gz'):
+            gbk_handle = gzip.open(genome.gbk_filepath, 'rt')
+        else:
+            gbk_handle = open(genome.gbk_filepath, 'r')
+        parser = GenBank.parse(gbk_handle)
+        with open(out_file, 'w') as outfile:
+            for gbk_record in parser:
+                contig_sequence = gbk_record.sequence
+                contig_id = gbk_record.locus
+                outfile.write('>' + contig_id + '\n' + ''.join(contig_sequence) + '\n')
+                result.append({'name': contig_id, 'start': 0, 'end': gbk_record.size, 'length': gbk_record.size})
+        gbk_handle.close()
+        return result
     
     def export_gff(self, genome_id, out_dir = None, feature_type=None):
         if out_dir is None:
@@ -1204,7 +1232,112 @@ class Importer(object):
         for genome in self.inputgenomes:
             self.export_jbrowse_genome_data(genome)
 
-    def export_jbrowse_genome_data(self, genome):
+    def export_jbrowse_genome_data(self, genome_id):
+        '''
+            Generates files for Jbrowse v.1 genome viewer
+        '''
+        # Make directory
+        temp_dir = os.path.join(self.config['cgcms.temp_dir'], genome_id)
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
+        os.mkdir(temp_dir)
+        os.mkdir(os.path.join(temp_dir, 'seq'))
+        
+        # Make genome FASTA file
+        genome_fasta = os.path.join(temp_dir, genome_id + '.fna')
+        ref_seqs = self.export_genome_fasta(genome_id, genome_fasta)
+        with open(os.path.join(temp_dir, 'seq', 'refSeqs.json'), 'w') as outfile:
+            json.dump(ref_seqs, outfile)
+            
+        # Make shell script for processing genome files for Jbrowse. Generate GFF files for Jbrowse tracks
+        script_rows = ['#!/bin/bash', 
+                       'source ' + self.config['cgcms.conda_path'],
+                       'conda activate cgcms-jbrowse'
+                      ]
+        
+        jbrowse_config = {'formatVersion' : 1,
+                  'tracks': [],
+                  'refseqs': genome_fasta + '.fai'
+                 }
+        jbrowse_track = {
+                         'category' : 'Reference sequence',
+                         'key' : 'Reference sequence',
+                         'label' : 'DNA',
+                         'seqType' : 'dna',
+                         'storeClass' : 'JBrowse/Store/SeqFeature/IndexedFasta',
+                         'type' : 'SequenceTrack',
+                         'urlTemplate' : os.path.basename(genome_fasta)
+                        }
+        jbrowse_config['tracks'].append(jbrowse_track)
+        # Index FASTA file
+        script_rows.append('samtools faidx ' + genome_fasta)
+            
+        # Create GFF3 files
+        feature_types = {'CDS': ('blue', 'CDSs', 'normal'),
+                         'RNA': ('coral', 'RNAs', 'compact'),
+                         'pseudogene': ('grey', 'Pseudogenes', 'compact'),
+                         'operon': ('goldenrod', 'Operons', 'compact')
+                         }
+        for feature_type in feature_types:
+            gff_file = self.export_gff(genome_id, temp_dir, feature_type)
+            script_rows.append('(grep ^"#" ' + gff_file + '; grep -v ^"#" ' + gff_file + ' | grep -v "^$" | grep "\t" | sort -k1,1 -k4,4n)|bgzip > ' + gff_file + '.gz')
+            script_rows.append('tabix -p gff ' + gff_file + '.gz')
+            script_rows.append('rm ' + gff_file)
+            jbrowse_track = {'compress' : 0,
+                             'key' : feature_types[feature_type][1],
+                             'label' : feature_types[feature_type][1],
+                             'storeClass' : 'JBrowse/Store/SeqFeature/GFF3Tabix',
+                             'style' : {
+                                'color': feature_types[feature_type][0],
+                                },
+                             'trackType' : 'CanvasFeatures',
+                             'type' : 'JBrowse/View/Track/CanvasFeatures',
+                             'displayMode': feature_types[feature_type][2],
+                             'urlTemplate' : os.path.basename(gff_file) + '.gz',
+                             
+                             'onClick': {
+                                 'label': '{Id}: {start}..{end}\n{product}',
+                                 'title': '{name} {type}',
+                                 'action': 'defaultDialog'
+                                 }
+                             }
+            if feature_type == 'operon':
+                jbrowse_track['fmtDetailValue_Name'] = "function(name, feature) { return '<a href=\"" + BASE_URL + "/operon/'+feature.get('internal_id')+'\" target=\"_blank\">' + name + ' ( '+ feature.get('internal_id') + ')</a>'; }"
+            else:
+                jbrowse_track['fmtDetailValue_Name'] = "function(name, feature) { return '<a href=\"" + BASE_URL + "/gene/'+feature.get('internal_id')+'\" target=\"_blank\">' + name + ' ( '+ feature.get('internal_id') + ')</a>'; }",
+            jbrowse_config['tracks'].append(jbrowse_track)
+        # Generate_names for Jbrowse search
+        script_rows.append('perl ' + self.config['cgcms.generate_names_command'] + ' --verbose --out ' + temp_dir)
+        # Write config file
+        with open(os.path.join(temp_dir, 'trackList.json'), 'w') as outfile:
+            json.dump(jbrowse_config, outfile, indent = 2)
+        
+        # Save shell script and run it immediately
+        script_path = os.path.join(self.config['cgcms.temp_dir'], 'make_jbrowse_files.sh')
+        with open(script_path, 'w') as outfile:
+            outfile.write('\n'.join(script_rows))
+            
+        cmd = ['bash', script_path]
+        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
+            for line in proc.stdout:
+                print(line, end='')
+        if proc.returncode != 0:
+            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+            # pylint: disable=no-member
+            raise CalledProcessError(proc.returncode, proc.args)
+
+        # Copy files to static dir and remove temp files
+        dest_dir = os.path.join(self.config['cgcms.json_dir'], genome_id)
+        if os.path.exists(dest_dir):
+            shutil.rmtree(dest_dir)
+        shutil.copytree(temp_dir, dest_dir)
+        shutil.rmtree(temp_dir)
+
+    def export_jbrowse_genome_data_json(self, genome):
+        '''
+            Generates large amount of small JSON files for Jbrowse v.1 genome viewer
+        
+        '''
         gff3_file = self.export_gff(genome)
         genome_fasta = os.path.join(self.config['cgcms.temp_dir'], genome + '.contigs.fasta')
         temp_dir = os.path.join(self.config['cgcms.temp_dir'], genome)
