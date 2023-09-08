@@ -23,6 +23,7 @@ from browser.dataimport.plugins.phispy import application as phispy
 from browser.dataimport.plugins.ecis_screen import application as ecis_screen
 from browser.dataimport.plugins.gapmind import application as gapmind
 from browser.dataimport.plugins.defensefinder import application as defensefinder
+from browser.dataimport.plugins.macsyfinder import application as macsyfinder
 """ 
     Various functions for generation and import of gene annotations.
 """
@@ -630,6 +631,13 @@ class Annotator(object):
             print(defensefinder_annotations, 'ready for upload')
             Annotation.objects.filter(source='DefenseFinder', gene_id__genome__name__in=genome_names).delete()
             self.add_custom_annotations(defensefinder_annotations)
+
+        # Run MacsyFinder
+        if 'macsyfinder' in plugins_available:
+            macsyfinder_annotations = macsyfinder(self, genomes)
+            print(macsyfinder_annotations, 'ready for upload')
+            Annotation.objects.filter(source='MacsyFinder', gene_id__genome__name__in=genome_names).delete()
+            self.add_custom_annotations(macsyfinder_annotations)
                 
 def autovivify(levels=1, final=dict):
     return (defaultdict(final) if levels < 2 else
