@@ -127,5 +127,4 @@ def _export_proteins(genome, output_dir):
     return out_path
 
 def _cleanup(working_dir):
-    #shutil.rmtree(working_dir)
-    pass
+    shutil.rmtree(working_dir)
