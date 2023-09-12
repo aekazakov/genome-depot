@@ -6,4 +6,4 @@ class BrowserConfig(AppConfig):
 
     def ready(self):
         # everytime server restarts
-        import browser.signals
+        import browser.signals # noqa: F401

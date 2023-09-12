@@ -1,7 +1,5 @@
 import os
-import csv
 import uuid
-import shutil
 import datetime
 import zipfile
 from pathlib import Path
@@ -13,9 +11,41 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.forms.widgets import TextInput
 # Import your models here
-from browser.models import Strain, Sample, Genome, Contig, Gene, Taxon, Cog_class, Kegg_reaction, Kegg_pathway, Kegg_ortholog, Go_term, Cazy_family, Ec_number, Ortholog_group, Eggnog_description, Tc_family, Strain_metadata, Sample_metadata, Protein, Annotation, Operon, Site, Regulon, Config, ChangeLog, Tag
-from browser.dataimport.importer import Importer
-from browser.async_tasks import test_async_task, async_import_genomes, async_delete_genomes, async_update_static_files, async_import_sample_metadata, async_import_sample_descriptions, async_update_strain_metadata, async_import_annotations, async_import_regulon
+from browser.models import Strain
+from browser.models import Sample
+from browser.models import Genome
+from browser.models import Contig
+from browser.models import Gene
+from browser.models import Taxon
+from browser.models import Cog_class
+from browser.models import Kegg_reaction
+from browser.models import Kegg_pathway
+from browser.models import Kegg_ortholog
+from browser.models import Go_term
+from browser.models import Cazy_family
+from browser.models import Ec_number
+from browser.models import Ortholog_group
+from browser.models import Eggnog_description
+from browser.models import Tc_family
+from browser.models import Strain_metadata
+from browser.models import Sample_metadata
+from browser.models import Protein
+from browser.models import Annotation
+from browser.models import Operon
+from browser.models import Site
+from browser.models import Regulon
+from browser.models import Config
+from browser.models import ChangeLog
+from browser.models import Tag
+from browser.async_tasks import test_async_task
+from browser.async_tasks import async_import_genomes
+from browser.async_tasks import async_delete_genomes
+from browser.async_tasks import async_update_static_files
+from browser.async_tasks import async_import_sample_metadata
+from browser.async_tasks import async_import_sample_descriptions
+from browser.async_tasks import async_update_strain_metadata
+from browser.async_tasks import async_import_annotations
+from browser.async_tasks import async_import_regulon
 from django_q.models import OrmQ
 from django_q.monitor import Stat
 
@@ -35,8 +65,14 @@ class ExcelImportForm(forms.Form):
 
 class GenomeImportForm(forms.Form):
     tsv_file = forms.FileField()
-    zip_file = forms.FileField(required=False, label='Zip archive with genomes in GBFF format (optional)')
-    download_email = forms.EmailField(max_length=200, required=False, label='Email for NCBI genome downloads (optional)')
+    zip_file = forms.FileField(required=False,
+                               label='Zip archive with genomes in ' + 
+                               'GBFF format (optional)'
+                               )
+    download_email = forms.EmailField(max_length=200,
+                                      required=False,
+                                      label='Email for NCBI genome downloads (optional)'
+                                      )
 
 
 class TagModelForm(forms.ModelForm):
@@ -56,12 +92,20 @@ def test_task(self, request, queryset):
 @admin.action(description = 'Delete genomes')
 def delete_genomes(self, request, queryset):
     task_id = async_delete_genomes(request, queryset)
-    messages.info(request, "Selected genomes are being deleted. Check queued task list for progress.")
+    messages.info(request,
+                  "Selected genomes are being deleted. " +
+                  "Check the task " + task_id + 
+                  " in the list of queued tasks for progress."
+                  )
 
 @admin.action(description = 'Update static files and re-build search databases')
 def update_static_files(self, request, queryset):
     task_id = async_update_static_files(request, queryset)
-    messages.info(request, "Static files for selected genomes are being re-created. Check queued task list for progress.")
+    messages.info(request,
+                  "Static files for selected genomes are being re-created. " +
+                  "Check the task " + task_id + 
+                  " in the list of queued tasks for progress."
+                  )
 
 def count_tasks(request):
     return str(OrmQ.objects.all().count())
@@ -80,8 +124,17 @@ class GenomeAdmin(admin.ModelAdmin):
     actions = [test_task,
                delete_genomes,
                update_static_files]
-    list_display = ['name', 'taxon', 'strain', 'sample', 'size', 'contigs', 'get_tags']
-    list_filter = (('strain', admin.EmptyFieldListFilter), ('sample', admin.EmptyFieldListFilter))
+    list_display = ['name',
+                    'taxon',
+                    'strain',
+                    'sample',
+                    'size',
+                    'contigs',
+                    'get_tags'
+                    ]
+    list_filter = (('strain', admin.EmptyFieldListFilter),
+                   ('sample', admin.EmptyFieldListFilter)
+                   )
     ordering = ['name']
     search_fields = ['name']
     fields = (
@@ -132,13 +185,17 @@ class GenomeAdmin(admin.ModelAdmin):
                 elif row[0] == '' and row[-1].startswith('NCBI:'):
                     pass
                     # Assembly will be downloaded from NCBI later
-                    #row[0] = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'), request.POST['download_email'], upload_dir)
                 elif not os.path.exists(row[0]):
                     print(row[0], 'not found')
                 lines.append('\t'.join(row))
-            task_name = async_import_genomes(lines, request.POST['download_email'])
+            task_name = async_import_genomes(lines,
+                                             request.POST['download_email']
+                                             )
             # Do some staff
-            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            self.message_user(request,
+                              "Your file was submitted for the processing with ID " +
+                              task_name
+                              )
             return redirect("..")
         form = GenomeImportForm()
         payload = {'form': form}
@@ -149,11 +206,17 @@ class GenomeAdmin(admin.ModelAdmin):
         )
         
     def delete_genomes(self, request, queryset):
-        self.message_user(request, "You asked for removal of " + str(len(queryset)) + " genomes")
+        self.message_user(request,
+                          "You asked for removal of " +
+                          str(len(queryset)) +
+                          " genomes")
         return redirect("..")
 
     def update_static_files(self, request, queryset):
-        self.message_user(request, "You asked for re-creating static files of " + str(len(queryset)) + " genomes")
+        self.message_user(request,
+                          "You asked for re-creating static files of " +
+                          str(len(queryset)) +
+                          " genomes")
         return redirect("..")
 
     def get_actions(self, request):
@@ -216,7 +279,10 @@ class SampleAdmin(admin.ModelAdmin):
                 lines.append(line)
             task_name = async_import_sample_descriptions(lines)
             # Do some staff
-            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            self.message_user(request,
+                              "Your file was submitted for the processing with ID " +
+                              task_name
+                              )
             return redirect("..")
         form = TsvImportForm()
         payload = {"form": form}
@@ -329,7 +395,10 @@ class StrainMetadataAdmin(admin.ModelAdmin):
             xlsx_file = request.FILES["xlsx_file"]
             task_name = async_update_strain_metadata(xlsx_file)
             # Do some staff
-            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            self.message_user(request,
+                              "Your file was submitted for the processing with ID " +
+                              task_name
+                              )
             return redirect("..")
         form = ExcelImportForm()
         payload = {"form": form}
@@ -366,7 +435,10 @@ class SampleMetadataAdmin(admin.ModelAdmin):
                 lines.append(line)
             task_name = async_import_sample_metadata(lines)
             # Do some staff
-            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            self.message_user(request,
+                              "Your file was submitted for the processing with ID " +
+                              task_name
+                              )
             return redirect("..")
         form = TsvImportForm()
         payload = {"form": form}
@@ -384,7 +456,16 @@ class ProteinAdmin(admin.ModelAdmin):
     ordering = ['protein_hash']
     search_fields = ['name', 'protein_hash', 'length']
     autocomplete_fields = ('taxonomy_id', )
-    raw_id_fields = ('ortholog_groups', 'cog_classes', 'kegg_reactions', 'kegg_pathways', 'kegg_orthologs', 'go_terms', 'cazy_families', 'ec_numbers', 'tc_families', )
+    raw_id_fields = ('ortholog_groups',
+                     'cog_classes',
+                     'kegg_reactions',
+                     'kegg_pathways',
+                     'kegg_orthologs',
+                     'go_terms',
+                     'cazy_families',
+                     'ec_numbers',
+                     'tc_families',
+                     )
     
 
 admin.site.register(Protein, ProteinAdmin)
@@ -414,7 +495,10 @@ class AnnotationAdmin(admin.ModelAdmin):
                 lines.append(line)
             task_name = async_import_annotations(lines)
             # Do some staff
-            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            self.message_user(request,
+                              "Your file was submitted for the processing with ID " +
+                              task_name
+                              )
             return redirect("..")
         form = TsvImportForm()
         payload = {"form": form}
@@ -471,7 +555,10 @@ class RegulonAdmin(admin.ModelAdmin):
                 lines.append(line)
             task_name = async_import_regulon(lines)
             # Do some staff
-            self.message_user(request, "Your file was submitted for the processing with ID " + task_name)
+            self.message_user(request,
+                              "Your file was submitted for the processing with ID " +
+                              task_name
+                              )
             return redirect("..")
         form = TsvImportForm()
         payload = {"form": form}
@@ -523,7 +610,11 @@ def clusters_view(request):
     clusters = []
     for stat in Stat.get_all():
         cluster_count += 1
-        clusters.append({'id':str(stat.cluster_id), 'tob': str(stat.tob), 'uptime': str(datetime.timedelta(seconds=stat.uptime())), 'workers': ','.join([str(x) for x in stat.workers])})
+        clusters.append({'id':str(stat.cluster_id),
+                         'tob': str(stat.tob),
+                         'uptime': str(datetime.timedelta(seconds=stat.uptime())),
+                         'workers': ','.join([str(x) for x in stat.workers])
+                         })
     context = {'cluster_count':str(cluster_count), 'clusters':clusters}
     return render(
         request, "admin/clusters.html", context
@@ -540,4 +631,3 @@ def handle_zip_upload(zipf, upload_dir):
             result[str(member.filename)] = os.path.join(upload_dir, member.filename)
             os.chmod(os.path.join(upload_dir, member.filename), 0o777)
     return result
-

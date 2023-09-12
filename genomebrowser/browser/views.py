@@ -34,7 +34,8 @@ class AnnotationSearchResultsSubView(generic.ListView):
         '''
         context = super(AnnotationSearchResultsSubView,self).get_context_data(**kwargs)
         if self.request.GET.get('annotation_query'):
-            context['searchcontext'] = 'Search results for "' + self.request.GET.get('annotation_query') + '"'
+            context['searchcontext'] = 'Search results for "' + \
+                                       self.request.GET.get('annotation_query') + '"'
         else:
             context['searchcontext'] = 'Query string is empty'
         return context

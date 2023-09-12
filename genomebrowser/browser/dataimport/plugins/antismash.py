@@ -1,6 +1,5 @@
 import os
 import shutil
-from collections import defaultdict
 from subprocess import Popen, PIPE, CalledProcessError
 from Bio import GenBank
 from django.db import connection
@@ -14,10 +13,13 @@ def application(annotator, genomes):
         This function is an entry point of the plugin.
         Input:
             annotator(Annotator): instance of Annotator class
-            genomes(dict<str:str>): dictionary with genome name as key and GBK path as value
+            genomes(dict<str:str>): dictionary with genome name 
+            as key and GBK path as value
         
     """
-    working_dir = os.path.join(annotator.config['cgcms.temp_dir'], 'antismash-plugin-temp')
+    working_dir = os.path.join(annotator.config['cgcms.temp_dir'],
+                               'antismash-plugin-temp'
+                               )
     script_path = preprocess(annotator, genomes, working_dir)
     run(script_path)
     output_file = postprocess(annotator, genomes, working_dir)
@@ -29,7 +31,8 @@ def preprocess(annotator, genomes, working_dir):
         Creates all directories and input files. 
         Input:
             annotator(Annotator): instance of Annotator class
-            genomes(dict<str:str>): dictionary with genome name as key and GBK path as value
+            genomes(dict<str:str>): dictionary with genome name 
+            as key and GBK path as value
         Output:
             path of the shell script running abricate in conda environment
     """
@@ -44,14 +47,18 @@ def preprocess(annotator, genomes, working_dir):
     with open(antismash_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
         outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
-        outfile.write('conda activate ' + annotator.config['plugins.antismash.conda_env'] + '\n')
+        outfile.write('conda activate ' +
+                      annotator.config['plugins.antismash.conda_env'] + '\n'
+                      )
         for genome in sorted(genomes.keys()):
-            outfile.write(' '.join([annotator.config['plugins.antismash.antismash_cmd'],
-                                    genomes[genome],
-                                    '--output-dir', os.path.join(output_dir, genome),
-                                    '--cpus',
-                                    annotator.config['plugins.antismash.threads'],
-                                    '--genefinding-tool', 'prodigal']) + '\n')
+            outfile.write(' '.join(
+                            [annotator.config['plugins.antismash.antismash_cmd'],
+                            genomes[genome],
+                            '--output-dir', os.path.join(output_dir, genome),
+                            '--cpus',
+                            annotator.config['plugins.antismash.threads'],
+                            '--genefinding-tool', 'prodigal']
+                          ) + '\n')
         outfile.write('conda deactivate\n')
     return antismash_script
 
@@ -62,22 +69,27 @@ def run(script_path):
     """
     cmd = ['/bin/bash', script_path]
     print('Running ' + ' '.join(cmd))
-    # Close MySQL connection before starting external process because it may run for too long resulting in "MySQL server has gone away" error
+    # Close MySQL connection before starting external process because 
+    # it may run for too long resulting in "MySQL server has gone away" error
     connection.close()
     with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
         for line in proc.stdout:
             print(line, end='')
     if proc.returncode != 0:
-        # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
+        # Suppress false positive no-member error
+        # (see https://github.com/PyCQA/pylint/issues/1860)
         # pylint: disable=no-member
         raise CalledProcessError(proc.returncode, proc.args)
 
 
 def postprocess(annotator, genomes, working_dir):
     """
-        Finds antiSMASH output files and creates file with annotations for upload into DB
+        Finds antiSMASH output files and creates file 
+        with annotations for upload into DB
     """
-    output_file = os.path.join(annotator.config['cgcms.temp_dir'], 'antismash-plugin-output.txt')
+    output_file = os.path.join(annotator.config['cgcms.temp_dir'],
+                               'antismash-plugin-output.txt'
+                               )
     antismash_ref = {}
     with open(annotator.config['plugins.antismash.antismash_ref'], 'r') as infile:
         for line in infile:
@@ -93,7 +105,10 @@ def postprocess(annotator, genomes, working_dir):
                 continue
             for filename in os.listdir(antismash_dir):
                 if 'region' in filename:
-                    outfile.write(get_genes(genome, os.path.join(antismash_dir, filename), antismash_ref))
+                    outfile.write(get_genes(genome,
+                                            os.path.join(antismash_dir, filename),
+                                            antismash_ref
+                                            ))
 
     _cleanup(working_dir)
     return output_file
@@ -116,7 +131,8 @@ def get_genes(genome_id, gbk_file, antismash_ref):
                     start, end, strand = parse_location(feature.location)
                     for qualifier in feature.qualifiers:
                         if qualifier.key == '/protocluster_number=':
-                            protocluster_number = qualifier.value[1:-1] + '_' + contig_name
+                            protocluster_number = qualifier.value[1:-1] + \
+                                                  '_' + contig_name
                         elif qualifier.key == '/product=':
                             product = qualifier.value[1:-1]
                     protocores[protocluster_number] = {}
@@ -134,7 +150,8 @@ def get_genes(genome_id, gbk_file, antismash_ref):
                     start, end, strand = parse_location(feature.location)
                     protocluster = None
                     for protocluster_number in protocores:
-                        if start >= protocores[protocluster_number]['start'] and end <= protocores[protocluster_number]['end']:
+                        if start >= protocores[protocluster_number]['start'] \
+                        and end <= protocores[protocluster_number]['end']:
                             protocluster = protocluster_number
                             break
                     if protocluster is None:
@@ -150,7 +167,9 @@ def get_genes(genome_id, gbk_file, antismash_ref):
                         if qualifier.key == '/locus_tag=':
                             locus_tag = qualifier.value[1:-1]
                         elif qualifier.key == '/gene_functions=':
-                            functions.append(parse_function(qualifier.value[1:-1], value))
+                            functions.append(parse_function(qualifier.value[1:-1],
+                                                            value
+                                                            ))
                         elif qualifier.key == '/gene_kind=':
                             note = qualifier.value[1:-1]
                             if value in antismash_ref:
@@ -158,7 +177,15 @@ def get_genes(genome_id, gbk_file, antismash_ref):
                             else:
                                 note = note + ' gene from ' + value + ' cluster.'
                     if functions:
-                        gene_line = '\t'.join([locus_tag, genome_id, source, url, key, value, note  + ' Functions: ' + '; '.join(functions)]) + '\n'
+                        gene_line = '\t'.join([locus_tag,
+                                               genome_id,
+                                               source,
+                                               url,
+                                               key,
+                                               value,
+                                               note + ' Functions: ' +
+                                               '; '.join(functions)
+                                               ]) + '\n'
                         result.append(gene_line)
     return ''.join(result)
 

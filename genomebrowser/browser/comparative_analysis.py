@@ -1,10 +1,8 @@
 import io
-import os
-import sys
 import parasail
 from datetime import datetime
-from collections import defaultdict, OrderedDict
-from subprocess import Popen, PIPE, CalledProcessError, STDOUT
+from collections import defaultdict
+from subprocess import Popen, PIPE, STDOUT
 # Importing necessary libraries from BioPython
 from Bio import Phylo, AlignIO
 from Bio.Align.Applications import MuscleCommandline
@@ -13,7 +11,7 @@ import toytree
 import toyplot
 
 from django.db.models import Q
-from .models import *
+from .models import Gene
 from django.urls import reverse
 
 
@@ -73,11 +71,15 @@ def _get_color(index):
             light_color.append(255)
         else:
             light_color.append(rgb_val + 80)
-    # color = '\'rgb(' + ', '.join([str(x) for x in COLORS[color_index]]) + ')\''
-    color = '.setColorGradient(\'rgb(' + ', '.join([str(x) for x in light_color]) + ')\', \'rgb(' + ', '.join([str(x) for x in COLORS[color_index]]) + ')\')'
+    color = '.setColorGradient(\'rgb(' + ', '.join(
+                [str(x) for x in light_color]
+            ) + ')\', \'rgb(' + ', '.join(
+                [str(x) for x in COLORS[color_index]]
+            ) + ')\')'
     return color
     
-def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group, request, locus_size):
+def add_gene(gene, gene_uid, track_uid, offset, reverse_gene,
+             gene_color, group, request, locus_size):
     result = []
     if gene.strand == 1:
         if reverse_gene:
@@ -102,8 +104,14 @@ def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group,
     elif size + start > locus_size:
         size = locus_size - start
     
-    result.append('\n\t\t// Add gene ' + gene.locus_tag + ' to lane ' + str(track_uid) + '; offset ' + str(offset) + ' coords ' + str(gene.start) + ' ' + str(gene.end))
-    result.append('\t\tgene' + str(gene_uid) + ' = lane' + str(track_uid) + '.addGene( ' + str(start) + ', ' + str(size) + ' , \'' + strand + '\');')
+    result.append('\n\t\t// Add gene ' + gene.locus_tag + ' to lane ' +
+                  str(track_uid) + '; offset ' + str(offset) + ' coords ' +
+                  str(gene.start) + ' ' + str(gene.end)
+                  )
+    result.append('\t\tgene' + str(gene_uid) + ' = lane' + str(track_uid) +
+                  '.addGene( ' + str(start) + ', ' + str(size) +
+                  ' , \'' + strand + '\');'
+                  )
     result.append('\t\tgene' + str(gene_uid) + gene_color + ';')
     result.append('\t\tgene' + str(gene_uid) + '.text.style = "Arial";')
     if gene.name == '' or gene.name is None:
@@ -112,27 +120,28 @@ def add_gene(gene, gene_uid, track_uid, offset, reverse_gene, gene_color, group,
         result.append('\t\tgene' + str(gene_uid) + '.name = "' + gene.name + '";')
     if group == '':
         if gene.type == 'CDS':
-            result.append('\t\tgene' + str(gene_uid) + '.onMouseover = "' + gene.locus_tag + ': ' + gene.function + '";')
+            result.append('\t\tgene' + str(gene_uid) + '.onMouseover = "' +
+                          gene.locus_tag + ': ' + gene.function + '";'
+                          )
         else:
-            result.append('\t\tgene' + str(gene_uid) + '.onMouseover = "' + gene.locus_tag + ': ' + gene.function + ' [' + gene.type + ']";')
+            result.append('\t\tgene' + str(gene_uid) + '.onMouseover = "' +
+                          gene.locus_tag + ': ' + gene.function + ' [' +
+                          gene.type + ']";'
+                          )
     else:
-        result.append('\t\tgene' + str(gene_uid) + '.onMouseover = "' + gene.locus_tag + ': ' + gene.function + ' [' + group + ']";')
-    gene_url = request.build_absolute_uri(reverse('genedetails', args=[gene.genome.name, gene.locus_tag]))
-    result.append('\t\tgene' + str(gene_uid) + '.onClick = function() {window.open("' + gene_url + '", "_blank");};')
+        result.append('\t\tgene' + str(gene_uid) + '.onMouseover = "' +
+                      gene.locus_tag + ': ' + gene.function + ' [' + group + ']";'
+                      )
+    gene_url = request.build_absolute_uri(reverse('genedetails',
+                                          args=[gene.genome.name, gene.locus_tag])
+                                          )
+    result.append('\t\tgene' +
+                  str(gene_uid) +
+                  '.onClick = function() {window.open("' +
+                  gene_url +
+                  '", "_blank");};'
+                  )
     return result
-
-#def make_clustal_alignment(infasta):
-    #result = ''
-    #args = ['clustalo', '-i', '-']
-    #print('Running clustalo')
-    #with Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
-        #outfasta, err = p.communicate(infasta)
-    #print('clustalo finished')
-    #if p.returncode != 0:
-        #print('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] Clustal omega finished with error:\n'+ ' '.join(err) + '\n')
-        #return result
-    #result = outfasta
-    #return result
 
 def make_muscle_alignment(infasta):
     result = None
@@ -140,11 +149,21 @@ def make_muscle_alignment(infasta):
     print(muscle_cline)
     
     print('Running MUSCLE')
-    with Popen(str(muscle_cline), stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
+    with Popen(str(muscle_cline),
+               stdin=PIPE,
+               stdout=PIPE,
+               stderr=STDOUT,
+               bufsize=1,
+               universal_newlines=True) as p:
         outfasta, err = p.communicate(infasta)
     print('MUSCLE finished')
     if p.returncode != 0:
-        print('[' + datetime.now().strftime("%d/%m/%Y %H:%M:%S") + '] MUSCLE finished with error:\n'+ ' '.join(err) + '\n')
+        print('[' + 
+              datetime.now().strftime("%d/%m/%Y %H:%M:%S") +
+              '] MUSCLE finished with error:\n' +
+              ' '.join(err) +
+              '\n'
+              )
         return result
     result = outfasta
     return result
@@ -152,7 +171,10 @@ def make_muscle_alignment(infasta):
 def make_protein_tree(proteins):
     """
         Input:
-        proteins: list of tuples. The first element of tuples is gene ID, the second is protein sequence, the third is gene label for the tree
+        proteins: list of tuples. 
+        The first element of each tuple is gene ID,
+        the second is protein sequence,
+        the third is gene label to show on the tree
     """
     infasta = []
     gene_labels = {}
@@ -160,7 +182,6 @@ def make_protein_tree(proteins):
         infasta.append('>' + str(protein[2]))
         gene_labels[protein[2]] = protein[0]
         infasta.append(protein[1])
-    #outfasta = make_clustal_alignment('\n'.join(infasta))
     outfasta = make_muscle_alignment('\n'.join(infasta))
     if outfasta is None:
         return [proteins[0][2]], '', ''
@@ -169,13 +190,14 @@ def make_protein_tree(proteins):
     # Calculate the distance matrix
     calculator = DistanceCalculator('identity')
     distMatrix = calculator.get_distance(align)
-    #print(distMatrix)
     # Create a DistanceTreeConstructor object
     constructor = DistanceTreeConstructor()
     # Construct the phlyogenetic tree using NJ algorithm
     NJTree = constructor.nj(distMatrix)
     NJTree.root_with_outgroup(proteins[0][2])
-    nodes = [gene_labels[term.name] for term in NJTree.get_terminals(order='postorder')]
+    nodes = [gene_labels[term.name] for term
+             in NJTree.get_terminals(order='postorder')
+             ]
     node_ids = [term.name for term in NJTree.get_terminals(order='postorder')]
     newick = io.StringIO()
     Phylo.write(NJTree, newick, 'newick')
@@ -183,7 +205,12 @@ def make_protein_tree(proteins):
     tip_labels = [item.split('|')[0] for item in tree.treelist[0].get_tip_labels()]
     nodes.reverse()
     print('Node IDs', node_ids)
-    canvas, axes, marks = tree.draw(width=200, height=70 + 56 * len(nodes), fixed_order=node_ids, tip_labels=tip_labels, scalebar=True)
+    canvas, axes, marks = tree.draw(width=200,
+                                    height=70 + 56 * len(nodes),
+                                    fixed_order=node_ids,
+                                    tip_labels=tip_labels,
+                                    scalebar=True
+                                    )
     canvas.style['background-color'] = 'white'
     canvas.style['padding-top'] = '60px'
     tree_canvas = toyplot.html.tostring(canvas)
@@ -192,14 +219,14 @@ def make_protein_tree(proteins):
 def sort_proteins(proteins, query_hash):
     """Sorts proteins by semi-global alignment score"""
     result = [query_hash]
-    profile = parasail.profile_create_stats_sat(proteins[query_hash], parasail.blosum62)
+    profile = parasail.profile_create_stats_sat(proteins[query_hash],
+                                                parasail.blosum62
+                                                )
     scores = []
     for protein_hash, protein_seq in proteins.items():
         if protein_hash == query_hash:
             continue
-        #print(ref['id'])
         search_result = parasail.sg_stats_scan_profile_sat(profile,protein_seq,11,1)
-        #print(ref['id'], result.score, result.matches, result.similar, result.end_query, result.end_ref)
         scores.append((protein_hash,search_result.score))
     result += [x[0] for x in reversed(sorted(scores, key=lambda x: x[1]))]
     return result
@@ -207,24 +234,39 @@ def sort_proteins(proteins, query_hash):
 def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
     ''' Returns list of genes sorted by protein siilarityto the pivot genee'''
     ret_genes = [pivot_gene]
-#    genes = {item.id:item for item in Gene.objects.filter(protein__ortholog_groups__id=eggnog_og.id).select_related('protein', 'genome', 'genome__strain', 'genome__sample', 'contig')}
-    genes = {item.id:item for item in Gene.objects.filter(protein__ortholog_groups__id=eggnog_og.id).select_related('protein', 'genome', 'genome__taxon', 'contig')}
+    genes = {item.id:item
+             for item
+             in Gene.objects.filter(
+                protein__ortholog_groups__id=eggnog_og.id).select_related(
+                'protein', 'genome', 'genome__taxon', 'contig'
+                )
+            }
     if len(genes) == 1:
         return ret_genes, len(genes), '', ''
-    proteins = {gene.protein.protein_hash:gene.protein.sequence for gene in genes.values()}
+    proteins = {gene.protein.protein_hash:gene.protein.sequence
+                for gene
+                in genes.values()
+                }
     sorted_proteins = sort_proteins(proteins, pivot_gene.protein.protein_hash)
-    gene2protein = defaultdict(list)
     gene_count = 0
-    tree_proteins = [(pivot_gene.id, pivot_gene.protein.sequence, pivot_gene.locus_tag + '|' + pivot_gene.genome.name)]
+    tree_proteins = [(pivot_gene.id,
+                      pivot_gene.protein.sequence,
+                      pivot_gene.locus_tag + '|' + pivot_gene.genome.name
+                      )]
     for protein_hash in sorted_proteins:
         if gene_count >= genelist_size:
             break
-        prot_genes = [x for x in genes.values() if x.protein.protein_hash == protein_hash]
+        prot_genes = [x for x
+                      in genes.values()
+                      if x.protein.protein_hash == protein_hash
+                      ]
         for gene in prot_genes:
             if gene.id == pivot_gene.id:
                 continue
-            #ret_genes.append(gene)
-            tree_proteins.append((gene.id, proteins[protein_hash], gene.locus_tag + '|' + gene.genome.name))
+            tree_proteins.append((gene.id,
+                                  proteins[protein_hash],
+                                  gene.locus_tag + '|' + gene.genome.name
+                                  ))
             gene_count += 1
             if gene_count >= genelist_size:
                 break
@@ -233,68 +275,16 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
     if tree_nodes[0] == pivot_gene.id:
         print('First gene is ', pivot_gene.locus_tag)
     else:
-        print('First gene is ', genes[tree_nodes[0]], 'instead of', pivot_gene.locus_tag)
+        print('First gene is ',
+              genes[tree_nodes[0]],
+              'instead of',
+              pivot_gene.locus_tag
+              )
     for gene_id in tree_nodes:
         if gene_id == pivot_gene.id:
             continue
         ret_genes.append(genes[int(gene_id)])
     return ret_genes, len(genes), tree_svg, tree_newick
-
-#def get_orthologs(eggnog_og, pivot_gene):
-    #''' Returns prioritized list of genes'''
-    #result = [pivot_gene]
-    #genes = Gene.objects.filter(protein__ortholog_groups__id=eggnog_og.id).select_related('protein', 'genome', 'genome__strain__taxon')
-    #protein_ids = list(set([gene.protein.protein_hash for gene in genes]))
-    #tree = make_taxonomy_tree([gene.genome.strain.taxon.taxonomy_id for gene in genes], pivot_gene.genome.strain.taxon.taxonomy_id, eggnog_og.taxon.taxonomy_id)
-    ##gene2taxon = {}
-    #taxon2genes = autovivify(2, dict)
-    #for gene in genes:
-        #genome_id = gene.genome.id
-        ##gene2taxon[gene.id] = gene.genome.strain.taxon
-        #taxon2genes[gene.genome.strain.taxon.taxonomy_id][genome_id][gene.id] = gene
-    #eggnog_top_taxon = eggnog_og.taxon
-    
-    #start_genome = pivot_gene.genome.id
-    #start_taxon = pivot_gene.genome.strain.taxon.taxonomy_id
-    #visited_taxa = set()
-    ## Get genes from start genome
-    #for gene_id in sorted(taxon2genes[start_taxon][start_genome].keys()):
-        #if gene_id == pivot_gene.id:
-            #continue
-        #result.append(taxon2genes[start_taxon][start_genome][gene_id])
-    ## Get genes from other genomes of the start taxon
-    #for genome_id in sorted(taxon2genes[start_taxon].keys()):
-        #if genome_id == start_genome:
-            #continue
-        #for gene_id in sorted(taxon2genes[start_taxon][genome_id].keys()):
-            #if taxon2genes[start_taxon][genome_id][gene_id] not in result:
-                #result.append(taxon2genes[start_taxon][genome_id][gene_id])
-    #visited_taxa.add(start_taxon)
-    ## Traverse the tree starting from start taxon:
-    #if 'children' in tree[start_taxon]:
-        #for child_taxon in sorted(tree[start_taxon]['children']):
-            #if child_taxon in visited_taxa:
-                #continue
-            #child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, child_taxon)
-            #visited_taxa = visited_taxa.union(child_visited_taxa)
-            #result += child_ordered_genes
-
-    #parent_id = tree[start_taxon]['parent']
-    #while True:
-        #child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, parent_id)
-        #visited_taxa = visited_taxa.union(child_visited_taxa)
-        #result += child_ordered_genes
-        #try:
-            #parent_id = tree[parent_id]['parent']
-        #except KeyError:
-            #print('Parent node not found ', parent_id)
-            #parent_id = '1'
-        #if parent_id == '1':
-            #break
-    #if parent_id == '1':
-        #child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, parent_id)
-        #result += child_ordered_genes
-    #return result
 
 def collect_genes(tree, taxon2genes, visited_taxa, taxon):
     print('Visiting ' + taxon)
@@ -311,7 +301,11 @@ def collect_genes(tree, taxon2genes, visited_taxa, taxon):
         for child_taxon in sorted(tree[taxon]['children']):
             if child_taxon in visited_taxa:
                 continue
-            child_ordered_genes, child_visited_taxa = collect_genes(tree, taxon2genes, visited_taxa, child_taxon)
+            child_ordered_genes, child_visited_taxa = collect_genes(tree,
+                                                                    taxon2genes,
+                                                                    visited_taxa,
+                                                                    child_taxon
+                                                                    )
             ordered_genes += child_ordered_genes
             visited_taxa = visited_taxa.union(child_visited_taxa)
     return ordered_genes, visited_taxa
@@ -323,16 +317,16 @@ def get_scribl(start_gene, eggnog_og, request):
     track_uid = 0
     scribl = []
     eggnog2color = {eggnog_og.eggnog_id:RED, '':DARK_GREY}
-    #ordered_orthologs = get_orthologs(eggnog_og, start_gene)
-    ordered_orthologs, og_gene_count, tree_canvas, tree_newick = get_sorted_orthologs(eggnog_og, start_gene, genelist_size)
+    ordered_orthologs, og_gene_count, tree_canvas, tree_newick = get_sorted_orthologs(
+        eggnog_og, start_gene, genelist_size
+        )
     if og_gene_count == 1:
         return '', '', '', og_gene_count, 1
     plot_gene_count = len(ordered_orthologs)
-    #if len(ordered_orthologs) > genelist_size:
-    #    ordered_orthologs = ordered_orthologs[:genelist_size]
     scribl.append('\t\tcanvas.width = parent.offsetWidth - 201;')
-    scribl.append('\t\tcanvas.height = ' + str(50 + 56 * len(ordered_orthologs)) + ';')
-    #scribl.append('parent.offsetHeight = ' + str(50 + 55 * len(ordered_orthologs)) + ';')
+    scribl.append('\t\tcanvas.height = ' +
+                  str(50 + 56 * len(ordered_orthologs)) + ';'
+                  )
     scribl.append('\t\tctx.font = "12px Arial";')
     scribl.append('\t\tctx.fillStyle = "#dbdbdb";')
     scribl.append('\t\tchart = new Scribl(canvas, canvas.width - 25);')
@@ -359,8 +353,13 @@ def get_scribl(start_gene, eggnog_og, request):
         if gene.strand == 1:
             reverse = False
         track_uid += 1
-        scribl.append('\t\ttrack' + str(track_uid) + ' = chart.addTrack();')
-        scribl.append('\t\tlane' + str(track_uid) + ' = track' + str(track_uid) + '.addLane();')
+        scribl.append('\t\ttrack' + str(track_uid) +
+                      ' = chart.addTrack();'
+                      )
+        scribl.append('\t\tlane' + str(track_uid) +
+                      ' = track' + str(track_uid) +
+                      '.addLane();'
+                      )
         middle_point = (gene.end + gene.start) / 2
         offset = int(middle_point - locus_size / 2)
         taxon_name = gene.genome.taxon.name
@@ -372,14 +371,17 @@ def get_scribl(start_gene, eggnog_og, request):
             display_end = offset
             if display_end > gene.contig.size:
                 display_end = gene.contig.size
-            scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' [' + taxon_name + '] ' +
-                gene.contig.contig_id + ': complement(' + str(display_start) + '..' + str(display_end) + ')\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
-#            if gene.genome.strain is not None:
-#                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.strain.full_name + '] ' +
-#                    gene.contig.contig_id + ': complement(' + str(display_start) + '..' + str(display_end) + ')\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
-#            else:
-#                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.sample.full_name + '] ' +
-#                    gene.contig.contig_id + ': complement(' + str(display_start) + '..' + str(display_end) + ')\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
+            scribl.append('\t\tctx.fillText(\'' + 
+                          gene.genome.name + ' [' +
+                          taxon_name + '] ' +
+                          gene.contig.contig_id + 
+                          ': complement(' +
+                          str(display_start) +
+                          '..' + str(display_end) +
+                          ')\', 10, track' +
+                          str(track_uid) +
+                          '.getPixelPositionY() - 8);'
+                          )
         else:
             display_start = offset
             if display_start < 1:
@@ -387,21 +389,30 @@ def get_scribl(start_gene, eggnog_og, request):
             display_end = offset + locus_size
             if display_end > gene.contig.size:
                 display_end = gene.contig.size
-            scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' [' + taxon_name + '] ' +
-                gene.contig.contig_id + ': ' + str(display_start) + '..' + str(display_end) + '\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
-#            if gene.genome.strain is not None:
-#                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.strain.full_name + '] ' +
-#                    gene.contig.contig_id + ': ' + str(display_start) + '..' + str(display_end) + '\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
-#            else:
-#                scribl.append('\t\tctx.fillText(\'' + gene.genome.name + ' genome [' + gene.genome.sample.full_name + '] ' +
-#                    gene.contig.contig_id + ': ' + str(display_start) + '..' + str(display_end) + '\', 10, track' + str(track_uid) + '.getPixelPositionY() - 8);')
+            scribl.append('\t\tctx.fillText(\'' + 
+                          gene.genome.name +
+                          ' [' + taxon_name + '] ' +
+                          gene.contig.contig_id +
+                          ': ' + str(display_start) +
+                          '..' + str(display_end) +
+                          '\', 10, track' +
+                          str(track_uid) +
+                          '.getPixelPositionY() - 8);'
+                          )
         # Crete track for gene glyphs
-        #track_uid += 1
         middle_point = (gene.end + gene.start) / 2
         offset = int(middle_point - locus_size / 2)
         range_start = int(middle_point - locus_size / 2)
         range_end = int(middle_point + locus_size / 2)
-        neigbor_genes = Gene.objects.filter(genome=gene.genome, contig=gene.contig).filter(Q(end__range=[range_start, range_end]) |Q(start__range=[range_start, range_end])).select_related('protein', 'genome').prefetch_related('protein__ortholog_groups')
+        neigbor_genes = Gene.objects.filter(
+                        genome=gene.genome,
+                        contig=gene.contig).filter(
+                        Q(end__range=[range_start, range_end])|
+                        Q(start__range=[range_start, range_end])).select_related(
+                        'protein', 'genome'
+                        ).prefetch_related(
+                        'protein__ortholog_groups'
+                        )
         for locus_member in neigbor_genes:
             group = ''
             if locus_member in ordered_orthologs:
@@ -409,7 +420,9 @@ def get_scribl(start_gene, eggnog_og, request):
             elif locus_member.protein is None:
                 group = ''
             else:
-                eggnogs = sorted([item.eggnog_id for item in locus_member.protein.ortholog_groups.all()])
+                eggnogs = sorted([item.eggnog_id
+                                  for item 
+                                  in locus_member.protein.ortholog_groups.all()])
                 for og_id in eggnogs:
                     if og_id.startswith('COG'):
                         group = og_id
@@ -420,8 +433,15 @@ def get_scribl(start_gene, eggnog_og, request):
                 eggnog2color[group] = _get_color(len(eggnog2color))
             gene_color = eggnog2color[group]
             gene_uid += 1
-            scribl += add_gene(locus_member, gene_uid, track_uid, offset, reverse, gene_color, group, request, locus_size)
+            scribl += add_gene(locus_member,
+                               gene_uid,
+                               track_uid,
+                               offset,
+                               reverse,
+                               gene_color,
+                               group,
+                               request,
+                               locus_size
+                               )
 
     return '\n'.join(scribl), tree_canvas, tree_newick, og_gene_count, plot_gene_count
-
-
