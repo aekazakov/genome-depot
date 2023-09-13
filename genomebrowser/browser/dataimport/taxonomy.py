@@ -1,8 +1,5 @@
 """ This file contains functions for taxonomy import and update"""
 import os
-import sys
-import shutil
-import codecs
 import tarfile
 import urllib.request
 from pathlib import Path
@@ -55,7 +52,6 @@ def update_taxonomy():
     config = {}
     for item in Config.objects.values('param', 'value'):
         config[item['param']] = item['value']
-    eggnog_file = config['cgcms.eggnog_taxonomy']
     tmp_dir = os.path.join(config['cgcms.temp_dir'], 'taxonomy')
 
     out_file = os.path.join(tmp_dir, 'ref_taxonomy.txt')
@@ -81,7 +77,7 @@ def update_taxonomy():
             old_taxonomy_names[taxonomy_id] = (name, row[4])
 
     print('Downloading', ncbi_url)
-    r = urllib.request.urlretrieve(url=ncbi_url, filename=ncbi_archive)
+    _ = urllib.request.urlretrieve(url=ncbi_url, filename=ncbi_archive)
     tar = tarfile.open(ncbi_archive)
     for filename in filenames:
         print('Extracting', filename)
@@ -96,7 +92,9 @@ def update_taxonomy():
                 taxonomy[row[0]] = {}
                 taxonomy[row[0]]['name'] = row[1]
                 if row[0] in taxonomy_id_lookup:
-                    print('Warining: non-unique taxon name', row[1], 'with IDs', taxonomy_id_lookup[row[1]], taxid)
+                    print('Warining: non-unique taxon name', row[1],
+                          'with IDs', taxonomy_id_lookup[row[1]], row[0]
+                          )
                 taxonomy_id_lookup[row[1]] = row[0]
     #initialize nodes
     print('Reading nodes.dmp')
@@ -138,7 +136,10 @@ def update_taxonomy():
             if name in taxonomy_id_lookup:
                 eggnog_taxa[eggnog_id] = taxonomy_id_lookup[name]
             else:
-                print(taxonomy_id, name, 'cannot be located. Transferring mapping to the parent', parent)
+                print(taxonomy_id, name,
+                      'cannot be located. Transferring mapping to the parent',
+                      parent
+                      )
                 eggnog_taxa[eggnog_id] = parent
         else:
             # Check if current entry is merged
@@ -151,9 +152,17 @@ def update_taxonomy():
         for taxonomy_id in sorted(taxonomy.keys()):
             taxonomy_data = taxonomy[taxonomy_id]
             if 'merged' in taxonomy_data:
-                outfile.write('\t'.join([taxonomy_id, taxonomy_data['name'], taxonomy_data['rank'], taxonomy_data['parent'], '0']) + '\n')
+                outfile.write('\t'.join([taxonomy_id,
+                                         taxonomy_data['name'],
+                                         taxonomy_data['rank'],
+                                         taxonomy_data['parent'],
+                                         '0']) + '\n')
             else:
-                outfile.write('\t'.join([taxonomy_id, taxonomy_data['name'], taxonomy_data['rank'], taxonomy_data['parent'], '1']) + '\n')
+                outfile.write('\t'.join([taxonomy_id,
+                                         taxonomy_data['name'],
+                                         taxonomy_data['rank'],
+                                         taxonomy_data['parent'],
+                                         '1']) + '\n')
     
     eggnog_taxonomy_temp_file = os.path.join(tmp_dir, 'eggnog_taxonomy_rules.txt')
     with open(eggnog_taxonomy_temp_file, 'w') as outfile:
@@ -179,7 +188,11 @@ def update_taxonomy():
                 taxon.save()
             else:
                 if taxon.name != taxonomy[taxon.taxonomy_id]['name']:
-                    print('Change', taxon.name, 'to', taxonomy[taxon.taxonomy_id]['name'])
+                    print('Change',
+                          taxon.name,
+                          'to',
+                          taxonomy[taxon.taxonomy_id]['name']
+                          )
                     taxon.name = taxonomy[taxon.taxonomy_id]['name']
                     taxon.save()
                 if taxon.rank != taxonomy[taxon.taxonomy_id]['rank']:
@@ -198,7 +211,12 @@ def update_taxonomy():
             taxon.parent_id = taxonomy[new_id]['parent']
             taxon.save()
         else:
-            print('Taxon not found:', taxon.name, '(', taxon.taxonomy_id, '). Fix manually.')
+            print('Taxon not found:',
+                  taxon.name,
+                  '(',
+                  taxon.taxonomy_id,
+                  '). Fix manually.'
+                  )
     os.rename(eggnog_taxonomy_temp_file, config['cgcms.eggnog_taxonomy'])
     os.rename(out_file, config['ref.taxonomy'])
     #shutil.rmtree(tmp_dir)

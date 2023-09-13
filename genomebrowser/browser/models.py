@@ -50,7 +50,11 @@ class Strain(models.Model):
     strain_id = models.CharField(max_length=100, unique=True, db_index=True)
     full_name = models.CharField(max_length=200)
     order = models.CharField(max_length=100)
-    taxon = models.ForeignKey(Taxon, on_delete=models.CASCADE, blank = False, null = False)
+    taxon = models.ForeignKey(Taxon,
+                              on_delete=models.CASCADE,
+                              blank = False,
+                              null = False
+                              )
 
     def __str__(self):
         return self.strain_id + ' (' + self.order + ')'
@@ -115,8 +119,16 @@ class Genome(models.Model):
     '''
     name = models.CharField(max_length=200, unique=True, db_index=True)
     description = models.TextField()
-    strain = models.ForeignKey(Strain, on_delete=models.CASCADE, blank = True, null = True)
-    sample = models.ForeignKey(Sample, on_delete=models.CASCADE, blank = True, null = True)
+    strain = models.ForeignKey(Strain,
+                               on_delete=models.CASCADE,
+                               blank = True,
+                               null = True
+                               )
+    sample = models.ForeignKey(Sample,
+                               on_delete=models.CASCADE,
+                               blank = True,
+                               null = True
+                               )
     contigs = models.PositiveIntegerField()
     size = models.PositiveIntegerField()
     genes = models.PositiveIntegerField()
@@ -125,7 +137,11 @@ class Genome(models.Model):
     external_url = models.CharField(max_length=200)
     external_id = models.CharField(max_length=40)
     gbk_filepath = models.CharField(max_length=200)
-    taxon = models.ForeignKey(Taxon, on_delete=models.CASCADE, blank = False, null = False)
+    taxon = models.ForeignKey(Taxon,
+                              on_delete=models.CASCADE,
+                              blank = False,
+                              null = False
+                              )
     tags = models.ManyToManyField(Tag)
 
     def get_tags(self):
@@ -142,7 +158,11 @@ class Contig(models.Model):
     contig_id = models.CharField(max_length=100)
     name = models.CharField(max_length=250)
     size = models.IntegerField()
-    genome = models.ForeignKey(Genome, on_delete=models.CASCADE, blank = True, null = True)
+    genome = models.ForeignKey(Genome,
+                               on_delete=models.CASCADE,
+                               blank = True,
+                               null = True
+                               )
     
     def __str__(self):
         return self.contig_id
@@ -156,8 +176,16 @@ class Operon(models.Model):
     start = models.IntegerField()
     end = models.IntegerField()
     strand = models.IntegerField()
-    genome = models.ForeignKey(Genome, on_delete=models.CASCADE, blank = True, null = True)
-    contig = models.ForeignKey(Contig, on_delete=models.SET_NULL, blank = True, null = True)
+    genome = models.ForeignKey(Genome,
+                               on_delete=models.CASCADE,
+                               blank = True,
+                               null = True
+                               )
+    contig = models.ForeignKey(Contig,
+                               on_delete=models.SET_NULL,
+                               blank = True,
+                               null = True
+                               )
     
     def __str__(self):
         return self.name
@@ -260,7 +288,11 @@ class Ortholog_group(models.Model):
         Stores EggNOG families
     '''
     eggnog_id = models.CharField(max_length=15, db_index=True)
-    taxon = models.ForeignKey(Taxon, on_delete=models.SET_NULL, blank = True, null = True)
+    taxon = models.ForeignKey(Taxon,
+                              on_delete=models.SET_NULL,
+                              blank = True,
+                              null = True
+                              )
 
     def __str__(self):
         return self.eggnog_id
@@ -297,8 +329,16 @@ class Protein(models.Model):
     ec_numbers = models.ManyToManyField(Ec_number)
     tc_families = models.ManyToManyField(Tc_family)
     ortholog_groups = models.ManyToManyField(Ortholog_group)
-    taxonomy_id = models.ForeignKey(Taxon, on_delete=models.SET_NULL, blank = True, null = True)
-    eggnog_description = models.ForeignKey(Eggnog_description, on_delete=models.SET_NULL, blank = True, null = True)
+    taxonomy_id = models.ForeignKey(Taxon,
+                                    on_delete=models.SET_NULL,
+                                    blank = True,
+                                    null = True
+                                    )
+    eggnog_description = models.ForeignKey(Eggnog_description,
+                                           on_delete=models.SET_NULL,
+                                           blank = True,
+                                           null = True
+                                           )
 
     def __str__(self):
         return self.protein_hash
@@ -310,15 +350,28 @@ class Gene(models.Model):
     '''
     name = models.CharField(max_length=50, db_index=True)
     locus_tag = models.CharField(max_length=50, db_index=True)
-    contig = models.ForeignKey(Contig, on_delete=models.SET_NULL, blank = True, null = True)
+    contig = models.ForeignKey(Contig,
+                               on_delete=models.SET_NULL,
+                               blank = True,
+                               null = True
+                               )
     type = models.CharField(max_length=20)
     start = models.IntegerField()
     end = models.IntegerField()
     strand = models.IntegerField()
     genome = models.ForeignKey(Genome, on_delete=models.CASCADE)
     function = models.CharField(max_length=250, db_index=True) # prokka function
-    protein = models.ForeignKey(Protein, on_delete=models.SET_NULL, blank = True, null = True)
-    operon = models.ForeignKey(Operon, on_delete=models.SET_NULL, blank = True, null = True, related_name='genes')
+    protein = models.ForeignKey(Protein,
+                                on_delete=models.SET_NULL,
+                                blank = True,
+                                null = True
+                                )
+    operon = models.ForeignKey(Operon,
+                               on_delete=models.SET_NULL,
+                               blank = True,
+                               null = True,
+                               related_name='genes'
+                               )
     
     def __str__(self):
         return self.locus_tag
@@ -349,7 +402,11 @@ class Site(models.Model):
     sequence = models.TextField()
     regulon = models.ForeignKey(Regulon, on_delete=models.CASCADE)
     genome = models.ForeignKey(Genome, on_delete=models.CASCADE)
-    contig = models.ForeignKey(Contig, on_delete=models.SET_NULL, blank = True, null = True)
+    contig = models.ForeignKey(Contig,
+                               on_delete=models.SET_NULL,
+                               blank = True,
+                               null = True
+                               )
     operons = models.ManyToManyField(Operon, blank = True)
     genes = models.ManyToManyField(Gene, blank = True)
     
