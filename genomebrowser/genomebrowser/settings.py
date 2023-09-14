@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import json
+#import json
+from decouple import config
+
 # Normally you should not import ANYTHING from Django directly
 # into your settings, but ImproperlyConfigured is an exception.
 from django.core.exceptions import ImproperlyConfigured
@@ -20,30 +22,29 @@ from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # JSON-based secrets module
-with open(os.path.join(BASE_DIR, "secrets.json")) as f:
-    secrets = json.loads(f.read())
+#with open(os.path.join(BASE_DIR, "secrets.json")) as f:
+#    secrets = json.loads(f.read())
 
-def get_secret(setting, secrets=secrets):
-    """Get the secret variable or return explicit exception."""
-    try:
-        return secrets[setting]
-    except KeyError:
-        error_msg = "Set the {0} environment variable".format(setting)
-        raise ImproperlyConfigured(error_msg)
+#def get_secret(setting, secrets=secrets):
+#    """Get the secret variable or return explicit exception."""
+#    try:
+#        return secrets[setting]
+#    except KeyError:
+#        error_msg = "Set the {0} environment variable".format(setting)
+#        raise ImproperlyConfigured(error_msg)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_secret('SECRET_KEY')
+# SECURITY WARNING: keep the secret key used in production in the .env file!
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [get_secret('HOSTNAME'), '127.0.0.1', 'testserver']
+ALLOWED_HOSTS = [config('HOSTNAME'), '127.0.0.1', 'testserver']
 INTERNAL_IPS = ['127.0.0.1',]
-
 
 # Application definition
 
@@ -104,9 +105,9 @@ WSGI_APPLICATION = 'genomebrowser.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': get_secret('DB_NAME'),
-        'USER': get_secret('DB_USER'),
-        'PASSWORD': get_secret('DB_PASSWORD'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
         'CONN_MAX_AGE': 3600,
         'TEST': {
             'NAME':'test_genomesdev'
@@ -151,18 +152,18 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST = 'smtp.gmail.com'
 #sender's email-id
-EMAIL_HOST_USER = get_secret('EMAIL_HOST_USER')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 #password associated with the email-id
-EMAIL_HOST_PASSWORD = get_secret('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-BASE_URL = get_secret('BASE_URL')
-STATIC_URL = get_secret('STATIC_URL')
-STATIC_ROOT = get_secret('STATIC_ROOT')
+BASE_URL = config('BASE_URL')
+STATIC_URL = config('STATIC_URL')
+STATIC_ROOT = config('STATIC_ROOT')
 STATICFILES_DIRS = [
-    get_secret('STATICFILES_DIR')
+    config('STATICFILES_DIR')
 ]
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'

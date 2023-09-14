@@ -7,34 +7,31 @@
 
 {% block title %}<div class="logo"><h2>Annotations</h2></div>{% endblock %}
 {% block content %}
-		<div class="loading-bar-area" id="loading-bar-area">
-		    {% include 'browser/loadingannotation.html' %}
-		</div>
-		<section id="two" class="wrapper style3">
-			<div class="inner" id="search-result-area" >
-				<header class="align-center">
-			{% if searchcontext %}
-			    <h4>{{ searchcontext }}</h4>
-			{% else %}
-			    <form action="{% url 'searchannotation' %}" method="get">
-			      <input name="annotation_query" type="text" placeholder="Search genes by annotation...">
-			    </form>
-			{% endif %}
-				</header>
-				<div id="searchresult"></div>
-			    <div id="run-time">Search time: </div>
-			    <div id ="error-box" class="error box"></div>
-				
-
-
+        <div class="loading-bar-area" id="loading-bar-area">
+            {% include 'browser/loadingannotation.html' %}
+        </div>
+        <section id="two" class="wrapper style3">
+            <div class="inner" id="search-result-area" >
+                <header class="align-center">
+            {% if searchcontext %}
+                <h4>{{ searchcontext }}</h4>
+            {% else %}
+                <form action="{% url 'searchannotation' %}" method="get">
+                  <input name="annotation_query" type="text" placeholder="Search genes by annotation...">
+                </form>
+            {% endif %}
+                </header>
+                <div id="searchresult"></div>
+                <div id="run-time">Search time: </div>
+                <div id ="error-box" class="error box"></div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script>
     $(document).ready(function(){
         $.ajax({
             url: "{% url 'loadingtextsearch' %}",
-	    type: "GET",
-	    datatype: 'json',
-	    data: {'annotation_query': "{{ annotation_query }}", 'genome': "{{ genome }}", 'page': "{{ page }}" }
+        type: "GET",
+        datatype: 'json',
+        data: {'annotation_query': "{{ annotation_query }}", 'genome': "{{ genome }}", 'page': "{{ page }}" }
         }).done(function(data){
             $('#loading-bar-area').remove();
             $('#run-time').append(data["time"].toFixed(2) + ' seconds')
@@ -45,12 +42,10 @@
             $('#loading-bar-area').remove();
             $('#error-box').append('Internal server error')
             $('#search-result-area').show();
-	});
+    });
     });
 </script>
-  
-		    </div>
-		</section>
-
+            </div>
+        </section>
 {% endblock %}
 

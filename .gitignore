@@ -1,6 +1,8 @@
-# Secret settings file
+# Secret settings files
+.env
 /secrets.json
 /configs.txt
+
 .htaccess
 
 # Django #

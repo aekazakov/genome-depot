@@ -7,167 +7,164 @@
 {% block content %}
 
     <section id="two" class="wrapper style3">
-	    <div class="inner">
-		    <header class="align-center">
-			    <h2>{{ genome.name }}</h2>
-		    </header>
+        <div class="inner">
+            <header class="align-center">
+                <h2>{{ genome.name }}</h2>
+            </header>
 
-		<div class="row">
-		    <div class="6u align-center">
-			<a class="align-center" href="#viewer">Genome viewer</a>
-		    </div>
-		    <div class="6u align-center">
-			<a class="align-center" href="#genesearch">Search genes</a>
-		    </div>
-		</div>
-		<hr>
-		    <header class="align-center">
-			<p class="align-center">Genome info</p>
-		    </header>
-		<div class="grid-style">
-		{%if genome.strain %}
-		    <div class="content">
-			Strain: <a href="{% url 'straindetails' strain_id=genome.strain.id %}">{{ genome.strain.full_name }}</a><br><br>
-			Taxonomy:<br>
-			{% if lineage %}
-			    {% for parent in lineage %}
-				<div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
-			    {% endfor %}
-			{% endif %}
-		    </div>
-		{% endif %}
-		{%if genome.sample %}
-		    <div class="content">
-			Sample: <a href="{% url 'sampledetails' sample_id=genome.sample.id %}">{{ genome.sample.full_name }}</a><br><br>
-			Taxonomy:<br>
-			{% if lineage %}
-			    {% for parent in lineage %}
-				<div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
-			    {% endfor %}
-			{% endif %}
-		    </div>
-		{% endif %}
-		    <div class="content">
-			
-			Size: {{ genome.size }} bp<br>
-			Contigs: {{ genome.contigs }}<br>
-			Genes: <a href="{% url 'searchgene' %}?genome={{ genome.name }}&type=gene">{{ genome.genes }} (click to open list)</a><br>
-			Operons: <a href="{% url 'operonlist' genome=genome.name %}">{{ operons }} (click to open list)</a><br>
-		    {%if sites %}
-			Sites: <a href="{% url 'sitelist' genome=genome.name %}">{{ sites }} (click to open list)</a><br>
-		    {% endif %}
-		    {%if regulons %}
-			Regulons: <a href="{% url 'regulonlist' genome=genome.name %}">{{ regulons }} (click to open list)</a><br>
-		    {% endif %}
-			<br>
-			Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a><br>
-			<a href="{% static 'genomes/gbff/' %}{{ genome.name }}.genome.gbff.gz">Download genome source file in GBFF format</a>
-		    </div>
-		</div>
-		<div class="content">
-		    <header class="align-center">
-			<p class="align-center">Description</p>
-		    </header>
-		    <h5 class="align-center">{% for tag in genome.tags.all %}
-			<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;
-			{% endfor %}{{ genome.description }}</h5>
-		</div>
-	    </div>
+        <div class="row">
+            <div class="6u align-center">
+            <a class="align-center" href="#viewer">Genome viewer</a>
+            </div>
+            <div class="6u align-center">
+            <a class="align-center" href="#genesearch">Search genes</a>
+            </div>
+        </div>
+        <hr>
+            <header class="align-center">
+            <p class="align-center">Genome info</p>
+            </header>
+        <div class="grid-style">
+        {%if genome.strain %}
+            <div class="content">
+            Strain: <a href="{% url 'straindetails' strain_id=genome.strain.id %}">{{ genome.strain.full_name }}</a><br><br>
+            Taxonomy:<br>
+            {% if lineage %}
+                {% for parent in lineage %}
+                <div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
+                {% endfor %}
+            {% endif %}
+            </div>
+        {% endif %}
+        {%if genome.sample %}
+            <div class="content">
+            Sample: <a href="{% url 'sampledetails' sample_id=genome.sample.id %}">{{ genome.sample.full_name }}</a><br><br>
+            Taxonomy:<br>
+            {% if lineage %}
+                {% for parent in lineage %}
+                <div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
+                {% endfor %}
+            {% endif %}
+            </div>
+        {% endif %}
+            <div class="content">
+            
+            Size: {{ genome.size }} bp<br>
+            Contigs: {{ genome.contigs }}<br>
+            Genes: <a href="{% url 'searchgene' %}?genome={{ genome.name }}&type=gene">{{ genome.genes }} (click to open list)</a><br>
+            Operons: <a href="{% url 'operonlist' genome=genome.name %}">{{ operons }} (click to open list)</a><br>
+            {%if sites %}
+            Sites: <a href="{% url 'sitelist' genome=genome.name %}">{{ sites }} (click to open list)</a><br>
+            {% endif %}
+            {%if regulons %}
+            Regulons: <a href="{% url 'regulonlist' genome=genome.name %}">{{ regulons }} (click to open list)</a><br>
+            {% endif %}
+            <br>
+            Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a><br>
+            <a href="{% static 'genomes/gbff/' %}{{ genome.name }}.genome.gbff.gz">Download genome source file in GBFF format</a>
+            </div>
+        </div>
+        <div class="content">
+            <header class="align-center">
+            <p class="align-center">Description</p>
+            </header>
+            <h5 class="align-center">{% for tag in genome.tags.all %}
+            <span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;
+            {% endfor %}{{ genome.description }}</h5>
+        </div>
+        </div>
     </section>
 
     <section id="three" >
-	<div  id="viewer" class="wrapper style3">
-	    <div class="inner">
-		<h2 class="align-center">Genome viewer</h2>
-	    </div>
-	</div>
+    <div  id="viewer" class="wrapper style3">
+        <div class="inner">
+        <h2 class="align-center">Genome viewer</h2>
+        </div>
+    </div>
 
-	{% if contig %}
-	    <div class="inner">
-		<div style="width: 100%; height: 350px; margin: 10 auto;">
-		    <iframe
-			src="{% static 'jbrowse/index.html' %}?data={{ genome.json_url }}&tracklist=0&nav=1&overview=1&tracks=DNA%2CCDSs%2COperons%2CPseudogenes%2CRNAs&loc={{ contig }}:{{ viewer_start }}..{{ viewer_end }}&highlight={{ contig }}:{{ highlight_start }}..{{ highlight_end }}"
-			style="border: 1px solid black"
-			width="100%"
-			height="100%"
-		    >
-		    </iframe>
-		</div>
-	    </div>
-	{% else %}
+    {% if contig %}
+        <div class="inner">
+        <div style="width: 100%; height: 350px; margin: 10 auto;">
+            <iframe
+            src="{% static 'jbrowse/index.html' %}?data={{ genome.json_url }}&tracklist=0&nav=1&overview=1&tracks=DNA%2CCDSs%2COperons%2CPseudogenes%2CRNAs&loc={{ contig }}:{{ viewer_start }}..{{ viewer_end }}&highlight={{ contig }}:{{ highlight_start }}..{{ highlight_end }}"
+            style="border: 1px solid black"
+            width="100%"
+            height="100%"
+            >
+            </iframe>
+        </div>
+        </div>
+    {% else %}
 
-	    <div class="inner">
-		<div style="width: 100%; height: 350px; margin: 10 auto;">
-		    <iframe
-			src="{% static 'jbrowse/index.html' %}?data={{ genome.json_url }}&tracklist=0&nav=1&overview=1&tracks=DNA%2CCDSs%2COperons%2CPseudogenes%2CRNAs"
-			style="border: 1px solid black"
-			width="100%"
-			height="100%"
-		    >
-		    </iframe>
-		</div>
-	    </div>
-	{% endif %}
+        <div class="inner">
+        <div style="width: 100%; height: 350px; margin: 10 auto;">
+            <iframe
+            src="{% static 'jbrowse/index.html' %}?data={{ genome.json_url }}&tracklist=0&nav=1&overview=1&tracks=DNA%2CCDSs%2COperons%2CPseudogenes%2CRNAs"
+            style="border: 1px solid black"
+            width="100%"
+            height="100%"
+            >
+            </iframe>
+        </div>
+        </div>
+    {% endif %}
     </section>
 
     <section id="genesearch" class="wrapper style3">
-	    <div class="inner">
-		    <header class="align-center">
-			<h4>Search genes in this genome</h4>
-		    </header>
-			<form action="{% url 'searchgene' %}" method="get">
-			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By gene name of function<input name="query" type="text" placeholder="Enter gene ID, name or function ..."></label>
-			    <input name="type" type="hidden" id="type" value = "gene">
-			</form>
-			<form action="{% url 'searchgene' %}" method="get">
-			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By KEGG Ortholog group<input name="query" type="text" placeholder="Enter KEGG ortholog ID or name..."></label>
-			    <input name="type" type="hidden" id="type" value = "ko">
-			</form>
-			<form action="{% url 'searchgene' %}" method="get">
-			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By KEGG pathway<input name="query" type="text" placeholder="Enter KEGG pathway ID or name..."></label>
-			    <input name="type" type="hidden" id="type" value = "kp">
-			</form>
-			<form action="{% url 'searchgene' %}" method="get">
-			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By KEGG reaction<input name="query" type="text" placeholder="Enter KEGG reaction ID or name..."></label>
-			    <input name="type" type="hidden" id="type" value = "kr">
-			</form>
-			<form action="{% url 'searchgene' %}" method="get">
-			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By enzymatic activity<input name="query" type="text" placeholder="Enter EC number or enzyme name..."></label>
-			    <input name="type" type="hidden" id="type" value = "ec">
-			</form>
-			<form action="{% url 'searchgene' %}" method="get">
-			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By transporter family<input name="query" type="text" placeholder="Enter TCDB family ID or name..."></label>
-			    <input name="type" type="hidden" id="type" value = "tc">
-			</form>
-			<form action="{% url 'searchgene' %}" method="get">
-			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By CAZy family<input name="query" type="text" placeholder="Enter CAZy family ID or name..."></label>
-			    <input name="type" type="hidden" id="type" value = "cazy">
-			</form>
-			<form action="{% url 'searchgene' %}" method="get">
-			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By COG class<input name="query" type="text" placeholder="Enter COG class name..."></label>
-			    <input name="type" type="hidden" id="type" value = "cog">
-			</form>
-			<form action="{% url 'searchgene' %}" method="get">
-			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>By GO term<input name="query" type="text" placeholder="Enter GO term ID or name..."></label>
-			    <input name="type" type="hidden" id="type" value = "go">
-			</form>
-			<form action="{% url 'searchannotation' %}" method="get">
-			    <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-			    <label>Text search in annotations<input name="annotation_query" type="text" placeholder="Search in other annotations (domain, function, etc.) ..."></label>
-			</form>
-	    </div>
+        <div class="inner">
+            <header class="align-center">
+            <h4>Search genes in this genome</h4>
+            </header>
+            <form action="{% url 'searchgene' %}" method="get">
+                <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <label>By gene name of function<input name="query" type="text" placeholder="Enter gene ID, name or function ..."></label>
+                <input name="type" type="hidden" id="type" value = "gene">
+            </form>
+            <form action="{% url 'searchgene' %}" method="get">
+                <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <label>By KEGG Ortholog group<input name="query" type="text" placeholder="Enter KEGG ortholog ID or name..."></label>
+                <input name="type" type="hidden" id="type" value = "ko">
+            </form>
+            <form action="{% url 'searchgene' %}" method="get">
+                <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <label>By KEGG pathway<input name="query" type="text" placeholder="Enter KEGG pathway ID or name..."></label>
+                <input name="type" type="hidden" id="type" value = "kp">
+            </form>
+            <form action="{% url 'searchgene' %}" method="get">
+                <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <label>By KEGG reaction<input name="query" type="text" placeholder="Enter KEGG reaction ID or name..."></label>
+                <input name="type" type="hidden" id="type" value = "kr">
+            </form>
+            <form action="{% url 'searchgene' %}" method="get">
+                <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <label>By enzymatic activity<input name="query" type="text" placeholder="Enter EC number or enzyme name..."></label>
+                <input name="type" type="hidden" id="type" value = "ec">
+            </form>
+            <form action="{% url 'searchgene' %}" method="get">
+                <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <label>By transporter family<input name="query" type="text" placeholder="Enter TCDB family ID or name..."></label>
+                <input name="type" type="hidden" id="type" value = "tc">
+            </form>
+            <form action="{% url 'searchgene' %}" method="get">
+                <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <label>By CAZy family<input name="query" type="text" placeholder="Enter CAZy family ID or name..."></label>
+                <input name="type" type="hidden" id="type" value = "cazy">
+            </form>
+            <form action="{% url 'searchgene' %}" method="get">
+                <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <label>By COG class<input name="query" type="text" placeholder="Enter COG class name..."></label>
+                <input name="type" type="hidden" id="type" value = "cog">
+            </form>
+            <form action="{% url 'searchgene' %}" method="get">
+                <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <label>By GO term<input name="query" type="text" placeholder="Enter GO term ID or name..."></label>
+                <input name="type" type="hidden" id="type" value = "go">
+            </form>
+            <form action="{% url 'searchannotation' %}" method="get">
+                <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <label>Text search in annotations<input name="annotation_query" type="text" placeholder="Search in other annotations (domain, function, etc.) ..."></label>
+            </form>
+        </div>
     </section>
-
-
-
 
 {% endblock %}

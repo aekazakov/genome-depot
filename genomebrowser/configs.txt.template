@@ -16,4 +16,6 @@ plugins.fama.conda_env = cgcms-fama
 plugins.gapmind.gapmind_env = cgcms-gapmind
 plugins.gapmind.threads = 8
 plugins.defensefinder.defensefinder_env = cgcms-defensefinder
+plugins.macsyfinder.macsyfinder_env = cgcms-macsyfinder
+plugins.macsyfinder.model = TXSScan
 strains.metadata_file = 

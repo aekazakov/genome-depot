@@ -396,6 +396,7 @@ echo "plugins.fama.fama_universal_lib = $CGCMSDIR/external_refdata/fama/universa
 echo "plugins.phispy.pvog_path = $CGCMSDIR/external_refdata/phispy/pvogs.hmm" >> configs.txt
 echo "plugins.gapmind.gapmind_dir = $CGCMSDIR/external_tools/PaperBLAST" >> configs.txt
 echo "plugins.defensefinder.defensefinder_models_dir = $CGCMSDIR/external_refdata/defensefinder/data" >> configs.txt
+echo "plugins.macsyfinder.models_dir = $CGCMSDIR/external_refdata/macsyfinder/data" >> configs.txt
 echo "ref.cazy_file = $WORKDIR/ref_data/ref_cazy.txt" >> configs.txt
 echo "ref.cog_codes_file = $WORKDIR/ref_data/ref_cog_codes.txt" >> configs.txt
 echo "ref.ec_file = $WORKDIR/ref_data/ref_ec.txt" >> configs.txt
