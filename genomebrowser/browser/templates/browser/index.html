@@ -4,54 +4,54 @@
 {% block title %} <div class="logo">Start page</div>{% endblock %}
 
 {% block content %}
-		<!-- Banner -->
-			<section class="banner full">
-				<article>
-					<img src="{% static 'images/slide04.jpg' %}"  alt="" />
-					<div class="inner">
-						<header>
-							<p>Welcome to comparative genomic content management system</p>
-							<h3><a href="{% url 'genome_list' %}">Click here for a list of <span style="text-decoration:underline;">all {{ num_genomes }} genomes</span></a></h3>
-							
-						</header>
-					</div>
-				</article>
-				<article>
-					<img src="{% static 'images/slide02.jpg' %}" alt="" />
-					<div class="inner">
-						<header>
-							<p>Or click to open</p>
-							<h3><a href="{% url 'strain_list' %}" style="text-decoration:underline;">list of strains</a> or <a href="{% url 'sample_list' %}" style="text-decoration:underline;">list of samples</a></h2>
-						</header>
-					</div>
-				</article>
-				<article>
-					<img src="{% static 'images/slide03.jpg' %}"  alt="" />
-					<div class="inner">
-						<header>
-							<p>Here you can</p>
-							<h3><a href="{% url 'textsearch' %}"> search in gene annotations</a></h2>
-						</header>
-					</div>
-				</article>
-				<article>
-					<img src="{% static 'images/slide01.jpg' %}"  alt="" />
-					<div class="inner">
-						<header>
-							<p>Have a sequence?</p>
-							<h3><a href="{% url 'proteinsearchform' %}">Try <span style="text-decoration:underline;">protein</span></a> or <a href="{% url 'nucleotidesearchform' %}"><span style="text-decoration:underline;">nucleotide</span> search</a></h3>
-						</header>
-					</div>
-				</article>
-				<article>
-					<img src="{% static 'images/slide05.jpg' %}" alt="" />
-					<div class="inner">
-						<header>
-							<p>Still confused?</p>
-							<h3><a href="{% url 'help' %}">Click here to open <span style="text-decoration:underline;">help page</span></a></h3>
-						</header>
-					</div>
-				</article>
-			</section>
+        <!-- Banner -->
+            <section class="banner full">
+                <article>
+                    <img src="{% static 'images/slide04.jpg' %}"  alt="" />
+                    <div class="inner">
+                        <header>
+                            <p>Welcome to comparative genomic content management system</p>
+                            <h3><a href="{% url 'genome_list' %}">Click here for a list of <span style="text-decoration:underline;">all {{ num_genomes }} genomes</span></a></h3>
+                            
+                        </header>
+                    </div>
+                </article>
+                <article>
+                    <img src="{% static 'images/slide02.jpg' %}" alt="" />
+                    <div class="inner">
+                        <header>
+                            <p>Or click to open</p>
+                            <h3><a href="{% url 'strain_list' %}" style="text-decoration:underline;">list of strains</a> or <a href="{% url 'sample_list' %}" style="text-decoration:underline;">list of samples</a></h2>
+                        </header>
+                    </div>
+                </article>
+                <article>
+                    <img src="{% static 'images/slide03.jpg' %}"  alt="" />
+                    <div class="inner">
+                        <header>
+                            <p>Here you can</p>
+                            <h3><a href="{% url 'textsearch' %}"> search in gene annotations</a></h2>
+                        </header>
+                    </div>
+                </article>
+                <article>
+                    <img src="{% static 'images/slide01.jpg' %}"  alt="" />
+                    <div class="inner">
+                        <header>
+                            <p>Have a sequence?</p>
+                            <h3><a href="{% url 'proteinsearchform' %}">Try <span style="text-decoration:underline;">protein</span></a> or <a href="{% url 'nucleotidesearchform' %}"><span style="text-decoration:underline;">nucleotide</span> search</a></h3>
+                        </header>
+                    </div>
+                </article>
+                <article>
+                    <img src="{% static 'images/slide05.jpg' %}" alt="" />
+                    <div class="inner">
+                        <header>
+                            <p>Still confused?</p>
+                            <h3><a href="{% url 'help' %}">Click here to open <span style="text-decoration:underline;">help page</span></a></h3>
+                        </header>
+                    </div>
+                </article>
+            </section>
 
 {% endblock %}

@@ -7,76 +7,73 @@
 
 {% block title %}<div class="logo"><h2>Regulons</h2></div>{% endblock %}
 {% block content %}
-			<section id="two" class="wrapper style3">
-				<div class="inner">
-					<header class="align-center">
-					    {% if searchcontext %}
-						<h4>{{ searchcontext }}</h4>
-					    {% else %}
-						<h4>Regulons in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }} [{{ genome.taxon.name }}]</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</h4>
-						<form action="{% url 'regulonlist' genome=genome.name %}" method="get">
-						  <input name="query" type="text" placeholder="Quick search in regulons by name, regulator or description...">
-						</form>
-					    {% endif %}
-					</header>
+            <section id="two" class="wrapper style3">
+                <div class="inner">
+                    <header class="align-center">
+                        {% if searchcontext %}
+                        <h4>{{ searchcontext }}</h4>
+                        {% else %}
+                        <h4>Regulons in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }} [{{ genome.taxon.name }}]</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</h4>
+                        <form action="{% url 'regulonlist' genome=genome.name %}" method="get">
+                          <input name="query" type="text" placeholder="Quick search in regulons by name, regulator or description...">
+                        </form>
+                        {% endif %}
+                    </header>
 
-			<div class="table-wrapper">
-				<table>
-					<thead>
-						<tr>
-							<th>Regulon</th>
-							<th>Regulators</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Regulon</th>
+                            <th>Regulators</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
     {% for regulon in regulonlist %}
-					    <tr>
-						<td><a href="{% url 'regulondetails' genome=regulon.genome.name name=regulon.name %}">{{ regulon.name }}</a></td>
-					    {% if regulon.regulators %}
-						<td>
-						{% for gene in regulon.regulators.all %}
-						    <a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a><br\>
-						{% endfor %}
-						</td>
-					    {% else %}
-						<td>&nbsp;</td>
-					    {% endif %}
-						<td>{{ regulon.description }}</td>
-					    </tr>
+                        <tr>
+                        <td><a href="{% url 'regulondetails' genome=regulon.genome.name name=regulon.name %}">{{ regulon.name }}</a></td>
+                        {% if regulon.regulators %}
+                        <td>
+                        {% for gene in regulon.regulators.all %}
+                            <a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a><br\>
+                        {% endfor %}
+                        </td>
+                        {% else %}
+                        <td>&nbsp;</td>
+                        {% endif %}
+                        <td>{{ regulon.description }}</td>
+                        </tr>
     {% endfor %}
-					</tbody>
-				</table>
-			</div>
+                    </tbody>
+                </table>
+            </div>
 
     {% if is_paginated %}
         <div>
-	    <span>
-		{% if page_obj.has_previous %}
-		  <a class="button small" href="?{% param_replace page=1 %}">First</a>
-		  {% if page_obj.previous_page_number != 1 %}
-		    <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
-		  {% endif %}
-		{% endif %}
+        <span>
+        {% if page_obj.has_previous %}
+          <a class="button small" href="?{% param_replace page=1 %}">First</a>
+          {% if page_obj.previous_page_number != 1 %}
+            <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+          {% endif %}
+        {% endif %}
 
-		Page {{ page_obj.number }} of {{ paginator.num_pages }}
-		{% if page_obj.has_next %}
-		  {% if page_obj.next_page_number != paginator.num_pages %}
-		    <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
-		  {% endif %}
-		  <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
-		{% endif %}
+        Page {{ page_obj.number }} of {{ paginator.num_pages }}
+        {% if page_obj.has_next %}
+          {% if page_obj.next_page_number != paginator.num_pages %}
+            <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+          {% endif %}
+          <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
+        {% endif %}
 
-		<span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
-	    </span>
+        <span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
+        </span>
         </div>
     {% endif %}
-
-
-
   
-			    </div>
-			</section>
+    </div>
+    </section>
 
 {% endblock %}
 

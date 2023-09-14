@@ -5,13 +5,13 @@
 {% block script-header %}
     <script src="{% static 'assets/js/Scribl.1.1.4.min.js' %}"></script>
     <script>
-	function toggleDiv(divid){ 
-	var div = document.getElementById(divid); 
-	if (div.style.display == 'none')
-	    div.style.display = '';
-	else
-	    div.style.display = 'none';
-	}
+    function toggleDiv(divid){ 
+    var div = document.getElementById(divid); 
+    if (div.style.display == 'none')
+        div.style.display = '';
+    else
+        div.style.display = 'none';
+    }
     </script>
     <style>#treetext {display:none;}</style>
     <script>
@@ -23,128 +23,128 @@
 
 {% endblock %}
 {% block body-tag %}
-	<body>
+    <body>
 {% endblock %}
 
 {% block title %}<div class="logo"><h2>Comparative analysis</h2></div>{% endblock %}
 
 {% block content %}
-	<div id="scriblscript"></div>
-	<section id="two" class="wrapper style3">
-		<div class="inner">
-		    <header class="align-center">
-			    <h2>EggNOG orthologs for {{ gene.locus_tag }} 
-				{%if gene.genome.strain %}
-					[<a href="{% url 'straindetails' strain_id=gene.genome.strain.id %}">{{ gene.genome.strain.full_name }}</a>]
-				{% else %}
-					[<a href="{% url 'sampledetails' sample_id=gene.genome.sample.id %}">{{ gene.genome.sample.full_name }}</a>]
-				{% endif %}
-				</h2>
-		    </header>
-		    <div class="grid-style">
-			<div class="content">
-			    <header class="align-center">
-				<p class="align-center">Gene information</p>
-			    </header>
-			    <span>Genome</span>
-			    <h5><a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.name }}</a> 
-				{%if gene.genome.strain %}
-					[{{ gene.genome.strain.full_name }}] 
-				{% else %}
-					[{{ gene.genome.sample.full_name }}] 
-				{% endif %}
-				</h5>
-			    <span>Function</span>
-			    <h5>{{ gene.function }}</h5>
-			</div>
-			{% if ortholog_group %}
-			<div class="content">
-			    <header class="align-center">
-				<p class="align-center">EggNOG mappings</p>
-			    </header>
-				<span>Ortholog group</span>
-				<h5>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}] </h5>
-				<h5><a href="{% url 'searchgene' %}?type=og&query={{ ortholog_group.id }}">Show all <span id="og_gene_count"></span> genes in the group {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></h5>
-			</div>
-			{% endif %}
-		    </div>
-		</div>
-		{% if gene %}
-		<div class="loading-bar-area" id="loading-bar-area">
-		    {% include 'browser/loading_scribl.html' %}
-		</div>
-		{% endif %}
-		<div class="inner" id="comparativeplot">
-			<header class="align-center">
-				<p class="align-center">Genomic neighborhood of <span id="plot_gene_count"></span> genes most similar to {{ gene.locus_tag }}</p>
-			</header>
-			<form action="{% url 'comparative' %}" method="get">
-			    <div class="row uniform">
-				<div class="2u 12u$(xsmall)">
-				    <div class="select-wrapper">
-					<select id="size" name="size">
-					    <option value="5" {% if size5 %}selected{% endif %}>5k</option>
-					    <option value="10" {% if size10 %}selected{% endif %}>10k</option>
-					    <option value="20" {% if size20 %}selected{% endif %}>20k</option>
-					    <option value="40" {% if size40 %}selected{% endif %}>40k</option>
-					    <option value="60" {% if size60 %}selected{% endif %}>60k</option>
-					    <option value="80" {% if size80 %}selected{% endif %}>80k</option>
-					    <option value="100" {% if size100 %}selected{% endif %}>100k</option>
-					</select>
-				    </div>
-				</div>
-				<div class="2u 12u$(xsmall)">
-				    <label for="size">Locus size</label>
-				</div>
-				<div class="2u 12u$(xsmall)">
-				    <div class="select-wrapper">
-					<select id="lines" name="lines">
-					    <option value="10" {% if lines10 %}selected{% endif %}>10</option>
-					    <option value="25" {% if lines25 %}selected{% endif %}>25</option>
-					    <option value="50" {% if lines50 %}selected{% endif %}>50</option>
-					    <option value="75" {% if lines75 %}selected{% endif %}>75</option>
-					    <option value="100" {% if lines100 %}selected{% endif %}>100</option>
-					    <option value="200" {% if lines200 %}selected{% endif %}>200</option>
-					</select>
-				    </div>
-				</div>
-				<div class="3u 12u$(xsmall)">
-				    <label for="lines">Max. number of homologs</label>
-				    <input type="hidden" name="genome" value="{{ gene.genome.name }}" /> 
-				    <input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}" /> 
-				    <input type="hidden" name="og" value="{{ ortholog_group.id }}" /> 
-				</div>
-				<div class="2u 12u$(xsmall)">
-				    <input type="submit" value="Refresh">
-				</div>
-			    </div>
-			</form>
+    <div id="scriblscript"></div>
+    <section id="two" class="wrapper style3">
+        <div class="inner">
+            <header class="align-center">
+                <h2>EggNOG orthologs for {{ gene.locus_tag }} 
+                {%if gene.genome.strain %}
+                    [<a href="{% url 'straindetails' strain_id=gene.genome.strain.id %}">{{ gene.genome.strain.full_name }}</a>]
+                {% else %}
+                    [<a href="{% url 'sampledetails' sample_id=gene.genome.sample.id %}">{{ gene.genome.sample.full_name }}</a>]
+                {% endif %}
+                </h2>
+            </header>
+            <div class="grid-style">
+            <div class="content">
+                <header class="align-center">
+                <p class="align-center">Gene information</p>
+                </header>
+                <span>Genome</span>
+                <h5><a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.name }}</a> 
+                {%if gene.genome.strain %}
+                    [{{ gene.genome.strain.full_name }}] 
+                {% else %}
+                    [{{ gene.genome.sample.full_name }}] 
+                {% endif %}
+                </h5>
+                <span>Function</span>
+                <h5>{{ gene.function }}</h5>
+            </div>
+            {% if ortholog_group %}
+            <div class="content">
+                <header class="align-center">
+                <p class="align-center">EggNOG mappings</p>
+                </header>
+                <span>Ortholog group</span>
+                <h5>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}] </h5>
+                <h5><a href="{% url 'searchgene' %}?type=og&query={{ ortholog_group.id }}">Show all <span id="og_gene_count"></span> genes in the group {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></h5>
+            </div>
+            {% endif %}
+            </div>
+        </div>
+        {% if gene %}
+        <div class="loading-bar-area" id="loading-bar-area">
+            {% include 'browser/loading_scribl.html' %}
+        </div>
+        {% endif %}
+        <div class="inner" id="comparativeplot">
+            <header class="align-center">
+                <p class="align-center">Genomic neighborhood of <span id="plot_gene_count"></span> genes most similar to {{ gene.locus_tag }}</p>
+            </header>
+            <form action="{% url 'comparative' %}" method="get">
+                <div class="row uniform">
+                <div class="2u 12u$(xsmall)">
+                    <div class="select-wrapper">
+                    <select id="size" name="size">
+                        <option value="5" {% if size5 %}selected{% endif %}>5k</option>
+                        <option value="10" {% if size10 %}selected{% endif %}>10k</option>
+                        <option value="20" {% if size20 %}selected{% endif %}>20k</option>
+                        <option value="40" {% if size40 %}selected{% endif %}>40k</option>
+                        <option value="60" {% if size60 %}selected{% endif %}>60k</option>
+                        <option value="80" {% if size80 %}selected{% endif %}>80k</option>
+                        <option value="100" {% if size100 %}selected{% endif %}>100k</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="2u 12u$(xsmall)">
+                    <label for="size">Locus size</label>
+                </div>
+                <div class="2u 12u$(xsmall)">
+                    <div class="select-wrapper">
+                    <select id="lines" name="lines">
+                        <option value="10" {% if lines10 %}selected{% endif %}>10</option>
+                        <option value="25" {% if lines25 %}selected{% endif %}>25</option>
+                        <option value="50" {% if lines50 %}selected{% endif %}>50</option>
+                        <option value="75" {% if lines75 %}selected{% endif %}>75</option>
+                        <option value="100" {% if lines100 %}selected{% endif %}>100</option>
+                        <option value="200" {% if lines200 %}selected{% endif %}>200</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="3u 12u$(xsmall)">
+                    <label for="lines">Max. number of homologs</label>
+                    <input type="hidden" name="genome" value="{{ gene.genome.name }}" /> 
+                    <input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}" /> 
+                    <input type="hidden" name="og" value="{{ ortholog_group.id }}" /> 
+                </div>
+                <div class="2u 12u$(xsmall)">
+                    <input type="submit" value="Refresh">
+                </div>
+                </div>
+            </form>
 
-			<div id="comparative" class="align-center">
-				<div id="treecanvas"></div>
-				<div id="scribl-container" class="content">
-					<canvas id="canvas" width="1000" height="600" style="padding: 10px 0px 10px 0px; -moz-border-radius:15px; border-radius:15px; background:-webkit-gradient(linear, left top, left bottom, from(rgb(33,99,102)), to(rgb(33,99,102)), color-stop(0.5, rgb(13,29,22)), color-stop(0.5, rgb(13,29,22))); background: -moz-linear-gradient(top, rgb(33,99,102), rgb(13,29,22), rgb(13,29,22), rgb(33,99,102));"></canvas>
-					</br><a id="pngexport">Export as gene plot as PNG image (right click Save As)</a>
-					<div>
-					    <header class="align-center" id="showtree">
-						<a onclick="Toggle()">Click to show phylogenetic tree in Newick format</a>
-					    </header>
-					    <div id="proteinsequence">
-						<textarea id="treetext" name="treetext" rows="4" cols="50"></textarea>
-					    </div>
-					</div>
-				</div>
-			</div>
-			<label id="run-time">Run time: </label>
-		</div>
+            <div id="comparative" class="align-center">
+                <div id="treecanvas"></div>
+                <div id="scribl-container" class="content">
+                    <canvas id="canvas" width="1000" height="600" style="padding: 10px 0px 10px 0px; -moz-border-radius:15px; border-radius:15px; background:-webkit-gradient(linear, left top, left bottom, from(rgb(33,99,102)), to(rgb(33,99,102)), color-stop(0.5, rgb(13,29,22)), color-stop(0.5, rgb(13,29,22))); background: -moz-linear-gradient(top, rgb(33,99,102), rgb(13,29,22), rgb(13,29,22), rgb(33,99,102));"></canvas>
+                    </br><a id="pngexport">Export as gene plot as PNG image (right click Save As)</a>
+                    <div>
+                        <header class="align-center" id="showtree">
+                        <a onclick="Toggle()">Click to show phylogenetic tree in Newick format</a>
+                        </header>
+                        <div id="proteinsequence">
+                        <textarea id="treetext" name="treetext" rows="4" cols="50"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <label id="run-time">Run time: </label>
+        </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script>
     $(document).ready(function(){
         $.ajax({
             url: "{% url 'loadingscribl' %}",
-	    type: "GET",
-	    datatype: 'json',
-	    data: {'locus_tag': "{{ locus_tag }}", 'genome': "{{ genome }}", 'og': "{{ og }}", "size": "{{ size }}", "lines": "{{ lines }}" }
+        type: "GET",
+        datatype: 'json',
+        data: {'locus_tag': "{{ locus_tag }}", 'genome': "{{ genome }}", 'og': "{{ og }}", "size": "{{ size }}", "lines": "{{ lines }}" }
         }).done(function(data){
             $('#loading-bar-area').remove();
             $('#run-time').append(data["time"].toFixed(2) + ' seconds')
@@ -154,7 +154,7 @@
             $('#treetext').append(data["tree_newick"])
             $('#scriblscript').append(data["scribl"])
             $('#comparativeplot').show();
-	    draw('canvas');
+        draw('canvas');
         }).fail(function(data){
             $('#loading-bar-area').remove();
             $('#comparative').html('<div class="error box">Internal server error</div>')
@@ -162,7 +162,7 @@
         });
     });
 </script>
-	</section>
+    </section>
     
 {% endblock %}
 

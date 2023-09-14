@@ -10,51 +10,51 @@
 {% block content %}
 
     <section id="two" class="wrapper style3">
-	    <div class="inner">
-		    <header class="align-center">
-			    <h2>{{ sample.sample_id }}</h2>
-			<p>({{ sample.full_name }})</p>
-		    </header>
-		    <div class="align-center">
-			<h5>Description: {{ sample.description }}</h5>
-		    </div>
+        <div class="inner">
+            <header class="align-center">
+                <h2>{{ sample.sample_id }}</h2>
+            <p>({{ sample.full_name }})</p>
+            </header>
+            <div class="align-center">
+            <h5>Description: {{ sample.description }}</h5>
+            </div>
 {% if genomes %}
-					<header class="align-center">
-					    <p>Genome assemblies</p>
-					</header>
+                    <header class="align-center">
+                        <p>Genome assemblies</p>
+                    </header>
     {% for genome in genomes %}
-					    <h5 class="align-center"><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> ({{ genome.size }} bp, {{ genome.genes }} genes)</h5>
+                        <h5 class="align-center"><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> ({{ genome.size }} bp, {{ genome.genes }} genes)</h5>
     {% endfor %}
 {% else %}
-					    <p>No genomes found.</p>
+                        <p>No genomes found.</p>
 {% endif %}
 {% if metadata %}
-		    <header class="align-center">
-			<p>Sample metadata</p>
-		    </header>
+            <header class="align-center">
+            <p>Sample metadata</p>
+            </header>
     {% for source in metadata %}
-		    <div class="align-center">
-			<h4>Data source: <a href="{{ source.url }}">{{ source.source }}</a></h4>
-			<div class="table-wrapper">
-				<table class="metadata">
-					<thead>
-					</thead>
-					<tbody>
+            <div class="align-center">
+            <h4>Data source: <a href="{{ source.url }}">{{ source.source }}</a></h4>
+            <div class="table-wrapper">
+                <table class="metadata">
+                    <thead>
+                    </thead>
+                    <tbody>
 
-	{% for entry in source.entries %}
-					    <tr>
-						    <td><strong>{{ entry.key }}</strong></td>
-						    <td class="tdbreak">{{ entry.value }}</td>
-					    </tr>
-	{% endfor %}
-					</tbody>
-				</table>
-			</div>
-		    </div>
+    {% for entry in source.entries %}
+                        <tr>
+                            <td><strong>{{ entry.key }}</strong></td>
+                            <td class="tdbreak">{{ entry.value }}</td>
+                        </tr>
+    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            </div>
     {% endfor %}
 {% endif %}
-		    </div>
-	    </div>
+            </div>
+        </div>
     </section>
 
 {% endblock %}

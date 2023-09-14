@@ -1,7 +1,7 @@
 # Secret settings files
 .env
-/secrets.json
-/configs.txt
+secrets.json
+configs.txt
 
 .htaccess
 
