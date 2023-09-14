@@ -1,19 +1,28 @@
 import os
 import shutil
 from django.core.management.base import BaseCommand, CommandError
-from browser.models import *
+from browser.models import Contig
 from browser.dataimport.importer import Importer
 
 class Command(BaseCommand):
-    help = 'This command cleans nucleotide and protein search databases after deletion of a genome from admin interface'
+    help = '''
+    This command cleans nucleotide and protein search
+    databases after deletion of a genome from admin interface
+    '''
     
     def handle(self, *args, **options):
         importer = Importer()
         self._clean_nucl_database(importer)
         importer.export_proteins()
         importer.delete_search_databases()
-        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_nucl'])), importer.config['cgcms.search_db_nucl'])
-        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_prot'])), importer.config['cgcms.search_db_prot'])
+        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                        os.path.basename(importer.config['cgcms.search_db_nucl'])),
+                        importer.config['cgcms.search_db_nucl']
+                        )
+        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                        os.path.basename(importer.config['cgcms.search_db_prot'])),
+                        importer.config['cgcms.search_db_prot']
+                        )
         importer.create_search_databases()
         print('Done!')
         
@@ -28,7 +37,9 @@ class Command(BaseCommand):
             contigs.add(contig_uid)
 
         nucl_db_fasta = importer.config['cgcms.search_db_nucl']
-        backup_file = os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(nucl_db_fasta))
+        backup_file = os.path.join(importer.config['cgcms.temp_dir'],
+                                   os.path.basename(nucl_db_fasta)
+                                   )
         save_flag = False
         contigs_saved = set()
         with open(backup_file, 'w') as outfile:
@@ -45,6 +56,10 @@ class Command(BaseCommand):
                         outfile.write(line)
         # Sanity check before making chenges in the database or deleting files
         if contigs.difference(contigs_saved):
-            raise ValueError('Nucleotide DB file corrupted. Add contigs: ' + str(contigs.difference(contigs_saved)))
+            raise CommandError('Nucleotide DB file corrupted. Add contigs: ' + \
+                             str(contigs.difference(contigs_saved))
+                             )
         if contigs_saved.difference(contigs):
-            raise ValueError('Nucleotide DB file corrupted. Remove contigs: ' + str(contigs_saved.difference(contigs)))
+            raise CommandError('Nucleotide DB file corrupted. Remove contigs: ' + \
+                             str(contigs_saved.difference(contigs))
+                             )

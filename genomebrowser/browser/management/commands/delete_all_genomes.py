@@ -1,8 +1,18 @@
 from django.core.management.base import BaseCommand
-from browser.models import *
+from browser.models import Annotation
+from browser.models import Gene
+from browser.models import Protein
+from browser.models import Genome
+from browser.models import Strain_metadata
+from browser.models import Strain
+from browser.models import Sample_metadata
+from browser.models import Sample
 
 class Command(BaseCommand):
-    help = 'Deletes all gene, protein, genome, strain, sample entries from the database'
+    help = '''
+    Deletes all Annotation, Gene, Protein, Genome,
+    Strain, Sample entries from the database
+    '''
     
     def handle(self, *args, **options):
         # Delete all mappings before deleting genes

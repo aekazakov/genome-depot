@@ -16,21 +16,38 @@ urlpatterns = [
     path('operons/<str:genome>/', views.OperonListView.as_view(), name='operonlist'),
     path('site/<str:genome>/<str:name>/', views.site_detail, name='sitedetails'),
     path('sites/<str:genome>/', views.SiteListView.as_view(), name='sitelist'),
-    path('regulon/<str:genome>/<str:name>/', views.regulon_detail, name='regulondetails'),
+    path('regulon/<str:genome>/<str:name>/',
+          views.regulon_detail,
+          name='regulondetails'
+          ),
     path('regulons/<str:genome>/', views.RegulonListView.as_view(), name='regulonlist'),
     path('getgene/', views.gene_byname, name='genebyname'),
     path('strains/', views.StrainListView.as_view(), name='strain_list'),
     path('samples/', views.SampleListView.as_view(), name='sample_list'),
     path('genomes/', views.GenomeListView.as_view(), name='genome_list'),
     path('genes/', views.GeneListView.as_view(), name='gene_list'),
-    # For testing in synchronous mode, use GeneSearchResultsSubView.as_view() instead of GeneSearchResultsAjaxView.as_view()
+    # For testing in synchronous mode, use GeneSearchResultsSubView.as_view() 
+    # instead of GeneSearchResultsAjaxView.as_view()
     # path('searchgene/', views.GeneSearchResultsSubView.as_view(), name='searchgene'),
     path('searchgene/', views.GeneSearchResultsAjaxView.as_view(), name='searchgene'),
-    path('loadinggenesearch/', views.GeneSearchResultsAjaxView.ajax_view, name='loadinggenesearch'),
-    # For testing in synchronous mode, use AnnotationSearchResultsSubView.as_view() instead of AnnotationSearchResultsAjaxView.as_view()
-    # path('searchannotation/', views.AnnotationSearchResultsSubView.as_view(), name='searchannotation'),
-    path('searchannotation/', views.AnnotationSearchResultsAjaxView.as_view(), name='searchannotation'),
-    path('loadingtextsearch/',views.AnnotationSearchResultsAjaxView.ajax_view,name="loadingtextsearch"),
+    path('loadinggenesearch/',
+         views.GeneSearchResultsAjaxView.ajax_view,
+         name='loadinggenesearch'
+         ),
+    # For testing in synchronous mode, use AnnotationSearchResultsSubView.as_view() 
+    # instead of AnnotationSearchResultsAjaxView.as_view()
+    # path('searchannotation/',
+    #     views.AnnotationSearchResultsSubView.as_view(),
+    #     name='searchannotation'
+    #     ),
+    path('searchannotation/',
+         views.AnnotationSearchResultsAjaxView.as_view(),
+         name='searchannotation'
+         ),
+    path('loadingtextsearch/',
+         views.AnnotationSearchResultsAjaxView.ajax_view,
+         name="loadingtextsearch"
+         ),
     path('export/', views.export_csv, name='export'),
     path('exportfasta/', views.export_fasta, name='exportfasta'),
     path('searchgenome/', views.GenomeSearchResultsView.as_view(), name='searchgenome'),

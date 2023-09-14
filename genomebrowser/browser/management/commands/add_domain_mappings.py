@@ -1,10 +1,12 @@
-import os
 from django.core.management.base import BaseCommand
-from browser.models import *
 from browser.dataimport.annotator import Annotator
 
 class Command(BaseCommand):
-    help = 'For protein sequences uploaded to Django database, this program runs hmmsearch with PFAM and TIGRFAM HMMs, and writes domain annotations to database. Existing domain annotations are deleted.'
+    help = '''
+    For protein sequences uploaded to Django database, 
+    this program runs hmmsearch with PFAM and TIGRFAM HMMs,
+    and writes domain annotations to database.
+    Existing domain annotations are deleted.'''
 
     def handle(self, *args, **options):
         annotator = Annotator()

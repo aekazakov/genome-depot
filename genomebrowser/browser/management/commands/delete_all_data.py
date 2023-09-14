@@ -1,5 +1,23 @@
 from django.core.management.base import BaseCommand
-from browser.models import *
+from browser.models import Annotation
+from browser.models import Eggnog_description
+from browser.models import Cog_class
+from browser.models import Kegg_reaction
+from browser.models import Kegg_pathway
+from browser.models import Kegg_ortholog
+from browser.models import Go_term
+from browser.models import Cazy_family
+from browser.models import Ec_number
+from browser.models import Tc_family
+from browser.models import Ortholog_group
+from browser.models import Gene
+from browser.models import Protein
+from browser.models import Genome
+from browser.models import Strain_metadata
+from browser.models import Strain
+from browser.models import Sample_metadata
+from browser.models import Sample
+from browser.models import Taxon
 
 class Command(BaseCommand):
     help = 'Deletes all genome browser entries from the database'

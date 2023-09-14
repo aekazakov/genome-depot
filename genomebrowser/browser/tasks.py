@@ -7,7 +7,7 @@ import shutil
 import uuid
 from Bio import GenBank
 from django.conf import settings
-from django.core.mail import mail_admins, send_mail
+from django.core.mail import mail_admins
 from browser.dataimport.importer import Importer, download_ncbi_assembly
 from browser.dataimport.annotator import Annotator
 from browser.models import Strain, Sample, Genome, Protein, Config
@@ -18,12 +18,14 @@ def test_task_impl(request, genome_names):
     try:
         print(genome_names[999])
         subject = 'CGCMS test task finished'
-        message = f'Test task finished successfuly at {settings.BASE_URL}'  #f'Hi {user.username}, thank you for registering in geeksforgeeks.'
+        message = f'Test task finished successfuly at {settings.BASE_URL}'
         mail_admins(subject, message)
-        #send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
     except Exception:
         subject = 'CGCMS test task finished with error'
-        message = f'CGCMS test task at {settings.BASE_URL} finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, {sys.exc_info()[2].tb_frame.f_code.co_filename}:{sys.exc_info()[2].tb_lineno}'
+        message = f'CGCMS test task at {settings.BASE_URL} finished with error.\n ' +\
+        f'Error:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
+        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
+        f'{sys.exc_info()[2].tb_lineno}'
         mail_admins(subject, message)
         raise
     return 'Genomes:' + genome_names
@@ -37,7 +39,10 @@ def import_genomes_impl(args):
         for line in lines:
             row = line.split('\t')
             if row[0] == '' and row[-1].startswith('NCBI:'):
-                row[0] = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'), email, upload_dir)
+                row[0] = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'),
+                                                email,
+                                                upload_dir
+                                                )
         genome_import_batch_size = 0
         genome_import_batch_limit = 1000
         genome_import_batch = []
@@ -58,18 +63,23 @@ def import_genomes_impl(args):
             importer = Importer()
             result = importer.import_genomes(genome_import_batch)
         subject = 'CGCMS task finished successfuly'
-        message = f'"Import Genomes" task finished successfuly at {settings.BASE_URL}'
+        message = '"Import Genomes" task finished successfuly at ' + \
+        f'{settings.BASE_URL}'
         mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
-        message = f'CGCMS "Import Genomes" task at {settings.BASE_URL} finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, {sys.exc_info()[2].tb_frame.f_code.co_filename}:{sys.exc_info()[2].tb_lineno}'
+        message = f'CGCMS "Import Genomes" task at {settings.BASE_URL} finished ' +\
+        f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
+        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
+        f'{sys.exc_info()[2].tb_lineno}'
         mail_admins(subject, message)
         raise
     return result
 
 def update_static_files_impl(genome_names):
     '''
-        Deletes and re-creates Jbrowse static files for an input list of genome IDs, then deletes and re-creates search databases.
+        Deletes and re-creates Jbrowse static files for an input list of
+        genome IDs, then deletes and re-creates search databases.
     '''
     importer = Importer()
     try:
@@ -77,17 +87,21 @@ def update_static_files_impl(genome_names):
             genome = Genome.objects.get(name=genome_name)
             if genome is not None:
                 if genome.strain:
-                    importer.inputgenomes[genome.name]['strain'] = genome.strain.strain_id
+                    importer.inputgenomes[genome.name]['strain'] = \
+                    genome.strain.strain_id
                 else:
                     importer.inputgenomes[genome.name]['strain'] = ''
                 if genome.sample:
-                    importer.inputgenomes[genome.name]['sample'] = genome.sample.sample_id
+                    importer.inputgenomes[genome.name]['sample'] = \
+                    genome.sample.sample_id
                 else:
                     importer.inputgenomes[genome.name]['sample'] = ''
                 importer.inputgenomes[genome.name]['gbk'] = genome.gbk_filepath
                 importer.inputgenomes[genome.name]['url'] = genome.external_url
                 importer.inputgenomes[genome.name]['external_id'] = genome.external_id
-            genome_fasta = os.path.join(importer.config['cgcms.temp_dir'], genome_name + '.contigs.fasta')
+            genome_fasta = os.path.join(importer.config['cgcms.temp_dir'],
+                                        genome_name + '.contigs.fasta'
+                                        )
             gbk_file = genome.gbk_filepath
             if gbk_file.endswith('.gz'):
                 gbk_handle = gzip.open(gbk_file, 'rt')
@@ -96,29 +110,42 @@ def update_static_files_impl(genome_names):
             parser = GenBank.parse(gbk_handle)
             with open(genome_fasta, 'w') as outfile:
                 for gbk_record in parser:
-                    outfile.write('>' + gbk_record.locus + '\n' + ''.join(gbk_record.sequence) + '\n')
+                    outfile.write('>' + gbk_record.locus + '\n' + 
+                                  ''.join(gbk_record.sequence) + '\n'
+                                  )
             gbk_handle.close()
         importer.export_jbrowse_data()
         importer.export_proteins()
         importer.export_contigs()
         importer.delete_search_databases()
-        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_nucl'])), importer.config['cgcms.search_db_nucl'])
-        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_prot'])), importer.config['cgcms.search_db_prot'])
+        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                        os.path.basename(importer.config['cgcms.search_db_nucl'])),
+                        importer.config['cgcms.search_db_nucl']
+                        )
+        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                        os.path.basename(importer.config['cgcms.search_db_prot'])),
+                        importer.config['cgcms.search_db_prot']
+                        )
         importer.create_search_databases()
         os.remove(importer.config['cgcms.search_db_nucl'])
         os.remove(importer.config['cgcms.search_db_prot'])
         subject = 'CGCMS task finished successfuly'
-        message = f'"Update static files" task finished successfuly at {settings.BASE_URL}'
+        message = '"Update static files" task finished successfuly ' +\
+        f'at {settings.BASE_URL}'
         mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
-        message = f'CGCMS "Update static files" task at {settings.BASE_URL} finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, {sys.exc_info()[2].tb_frame.f_code.co_filename}:{sys.exc_info()[2].tb_lineno}'
+        message = f'CGCMS "Update static files" task at {settings.BASE_URL} finished' +\
+        f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
+        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}: ' +\
+        f'{sys.exc_info()[2].tb_lineno}'
         mail_admins(subject, message)
         raise
 
 def delete_genomes_impl(genome_names):
     '''
-        Deletes genomes from an input list of genomes, then deletes and re-creates search databases
+        Deletes genomes from an input list of genomes, then 
+        deletes and re-creates search databases
     '''
     try:
         importer = Importer()
@@ -130,8 +157,14 @@ def delete_genomes_impl(genome_names):
         importer.export_proteins()
         importer.export_contigs()
         importer.delete_search_databases()
-        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_nucl'])), importer.config['cgcms.search_db_nucl'])
-        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_prot'])), importer.config['cgcms.search_db_prot'])
+        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                        os.path.basename(importer.config['cgcms.search_db_nucl'])),
+                        importer.config['cgcms.search_db_nucl']
+                        )
+        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                        os.path.basename(importer.config['cgcms.search_db_prot'])),
+                        importer.config['cgcms.search_db_prot']
+                        )
         importer.create_search_databases()
         for genome in genome_names:
             shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'], genome))
@@ -142,7 +175,10 @@ def delete_genomes_impl(genome_names):
         mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
-        message = f'CGCMS "Delete genomes" task at {settings.BASE_URL} finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, {sys.exc_info()[2].tb_frame.f_code.co_filename}:{sys.exc_info()[2].tb_lineno}'
+        message = f'CGCMS "Delete genomes" task at {settings.BASE_URL} finished ' +\
+        f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
+        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
+        f'{sys.exc_info()[2].tb_lineno}'
         mail_admins(subject, message)
         raise
 
@@ -153,11 +189,15 @@ def import_sample_metadata_impl(lines):
         annotator = Annotator()
         annotator.add_sample_metadata(lines)
         subject = 'CGCMS task finished successfuly'
-        message = f'"Import sample metadata" task finished successfuly at {settings.BASE_URL}'
+        message = '"Import sample metadata" task finished successfuly ' +\
+        f'at {settings.BASE_URL}'
         mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
-        message = f'CGCMS "Import sample metadata" task at {settings.BASE_URL} finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, {sys.exc_info()[2].tb_frame.f_code.co_filename}:{sys.exc_info()[2].tb_lineno}'
+        message = f'CGCMS "Import sample metadata" task at {settings.BASE_URL} ' +\
+        f'finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]},' +\
+        f' {sys.exc_info()[2].tb_frame.f_code.co_filename}: ' +\
+        f'{sys.exc_info()[2].tb_lineno}'
         mail_admins(subject, message)
         raise
 
@@ -167,11 +207,15 @@ def import_sample_descriptions_impl(lines):
         annotator = Annotator()
         annotator.update_sample_descriptions(lines)
         subject = 'CGCMS task finished successfuly'
-        message = f'"Import sample descriptions" task finished successfuly at {settings.BASE_URL}'
+        message = '"Import sample descriptions" task finished successfuly ' +\
+        f'at {settings.BASE_URL}'
         mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
-        message = f'CGCMS "Import sample descriptions" task at {settings.BASE_URL} finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, {sys.exc_info()[2].tb_frame.f_code.co_filename}:{sys.exc_info()[2].tb_lineno}'
+        message = f'CGCMS "Import sample descriptions" task at {settings.BASE_URL} ' +\
+        f'finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]},' +\
+        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
+        f'{sys.exc_info()[2].tb_lineno}'
         mail_admins(subject, message)
         raise
 
@@ -181,11 +225,15 @@ def update_strain_metadata_impl(xlsx_file):
         annotator = Annotator()
         annotator.update_strain_metadata(xlsx_path=None, xlsx_file=xlsx_file)
         subject = 'CGCMS task finished successfuly'
-        message = f'"Update strain metadata" task finished successfuly at {settings.BASE_URL}'
+        message = '"Update strain metadata" task finished successfuly ' +\
+        f'at {settings.BASE_URL}'
         mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
-        message = f'CGCMS "Update strain metadata" task at {settings.BASE_URL} finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, {sys.exc_info()[2].tb_frame.f_code.co_filename}:{sys.exc_info()[2].tb_lineno}'
+        message = f'CGCMS "Update strain metadata" task at {settings.BASE_URL} ' +\
+        f'finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]},' +\
+        f' {sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
+        f'{sys.exc_info()[2].tb_lineno}'
         mail_admins(subject, message)
         raise
     
@@ -195,11 +243,15 @@ def import_annotations_impl(lines):
         annotator = Annotator()
         annotator.import_annotations(lines)
         subject = 'CGCMS task finished successfuly'
-        message = f'"Import annotations" task finished successfuly at {settings.BASE_URL}'
+        message = '"Import annotations" task finished successfuly ' +\
+        f'at {settings.BASE_URL}'
         mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
-        message = f'CGCMS "Import annotations" task at {settings.BASE_URL} finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, {sys.exc_info()[2].tb_frame.f_code.co_filename}:{sys.exc_info()[2].tb_lineno}'
+        message = f'CGCMS "Import annotations" task at {settings.BASE_URL} finished' +\
+        f' with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
+        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
+        f'{sys.exc_info()[2].tb_lineno}'
         mail_admins(subject, message)
         raise
 
@@ -213,6 +265,9 @@ def import_regulon_impl(lines):
         mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
-        message = f'CGCMS "Import regulon" task at {settings.BASE_URL} finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, {sys.exc_info()[2].tb_frame.f_code.co_filename}:{sys.exc_info()[2].tb_lineno}'
+        message = f'CGCMS "Import regulon" task at {settings.BASE_URL} finished ' +\
+        f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
+        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
+        f'{sys.exc_info()[2].tb_lineno}'
         mail_admins(subject, message)
         raise

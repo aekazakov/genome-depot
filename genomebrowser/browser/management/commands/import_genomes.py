@@ -1,6 +1,5 @@
 import os
 from django.core.management.base import BaseCommand, CommandError
-from browser.models import *
 from browser.dataimport.importer import Importer
 
 class Command(BaseCommand):
@@ -15,7 +14,7 @@ class Command(BaseCommand):
             print('Using genomes file', options['i'])
             lines = []
             with open(options['i'], 'r') as infile:
-                print('Reading file of genomes', in_file)
+                print('Reading file of genomes', options['i'])
                 for line in infile:
                     lines.append(line)
             result = importer.import_genomes(lines)

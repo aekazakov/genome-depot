@@ -3,7 +3,10 @@ from django.core.management.base import BaseCommand, CommandError
 from browser.models import Tag, Genome
 
 class Command(BaseCommand):
-    help = 'For protein sequences from selected genomes uploaded to Django database, this program runs one of annotation tool plugins.'
+    help = '''
+    For protein sequences from selected genomes uploaded to Django
+    database, this program runs one of annotation tool plugins.
+    '''
 
     def add_arguments(self, parser):
         parser.add_argument('-i', default='genomes.txt', help='Path to input file')
@@ -19,7 +22,8 @@ class Command(BaseCommand):
         for tag_name in tag_names:
             tag_name = tag_name.strip()
             if not tag_name.isalnum():
-                raise CommandError('Tag must contain only alphabet letter (a-z) and numbers (0-9). Correct the tag ' + tag_name)
+                raise CommandError('Tag must contain only alphabet letter (a-z)' +
+                                    'and numbers (0-9). Correct the tag ' + tag_name)
             try:
                 tag = Tag.objects.get(name=tag_name)
                 tags[tag_name] = tag

@@ -1,9 +1,9 @@
-import os
 from django.core.management.base import BaseCommand
 from browser.dataimport.annotator import Annotator
 
 class Command(BaseCommand):
-    help = """For genomes uploaded into Django database, this program imports regulons from tab-separated file.
+    help = """For genomes uploaded into Django database, 
+    this program imports regulons from tab-separated file.
     Metadata file must contain the following fields:
     1. Regulon name.
     2. Genome name  (as in the database).

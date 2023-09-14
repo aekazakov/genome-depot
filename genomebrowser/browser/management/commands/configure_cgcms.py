@@ -1,14 +1,16 @@
 import os
 from django.core.management.base import BaseCommand
 from browser.models import Config
-from browser.dataimport.importer import Importer
 from genomebrowser.settings import BASE_URL
 
 class Command(BaseCommand):
     help = 'Imports config settings from file'
 
     def add_arguments(self, parser):
-        parser.add_argument('-i', default='configs.txt', help='Path to parameters file')
+        parser.add_argument('-i',
+                            default='configs.txt',
+                            help='Path to parameters file'
+                            )
 
     def handle(self, *args, **options):
         if os.path.exists(options['i']):
@@ -27,10 +29,15 @@ class Command(BaseCommand):
                         item.save()
             for param in configs:
                 if param not in configs_saved:
-                    config = Config.objects.create(param=param, value=configs[param])
+                    _ = Config.objects.create(param=param, value=configs[param])
                     
             tracklist_template = 'trackList.json.template'
-            tracklist_file = os.path.join(Config.objects.get(param='cgcms.json_dir').value, 'trackList.json')
+            tracklist_file = os.path.join(
+                                          Config.objects.get(
+                                              param='cgcms.json_dir'
+                                          ).value,
+                                          'trackList.json'
+                                          )
             print('Writing', tracklist_file)
             with open(tracklist_file, 'w') as outfile:
                 with open(tracklist_template, 'r') as infile:

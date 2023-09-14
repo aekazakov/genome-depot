@@ -1,14 +1,37 @@
 import hashlib
 from unittest import skip
-from contextlib import contextmanager
+#from contextlib import contextmanager
 
 from django.test import TransactionTestCase
 from django.test import Client
 from django.utils import timezone
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+#from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.db.utils import IntegrityError
 
-from browser.models import *
+from browser.models import Taxon
+from browser.models import Config
+from browser.models import Strain
+from browser.models import Sample
+from browser.models import Strain_metadata
+from browser.models import Genome
+from browser.models import Annotation
+from browser.models import Regulon
+from browser.models import Contig
+from browser.models import Sample_metadata
+from browser.models import Kegg_ortholog
+from browser.models import Kegg_pathway
+from browser.models import Kegg_reaction
+from browser.models import Go_term
+from browser.models import Cog_class
+from browser.models import Ec_number
+from browser.models import Cazy_family
+from browser.models import Operon
+from browser.models import Ortholog_group
+from browser.models import Eggnog_description
+from browser.models import Tc_family
+from browser.models import Protein
+from browser.models import Gene
+from browser.models import Site
 from browser.dataimport.importer import Importer
 from browser.comparative_analysis import _get_color, make_muscle_alignment
 
@@ -31,7 +54,12 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(config_saved.value, 'parameter value')
 
     def test_taxon(self):
-        taxon = Taxon(taxonomy_id='10', eggnog_taxid='10', rank='genus', parent_id='1706371', name='Cellvibrio')
+        taxon = Taxon(taxonomy_id='10',
+                      eggnog_taxid='10',
+                      rank='genus',
+                      parent_id='1706371',
+                      name='Cellvibrio'
+                      )
         self.assertEqual(taxon.name, 'Cellvibrio')
         self.assertEqual(taxon.taxonomy_id, '10')
         self.assertNotEqual(taxon.taxonomy_id, 10)
@@ -41,9 +69,18 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(taxon_saved.taxonomy_id, '10')
         
     def test_strain(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans'
+                      )
         taxon.save()
-        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain = Strain(strain_id='FW104-10B01',
+                        full_name='Rhodanobacter denitrificans str. FW104-10B01',
+                        order='Xanthomonadales',
+                        taxon=taxon
+                        )
         strain.save()
         self.assertEqual(strain.strain_id, 'FW104-10B01')
         self.assertEqual(strain.taxon.name, 'Rhodanobacter denitrificans')
@@ -52,44 +89,82 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(strain_saved.taxon.name, 'Rhodanobacter denitrificans')
         
     def test_sample(self):
-        sample = Sample(sample_id='FW106-02', full_name='FW106 groundwater metagenome')
-        sample.description = 'Metagenomic sample from groundwater of FW106 well, site Y-12 West, collection date 2014-06-09, 0.2 micron filter'
+        sample = Sample(sample_id='FW106-02',
+                        full_name='FW106 groundwater metagenome'
+                        )
+        sample.description = 'Metagenomic sample from groundwater of FW106 well, ' +\
+        'site Y-12 West, collection date 2014-06-09, 0.2 micron filter'
         sample.save()
         self.assertEqual(sample.sample_id, 'FW106-02')
         sample_saved = Sample.objects.get(sample_id='FW106-02')
         self.assertEqual(sample_saved.sample_id, 'FW106-02')
 
     def test_strain_metadata(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans'
+                      )
         taxon.save()
-        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain = Strain(strain_id='FW104-10B01',
+                        full_name='Rhodanobacter denitrificans str. FW104-10B01',
+                        order='Xanthomonadales',
+                        taxon=taxon
+                        )
         strain.save()
-        strain_metadata = Strain_metadata(strain=strain, source='abcdef', url='https://nih.gov/', key='ghijkl', value='mnopqr')
+        strain_metadata = Strain_metadata(strain=strain,
+                                          source='abcdef',
+                                          url='https://nih.gov/',
+                                          key='ghijkl',
+                                          value='mnopqr'
+                                          )
         self.assertEqual(strain_metadata.source, 'abcdef')
         self.assertEqual(strain_metadata.strain.strain_id, 'FW104-10B01')
         strain_metadata.save()
         strain_metadata_saved = Strain_metadata.objects.filter(source='abcdef')
         self.assertEqual(len(list(strain_metadata_saved.all())), 1)
-        self.assertEqual(list(strain_metadata_saved.all())[0].strain.strain_id, 'FW104-10B01')
+        self.assertEqual(list(strain_metadata_saved.all())[0].strain.strain_id,
+                         'FW104-10B01'
+                         )
 
     def test_sample_metadata(self):
         sample = Sample(sample_id='FW106-02', full_name='FW106 groundwater metagenome')
-        sample.description = 'Metagenomic sample from groundwater of FW106 well, site Y-12 West, collection date 2014-06-09, 0.2 micron filter'
+        sample.description = 'Metagenomic sample from groundwater of FW106 well, ' +\
+        'site Y-12 West, collection date 2014-06-09, 0.2 micron filter'
         sample.save()
-        sample_metadata = Sample_metadata(sample=sample, source='abcdef', url='https://www.lbl.gov/', key='ghijkl', value='mnopqr')
+        sample_metadata = Sample_metadata(sample=sample,
+                                          source='abcdef',
+                                          url='https://www.lbl.gov/',
+                                          key='ghijkl',
+                                          value='mnopqr'
+                                          )
         self.assertEqual(sample_metadata.source, 'abcdef')
         self.assertEqual(sample_metadata.sample.sample_id, 'FW106-02')
         sample_metadata.save()
         sample_metadata_saved = Sample_metadata.objects.filter(source='abcdef')
         self.assertEqual(len(list(sample_metadata_saved.all())), 1)
-        self.assertEqual(list(sample_metadata_saved.all())[0].sample.sample_id, 'FW106-02')
+        self.assertEqual(list(sample_metadata_saved.all())[0].sample.sample_id,
+                         'FW106-02'
+                         )
 
     def test_genome(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans'
+                      )
         taxon.save()
-        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain = Strain(strain_id='FW104-10B01',
+                        full_name='Rhodanobacter denitrificans str. FW104-10B01',
+                        order='Xanthomonadales',
+                        taxon=taxon
+                        )
         strain.save()
-        sample = Sample(sample_id='FW106-02', full_name='FW106 groundwater metagenome')
+        sample = Sample(sample_id='FW106-02',
+                        full_name='FW106 groundwater metagenome'
+                        )
         sample.save()
         genome = Genome(name='FW104-10B01',
                         description='Test description',
@@ -113,9 +188,18 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(genome_saved.genes, 0)
         
     def test_contig(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans'
+                      )
         taxon.save()
-        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain = Strain(strain_id='FW104-10B01',
+                        full_name='Rhodanobacter denitrificans str. FW104-10B01',
+                        order='Xanthomonadales',
+                        taxon=taxon
+                        )
         strain.save()
         genome = Genome(name='FW104-10B01',
                         description='Test description',
@@ -129,7 +213,10 @@ class BrowserTestCase(TransactionTestCase):
                         genes=0,
                         size=0,
                         taxon=taxon)
-        contig = Contig(contig_id='scaffold1', name='scaffold0001', size=1000, genome=genome)
+        contig = Contig(contig_id='scaffold1',
+                        name='scaffold0001',
+                        size=1000,
+                        genome=genome)
         genome.contigs = 1
         genome.size += contig.size
         self.assertEqual(contig.name, 'scaffold0001')
@@ -142,9 +229,18 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(contig_saved.genome.contigs, 1)
 
     def test_operon(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans'
+                      )
         taxon.save()
-        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain = Strain(strain_id='FW104-10B01',
+                        full_name='Rhodanobacter denitrificans str. FW104-10B01',
+                        order='Xanthomonadales',
+                        taxon=taxon
+                        )
         strain.save()
         genome = Genome(name='FW104-10B01',
                         description='Test description',
@@ -158,12 +254,22 @@ class BrowserTestCase(TransactionTestCase):
                         genes=0,
                         size=0,
                         taxon=taxon)
-        contig = Contig(contig_id='scaffold1', name='scaffold0001', size=1000, genome=genome)
+        contig = Contig(contig_id='scaffold1',
+                        name='scaffold0001',
+                        size=1000,
+                        genome=genome
+                        )
         genome.contigs = 1
         genome.size += contig.size
         genome.save()
         contig.save()
-        operon = Operon(name='operon_1', start=10, end=990, strand=-1, genome=genome, contig=contig)
+        operon = Operon(name='operon_1',
+                        start=10,
+                        end=990,
+                        strand=-1,
+                        genome=genome,
+                        contig=contig
+                        )
         self.assertEqual(operon.name, 'operon_1')
         operon.save()
         operon_saved = Operon.objects.get(name='operon_1')
@@ -200,7 +306,10 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(kegg_ortholog_saved.description, 'Test description')
 
     def test_go_term(self):
-        go_term = Go_term(go_id='GO:0000001', go_namespace='Test name', description='Test description')
+        go_term = Go_term(go_id='GO:0000001',
+                          go_namespace='Test name',
+                          description='Test description'
+                          )
         self.assertEqual(go_term.go_namespace, 'Test name')
         go_term.save()
         go_term_saved = Go_term.objects.get(go_id='GO:0000001')
@@ -228,31 +337,51 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(tc_family_saved.description, 'Test description')
 
     def test_ortholog_group(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans'
+                      )
         taxon.save()
         ortholog_group = Ortholog_group(eggnog_id='COG001', taxon=taxon)
         self.assertEqual(ortholog_group.eggnog_id, 'COG001')
         ortholog_group.save()
         ortholog_group_saved = Ortholog_group.objects.get(eggnog_id='COG001')
-        self.assertEqual(ortholog_group_saved.taxon.name, 'Rhodanobacter denitrificans')
+        self.assertEqual(ortholog_group_saved.taxon.name,
+                         'Rhodanobacter denitrificans'
+                         )
 
     def test_eggnog_description(self):
         description='Test description'
-        eggnog_description = Eggnog_description(fingerprint=hashlib.md5(description.encode('utf-8')).hexdigest(), description=description)
+        eggnog_description = Eggnog_description(
+            fingerprint=hashlib.md5(description.encode('utf-8')).hexdigest(),
+            description=description
+            )
         self.assertEqual(eggnog_description.description, 'Test description')
         eggnog_description.save()
-        eggnog_description_saved = Eggnog_description.objects.get(fingerprint=hashlib.md5(description.encode('utf-8')).hexdigest())
+        eggnog_description_saved = Eggnog_description.objects.get(
+            fingerprint=hashlib.md5(description.encode('utf-8')).hexdigest()
+            )
         self.assertEqual(eggnog_description_saved.description, 'Test description')
 
     def test_protein(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans'
+                      )
         taxon.save()
         sequence = 'MAAAAPPPTTTTT'
         protein = Protein(name='ProT',
                           length=100,
-                          protein_hash=hashlib.md5(sequence.encode('utf-8')).hexdigest(),
+                          protein_hash=hashlib.md5(
+                                                   sequence.encode('utf-8')
+                                                   ).hexdigest(),
                           sequence=sequence,
-                          taxonomy_id=taxon)
+                          taxonomy_id=taxon
+                          )
         self.assertEqual(protein.name, 'ProT')
         protein.save()
         protein_saved = Protein.objects.get(name='ProT')
@@ -268,7 +397,10 @@ class BrowserTestCase(TransactionTestCase):
         kegg_pathway.save()
         kegg_ortholog = Kegg_ortholog(kegg_id='KO0001', description='Test description')
         kegg_ortholog.save()
-        go_term = Go_term(go_id='GO:0000001', go_namespace='Test name', description='Test description')
+        go_term = Go_term(go_id='GO:0000001',
+                          go_namespace='Test name',
+                          description='Test description'
+                          )
         go_term.save()
         cazy_family = Cazy_family(cazy_id='GT99', description='Test description')
         cazy_family.save()
@@ -278,7 +410,10 @@ class BrowserTestCase(TransactionTestCase):
         tc_family.save()
         ortholog_group = Ortholog_group(eggnog_id='COG001', taxon=taxon)
         ortholog_group.save()
-        eggnog_description = Eggnog_description(fingerprint=hashlib.md5(description.encode('utf-8')).hexdigest(), description=description)
+        eggnog_description = Eggnog_description(
+            fingerprint=hashlib.md5(description.encode('utf-8')).hexdigest(),
+            description=description
+            )
         eggnog_description.save()
         protein.cog_classes.add(cog_class)
         protein.kegg_reactions.add(kegg_reaction)
@@ -301,7 +436,9 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(protein_saved.ec_numbers.all()[0].ec_number, '99.1.1.1')
         self.assertEqual(protein_saved.tc_families.all()[0].tc_id, 'GT99')
         self.assertEqual(protein_saved.ortholog_groups.all()[0].eggnog_id, 'COG001')
-        self.assertEqual(protein_saved.eggnog_description.description, 'Test description')
+        self.assertEqual(protein_saved.eggnog_description.description,
+                         'Test description'
+                         )
         # Test for error on incomplete init args
         protein = Protein(length=100,
                           taxonomy_id=taxon)
@@ -309,37 +446,56 @@ class BrowserTestCase(TransactionTestCase):
         with self.assertRaises(IntegrityError):
             # no protein name provided
             protein = Protein(length=100,
-                              protein_hash=hashlib.md5(sequence.encode('utf-8')).hexdigest(),
+                              protein_hash=hashlib.md5(
+                                                       sequence.encode('utf-8')
+                                                       ).hexdigest(),
                               sequence=sequence,
-                              taxonomy_id=taxon)
+                              taxonomy_id=taxon
+                              )
             protein.save()
         with self.assertRaises(IntegrityError):
             # no protein length provided
             protein = Protein(name='ProT',
-                              protein_hash=hashlib.md5('AAAAAAAAAAAAAAWWWWWWWWWWWWWWWW'.encode('utf-8')).hexdigest(),
-                              sequence=sequence,
-                              taxonomy_id=taxon)
+                protein_hash=hashlib.md5(
+                    'AAAAAAAAAAAAAAWWWWWWWWWWWWWWWW'.encode('utf-8')
+                    ).hexdigest(),
+                sequence=sequence,
+                taxonomy_id=taxon
+                )
             protein.save()
         with self.assertRaises(IntegrityError):
             # no protein hash provided
             protein = Protein(name='ProT',
                               length=100,
                               sequence=sequence,
-                              taxonomy_id=taxon)
+                              taxonomy_id=taxon
+                              )
             protein.save()
         with self.assertRaises(ValueError):
             # string taxonomy ID instead of Taxon
             protein = Protein(name='ProT',
-                              length=100,
-                              protein_hash=hashlib.md5('MMMMMMMMMMMMMGGGGGGGGGGGGGGGG'.encode('utf-8')).hexdigest(),
-                              sequence=sequence,
-                              taxonomy_id='0123')
+                length=100,
+                protein_hash=hashlib.md5(
+                    'MMMMMMMMMMMMMGGGGGGGGGGGGGGGG'.encode('utf-8')
+                    ).hexdigest(),
+                sequence=sequence,
+                taxonomy_id='0123'
+                )
             protein.save()
 
     def test_gene(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans'
+                      )
         taxon.save()
-        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain = Strain(strain_id='FW104-10B01',
+                        full_name='Rhodanobacter denitrificans str. FW104-10B01',
+                        order='Xanthomonadales',
+                        taxon=taxon
+                        )
         strain.save()
         genome = Genome(name='FW104-10B01',
                         description='Test description',
@@ -353,19 +509,32 @@ class BrowserTestCase(TransactionTestCase):
                         genes=0,
                         size=0,
                         taxon=taxon)
-        contig = Contig(contig_id='scaffold1', name='scaffold0001', size=1000, genome=genome)
+        contig = Contig(contig_id='scaffold1',
+                        name='scaffold0001',
+                        size=1000,
+                        genome=genome
+                        )
         genome.contigs = 1
         genome.size += contig.size
         genome.save()
         contig.save()
-        operon = Operon(name='operon_1', start=10, end=990, strand=-1, genome=genome, contig=contig)
+        operon = Operon(name='operon_1',
+                        start=10,
+                        end=990,
+                        strand=-1,
+                        genome=genome,
+                        contig=contig
+                        )
         operon.save()
         sequence = 'MAAAAPPPTTTTT'
         protein = Protein(name='ProT',
                           length=100,
-                          protein_hash=hashlib.md5(sequence.encode('utf-8')).hexdigest(),
+                          protein_hash=hashlib.md5(
+                                                   sequence.encode('utf-8')
+                                                   ).hexdigest(),
                           sequence=sequence,
-                          taxonomy_id=taxon)
+                          taxonomy_id=taxon
+                          )
         protein.save()
         gene = Gene(name='genE',
                     locus_tag= 'Aaa_0001',
@@ -399,9 +568,18 @@ class BrowserTestCase(TransactionTestCase):
                     operon=operon)
 
     def test_regulon(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans'
+                      )
         taxon.save()
-        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain = Strain(strain_id='FW104-10B01',
+                        full_name='Rhodanobacter denitrificans str. FW104-10B01',
+                        order='Xanthomonadales',
+                        taxon=taxon
+                        )
         strain.save()
         genome = Genome(name='FW104-10B01',
                         description='Test description',
@@ -415,17 +593,28 @@ class BrowserTestCase(TransactionTestCase):
                         genes=0,
                         size=0,
                         taxon=taxon)
-        contig = Contig(contig_id='scaffold1', name='scaffold0001', size=1000, genome=genome)
+        contig = Contig(contig_id='scaffold1',
+                        name='scaffold0001',
+                        size=1000,
+                        genome=genome
+                        )
         genome.contigs = 1
         genome.size += contig.size
         genome.save()
         contig.save()
-        operon = Operon(name='operon_1', start=10, end=990, strand=-1, genome=genome, contig=contig)
+        operon = Operon(name='operon_1',
+                        start=10,
+                        end=990,
+                        strand=-1,
+                        genome=genome,
+                        contig=contig
+                        )
         operon.save()
         sequence = 'MAAAAPPPTTTTT'
         protein = Protein(name='ProT',
                           length=100,
-                          protein_hash=hashlib.md5(sequence.encode('utf-8')).hexdigest(),
+                          protein_hash=hashlib.md5(sequence.encode('utf-8')
+                                                   ).hexdigest(),
                           sequence=sequence,
                           taxonomy_id=taxon)
         protein.save()
@@ -452,9 +641,18 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(regulon_saved.genome.name, 'FW104-10B01')
 
     def test_site(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans'
+                      )
         taxon.save()
-        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain = Strain(strain_id='FW104-10B01',
+                        full_name='Rhodanobacter denitrificans str. FW104-10B01',
+                        order='Xanthomonadales',
+                        taxon=taxon
+                        )
         strain.save()
         genome = Genome(name='FW104-10B01',
                         description='Test description',
@@ -468,17 +666,29 @@ class BrowserTestCase(TransactionTestCase):
                         genes=0,
                         size=0,
                         taxon=taxon)
-        contig = Contig(contig_id='scaffold1', name='scaffold0001', size=1000, genome=genome)
+        contig = Contig(contig_id='scaffold1',
+                        name='scaffold0001',
+                        size=1000,
+                        genome=genome
+                        )
         genome.contigs = 1
         genome.size += contig.size
         genome.save()
         contig.save()
-        operon = Operon(name='operon_1', start=10, end=990, strand=-1, genome=genome, contig=contig)
+        operon = Operon(name='operon_1',
+                        start=10,
+                        end=990,
+                        strand=-1,
+                        genome=genome,
+                        contig=contig
+                        )
         operon.save()
         sequence = 'MAAAAPPPTTTTT'
         protein = Protein(name='ProT',
                           length=100,
-                          protein_hash=hashlib.md5(sequence.encode('utf-8')).hexdigest(),
+                          protein_hash=hashlib.md5(
+                                                   sequence.encode('utf-8')
+                                                   ).hexdigest(),
                           sequence=sequence,
                           taxonomy_id=taxon)
         protein.save()
@@ -500,7 +710,16 @@ class BrowserTestCase(TransactionTestCase):
         regulon.regulators.add(gene)
         regulon.save()
 
-        site = Site(name='Test site 1', type='TFBS', start=991, end=999, strand=-1, sequence='AAAGGGGTTT', regulon=regulon, genome=genome, contig=contig)
+        site = Site(name='Test site 1',
+                    type='TFBS',
+                    start=991,
+                    end=999,
+                    strand=-1,
+                    sequence='AAAGGGGTTT',
+                    regulon=regulon,
+                    genome=genome,
+                    contig=contig
+                    )
         site.save()
         site.operons.add(operon)
         site.genes.add(gene)
@@ -511,9 +730,17 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(site_saved.regulon.name, 'TesT')
 
     def test_annotation(self):
-        taxon = Taxon(taxonomy_id='666685', eggnog_taxid='666685', rank='species', parent_id='75309', name='Rhodanobacter denitrificans')
+        taxon = Taxon(taxonomy_id='666685',
+                      eggnog_taxid='666685',
+                      rank='species',
+                      parent_id='75309',
+                      name='Rhodanobacter denitrificans')
         taxon.save()
-        strain = Strain(strain_id='FW104-10B01', full_name='Rhodanobacter denitrificans str. FW104-10B01', order='Xanthomonadales', taxon=taxon)
+        strain = Strain(strain_id='FW104-10B01',
+                        full_name='Rhodanobacter denitrificans str. FW104-10B01',
+                        order='Xanthomonadales',
+                        taxon=taxon
+                        )
         strain.save()
         genome = Genome(name='FW104-10B01',
                         description='Test description',
@@ -527,7 +754,11 @@ class BrowserTestCase(TransactionTestCase):
                         genes=0,
                         size=0,
                         taxon=taxon)
-        contig = Contig(contig_id='scaffold1', name='scaffold0001', size=1000, genome=genome)
+        contig = Contig(contig_id='scaffold1',
+                        name='scaffold0001',
+                        size=1000,
+                        genome=genome
+                        )
         genome.contigs = 1
         genome.size += contig.size
         genome.save()
@@ -535,7 +766,8 @@ class BrowserTestCase(TransactionTestCase):
         sequence = 'MAAAAPPPTTTTT'
         protein = Protein(name='ProT',
                           length=100,
-                          protein_hash=hashlib.md5(sequence.encode('utf-8')).hexdigest(),
+                          protein_hash=hashlib.md5(sequence.encode('utf-8')
+                                                   ).hexdigest(),
                           sequence=sequence,
                           taxonomy_id=taxon)
         protein.save()
@@ -551,7 +783,13 @@ class BrowserTestCase(TransactionTestCase):
                     protein=protein)
         gene.save()
         
-        annotation = Annotation(gene_id=gene, source='Personal communication', url='https://nih.gov', key='group', value='group_name', note='Test description')
+        annotation = Annotation(gene_id=gene,
+                                source='Personal communication',
+                                url='https://nih.gov',
+                                key='group',
+                                value='group_name',
+                                note='Test description'
+                                )
         self.assertEqual(annotation.value, 'group_name')
         annotation.save()
         annotation_saved = Annotation.objects.get(value='group_name')
@@ -613,24 +851,39 @@ class BrowserTestCase(TransactionTestCase):
 
     def test_genelist1_page(self):
         # Gene list for a genome
-        response = self.client.get('/searchgene/', {'genome':'E_coli_BW2952', 'type':'gene'})
+        response = self.client.get('/searchgene/',
+                                   {'genome':'E_coli_BW2952', 'type':'gene'}
+                                   )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genes from genome E_coli_BW2952')
-        self.assertContains(response, 'data: {\'query\': "", \'type\': "gene", \'genome\': "E_coli_BW2952", \'page\': "" }')
+        self.assertContains(response,
+                            'data: {\'query\': "", \'type\': "gene", ' +\
+                            '\'genome\': "E_coli_BW2952", \'page\': "" }'
+                            )
 
     def test_genelist2_page(self):
         # Gene list for "regulator" text query
-        response = self.client.get('/searchgene/', {'query':'regulator', 'type':'gene'})
+        response = self.client.get('/searchgene/',
+                                   {'query':'regulator', 'type':'gene'}
+                                   )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Search results for')
-        self.assertContains(response, 'data: {\'query\': "regulator", \'type\': "gene", \'genome\': "", \'page\': "" }')
+        self.assertContains(response,
+                            'data: {\'query\': "regulator", \'type\': ' +\
+                            '"gene", \'genome\': "", \'page\': "" }'
+                            )
 
     def test_annotationlist_page(self):
         # Annotation list for "Pfam" text query
-        response = self.client.get('/searchannotation/', {'annotation_query':'Pfam'})
+        response = self.client.get('/searchannotation/',
+                                   {'annotation_query':'Pfam'}
+                                   )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Search results for')
-        self.assertContains(response, 'data: {\'annotation_query\': "Pfam", \'genome\': "", \'page\': "" }')
+        self.assertContains(response,
+                            'data: {\'annotation_query\': "Pfam", ' +\
+                            '\'genome\': "", \'page\': "" }'
+                            )
 
     def test_operon_page(self):
         operon_id = Operon.objects.values_list('name', flat=True)[0]
@@ -641,7 +894,11 @@ class BrowserTestCase(TransactionTestCase):
 
     def test_site_page(self):
         genome_id = 'E_coli_BW2952'
-        site_id = Site.objects.filter(genome__name=genome_id).values_list('name', flat=True)[0]
+        site_id = Site.objects.filter(
+            genome__name=genome_id
+        ).values_list(
+            'name', flat=True
+        )[0]
         response = self.client.get('/site/' + genome_id + '/' + site_id + '/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Site information')
@@ -727,7 +984,9 @@ class BrowserTestCase(TransactionTestCase):
     def test_nucleotidesearch_page(self):
         response = self.client.get('/nuclsearchform/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Enter one nucleotide sequence in FASTA format')
+        self.assertContains(response,
+                            'Enter one nucleotide sequence in FASTA format'
+                            )
 
     def test_help_page(self):
         response = self.client.get('/help/')
@@ -735,17 +994,28 @@ class BrowserTestCase(TransactionTestCase):
         self.assertContains(response, 'ENIGMA genome browser')
 
     def test_comparative_view(self):
-        response = self.client.get('/comparative/', {'genome':'E_coli_BW2952', 'locus_tag':'BWG_RS00020', 'og':'102492', 'size':'10', 'lines':'50'})
+        response = self.client.get('/comparative/',
+                                   {'genome':'E_coli_BW2952',
+                                    'locus_tag':'BWG_RS00020',
+                                    'og':'102492',
+                                    'size':'10',
+                                    'lines':'50'
+                                    }
+                                   )
         print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Comparative analysis</h2>')
 
     def test_comparative_get_color(self):
         color = _get_color(6)
-        self.assertEqual(color, '.setColorGradient(\'rgb(255, 182, 199)\', \'rgb(204, 102, 119)\')')
+        self.assertEqual(color,
+            '.setColorGradient(\'rgb(255, 182, 199)\', \'rgb(204, 102, 119)\')'
+            )
 
     def test_make_muscle_alignment(self):
-        proteins = '''>1\nMKRISTTITTTTITTGNGAG\n>2\nMKRISTTITTTITITTGNGAG\n>3\nMKRISTTITTTITITTGNGAG'''
+        proteins = '>1\nMKRISTTITTTTITTGNGAG\n' +\
+        '>2\nMKRISTTITTTITITTGNGAG\n' +\
+        '>3\nMKRISTTITTTITITTGNGAG'
         outfasta = make_muscle_alignment(proteins)
         outfasta_lines = outfasta.split('\n')
         self.assertEqual(outfasta_lines[-6], 'MKRISTTITTT-TITTGNGAG')
@@ -776,12 +1046,20 @@ class ImporterTestCase(TransactionTestCase):
     @skip("working")
     def test_generate_strain_data(self):
         """Read GBK file and return correct strain data"""
-        p_aeruginosa = self.importer.generate_strain_data('/mnt/data2/Bacteriocins/genomes/Pseudomonas_aeruginosa_PAO1.gb', 'PAO1', '')
+        p_aeruginosa = self.importer.generate_strain_data(
+            '/mnt/data2/Bacteriocins/genomes/Pseudomonas_aeruginosa_PAO1.gb',
+            'PAO1',
+            ''
+            )
         self.assertEqual(p_aeruginosa.strain_id, 'PAO1')
         self.assertEqual(p_aeruginosa.full_name, 'Pseudomonas aeruginosa PAO1')
         self.assertEqual(p_aeruginosa.taxon.taxonomy_id, '208964')
         self.assertEqual(p_aeruginosa.order, 'Pseudomonadales')
-        isolate = self.importer.generate_strain_data('/mnt/data2/ENIGMA/genome_files/genbank/DP16D-E2.genome.gbff.gz', 'DP16D-E2', '')
+        isolate = self.importer.generate_strain_data(
+            '/mnt/data2/ENIGMA/genome_files/genbank/DP16D-E2.genome.gbff.gz',
+            'DP16D-E2',
+            ''
+            )
         self.assertEqual(isolate.strain_id, 'DP16D-E2')
         self.assertEqual(isolate.full_name, 'Environmental isolate DP16D-E2')
         self.assertEqual(isolate.taxon.taxonomy_id, '48479')

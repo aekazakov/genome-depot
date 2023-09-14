@@ -125,18 +125,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+{'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+{'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+{'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
 
 
@@ -158,8 +150,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = get_secret('EMAIL_HOST_USER')  #sender's email-id
-EMAIL_HOST_PASSWORD = get_secret('EMAIL_HOST_PASSWORD')  #password associated with above email-id
+#sender's email-id
+EMAIL_HOST_USER = get_secret('EMAIL_HOST_USER')
+#password associated with the email-id
+EMAIL_HOST_PASSWORD = get_secret('EMAIL_HOST_PASSWORD')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

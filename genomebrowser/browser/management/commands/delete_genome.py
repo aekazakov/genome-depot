@@ -1,11 +1,14 @@
 import os
 import shutil
 from django.core.management.base import BaseCommand, CommandError
-from browser.models import *
+from browser.models import Protein
+from browser.models import Genome
+from browser.models import Strain
+from browser.models import Sample
 from browser.dataimport.importer import Importer
 
 class Command(BaseCommand):
-    help = 'Deletes a genome with all genes and annotations from the database'
+    help = 'Deletes one genome with all genes and annotations from the database'
     
     def add_arguments(self, parser):
         parser.add_argument('-g', default='', help='Genome name')
@@ -23,7 +26,10 @@ class Command(BaseCommand):
             print('Not unique genome name: ' + genome_name)
             raise CommandError()
         importer = Importer()
-        print('Note 1: Genome deletion removes contigs, genes and gene annotations for this genome. It also removes proteins not linked to any gene. But it does not remove a strain associated with this genome if the strain has other genomes.')
+        print('''Note 1: Genome deletion removes contigs, genes and 
+        gene annotations for this genome. It also removes proteins 
+        not linked to any gene. But it does not remove a strain 
+        associated with this genome if the strain has other genomes.''')
         print('Deleting genome...')
         genome_set.delete()
         print('Deleting proteins not linked to genes...')
@@ -35,10 +41,18 @@ class Command(BaseCommand):
         importer.export_proteins()
         importer.export_contigs()
         importer.delete_search_databases()
-        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_nucl'])), importer.config['cgcms.search_db_nucl'])
-        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'], os.path.basename(importer.config['cgcms.search_db_prot'])), importer.config['cgcms.search_db_prot'])
+        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                        os.path.basename(importer.config['cgcms.search_db_nucl'])),
+                        importer.config['cgcms.search_db_nucl']
+                        )
+        shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                        os.path.basename(importer.config['cgcms.search_db_prot'])),
+                        importer.config['cgcms.search_db_prot']
+                        )
         importer.create_search_databases()
-        shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'], genome_name))
+        shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'],
+                                   genome_name
+                                   ))
         os.remove(importer.config['cgcms.search_db_nucl'])
         os.remove(importer.config['cgcms.search_db_prot'])
         # importer.cleanup()

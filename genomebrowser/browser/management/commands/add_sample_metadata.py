@@ -1,10 +1,9 @@
-import os
 from django.core.management.base import BaseCommand
-from browser.models import *
 from browser.dataimport.annotator import Annotator
 
 class Command(BaseCommand):
-    help = """For samples uploaded into Django database, this program adds metadata from tab-separated file.
+    help = """For samples uploaded into Django database,
+    this program adds metadata from tab-separated file.
     Metadata file must contain the following fields:
     1. Sample name (as in the database).
     2. Metadata source.

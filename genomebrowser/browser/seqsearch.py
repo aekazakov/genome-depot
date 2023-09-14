@@ -1,12 +1,9 @@
 import os
-import uuid
-from datetime import datetime
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
-from subprocess import Popen, PIPE, CalledProcessError, STDOUT
+from subprocess import Popen, PIPE, STDOUT
 from django.core.exceptions import SuspiciousOperation
 from browser.models import Config
-
 
 def _verify_alphabet(sequence, alphabet):
     '''
@@ -36,11 +33,25 @@ def validate_params(params):
         try:
             result['evalue'] = str(float(evalue))
         except ValueError:
-            raise SuspiciousOperation("Unacceptable value '%s' for e-value parameter." % result['evalue'])
+            raise SuspiciousOperation(
+            "Unacceptable value '%s' for e-value parameter." % result['evalue']
+            )
         except TypeError:
-            raise SuspiciousOperation("Unacceptable value '%s' for e-value parameter." % result['evalue'])
-        if result['evalue'] not in ['1e-20', '1e-10', '1e-08', '1e-06', '0.0001', '0.01', '1.0', '10.0']:
-            raise SuspiciousOperation("Unacceptable value '%s' for e-value parameter." % result['evalue'])
+            raise SuspiciousOperation(
+            "Unacceptable value '%s' for e-value parameter." % result['evalue']
+            )
+        if result['evalue'] not in ['1e-20',
+                                    '1e-10',
+                                    '1e-08',
+                                    '1e-06',
+                                    '0.0001',
+                                    '0.01',
+                                    '1.0',
+                                    '10.0'
+                                    ]:
+            raise SuspiciousOperation(
+            "Unacceptable value '%s' for e-value parameter." % result['evalue']
+            )
         try:
             hitstoshow = params['hitstoshow']
         except KeyError:
@@ -50,11 +61,17 @@ def validate_params(params):
         try:
             result['hitstoshow'] = str(int(hitstoshow))
         except TypeError:
-            raise SuspiciousOperation("Unacceptable value '%s' for hitstoshow parameter." % result['hitstoshow'])
+            raise SuspiciousOperation(
+            "Unacceptable value '%s' for hitstoshow parameter." % result['hitstoshow']
+            )
         except ValueError:
-            raise SuspiciousOperation("Unacceptable value '%s' for hitstoshow parameter." % result['hitstoshow'])
+            raise SuspiciousOperation(
+            "Unacceptable value '%s' for hitstoshow parameter." % result['hitstoshow']
+            )
         if result['hitstoshow'] not in ['10', '20', '50', '100', '500', '1000']:
-            raise SuspiciousOperation("Unacceptable value '%s' for hitstoshow parameter." % result['hitstoshow'])
+            raise SuspiciousOperation(
+            "Unacceptable value '%s' for hitstoshow parameter." % result['hitstoshow']
+            )
     return result
 
         
@@ -76,14 +93,18 @@ def run_protein_search(params):
     blast_db = os.path.join(search_dir, 'blast_prot')
     searchcontext = ''
     query_lines = query.split('\n')
-    seq_record = SeqRecord(Seq(''.join([x.rstrip('\n\r') for x in query_lines[1:]])), id=query_lines[0][1:].rstrip('\r\n'))
+    seq_record = SeqRecord(Seq(''.join([x.rstrip('\n\r') for x in query_lines[1:]])),
+                           id=query_lines[0][1:].rstrip('\r\n')
+                           )
     if not _verify_alphabet(seq_record.seq.upper(), PROTEIN_ALPHABET):
-        searchcontext = 'Wrong protein sequence format. FASTA header and valid sequence required.'
+        searchcontext = 'Wrong protein sequence format. ' +\
+                        'FASTA header and valid sequence required.'
         return result, searchcontext, 0
     sequence = str(seq_record.seq)
     sequence_id = str(seq_record.id)
     if not sequence:
-        searchcontext = 'Wrong sequence format. FASTA header and valid sequence required.'
+        searchcontext = 'Wrong sequence format. ' +\
+                        'FASTA header and valid sequence required.'
         return result, searchcontext, 0
     query_len = len(seq_record)
     args = [
@@ -96,7 +117,13 @@ def run_protein_search(params):
         '-outfmt',
         '6'
         ]
-    with Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
+    with Popen(args,
+               stdin=PIPE,
+               stdout=PIPE,
+               stderr=STDOUT,
+               bufsize=1,
+               universal_newlines=True
+               ) as p:
         blastoutput, err = p.communicate(query.strip())
     if p.returncode != 0:
         searchcontext = 'BLASTP finished with error:\n' + '\n'.join(err)
@@ -135,16 +162,21 @@ def run_nucleotide_search(params):
     blast_db = os.path.join(search_dir, 'blast_nucl')
     searchcontext = ''
     query_lines = query.split('\n')
-    seq_record = SeqRecord(Seq(''.join([x.rstrip('\n\r') for x in query_lines[1:]])), id=query_lines[0][1:].rstrip('\r\n'))
+    seq_record = SeqRecord(Seq(''.join([x.rstrip('\n\r') for x in query_lines[1:]])),
+                           id=query_lines[0][1:].rstrip('\r\n')
+                           )
     if not _verify_alphabet(seq_record.seq.upper(), DNA_ALPHABET):
-        searchcontext = 'Wrong nucleotide sequence format. FASTA header and valid sequence required. Multiple entries not supported.'
+        searchcontext = 'Wrong nucleotide sequence format. ' +\
+                        'FASTA header and valid sequence required. ' +\
+                        'Multiple entries not supported.'
         return result, searchcontext, 0
     sequence = str(seq_record.seq)
     sequence_id = str(seq_record.id)
     query_len = len(seq_record)
 
     if not sequence:
-        searchcontext = 'Wrong sequence format. FASTA header and sequence required. Multiple entries not supported.'
+        searchcontext = 'Wrong sequence format. FASTA header and sequence required.' +\
+                        'Multiple entries not supported.'
         return result, searchcontext, 0
     args = [
         'megablast',
@@ -155,7 +187,13 @@ def run_nucleotide_search(params):
         '-f', 'T',
         '-d', blast_db
         ]
-    with Popen(args, stdin=PIPE, stdout=PIPE, stderr=STDOUT, bufsize=1, universal_newlines=True) as p:
+    with Popen(args,
+               stdin=PIPE,
+               stdout=PIPE,
+               stderr=STDOUT,
+               bufsize=1,
+               universal_newlines=True
+               ) as p:
         blastoutput, err = p.communicate(query.strip())
     if p.returncode != 0:
         searchcontext = 'Megablast finished with error:\n' + '\n'.join(err)

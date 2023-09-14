@@ -1,6 +1,5 @@
 import os
 from django.core.management.base import BaseCommand
-from browser.models import *
 from browser.dataimport.importer import Importer
 
 class Command(BaseCommand):
