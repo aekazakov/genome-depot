@@ -16,7 +16,7 @@ def test_task_impl(request, genome_names):
     print(request)
     print(genome_names)
     try:
-        print(genome_names[999])
+        print(genome_names[0])
         subject = 'CGCMS test task finished'
         message = f'Test task finished successfuly at {settings.BASE_URL}'
         mail_admins(subject, message)

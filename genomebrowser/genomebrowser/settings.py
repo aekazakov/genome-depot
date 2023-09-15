@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 #import json
-from decouple import config
+from decouple import config, Csv
 
 # Normally you should not import ANYTHING from Django directly
 # into your settings, but ImproperlyConfigured is an exception.
@@ -41,10 +41,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = [config('HOSTNAME'), '127.0.0.1', 'testserver']
-INTERNAL_IPS = ['127.0.0.1',]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+INTERNAL_IPS = config('INTERNAL_IPS', cast=Csv()) #['127.0.0.1',]
+TITLE = config('TITLE')
 
 # Application definition
 
@@ -146,7 +147,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-ADMINS = [('Alexey', 'aekazakov@lbl.gov')]
+ADMINS = [tuple(config('ADMIN', cast=Csv()))]
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587

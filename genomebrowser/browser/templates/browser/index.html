@@ -1,6 +1,6 @@
 {% extends "base_generic.html" %}
 {% load static %}
-{% block page-title %}<title>CGCMS start page</title>{% endblock %}
+{% block page-title %}<title>{%if site_title %}{{ site_title }}{% else %}CGCMS start page{% endif %}</title>{% endblock %}
 {% block title %} <div class="logo">Start page</div>{% endblock %}
 
 {% block content %}
@@ -10,7 +10,7 @@
                     <img src="{% static 'images/slide04.jpg' %}"  alt="" />
                     <div class="inner">
                         <header>
-                            <p>Welcome to comparative genomic content management system</p>
+                            <p>Welcome to {%if site_title %}{{ site_title }}{% else %}comparative genomic content management system{% endif %}</p>
                             <h3><a href="{% url 'genome_list' %}">Click here for a list of <span style="text-decoration:underline;">all {{ num_genomes }} genomes</span></a></h3>
                             
                         </header>

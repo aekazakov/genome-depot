@@ -8,7 +8,7 @@
 -->
 <html>
     <head>
-        {% block page-title %}<title>CGCMS</title>{% endblock %}
+        {% block page-title %}<title>{%if site_title %}{{ site_title }}{% else %}CGCMS{% endif %}</title>{% endblock %}
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />

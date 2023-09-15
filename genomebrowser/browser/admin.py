@@ -3,13 +3,13 @@ import uuid
 import datetime
 import zipfile
 from pathlib import Path
-from django import forms
 from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.forms.widgets import TextInput
+from django.contrib.contenttypes.models import ContentType
+from django.http import HttpResponseRedirect
 # Import your models here
 from browser.models import Strain
 from browser.models import Sample
@@ -37,6 +37,11 @@ from browser.models import Regulon
 from browser.models import Config
 from browser.models import ChangeLog
 from browser.models import Tag
+from browser.forms import TsvImportForm
+from browser.forms import ExcelImportForm
+from browser.forms import GenomeImportForm
+from browser.forms import TagModelForm
+from browser.forms import AddTagForm
 from browser.async_tasks import test_async_task
 from browser.async_tasks import async_import_genomes
 from browser.async_tasks import async_delete_genomes
@@ -55,39 +60,15 @@ admin.site.site_title = "CGCMS Admin Portal"
 admin.site.index_title = "Welcome to CGCMS administration interface"
 
 
-class TsvImportForm(forms.Form):
-    tsv_file = forms.FileField()
-
-
-class ExcelImportForm(forms.Form):
-    xlsx_file = forms.FileField()
-
-
-class GenomeImportForm(forms.Form):
-    tsv_file = forms.FileField()
-    zip_file = forms.FileField(required=False,
-                               label='Zip archive with genomes in ' + 
-                               'GBFF format (optional)'
-                               )
-    download_email = forms.EmailField(max_length=200,
-                                      required=False,
-                                      label='Email for NCBI genome downloads (optional)'
-                                      )
-
-
-class TagModelForm(forms.ModelForm):
-    class Meta:
-        model = Tag
-        fields = "__all__"
-        widgets = {
-            "color": TextInput(attrs={"type": "color"}),
-            "textcolor": TextInput(attrs={"type": "color"}),
-        }
-
 
 @admin.action(description = 'Test sync action')
 def test_task(self, request, queryset):
-    test_async_task(request, queryset)
+    task_id = test_async_task(request, queryset)
+    messages.info(request,
+                  "Test action is starting. " +
+                  "Check the task " + task_id + 
+                  " in the list of queued tasks for progress."
+                  )
     
 @admin.action(description = 'Delete genomes')
 def delete_genomes(self, request, queryset):
@@ -107,6 +88,44 @@ def update_static_files(self, request, queryset):
                   " in the list of queued tasks for progress."
                   )
 
+@admin.action(description = 'Add a tag')
+def add_genome_tag(self, request, queryset):
+    if 'do_action' in request.POST:
+        form = AddTagForm(request.POST)
+        if form.is_valid():
+            tag = form.cleaned_data['tag']
+            updated = 0
+            for genome in queryset:
+                genome.tags.add(tag)
+                updated += 1
+            messages.success(request, '{0} genomes were updated'.format(updated))
+        redirect("..")
+    else:
+        form = AddTagForm()
+        return render(request, 'admin/add_tag.html',
+            {'title': u'Add tag',
+             'objects': queryset,
+             'form': form})
+
+@admin.action(description = 'Remove a tag')
+def remove_genome_tag(self, request, queryset):
+    if 'do_action' in request.POST:
+        form = AddTagForm(request.POST)
+        if form.is_valid():
+            tag = form.cleaned_data['tag']
+            updated = 0
+            for genome in queryset:
+                genome.tags.remove(tag)
+                updated += 1
+            messages.success(request, '{0} genomes were updated'.format(updated))
+        redirect("..")
+    else:
+        form = AddTagForm()
+        return render(request, 'admin/remove_tag.html',
+            {'title': u'Remove tag',
+             'objects': queryset,
+             'form': form})
+
 def count_tasks(request):
     return str(OrmQ.objects.all().count())
 
@@ -122,8 +141,11 @@ class GenomeAdmin(admin.ModelAdmin):
     change_list_template = 'admin/genome_change_list.html'
     #actions = [delete_genome]
     actions = [test_task,
+               add_genome_tag,
+               remove_genome_tag,
                delete_genomes,
-               update_static_files]
+               update_static_files
+               ]
     list_display = ['name',
                     'taxon',
                     'strain',
@@ -154,7 +176,7 @@ class GenomeAdmin(admin.ModelAdmin):
         my_urls = [
             path('add/', self.import_genomes),
             path('delete-genomes/', self.delete_genomes),
-            path('update-static/', self.update_static_files),
+            path('update-static/', self.update_static_files)
         ]
         return my_urls + urls
 
@@ -219,6 +241,7 @@ class GenomeAdmin(admin.ModelAdmin):
                           " genomes")
         return redirect("..")
 
+        
     def get_actions(self, request):
         actions = super().get_actions(request)
         if 'delete_selected' in actions:

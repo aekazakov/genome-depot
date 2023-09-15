@@ -37,6 +37,8 @@ from browser.models import Sample_metadata
 from browser.models import Site
 from browser.models import Strain
 from browser.models import Strain_metadata
+from genomebrowser.settings import TITLE
+
 # Create your views here.
 
 class AnnotationSearchResultsSubView(generic.ListView):
@@ -1215,7 +1217,7 @@ def startpage(request):
     '''
     template = loader.get_template('browser/index.html')
     num_genomes = Genome.objects.all().count()
-    context = {'num_genomes':num_genomes}
+    context = {'num_genomes':num_genomes, 'site_title':TITLE}
     return HttpResponse(template.render(context, request))
 
 def show_help(request):
@@ -1223,7 +1225,7 @@ def show_help(request):
         Displays help page
     '''
     template = loader.get_template('browser/help.html')
-    context = {}
+    context = {'site_title':TITLE}
     return HttpResponse(template.render(context, request))
 
 
