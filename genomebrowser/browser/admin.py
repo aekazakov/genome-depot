@@ -2,14 +2,13 @@ import os
 import uuid
 import datetime
 import zipfile
+import logging
 from pathlib import Path
 from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseRedirect
 # Import your models here
 from browser.models import Strain
 from browser.models import Sample
@@ -54,6 +53,7 @@ from browser.async_tasks import async_import_regulon
 from django_q.models import OrmQ
 from django_q.monitor import Stat
 
+logger = logging.getLogger("CGCMS")
 
 admin.site.site_header = "CGCMS admin"
 admin.site.site_title = "CGCMS Admin Portal"
@@ -182,14 +182,14 @@ class GenomeAdmin(admin.ModelAdmin):
 
     def import_genomes(self, request):
         if request.method == 'POST':
-            print(request.FILES)
+            logger.debug(request.FILES)
             tsv_file = request.FILES["tsv_file"]
             zip_file = None
             zip_content = {}
             temp_dir = Config.objects.get(param='cgcms.temp_dir').value
             upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
             if 'zip_file' in request.FILES:
-                print(upload_dir)
+                logger.debug(upload_dir)
                 Path(upload_dir).mkdir(parents=True, exist_ok=True)
                 os.chmod(upload_dir, 0o777)
                 zip_file = request.FILES["zip_file"]
@@ -208,7 +208,7 @@ class GenomeAdmin(admin.ModelAdmin):
                     pass
                     # Assembly will be downloaded from NCBI later
                 elif not os.path.exists(row[0]):
-                    print(row[0], 'not found')
+                    logger.warning('%s not found', row[0])
                 lines.append('\t'.join(row))
             task_name = async_import_genomes(lines,
                                              request.POST['download_email']
@@ -293,12 +293,12 @@ class SampleAdmin(admin.ModelAdmin):
 
     def import_sample_descriptions(self, request):
         if request.method == 'POST':
-            print(request.FILES)
+            logger.debug(request.FILES)
             tsv_file = request.FILES["tsv_file"]
             lines = []
             for line in tsv_file:
                 line = line.decode()
-                print(line)
+                logger.debug(line)
                 lines.append(line)
             task_name = async_import_sample_descriptions(lines)
             # Do some staff
@@ -414,7 +414,7 @@ class StrainMetadataAdmin(admin.ModelAdmin):
 
     def update_strain_metadata(self, request):
         if request.method == 'POST':
-            print(request.FILES)
+            logger.debug(request.FILES)
             xlsx_file = request.FILES["xlsx_file"]
             task_name = async_update_strain_metadata(xlsx_file)
             # Do some staff
@@ -449,12 +449,12 @@ class SampleMetadataAdmin(admin.ModelAdmin):
 
     def import_sample_metadata(self, request):
         if request.method == 'POST':
-            print(request.FILES)
+            logger.debug(request.FILES)
             tsv_file = request.FILES["tsv_file"]
             lines = []
             for line in tsv_file:
                 line = line.decode()
-                print(line)
+                logger.debug(line)
                 lines.append(line)
             task_name = async_import_sample_metadata(lines)
             # Do some staff
@@ -509,12 +509,12 @@ class AnnotationAdmin(admin.ModelAdmin):
     
     def import_annotations(self, request):
         if request.method == 'POST':
-            print(request.FILES)
+            logger.debug(request.FILES)
             tsv_file = request.FILES["csv_file"]
             lines = []
             for line in tsv_file:
                 line = line.decode()
-                print(line)
+                logger.debug(line)
                 lines.append(line)
             task_name = async_import_annotations(lines)
             # Do some staff
@@ -569,12 +569,12 @@ class RegulonAdmin(admin.ModelAdmin):
 
     def import_regulons(self, request):
         if request.method == 'POST':
-            print(request.FILES)
+            logger.debug(request.FILES)
             tsv_file = request.FILES["tsv_file"]
             lines = []
             for line in tsv_file:
                 line = line.decode()
-                print(line)
+                logger.debug(line)
                 lines.append(line)
             task_name = async_import_regulon(lines)
             # Do some staff

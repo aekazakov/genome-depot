@@ -1,6 +1,7 @@
 import csv
 import time
 import json
+import logging
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -40,6 +41,8 @@ from browser.models import Strain_metadata
 from genomebrowser.settings import TITLE
 
 # Create your views here.
+logger = logging.getLogger("CGCMS")
+
 
 class AnnotationSearchResultsSubView(generic.ListView):
     '''
@@ -416,7 +419,7 @@ class GeneSearchResultsSubView(generic.ListView):
         query = query.strip()
         genome = self.request.GET.get('genome')
         query_type = self.request.GET.get('type')
-        print(query, genome, query_type)
+        logger.debug(', '.join([query, genome, query_type]))
         if query_type == 'gene':
             if genome:
                 object_list = Gene.objects.filter(
@@ -890,7 +893,7 @@ class GeneSearchResultsAjaxView(View):
 
         # Sleep timer for testing to imitate long-running task
         # sleep_timer = 0
-        # print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        # logger.debug('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         # time.sleep(sleep_timer)
 
         context = {}
@@ -1262,9 +1265,9 @@ def taxon_detail(request, taxonomy_id):
     '''
     try:
         taxon = Taxon.objects.get(taxonomy_id = taxonomy_id)
-        #print(taxon.name, 'found')
+        logger.debug('%s found', taxon.name)
     except Taxon.DoesNotExist:
-        #print('Taxonomy ID', taxonomy_id, 'not found')
+        logger.error('Taxonomy ID %s not found', taxonomy_id)
         raise Http404('Taxon ' + taxonomy_id + ' does not exist')
     context = {'taxon': taxon}
     children = get_taxon_children(taxonomy_id)
@@ -1293,12 +1296,12 @@ def genome_detail(request, name):
         Displays genome page.
     '''
     try:
-        genome = Genome.objects.get(
-            name = name
-        ).select_related(
+        genome = Genome.objects.select_related(
             'taxon', 'strain', 'sample'
         ).prefetch_related(
             'tags'
+        ).get(
+            name = name
         )
     except Genome.DoesNotExist:
         raise Http404('Genome ' + name + ' does not exist')
@@ -1362,7 +1365,7 @@ def strain_detail(request, strain_id):
         metadata = []
         for source in sorted(metadata_entries.keys()):
             metadata.append(metadata_entries[source])
-        print(metadata)
+        logger.debug(str(metadata))
     except Strain.DoesNotExist:
         return render(request,
                       '404.html',
@@ -1399,7 +1402,7 @@ def sample_detail(request, sample_id):
         metadata = []
         for source in sorted(metadata_entries.keys()):
             metadata.append(metadata_entries[source])
-        print(metadata)
+        logger.debug(str(metadata))
     except Sample.DoesNotExist:
         return render(request,
                       '404.html',
@@ -1415,9 +1418,7 @@ def gene_detail(request, genome, locus_tag):
         Displays gene page.
     '''
     try:
-        gene = Gene.objects.get(
-            genome__name=genome, locus_tag = locus_tag
-        ).select_related(
+        gene = Gene.objects.select_related(
             'genome', 'genome__taxon', 'protein', 'operon'
         ).prefetch_related(
             'protein__ortholog_groups__taxon',
@@ -1429,6 +1430,8 @@ def gene_detail(request, genome, locus_tag):
             'protein__tc_families',
             'protein__cog_classes',
             'genome__tags'
+        ).get(
+            genome__name=genome, locus_tag = locus_tag
         )
         annotations = Annotation.objects.filter(
             gene_id = gene
@@ -1510,7 +1513,7 @@ def site_detail(request, genome, name):
         context['viewer_end'] = str(viewer_end)
         context['highlight_start'] = site.start
         context['highlight_end'] = site.end
-        print(site.genes)
+        logger.debug(str(site.genes))
     except Site.DoesNotExist:
         raise Http404('Site not found')
     return render(request, 'browser/site.html', context)
@@ -1537,7 +1540,7 @@ def regulon_detail(request, genome, name):
     context['ortholog_groups'] = Ortholog_group.objects.filter(
         id__in=list(ortholog_groups)
         )
-    print([x.name for x in sites])
+    logger.debug(str([x.name for x in sites]))
     return render(request, 'browser/regulon.html', context)
 
 def gene_byname(request):
@@ -1598,7 +1601,7 @@ def protein_search_external(request):
             context['searchcontext'] = searchcontext
         for row in hits:
             row=row.split('\t')
-            print('Search for gene', row[1])
+            logger.info('Search for gene %s', row[1])
             if row[0] not in result:
                 result[row[0]] = []
             unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
@@ -1636,11 +1639,11 @@ class NsearchResultView(View):
         '''
             Takes a POST request and returns a webpage that will send AJAX request
         '''
-        #print('Sequence sent:', request.POST.get("sequence"))
+        #logger.debug(('Sequence sent: %s', request.POST.get("sequence"))
         context = {'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')}
         for key, val in request.POST.items():
             context[key] = val
-            #print(key, val)
+            #logger.debug('%s:%s', key, val)
         return render(request,'browser/nucleotidesearchajax.html', context)
 
     def get(self,request):
@@ -1660,15 +1663,15 @@ class NsearchResultView(View):
         '''
         start_time = time.time()
         result = []
-        #print('REQUEST2')
+        #logger.debug('REQUEST2')
         #for key, val in request.POST.items():
-        #    print(key, val)
+        #    logger.debug('%s:%s',key, val)
         params = {'sequence': request.POST.get("sequence"),
                   'evalue': request.POST.get("evalue"),
                   'hitstoshow': request.POST.get("hitstoshow")
                   }
         #sleep_timer = 0
-        #print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        #logger.debug('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         #time.sleep(sleep_timer)
         hits, searchcontext, query_len = run_nucleotide_search(params)
         if hits:
@@ -1681,7 +1684,9 @@ class NsearchResultView(View):
                 row=row.split('\t')
                 contig_name, genome_name = row[1].split('|')
                 genome_name = genome_name.split('[')[0]
-                print('Search for contig', contig_name, 'in genome', genome_name)
+                logger.debug('Search for contig %s in genome %s',
+                             contig_name, genome_name
+                             )
                 target = Contig.objects.select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -1730,7 +1735,7 @@ class NsearchResultView(View):
                        "query_len":query_len,
                        "time":time.time()-start_time
                        }
-        print(context)
+        logger.debug(context)
         data = json.dumps(context)
         return HttpResponse(data,content_type="application/json")
 
@@ -1750,13 +1755,13 @@ class PsearchResultView(View):
         '''
             Takes a POST request and returns a webpage that will send AJAX request
         '''
-        #sequence = request.POST.get("sequence")
-        #print('Sequence sent:', sequence)
+        sequence = request.POST.get("sequence")
+        logger.debug('Sequence sent: %s', sequence)
         context = {'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')}
-        #print('REQUEST1')
+        logger.debug('REQUEST1')
         for key, val in request.POST.items():
             context[key] = val
-            #print(key, val)
+            logger.debug('%s:%s', key, val)
         return render(request,'browser/proteinsearchajax.html', context)
 
     def get(self,request):
@@ -1776,15 +1781,15 @@ class PsearchResultView(View):
         '''
         start_time = time.time()
         result = []
-        #print('REQUEST2')
-        #for key, val in request.POST.items():
-        #    print(key, val)
+        logger.debug('REQUEST2')
+        for key, val in request.POST.items():
+            logger.debug('%s,%s', key, val)
         params = {'sequence': request.POST.get("sequence"),
                   'evalue': request.POST.get("evalue"),
                   'hitstoshow': request.POST.get("hitstoshow")
                   }
         #sleep_timer = 0
-        #print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        #logger.debug('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         #time.sleep(sleep_timer)
         hits, searchcontext, query_len = run_protein_search(params)
 
@@ -1920,9 +1925,10 @@ class ComparativeView(View):
         except SuspiciousOperation as e:
             return render(request, '404.html', {'searchcontext': str(e)})
         
-        #print('REQUEST1')
-        #print('Request parameters:', og_id, genome, locus_tag, 
-        # request.GET.get('size'), request.GET.get('lines'))
+        logger.debug('REQUEST1')
+        logger.debug('Request parameters: %s %s %s %s %s', og_id, genome,
+                     locus_tag, request.GET.get('size'), request.GET.get('lines')
+                     )
         context = {}
         for key, val in request.GET.items():
             context[key] = val
@@ -1947,9 +1953,9 @@ class ComparativeView(View):
     def ajax_view(request):
         start_time = time.time()
 
-        #print('REQUEST2')
-        #for key, val in request.GET.items():
-        #    print(key, val)
+        logger.debug('REQUEST2')
+        for key, val in request.GET.items():
+            logger.debug('%s:%s', key, val)
         try:
             ComparativeView.verify_parameters(request.GET.get('size'),
                                               request.GET.get('lines')
@@ -1959,7 +1965,7 @@ class ComparativeView(View):
             
         # Sleep timer for testing to imitate long-running task
         #sleep_timer = 0
-        #print('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
+        #logger.debug('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         #time.sleep(sleep_timer)
 
         context = {}
@@ -2648,10 +2654,10 @@ def generate_external_link(query, query_type, genome=None):
                 ).prefetch_related(
                     'protein__kegg_orthologs'
                 )
-                print(kp_ids[0]['kegg_id'])
+                logger.debug(kp_ids[0]['kegg_id'])
                 kegg_map_url = 'https://www.kegg.jp/pathway/' + \
                                kp_ids[0]['kegg_id'] + '+'
-                print(kegg_map_url)
+                logger.debug(kegg_map_url)
                 ko_ids = set()
                 for gene in gene_list:
                     for ko in gene.protein.kegg_orthologs.all():

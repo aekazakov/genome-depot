@@ -2,9 +2,9 @@ import os
 import gzip
 import json
 import shutil
-#import mmh3
 import hashlib
 import urllib
+import logging
 from collections import defaultdict, OrderedDict
 from pathlib import Path
 from Bio import GenBank
@@ -40,8 +40,8 @@ from browser.models import Cog_class
 from browser.models import Operon
 from browser.models import Annotation
 from genomebrowser.settings import BASE_URL
-from browser.dataimport.annotator import Annotator
-from browser.dataimport.taxonomy import load_taxonomy
+from browser.pipeline.annotate import Annotator
+from browser.pipeline.taxonomy import load_taxonomy
 
 """ Imports genomes into database from GenBank files.
 Input file must have six columns:
@@ -53,17 +53,17 @@ Input file must have six columns:
 6. External ID to be used as a label (can be blank)
 
 """
+logger = logging.getLogger("CGCMS")
 
 class Importer(object):
 
     def __init__(self):
         self.config = {}
-        self.read_config()
+        self._read_config()
         self.inputgenomes = defaultdict(dict)
         self.staticfiles = defaultdict(list)
         self.taxonomy, self.taxonomy_id_lookup, self.eggnog_taxonomy_lookup = \
         load_taxonomy(self.config['ref.taxonomy'], self.config['cgcms.eggnog_taxonomy'])
-        #self.taxonomy_id_lookup = {}
         self.protein_hash2id = {}
         self.protein_hash2gene = defaultdict(list)
         self.eggnog_input_file = os.path.join(self.config['cgcms.temp_dir'],
@@ -84,7 +84,7 @@ class Importer(object):
         self.mappings = {}
         self.relations = {}
         
-    def read_config(self):
+    def _read_config(self):
         for item in Config.objects.values('param', 'value'):
             self.config[item['param']] = item['value']
     
@@ -150,6 +150,8 @@ class Importer(object):
             line.rstrip('\n\r').split('\t')
             # Sanity check
             if sample_id == '' and strain_id == '':
+                logger.error('Either strain ID or sample ID required for genome %s',
+                             genome_id)
                 raise ValueError('Either strain ID or sample ID required for genome '
                                  + genome_id
                                  )
@@ -180,11 +182,11 @@ class Importer(object):
                                        genome_file
                                        )
         if problem_genomes:
-            print('CHECK LIST OF GENOMES. SOME GENOME ' + 
+            logger.error('CHECK INPUT LIST OF GENOMES. SOME GENOME ' + 
                   'NAMES ALREADY EXIST IN THE DATABASE:'
                   )
             for genome in problem_genomes:
-                print(genome)
+                logger.error(genome)
             raise ValueError('Check and fix errors:\n' + '\n'.join(problem_genomes))
         self.genomefiles = result
         
@@ -252,10 +254,10 @@ class Importer(object):
                 # let's try organism attribute of sequence records
                 organism_data['organism'] = organism
             else:
-                print('Organism name not found in', gbk_file)
+                logger.warning('Organism name not found in %s', gbk_file)
                 organism_data['organism'] = 'Unknown'
         if 'tax_id' not in organism_data:
-            print('Taxonomy ID not found in', gbk_file)
+            logger.warning('Taxonomy ID not found in %s', gbk_file)
             organism_data['tax_id'] = '0'
         return organism_data
     
@@ -431,7 +433,11 @@ class Importer(object):
                 parent_id = self.taxonomy[parent_id]['parent']
     
     def process_protein(self, sequence, protein_name):
-        #protein_hash = hex(mmh3.hash128(sequence))[2:]
+        '''
+            This functions populates self.protein_data and 
+            exports protein sequences into the input file for
+            eggnog-mapper
+        '''
         if sequence.endswith('*'):
             sequence = sequence[:-1]
         protein_hash = hashlib.md5(sequence.encode('utf-8')).hexdigest()
@@ -446,7 +452,7 @@ class Importer(object):
                 outfile.write('>' + protein_hash + '\n' + sequence + '\n')
         return protein_hash
         
-    def parse_location(self, location):
+    def parse_location(self, location, contig_size):
         strand = 1
         if location.startswith('complement('):
             strand = -1
@@ -455,6 +461,8 @@ class Importer(object):
         location = location.replace('<','')
         location = location.replace('order(','join(')
         if location.startswith('join('):
+            # This is a compound location.
+            # Compound locations are not supported.
             location = location[5:-1]
             segments = location.split(',')
             location_coords = []
@@ -464,37 +472,52 @@ class Importer(object):
                                         in segment.split('..')
                                         ]
                 except ValueError:
-                    print('Location parsing error', location)
+                    logger.error('Location parsing error: %s', location)
                     raise
             location_coords.sort()
+            start = location_coords[0]
+            end = location_coords[-1]
+            if start == 1 and end == contig_size:
+                # This is probably a feature that wraps around origin 
+                # of a circular sequence. Either the first or the last
+                # segment of the gene will be shown on the web site.
+                if strand == 1:
+                    try:
+                        location_coords = [int(coord.strip()) for coord
+                                            in segments[-1].split('..')
+                                            ]
+                    except ValueError:
+                        logger.error('Location parsing error: %s', location)
+                        raise
+                else:
+                    try:
+                        location_coords = [int(coord.strip()) for coord
+                                            in segments[0].split('..')
+                                            ]
+                    except ValueError:
+                        logger.error('Location parsing error: %s', location)
+                        raise
+                location_coords.sort()
+                start = location_coords[0]
+                end = location_coords[-1]
         else:
             try:
                 location_coords = [int(coord.strip()) for coord 
                                    in location.split('..')
                                    ]
             except ValueError:
-                print('Location parsing error', location)
+                logger.error('Location parsing error: %s', location)
                 raise
-        start = location_coords[0]
-        end = location_coords[-1]
-        if start == 1 and end > 500000:
-            # Feature size is too big. This is probably a gene that starts
-            # at the end of circular genome and ends at the beginning
-            # Either the beginning or the end of the gene will be shown
-            # on the web site, depending on the size of the parts.
-            if location_coords[1] - location_coords[0] > \
-            location_coords[-1] - location_coords[-2]:
-                end = location_coords[1]
-            else:
-                start = location_coords[-2]
+            start = location_coords[0]
+            end = location_coords[-1]
         return start, end, strand
         
-    def process_feature(self, feature, genome_id, contig_id, locus_tags):
+    def process_feature(self, feature, genome_id, contig_id, locus_tags, contig_size):
         translation = ''
         accepted_features = ['gene', 'CDS', 'rRNA', 'tRNA']
         if feature.key not in accepted_features:
             return '', ''
-        start, end, strand = self.parse_location(feature.location)
+        start, end, strand = self.parse_location(feature.location, contig_size)
         locus_tag = ''
         old_locus_tag = ''
         translation = ''
@@ -607,7 +630,7 @@ class Importer(object):
                     with gzip.open(gbk_copy, 'wb') as outfile:
                         shutil.copyfileobj(infile, outfile)
                 gbk_handle = open(gbk_file, 'r')
-            print('Reading', gbk_file)
+            logger.info('Reading %s', gbk_file)
             self.inputgenomes[genome_id]['gbk_filepath'] = gbk_copy
             parser = GenBank.parse(gbk_handle)
             genome_size = 0
@@ -616,7 +639,6 @@ class Importer(object):
             genome_sequence = []
             features = OrderedDict()
             genome_fasta = os.path.join(self.config['cgcms.temp_dir'],
-                                        genome_id,
                                         genome_id + '.fna'
                                         )
             locus_tags = set()
@@ -647,7 +669,8 @@ class Importer(object):
                             self.process_feature(feature,
                                                  genome_id,
                                                  contig_id,
-                                                 locus_tags
+                                                 locus_tags,
+                                                 contig_size
                                                  )
                         locus_tags.add(locus_tag)
                         if feature_location != '':
@@ -758,11 +781,12 @@ class Importer(object):
         cmd = ['/bin/bash', eggnog_mapper_script]
         with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
             for line in proc.stdout:
-                print(line, end='')
+                logger.info(line)
         if proc.returncode != 0:
             # Suppress false positive no-member error
             # (see https://github.com/PyCQA/pylint/issues/1860)
             # pylint: disable=no-member
+            logger.error('EggNOG-mapper finished with error')
             raise CalledProcessError(proc.returncode, proc.args)
         return result
         
@@ -837,7 +861,7 @@ class Importer(object):
                     row[0] = row[0].split(':')[-1]
                 ref_data[row[0]]['id'] = row[1]
                 ref_data[row[0]]['description'] = row[2]
-        print(len(ref_data), 'reference entries found')
+        logger.info('%d reference entries found', len(ref_data))
         for protein_hash in self.protein_data:
             if mapping_id not in self.protein_data[protein_hash]:
                 continue
@@ -856,7 +880,7 @@ class Importer(object):
                 except KeyError:
                     if not ref_item.startswith('ko')\
                     and mapping_id == 'eggnog.KEGG_Reaction':
-                        print(ref_item, 'not found in', ref_file)
+                        logger.error('%s not found in %s', ref_item, ref_file)
                     continue
                 selected_ref_data[ref_id] = ref_description
                 relations.add((protein_hash, ref_id))
@@ -874,7 +898,7 @@ class Importer(object):
                 row = line.rstrip('\n\r').split('\t')
                 ref_data[row[0]]['id'] = row[1]
                 ref_data[row[0]]['description'] = (row[2], row[3])
-        print(len(ref_data), 'reference entries found')
+        logger.info('%d reference entries found', len(ref_data))
         for protein_hash in self.protein_data:
             if mapping_id not in self.protein_data[protein_hash]:
                 continue
@@ -1014,12 +1038,12 @@ class Importer(object):
     def write_data(self):
         # write taxonomy data
         Taxon.objects.bulk_create(self.taxon_instances.values(), batch_size=1000)
-        print('Taxonomy imported')
+        logger.info('Taxonomy imported')
         taxon_instances = {taxon.taxonomy_id:taxon for taxon in Taxon.objects.all()}
         
         # write strain data
         Strain.objects.bulk_create(self.strain_instances.values(), batch_size=1000)
-        print('Strains imported')
+        logger.info('Strains imported')
 
         # write strain metadata
         strain_instances = {strain.strain_id:strain for strain
@@ -1038,11 +1062,11 @@ class Importer(object):
         Strain_metadata.objects.bulk_create(strain_metadata_instances,
                                             batch_size=1000
                                             )
-        print('Strain metadata imported')
+        logger.info('Strain metadata imported')
 
         # write sample data
         Sample.objects.bulk_create(self.sample_instances.values(), batch_size=1000)
-        print('Samples imported')
+        logger.info('Samples imported')
         sample_instances = {sample.sample_id:sample for sample
                             in Sample.objects.all()
                             }
@@ -1116,7 +1140,7 @@ class Importer(object):
                         ]
             protein_instances.append(protein_instance)
         Protein.objects.bulk_create(protein_instances, batch_size=1000)
-        print('Proteins imported')
+        logger.info('Proteins imported')
         
         # write contig data
         contig_instances = []
@@ -1128,20 +1152,20 @@ class Importer(object):
                 genome=genome_ids[contig_entry['genome']]
                 ))
         Contig.objects.bulk_create(contig_instances, batch_size=1000)
-        print('Contigs imported')
+        logger.info('Contigs imported')
         
         # write gene data
         gene_instances = []
-        contig_ids = {(contig.genome.name, contig.contig_id):contig for contig
+        contig_ids = {(contig.genome.name, contig.contig_id):contig.id for contig
                       in Contig.objects.all()
                       }
-        protein_ids = {protein.protein_hash:protein for protein
+        protein_ids = {protein.protein_hash:protein.id for protein
                        in Protein.objects.all()
                        }
         for gene_id,gene_entry in self.gene_data.items():
             gene_instance = Gene(name=gene_entry['name'],
                 locus_tag=gene_entry['locus_tag'],
-                contig=contig_ids[(gene_entry['genome_id'], gene_entry['contig_id'])],
+                contig_id=contig_ids[(gene_entry['genome_id'], gene_entry['contig_id'])],
                 type=gene_entry['type'],
                 start=gene_entry['start'],
                 end=gene_entry['end'],
@@ -1149,15 +1173,15 @@ class Importer(object):
                 genome=genome_ids[gene_entry['genome_id']]
                 )
             if 'protein_hash' in gene_entry:
-                gene_instance.protein = protein_ids[gene_entry['protein_hash']]
+                gene_instance.protein_id = protein_ids[gene_entry['protein_hash']]
             if 'function' in gene_entry:
                 if len(gene_entry['function']) > 249:
-                    print('Function too long:', gene_entry['function'])
+                    logger.warning('Function name too long: %s', gene_entry['function'])
                     gene_entry['function'] = gene_entry['function'][:246] + '...'
                 gene_instance.function = gene_entry['function']
             gene_instances.append(gene_instance)
         Gene.objects.bulk_create(gene_instances, batch_size=1000)
-        print('Genes imported')
+        logger.info('Genes imported')
 
         # write kegg reactions data
         existing_ref_data_objects = set([item['kegg_id'] for item
@@ -1173,20 +1197,20 @@ class Importer(object):
         Kegg_reaction.objects.bulk_create(reference_data_instances, batch_size=1000)
         
         relations = []
-        reference_data_objects = {ref_object.kegg_id:ref_object for ref_object
+        reference_data_objects = {ref_object.kegg_id:ref_object.id for ref_object
                                   in Kegg_reaction.objects.all()
                                   }
         for (protein_hash, reference_id) in self.relations['kegg_reaction']:
             relations.append(Protein.kegg_reactions
-                             .through(protein=protein_ids[protein_hash],
-                                      kegg_reaction=reference_data_objects[reference_id]
+                             .through(protein_id=protein_ids[protein_hash],
+                                      kegg_reaction_id=reference_data_objects[reference_id]
                                       )
                              )
         Protein.kegg_reactions.through.objects.bulk_create(relations,
                                                            batch_size = 1000,
                                                            ignore_conflicts=True
                                                            )
-        print('KEGG reactions imported')
+        logger.info('KEGG reactions imported')
 
         # write kegg pathways data
         existing_ref_data_objects = set([item['kegg_id'] for item
@@ -1204,20 +1228,20 @@ class Importer(object):
                                          )
 
         relations = []
-        reference_data_objects = {ref_object.kegg_id:ref_object for ref_object
+        reference_data_objects = {ref_object.kegg_id:ref_object.id for ref_object
                                   in Kegg_pathway.objects.all()
                                   }
         for (protein_hash, reference_id) in self.relations['kegg_pathway']:
             relations.append(Protein.kegg_pathways
-                             .through(protein=protein_ids[protein_hash],
-                                      kegg_pathway=reference_data_objects[reference_id]
+                             .through(protein_id=protein_ids[protein_hash],
+                                      kegg_pathway_id=reference_data_objects[reference_id]
                                       )
                              )
         Protein.kegg_pathways.through.objects.bulk_create(relations,
                                                           batch_size = 1000,
                                                           ignore_conflicts=True
                                                           )
-        print('KEGG pathways imported')
+        logger.info('KEGG pathways imported')
 
         # write kegg orthologs data
         existing_ref_data_objects = set([item['kegg_id'] for item
@@ -1235,20 +1259,20 @@ class Importer(object):
                                           )
 
         relations = []
-        reference_data_objects = {ref_object.kegg_id:ref_object for ref_object
+        reference_data_objects = {ref_object.kegg_id:ref_object.id for ref_object
                                   in Kegg_ortholog.objects.all()
                                   }
         for (protein_hash, reference_id) in self.relations['kegg_ortholog']:
             relations.append(Protein.kegg_orthologs
-                             .through(protein=protein_ids[protein_hash],
-                                      kegg_ortholog=reference_data_objects[reference_id]
+                             .through(protein_id=protein_ids[protein_hash],
+                                      kegg_ortholog_id=reference_data_objects[reference_id]
                                       )
                              )
         Protein.kegg_orthologs.through.objects.bulk_create(relations,
                                                            batch_size = 1000,
                                                            ignore_conflicts=True
                                                            )
-        print('KEGG orthologs imported')
+        logger.info('KEGG orthologs imported')
 
         # write go data
         existing_ref_data_objects = set([item['go_id'] for item
@@ -1265,20 +1289,20 @@ class Importer(object):
         Go_term.objects.bulk_create(reference_data_instances, batch_size=1000)
 
         relations = []
-        reference_data_objects = {ref_object.go_id:ref_object for ref_object
+        reference_data_objects = {ref_object.go_id:ref_object.id for ref_object
                                   in Go_term.objects.all()
                                   }
         for (protein_hash, reference_id) in self.relations['go']:
             relations.append(Protein.go_terms
-                             .through(protein=protein_ids[protein_hash],
-                                      go_term=reference_data_objects[reference_id]
+                             .through(protein_id=protein_ids[protein_hash],
+                                      go_term_id=reference_data_objects[reference_id]
                                       )
                              )
         Protein.go_terms.through.objects.bulk_create(relations,
                                                      batch_size = 1000,
                                                      ignore_conflicts=True
                                                      )
-        print('GO terms imported')
+        logger.info('GO terms imported')
 
         # write og data
         # orthogroup id is eggnog_id + '@' + taxonomy_id
@@ -1300,22 +1324,22 @@ class Importer(object):
                 ))
         Ortholog_group.objects.bulk_create(reference_data_instances, batch_size=1000)
         
-        og_ids = {(og.eggnog_id, og.taxon.taxonomy_id):og for og
+        og_ids = {(og.eggnog_id, og.taxon.taxonomy_id):og.id for og
                    in Ortholog_group.objects.all()
                    }
         relations = []
         for (protein_hash, eggnog_id, taxonomy_id) in self.relations['og']:
             relations.append(Protein.ortholog_groups
                              .through(
-                                      protein=protein_ids[protein_hash],
-                                      ortholog_group=og_ids[(eggnog_id, taxonomy_id)]
+                                      protein_id=protein_ids[protein_hash],
+                                      ortholog_group_id=og_ids[(eggnog_id, taxonomy_id)]
                                       )
                              )
         Protein.ortholog_groups.through.objects.bulk_create(relations,
                                                             batch_size = 1000,
                                                             ignore_conflicts=True
                                                             )
-        print('EggNOG orthologs imported')
+        logger.info('EggNOG orthologs imported')
 
         # write ec data
         existing_ref_data_objects = set([item['ec_number'] for item 
@@ -1331,20 +1355,20 @@ class Importer(object):
         Ec_number.objects.bulk_create(reference_data_instances, batch_size=1000)
 
         relations = []
-        reference_data_objects = {ref_object.ec_number:ref_object for ref_object
+        reference_data_objects = {ref_object.ec_number:ref_object.id for ref_object
                                   in Ec_number.objects.all()
                                   }
         for (protein_hash, reference_id) in self.relations['ec']:
             relations.append(Protein.ec_numbers
-                             .through(protein=protein_ids[protein_hash],
-                                      ec_number=reference_data_objects[reference_id]
+                             .through(protein_id=protein_ids[protein_hash],
+                                      ec_number_id=reference_data_objects[reference_id]
                                       )
                              )
         Protein.ec_numbers.through.objects.bulk_create(relations,
                                                        batch_size = 1000,
                                                        ignore_conflicts=True
                                                        )
-        print('EC numbers imported')
+        logger.info('EC numbers imported')
 
         # write tc data
         existing_ref_data_objects = set([item['tc_id'] for item 
@@ -1360,19 +1384,19 @@ class Importer(object):
         Tc_family.objects.bulk_create(reference_data_instances, batch_size=1000)
 
         relations = []
-        reference_data_objects = {ref_object.tc_id:ref_object for ref_object
+        reference_data_objects = {ref_object.tc_id:ref_object.id for ref_object
                                   in Tc_family.objects.all()
                                   }
         for (protein_hash, reference_id) in self.relations['tc']:
             relations.append(Protein.tc_families.through(
-                             protein=protein_ids[protein_hash],
-                             tc_family=reference_data_objects[reference_id])
+                             protein_id=protein_ids[protein_hash],
+                             tc_family_id=reference_data_objects[reference_id])
                              )
         Protein.tc_families.through.objects.bulk_create(relations,
                                                         batch_size = 1000,
                                                         ignore_conflicts=True
                                                         )
-        print('TC families imported')
+        logger.info('TC families imported')
 
         # write cazy data
         existing_ref_data_objects = set([item['cazy_id'] for item
@@ -1388,20 +1412,20 @@ class Importer(object):
         Cazy_family.objects.bulk_create(reference_data_instances, batch_size=1000)
 
         relations = []
-        reference_data_objects = {ref_object.cazy_id:ref_object for ref_object
+        reference_data_objects = {ref_object.cazy_id:ref_object.id for ref_object
                                   in Cazy_family.objects.all()
                                   }
         for (protein_hash, reference_id) in self.relations['cazy']:
             relations.append(Protein.cazy_families.through(
-                                   protein=protein_ids[protein_hash],
-                                   cazy_family=reference_data_objects[reference_id]
+                                   protein_id=protein_ids[protein_hash],
+                                   cazy_family_id=reference_data_objects[reference_id]
                                    )
                              )
         Protein.cazy_families.through.objects.bulk_create(relations,
                                                           batch_size = 1000,
                                                           ignore_conflicts=True
                                                           )
-        print('CAZy families imported')
+        logger.info('CAZy families imported')
 
         # write cog data
         existing_ref_data_objects = set([item['cog_id'] for item 
@@ -1417,20 +1441,20 @@ class Importer(object):
         Cog_class.objects.bulk_create(reference_data_instances, batch_size=1000)
 
         relations = []
-        reference_data_objects = {ref_object.cog_id:ref_object for ref_object
+        reference_data_objects = {ref_object.cog_id:ref_object.id for ref_object
                                   in Cog_class.objects.all()
                                   }
         for (protein_hash, reference_id) in self.relations['cog']:
             relations.append(Protein.cog_classes.through(
-                                protein=protein_ids[protein_hash],
-                                cog_class=reference_data_objects[reference_id]
+                                protein_id=protein_ids[protein_hash],
+                                cog_class_id=reference_data_objects[reference_id]
                                 )
                             )
         Protein.cog_classes.through.objects.bulk_create(relations,
                                                         batch_size = 1000,
                                                         ignore_conflicts=True
                                                         )
-        print('COG classes imported')
+        logger.info('COG classes imported')
 
     def export_genome_fasta(self, genome_id, out_file = None):
         '''
@@ -1651,7 +1675,7 @@ class Importer(object):
         cmd = ['bash', script_path]
         with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
             for line in proc.stdout:
-                print(line, end='')
+                logger.info(line)
         if proc.returncode != 0:
             # Suppress false positive no-member error
             # (see https://github.com/PyCQA/pylint/issues/1860)
@@ -1683,19 +1707,19 @@ class Importer(object):
                    os.path.join(self.config['cgcms.search_db_dir'],
                    'blast_nucl')
                    ]
-            print(' '.join(cmd))
+            logger.info(' '.join(cmd))
             with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
                 for line in proc.stdout:
-                    print(line, end='')
+                    logger.info(line)
             if proc.returncode != 0:
                 # Suppress false positive no-member error
                 # (see https://github.com/PyCQA/pylint/issues/1860)
                 # pylint: disable=no-member
                 raise CalledProcessError(proc.returncode, proc.args)
         else:
-            print(self.config['cgcms.search_db_nucl'],
-                  ' is missing or empty. Sequence database was not created.'
-                  )
+            logger.warning('%s is missing or empty. Sequence database was not created.',
+                           self.config['cgcms.search_db_nucl']
+                           )
 
         if os.path.exists(self.config['cgcms.search_db_prot']) \
         and os.stat(self.config['cgcms.search_db_prot']).st_size > 0:
@@ -1705,19 +1729,19 @@ class Importer(object):
                    os.path.join(self.config['cgcms.search_db_dir'],
                    'blast_prot')
                    ]
-            print(' '.join(cmd))
+            logger.info(' '.join(cmd))
             with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
                 for line in proc.stdout:
-                    print(line, end='')
+                    logger.info(line)
             if proc.returncode != 0:
                 # Suppress false positive no-member error
                 # (see https://github.com/PyCQA/pylint/issues/1860)
                 # pylint: disable=no-member
                 raise CalledProcessError(proc.returncode, proc.args)
         else:
-            print(self.config['cgcms.search_db_prot'],
-                  ' is missing or empty. Sequence database was not created.'
-                  )
+            logger.info('%s is missing or empty. Sequence database was not created.',
+                        self.config['cgcms.search_db_prot']
+                        )
         
     def delete_search_databases(self):
         for filename in os.listdir(self.config['cgcms.search_db_dir']):
@@ -1751,7 +1775,7 @@ class Importer(object):
         
     def import_genomes(self, lines):
         '''
-            This function contains a workflow for genome import.
+            This function defines a workflow for genome import pipeline.
             
             Input parameters:
               lines([str]): input list of lines 
@@ -1772,36 +1796,36 @@ class Importer(object):
 
             This function does not return anything.
         '''
-        print('Trying to create directories for static files')
+        logger.info('Trying to create directories for static files')
         self.make_dirs()
         # read input list. Populate self.inputgenomes
         self.read_genome_list(lines)
         
-        print('Checking genome names')
+        logger.info('Checking genome names')
         # check if any genomes already exist in the database
         self.check_genomes()
         
-        print('Preparing strain data')
+        logger.info('Preparing strain data')
         # make strain data for upload
         self.prepare_strain_data()
         
-        print('Preparing sample data')
+        logger.info('Preparing sample data')
         # make sample data for upload
         self.prepare_sample_data()
         
-        print('Preparing taxonomy data')
+        logger.info('Preparing taxonomy data')
         # make taxonomy data file for upload
         self.prepare_taxonomy_data()
         
-        print('Loading proteins from the database')
+        logger.info('Loading proteins from the database')
         # read protein IDs and hashes
         self.load_proteins()
 
-        print('Processing GBK files')
+        logger.info('Processing GBK files')
         # make genome, contigs, genes data files
         self.process_gbk()
 
-        print('Running eggnog-mapper')
+        logger.info('Running eggnog-mapper')
         # Close MySQL connection before starting eggnog-mapper because it 
         # may run for days resulting in "MySQL server has gone away" error
         connection.close()
@@ -1811,62 +1835,62 @@ class Importer(object):
         # eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
         # 'eggnog_mapper_output.emapper.annotations')
         
-        print('Reading eggnog-mapper output')
+        logger.info('Reading eggnog-mapper output')
         # separate eggnog-mapper output by genome?
         self.parse_eggnog_output(eggnog_outfile)
         
-        print('Prepare eggnog mappings')
+        logger.info('Prepare eggnog mappings')
         # make mappings and relations data
         self.make_mappings()
 
-        print('Prepare eggnog ortholog mappings')
+        logger.info('Prepare eggnog ortholog mappings')
         # make og data file for upload
         self.prepare_og_data()
         
-        print('Prepare eggnog descriptions')
+        logger.info('Prepare eggnog descriptions')
         # make eggnog description data file for upload
         self.prepare_eggnog_description_data()
         
-        print('Populating mysql database')
+        logger.info('Populating mysql database')
         # At this point, genes and annotations are actually written to the database
         self.write_data()
         
-        print('Predict operons')
+        logger.info('Predict operons')
         # Export contigs and proteins and run POEM_py3
         operons_data = self.predict_operons()
         # Write operons to the database
         self.create_operons(operons_data)
         
         #export JBrowse data
-        print('Creating Jbrowser files')
+        logger.info('Creating Jbrowser files')
         self.export_jbrowse_data()
-        print('Exporting protein sequences')
+        logger.info('Exporting protein sequences')
         self.export_proteins()
         
-        print('At this moment, we are ready to delete search databases')
+        logger.info('At this moment, we are ready to delete search databases')
         self.delete_search_databases()
         
         # copy static files
-        print('Copying static files')
+        logger.info('Copying static files')
         self.copy_static_files()
-        print('Generating search databases')
+        logger.info('Generating search databases')
         self.create_search_databases()
 
 #        self.append_eggnog_stored_data(new_eggnog_data)
         # delete temp files
-        print('Removing temporary files')
+        logger.info('Removing temporary files')
         self.cleanup()
-        print('Genomes successfully imported')
+        logger.info('All genomes successfully imported')
 
-        # Generate HMM-based mappings
+        # Run annotation tools
         annotator = Annotator()
-        new_genome_ids = [item['id'] for item
-                          in Genome.objects.filter(
-                                                   name__in = self.genome_data.keys()
-                                                   ).values('id')
+        #new_genome_ids = [item['id'] for item
+        #                  in Genome.objects.filter(
+        #                                           name__in = self.genome_data.keys()
+        #                                           ).values('id')
                           ]
-        annotator.update_pfam_domains(new_genome_ids)
-        annotator.update_tigrfam_domains(new_genome_ids)
+        #annotator.update_pfam_domains(new_genome_ids)
+        #annotator.update_tigrfam_domains(new_genome_ids)
         
         # Generate annotations with external tools
         new_genome_files = {item['name']:item['gbk_filepath'] for item
@@ -1875,6 +1899,7 @@ class Importer(object):
                                                      ).values('name','gbk_filepath')
                             }
         annotator.run_external_tools(new_genome_files)
+        logger.info('Done')
         return 'Done!'
 
     def export_proteins(self):
@@ -2020,13 +2045,13 @@ class Importer(object):
             outfile.write('conda deactivate\n')
             
         cmd = ['/bin/bash', poem_script]
-        print(' '.join(cmd))
+        logger.info(' '.join(cmd))
         # Close MySQL connection before starting external process because 
         # it may run for too long resulting in "MySQL server has gone away" error
         connection.close()
         with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
             for line in proc.stdout:
-                print(line, end='')
+                logger.info(line)
         if proc.returncode != 0:
             # Suppress false positive no-member error 
             # (see https://github.com/PyCQA/pylint/issues/1860)
@@ -2109,8 +2134,8 @@ class Importer(object):
             contigs = {item.contig_id:item for item
                        in Contig.objects.filter(genome__name=genome_id)
                        }
-            print('Contigs:')
-            print(contigs.keys())
+            logger.info('Contigs:')
+            logger.info(contigs.keys())
             for operon in operons_data[genome_id]:
                 operon_instance = Operon(name = operon[0],
                                          start = operon[1],
@@ -2146,7 +2171,7 @@ class Importer(object):
 
     def generate_static_files(self, in_file):
         if os.path.exists(in_file):
-            print('Genomes file found', in_file)
+            logger.debug('Genomes list file found', in_file)
         self.load_genome_list(in_file)
         self.load_genome_data()
         self.process_gbk()
@@ -2348,7 +2373,8 @@ class Importer(object):
                                                         str(feature.location.end),
                                                         str(feature.location.strand)
                                                         ])
-                                    print('Using', gene_id, 'instead of locus tag')
+                                    logger.warning('Using %s instead of locus tag',
+                                                   gene_id)
                                 if gene_id in genedata[accession]:
                                     if 'note' not in feature.qualifiers:
                                         feature.qualifiers['note'] = []
@@ -2387,7 +2413,7 @@ class Importer(object):
                                                  key=lambda x: x.location.start
                                                  )
                     SeqIO.write(seq_record, outfile, 'genbank')
-            print(genome_id, 'exported')
+            logger.info(genome_id, 'exported')
         
 
 def download_ncbi_assembly(assembly_id, email, upload_dir):
@@ -2413,7 +2439,7 @@ def download_ncbi_assembly(assembly_id, email, upload_dir):
         return ''
     link = os.path.join(url, os.path.basename(url) + '_genomic.gbff.gz')
     outfile = os.path.join(upload_dir, assembly_id + '_genomic.gbff.gz')
-    print ('Getting assembly from', link)
+    logger.info ('Getting assembly from', link)
     urllib.request.urlretrieve(link, filename=outfile)
     return outfile
     

@@ -1,7 +1,7 @@
 import os
 from django.core.management.base import BaseCommand, CommandError
 from browser.models import Genome
-from browser.dataimport.annotator import Annotator
+from browser.pipeline.annotate import Annotator
 
 class Command(BaseCommand):
     help = '''

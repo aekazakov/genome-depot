@@ -1,7 +1,7 @@
 import os
 from django.core.management.base import BaseCommand, CommandError
 from browser.models import Genome
-from browser.dataimport.annotator import Annotator
+from browser.pipeline.annotate import Annotator
 
 
 class Command(BaseCommand):
@@ -25,6 +25,6 @@ class Command(BaseCommand):
                     genomes[genome_name] = Genome.objects.get(
                                                               name=genome_name
                                                               ).gbk_filepath
-            annotator.run_external_tools(genomes, plugin=None)
+            annotator.run_external_tools(genomes, plugin_name=None)
         else:
             raise CommandError('Genomes file ' + options['i'] + ' not found.')

@@ -1,12 +1,14 @@
-from .models import Gene
-from .models import Ortholog_group
-from .models import Regulon
-from .models import Site
+import logging
 from collections import defaultdict
-from browser.dataimport.annotator import autovivify
 from django.urls import reverse
 from django.http import Http404
+from browser.models import Gene
+from browser.models import Ortholog_group
+from browser.models import Regulon
+from browser.models import Site
+from browser.pipeline.annotate import autovivify
 
+logger = logging.getLogger("CGCMS")
 
 def get_lowest_level_og(protein):
     result = None
@@ -33,6 +35,7 @@ def build_conserved_regulon(og_id):
     try:
         og = Ortholog_group.objects.get(id=og_id)
     except Ortholog_group.DoesNotExist:
+        logger.error('Ortholog group not found: %s', og_id)
         raise Http404('Ortholog group not found: ' + og_id)
     
     regulators = Gene.objects.filter(protein__ortholog_groups__id=og.id

@@ -1,6 +1,6 @@
 import os
 from django.core.management.base import BaseCommand
-from browser.dataimport.importer import Importer
+from browser.pipeline.genome_import import Importer
 
 class Command(BaseCommand):
     help = 'Export genomes with gene annotations in genbank format'

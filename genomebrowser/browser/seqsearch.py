@@ -1,9 +1,12 @@
 import os
+import logging
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 from subprocess import Popen, PIPE, STDOUT
 from django.core.exceptions import SuspiciousOperation
 from browser.models import Config
+
+logger = logging.getLogger("CGCMS")
 
 def _verify_alphabet(sequence, alphabet):
     '''
@@ -84,7 +87,7 @@ def run_protein_search(params):
         params = validate_params(params)
     except SuspiciousOperation as e:
         searchcontext = str(e)
-        print('Parameters:', params)
+        logger.debug('Parameters: %s', str(params))
         return result, searchcontext, 0
     query = params['sequence']
 
@@ -127,7 +130,9 @@ def run_protein_search(params):
         blastoutput, err = p.communicate(query.strip())
     if p.returncode != 0:
         searchcontext = 'BLASTP finished with error:\n' + '\n'.join(err)
-        print('BLASTP finished with error. Parameters:', params, '\n'.join(err))
+        logger.error('BLASTP finished with error. Parameters: %s \n %s',
+                     str(params), '\n'.join(err)
+                     )
         return result, searchcontext, 0
     for line in blastoutput.split('\n'):
         if line.startswith('#'):
@@ -153,7 +158,7 @@ def run_nucleotide_search(params):
         params = validate_params(params)
     except SuspiciousOperation as e:
         searchcontext = str(e)
-        print('Parameters:', params)
+        logger.debug('Parameters: %s', str(params))
         return result, searchcontext, 0
     query = params['sequence']
     
@@ -197,7 +202,9 @@ def run_nucleotide_search(params):
         blastoutput, err = p.communicate(query.strip())
     if p.returncode != 0:
         searchcontext = 'Megablast finished with error:\n' + '\n'.join(err)
-        print('Megablast finished with error. Parameters:', params, '\n'.join(err))
+        logger.error('Megablast finished with error. Parameters: %s \n %s',
+                     str(params), '\n'.join(err)
+                     )
         return result, searchcontext, 0
     for line in blastoutput.split('\n'):
         if line.startswith('#'):

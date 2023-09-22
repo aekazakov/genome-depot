@@ -5,18 +5,21 @@ import sys
 import gzip
 import shutil
 import uuid
+import logging
 from Bio import GenBank
 from django.conf import settings
 from django.core.mail import mail_admins
-from browser.dataimport.importer import Importer, download_ncbi_assembly
-from browser.dataimport.annotator import Annotator
+from browser.pipeline.genome_import import Importer, download_ncbi_assembly
+from browser.pipeline.annotate import Annotator
 from browser.models import Strain, Sample, Genome, Protein, Config
 
+logger = logging.getLogger("CGCMS")
+
 def test_task_impl(request, genome_names):
-    print(request)
-    print(genome_names)
+    logger.debug(request)
+    logger.debug(genome_names)
     try:
-        print(genome_names[0])
+        logger.debug(genome_names[0])
         subject = 'CGCMS test task finished'
         message = f'Test task finished successfuly at {settings.BASE_URL}'
         mail_admins(subject, message)
@@ -32,7 +35,7 @@ def test_task_impl(request, genome_names):
 
 def import_genomes_impl(args):
     lines, email = args
-    print ('Asynchronous task received. Starting import.')
+    logger.debug('Asynchronous task received. Starting import.')
     temp_dir = Config.objects.get(param='cgcms.temp_dir').value
     try:
         upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
@@ -52,14 +55,14 @@ def import_genomes_impl(args):
             genome_import_batch.append(line)
             if genome_import_batch_size == genome_import_batch_limit:
                 genome_batch_count += 1
-                print('Importing genome batch', genome_batch_count)
+                logger.debug('Importing genome batch %d', genome_batch_count)
                 importer = Importer()
                 result = importer.import_genomes(genome_import_batch)
                 genome_import_batch_size = 0
                 genome_import_batch = []
         if genome_import_batch:
             genome_batch_count += 1
-            print('Importing genome batch', genome_batch_count)
+            logger.debug('Importing genome batch %d', genome_batch_count)
             importer = Importer()
             result = importer.import_genomes(genome_import_batch)
         subject = 'CGCMS task finished successfuly'
@@ -167,7 +170,8 @@ def delete_genomes_impl(genome_names):
                         )
         importer.create_search_databases()
         for genome in genome_names:
-            shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'], genome))
+            if os.path.exists(os.path.join(importer.config['cgcms.json_dir'], genome)):
+                shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'], genome))
         os.remove(importer.config['cgcms.search_db_nucl'])
         os.remove(importer.config['cgcms.search_db_prot'])
         subject = 'CGCMS task finished successfuly'
@@ -184,7 +188,7 @@ def delete_genomes_impl(genome_names):
 
     
 def import_sample_metadata_impl(lines):
-    print ('Asynchronous task received. Starting import.')
+    logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
         annotator.add_sample_metadata(lines)
@@ -202,7 +206,7 @@ def import_sample_metadata_impl(lines):
         raise
 
 def import_sample_descriptions_impl(lines):
-    print ('Asynchronous task received. Starting import.')
+    logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
         annotator.update_sample_descriptions(lines)
@@ -220,7 +224,7 @@ def import_sample_descriptions_impl(lines):
         raise
 
 def update_strain_metadata_impl(xlsx_file):
-    print ('Asynchronous task received. Starting import.')
+    logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
         annotator.update_strain_metadata(xlsx_path=None, xlsx_file=xlsx_file)
@@ -238,7 +242,7 @@ def update_strain_metadata_impl(xlsx_file):
         raise
     
 def import_annotations_impl(lines):
-    print ('Asynchronous task received. Starting import.')
+    logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
         annotator.import_annotations(lines)
@@ -256,7 +260,7 @@ def import_annotations_impl(lines):
         raise
 
 def import_regulon_impl(lines):
-    print ('Asynchronous task received. Starting import.')
+    logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
         annotator.add_regulons(lines)

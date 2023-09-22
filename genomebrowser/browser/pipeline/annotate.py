@@ -2,6 +2,9 @@ import os
 import hashlib
 import openpyxl
 import requests
+import importlib
+import pkgutil
+import logging
 from pathlib import Path
 from io import BytesIO
 from collections import defaultdict
@@ -20,25 +23,19 @@ from browser.models import Sample_metadata
 from browser.models import Site
 from browser.models import Strain
 from browser.models import Strain_metadata
+import browser.pipeline.plugins
 
-# Register plugins here
-from browser.dataimport.plugins.fama import application as fama
-from browser.dataimport.plugins.amrfinder import application as amrfinder
-from browser.dataimport.plugins.antismash import application as antismash
-from browser.dataimport.plugins.phispy import application as phispy
-from browser.dataimport.plugins.ecis_screen import application as ecis_screen
-from browser.dataimport.plugins.gapmind import application as gapmind
-from browser.dataimport.plugins.defensefinder import application as defensefinder
-from browser.dataimport.plugins.macsyfinder import application as macsyfinder
 """ 
     Various functions for generation and import of gene annotations.
 """
+
+logger = logging.getLogger("CGCMS")
 
 class Annotator(object):
 
     def __init__(self):
         self.config = {}
-        self.read_config()
+        self._read_config()
         self.proteins = {}
         self.hmmsearch_input_file = os.path.join(self.config['cgcms.temp_dir'],
                                                  'hmmsearch_input.faa'
@@ -48,8 +45,15 @@ class Annotator(object):
         # Data tables
         self.annotations = []
         self.metadata = []
+        self.plugins = {name: importlib.import_module(name)
+                        for finder, name, ispkg
+                        in pkgutil.iter_modules(browser.pipeline.plugins.__path__,
+                                                browser.pipeline.plugins.__name__ + "."
+                                                )
+                        }
         
-    def read_config(self):
+        
+    def _read_config(self):
         for item in Config.objects.values('param', 'value'):
             self.config[item['param']] = item['value']
 
@@ -86,7 +90,7 @@ class Annotator(object):
               ]
         with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
             for line in proc.stdout:
-                print(line, end='')
+                logger.info(line)
         if proc.returncode != 0:
             # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
             # pylint: disable=no-member
@@ -124,7 +128,7 @@ class Annotator(object):
         
     def add_pfam_domains(self):
         self.proteins = {}
-        print('Deleting existing annotations')
+        logger.info('Deleting existing annotations')
         Annotation.objects.filter(source='Pfam database').delete()
         self._create_pfam_domains()
         
@@ -135,10 +139,10 @@ class Annotator(object):
         """
         batch_size=10000
         # export proteins as FASTA
-        print('Exporting proteins')
+        logger.info('Exporting proteins')
         self.export_proteins(genome_ids)
         # run hmmscan
-        print('Running HMMSEARCH')
+        logger.info('Running HMMSEARCH')
         hmmsearch_outfile = os.path.join(self.config['cgcms.temp_dir'],
                                          'hmmsearch_pfam.out.txt'
                                          )
@@ -146,12 +150,12 @@ class Annotator(object):
             os.remove(hmmsearch_outfile)
         self.run_hmmsearch(hmmsearch_outfile, self.config['ref.pfam_hmm_lib'])
         # parse result
-        print('Reading HMMSEARCH output')
+        logger.info('Reading HMMSEARCH output')
         hits = self.parse_hmmsearch_output(hmmsearch_outfile)
         # read HMM list
         ref_hmm = self.read_hmm_reference(self.config['ref.pfam_hmm_list'])
         # create Annotations
-        print('Creating annotations')
+        logger.info('Creating annotations')
         annotations_written = 0
         for hit in hits:
             protein = self.proteins[hit['protein_hash']]
@@ -176,15 +180,15 @@ class Annotator(object):
                         annotations_written += len(self.annotations)
                         self.annotations = []
         # write Annotations
-        print('Writing annotations')
+        logger.info('Writing annotations')
         Annotation.objects.bulk_create(self.annotations, batch_size=batch_size)
         annotations_written += len(self.annotations)
-        print(annotations_written, 'annotations created for PFAM domains')
+        logger.info('%d annotations created for PFAM domains', annotations_written)
         self.annotations = []
         
     def update_pfam_domains(self, genome_ids=None):
         self.proteins = {}
-        print('Delete existing PFAM annotations')
+        logger.info('Delete existing PFAM annotations')
         if genome_ids is None:
             Annotation.objects.filter(source='Pfam database').delete()
         else:
@@ -195,7 +199,7 @@ class Annotator(object):
 
     def update_tigrfam_domains(self, genome_ids=None):
         self.proteins = {}
-        print('Delete existing TIGRFAM annotations')
+        logger.info('Delete existing TIGRFAM annotations')
         if genome_ids is None:
             Annotation.objects.filter(source='TIGRFAM database').delete()
         else:
@@ -206,16 +210,16 @@ class Annotator(object):
 
     def add_tigrfam_domains(self):
         self.proteins = {}
-        print('Deleting existing annotations')
+        logger.info('Deleting existing annotations')
         Annotation.objects.filter(source='TIGRFAM database').delete()
         self._create_tigrfam_domains()
     
     def _create_tigrfam_domains(self, genome_ids=None):
         batch_size=10000
-        print('Exporting proteins')
+        logger.info('Exporting proteins')
         self.export_proteins(genome_ids)
         # run hmmscan
-        print('Running HMMSEARCH')
+        logger.info('Running HMMSEARCH')
         hmmsearch_outfile = os.path.join(self.config['cgcms.temp_dir'],
                                          'hmmsearch_tigrfam.out.txt'
                                          )
@@ -223,12 +227,12 @@ class Annotator(object):
             os.remove(hmmsearch_outfile)
         self.run_hmmsearch(hmmsearch_outfile, self.config['ref.tigrfam_hmm_lib'])
         # parse result
-        print('Reading HMMSEARCH output')
+        logger.info('Reading HMMSEARCH output')
         hits = self.parse_hmmsearch_output(hmmsearch_outfile)
         # read HMM list
         ref_hmm = self.read_hmm_reference(self.config['ref.tigrfam_hmm_list'])
         # create Annotations
-        print('Creating annotations')
+        logger.info('Creating annotations')
         annotations_written = 0
         for hit in hits:
             protein = self.proteins[hit['protein_hash']]
@@ -251,10 +255,10 @@ class Annotator(object):
                         annotations_written += len(self.annotations)
                         self.annotations = []
         # write Annotations
-        print('Writing annotations')
+        logger.info('Writing annotations')
         Annotation.objects.bulk_create(self.annotations, batch_size=10000)
         annotations_written += len(self.annotations)
-        print(annotations_written, 'annotations created for TIGRFAM families')
+        logger.info('%d annotations created for TIGRFAM families', annotations_written)
         self.annotations = []
     
     def make_fitbrowser_annotations(self, strain, org_name, protein_path):
@@ -265,16 +269,11 @@ class Annotator(object):
             if protein_sequence.startswith('V') or protein_sequence.startswith('L'):
                 protein_sequence = 'M' + protein_sequence[1:]
             protein_hash = hashlib.md5(protein_sequence.encode('utf-8')).hexdigest()
-            #print(protein_hash, seq_record.id)
-            #print(seq_record.seq)
             if protein_hash in self.proteins:
-                #print(protein_hash + 'protein found!')
                 seq_id = seq_record.id.split(' ')[0]
                 org_id, locus_id = seq_id.split(':')
-                #print(org_id, locus_id)
                 for gene in self.proteins[protein_hash].gene_set.all():
                     if gene.genome.strain == strain:
-                        #print('Adding annotation to gene', gene.locus_tag)
                         url='http://fit.genomics.lbl.gov/cgi-bin/singleFit.cgi?orgId='\
                         + org_id + '&locusId=' + locus_id
                         result.append(Annotation(gene_id=gene,
@@ -284,7 +283,7 @@ class Annotator(object):
                             value=locus_id,
                             note='Gene ' + locus_id + ' from ' + org_name
                             ))
-        print(org_name, 'genes found:', len(result))
+        logger.info('%d genes found in %s', len(result), org_name)
         return result
         
     def add_fitbrowser_links(self):
@@ -294,32 +293,32 @@ class Annotator(object):
         """
         self.annotations = []
         # Delete existing annotations
-        print('Deleting existing annotations')
+        logger.info('Deleting existing annotations')
         Annotation.objects.filter(source='Fitness Browser').delete()
-        print('Making protein list')
+        logger.info('Making protein list')
         for protein in Protein.objects.all():
             self.proteins[protein.protein_hash] = protein
         strains = {item.strain_id:item for item in Strain.objects.all()}
-        print('Reading organism list')
+        logger.info('Reading organism list')
         with open(self.config['ref.fitbrowser_orgs_file'], 'r') as infile:
             for line in infile:
                 row = line.rstrip('\n\r').split('\t')
                 if row[0] in strains:
-                    print(row[0], 'found in database')
+                    logger.info(row[0] + ' found in database')
                     self.annotations += \
                         self.make_fitbrowser_annotations(strains[row[0]],
                                                          row[1],
                                                          row[3]
                                                          )
                     # write Annotations
-                    print('Writing annotations')
+                    logger.info('Writing annotations')
                     Annotation.objects.bulk_create(self.annotations,
                                                    batch_size=10000
                                                    )
-                    print(len(self.annotations),
-                          'annotations created for',
-                          row[0]
-                          )
+                    logger.info('%d annotations created for %s',
+                                len(self.annotations),
+                                row[0]
+                                )
                     self.annotations = []
         self.annotations = []
 
@@ -329,7 +328,7 @@ class Annotator(object):
         preserved (annotation is considered identical if, for 
         the same gene, it has same source, key and value)
         """
-        print('Reading annotations from file')
+        logger.info('Reading annotations from file')
         lines = []
         with open(tsv_file, 'r') as infile:
             for line in infile:
@@ -360,13 +359,13 @@ class Annotator(object):
                                           value=value
                                           )
             if existing_annotations:
-                print('Annotation exists',
-                      locus_tag,
-                      genome_name,
-                      source,
-                      key,
-                      value
-                      )
+                logger.info(' '.join(['Annotation exists',
+                                      locus_tag,
+                                      genome_name,
+                                      source,
+                                      key,
+                                      value
+                                      ]))
             else:
                 try:
                     gene = Gene.objects.get(locus_tag=locus_tag,
@@ -379,15 +378,15 @@ class Annotator(object):
                         value=value,
                         note=note
                         ))
-                    print('Annotation added',
-                          locus_tag,
-                          genome_name,
-                          source,
-                          key,
-                          value
-                          )
+                    logger.info(' '.join(['Annotation added',
+                                          locus_tag,
+                                          genome_name,
+                                          source,
+                                          key,
+                                          value
+                                          ]))
                 except Gene.DoesNotExist:
-                    print('Gene not found', locus_tag, genome_name)
+                    logger.warning('Gene %s not found in %s', locus_tag, genome_name)
             if len(self.annotations) >= batch_size:
                 Annotation.objects.bulk_create(self.annotations,
                                                batch_size=batch_size
@@ -398,7 +397,7 @@ class Annotator(object):
         if self.annotations:
             Annotation.objects.bulk_create(self.annotations, batch_size=10000)
         annotations_written += len(self.annotations)
-        print(annotations_written, 'annotations written')
+        logger.info('%d annotations written', annotations_written)
         self.annotations = []
 
     def add_regulons(self, lines):
@@ -409,7 +408,7 @@ class Annotator(object):
         (site is considered identical if it has the same genome, 
         contig, start, end and strand)
         """
-        print('Reading regulons from file')
+        logger.info('Reading regulons from file')
         regulon_data = autovivify(2, list)
         
         for line in lines:
@@ -436,8 +435,6 @@ class Annotator(object):
                                                             strand, 
                                                             sequence
                                                             ))
-        print(regulon_data)
-        
         for genome_name in regulon_data:
             genome = Genome.objects.get(name=genome_name)
             # Create regulons
@@ -445,14 +442,14 @@ class Annotator(object):
                                  in Regulon.objects.filter(genome__name = genome_name)
                                  }
             for regulon_name in regulon_data[genome_name]:
-                print(regulon_name, genome_name)
+                logger.info(regulon_name + ' ' + genome_name)
                 if regulon_name not in existing_regulons:
                     regulator_ids = \
                         regulon_data[genome_name][regulon_name][0][0].split(',')
                     regulon = Regulon(name=regulon_name, genome=genome)
                     regulon.save()
                     existing_regulons[regulon_name] = regulon
-                    print(str(regulon))
+                    logger.info(str(regulon))
                     for regulator_id in regulator_ids:
                         regulon.regulators.add(
                             Gene.objects.get(locus_tag=regulator_id,
@@ -465,7 +462,7 @@ class Annotator(object):
                     for regulon_ind in regulon_data[genome_name][regulon_name]:
                         regulator_ids = regulon_ind[0].split(',')
                         for regulator_id in regulator_ids:
-                            print (regulator_id)
+                            logger.info(regulator_id)
                             if regulator_id not in existing_regulators:
                                 regulon.regulators.add(
                                     Gene.objects.get(locus_tag=regulator_id,
@@ -504,7 +501,7 @@ class Annotator(object):
                                                      strand = int(site_data[5])
                                                      )
                     if not same_sites:
-                        print(site_data)
+                        logger.info(str(site_data))
                         site = Site(name = site_name,
                                     type = 'TFBS',
                                     start = int(site_data[3]),
@@ -530,7 +527,7 @@ class Annotator(object):
             N.B.: This function is not associated with add_strain_metadata
             management command.
         """
-        print('Reading metadata from file')
+        logger.info('Reading metadata from file')
         self.metadata = []
         strains = {item.strain_id:item for item in Strain.objects.all()}
         with open(tsv_file, 'r') as infile:
@@ -545,18 +542,20 @@ class Annotator(object):
                         key=key,
                         value=value
                         ))
-                    print('Metadata added', strain, source, key, value)
+                    logger.info('Metadata added %s %s %s %s',
+                                strain, source, key, value
+                                )
         # write metadata
-        print('Writing metadata')
+        logger.info('Writing metadata')
         Strain_metadata.objects.bulk_create(self.metadata, batch_size=10000)
-        print(len(self.metadata), 'metadata entries written')
+        logger.info('%s metadata entries written', len(self.metadata))
 
     def update_strain_metadata(self, xlsx_path=None, xlsx_file=None):
         """ 
             This function adds strain metadata from Excel file and
             from isolates.genomics.lbl.gov API
         """
-        print('Reading metadata from file', xlsx_file)
+        logger.info('Reading metadata from file %s', xlsx_file)
         metadata_imported = defaultdict(dict)
         if xlsx_path is not None:
             xlsx_path = Path(xlsx_path)
@@ -582,7 +581,7 @@ class Annotator(object):
                         )
         
         # Download from isolates.genomics.lbl.gov 
-        print('Downloading metadata from isolates.genomics.lbl.gov')
+        logger.info('Downloading metadata from isolates.genomics.lbl.gov')
         url = 'http://isolates.genomics.lbl.gov/api/v1/isolates/id/'
         external_url = 'http://isolates.genomics.lbl.gov/isolates/id/'
         fields = [('condition',
@@ -608,17 +607,16 @@ class Annotator(object):
             # extracting data in json format 
             data = r.json()
             if 'id' not in data:
-                print(isolate_url, 'returned no data')
+                logger.warning('%s returned no data', isolate_url)
                 errors += 1
             if errors >= error_threshold:
-                print('Download stopped after',
-                      error_threshold,
-                      'errors. Last url is',
-                      isolate_url
-                      )
+                logger.info('Download stopped after %d errors. Last url is %s',
+                            error_threshold,
+                            isolate_url
+                            )
                 break
             try:
-                print(data['id'], data['isolate_id'])
+                logger.info(data['id'] + ' ' + data['isolate_id'])
                 strain_id = data['isolate_id']
                 for field in fields:
                     if field[0] in data:
@@ -644,7 +642,7 @@ class Annotator(object):
                                   + '\n'
                                   )
         # Check existing entries
-        print('Updating exisiting metadata')
+        logger.info('Updating exisiting metadata')
         strains = {item.strain_id:item for item in Strain.objects.all()}
         for strain_id in strains:
             if strain_id not in metadata_imported:
@@ -694,18 +692,18 @@ class Annotator(object):
                     key=key,
                     value=value
                     ))
-                print('Metadata added', sample, source, key, value)
+                logger.info('Metadata added %s %s %s %s', sample, source, key, value)
         # write metadata
-        print('Writing metadata')
+        logger.info('Writing metadata')
         Sample_metadata.objects.bulk_create(self.metadata, batch_size=10000)
-        print(len(self.metadata), 'metadata entries written')
+        logger.info('%d metadata entries written', len(self.metadata))
 
     def update_genome_descriptions(self, tsv_file):
         """ 
             Reads genome descriptions from a tab-separated file
             and updates Genome objects
         """
-        print('Reading metadata from file')
+        logger.info('Reading metadata from file')
         genomes = {item.name:item for item in Genome.objects.all()}
         with open(tsv_file, 'r') as infile:
             for line in infile:
@@ -715,7 +713,7 @@ class Annotator(object):
                 if genome_name in genomes:
                     genomes[genome_name].description = description
                     genomes[genome_name].save()
-                    print('Genome description updated for', genome_name)
+                    logger.info('Genome description updated for %s', genome_name)
 
     def update_sample_descriptions(self, lines):
         """ 
@@ -731,94 +729,44 @@ class Annotator(object):
                 samples[sample_name].description = description
                 samples[sample_name].full_name = full_name
                 samples[sample_name].save()
-                print('Sample description updated for', sample_name)
+                logger.info('Sample description updated for %s', sample_name)
 
-    def run_external_tools(self, genomes, plugin=None):
-        plugins_available = set()
+    def run_external_tools(self, genomes, plugin_name=None):
+        plugins_enabled = set()
         for param in self.config:
             if param.startswith('plugins.') and self.config[param] != '':
                 tool = param.split('.')[1]
-                plugins_available.add(tool)
-        
-        if plugin is None:
-            print('Run all available plugins:', ','.join(list(plugins_available)))
-        elif plugin in plugins_available:
-            print('Run only', plugin)
-            plugins_available = set()
-            plugins_available.add(plugin)
-        genome_names = list(genomes.keys())
-        # Run Fama
-        if 'fama' in plugins_available:
-            fama_annotations = fama(self, genomes)
-            print(fama_annotations, 'ready for upload')
-            Annotation.objects.filter(source='Fama',
-                                      gene_id__genome__name__in=genome_names
-                                      ).delete()
-            self.add_custom_annotations(fama_annotations)
-
-        # Run amrfinder
-        if 'amrfinder' in plugins_available:
-            amrfinder_annotations = amrfinder(self, genomes)
-            print(amrfinder_annotations, 'ready for upload')
-            Annotation.objects.filter(source='AMRFinderPlus',
-                                      gene_id__genome__name__in=genome_names
-                                      ).delete()
-            self.add_custom_annotations(amrfinder_annotations)
-
-        # Run antiSMASH
-        if 'antismash' in plugins_available:
-            antismash_annotations = antismash(self, genomes)
-            print(antismash_annotations, 'ready for upload')
-            Annotation.objects.filter(source='antiSMASH',
-                                      gene_id__genome__name__in=genome_names
-                                      ).delete()
-            self.add_custom_annotations(antismash_annotations)
-        
-        # Run PhiSpy
-        if 'phispy' in plugins_available:
-            phispy_annotations = phispy(self, genomes)
-            print(phispy_annotations, 'ready for upload')
-            Annotation.objects.filter(source='pVOGs',
-                                      gene_id__genome__name__in=genome_names
-                                      ).delete()
-            self.add_custom_annotations(phispy_annotations)
-
-        # Run eCIS-screen
-        if 'ecis_screen' in plugins_available:
-            ecis_screen_annotations = ecis_screen(self, genomes)
-            print(ecis_screen_annotations, 'ready for upload')
-            Annotation.objects.filter(source='eCIS-screen',
-                                      gene_id__genome__name__in=genome_names
-                                      ).delete()
-            self.add_custom_annotations(ecis_screen_annotations)
-    
-        # Run GapMind
-        if 'gapmind' in plugins_available:
-            gapmind_annotations = gapmind(self, genomes)
-            print(gapmind_annotations, 'ready for upload')
-            Annotation.objects.filter(source='GapMind',
-                                      gene_id__genome__name__in=genome_names
-                                      ).delete()
-            self.add_custom_annotations(gapmind_annotations)
-
-        # Run DefenseFinder
-        if 'defensefinder' in plugins_available:
-            defensefinder_annotations = defensefinder(self, genomes)
-            print(defensefinder_annotations, 'ready for upload')
-            Annotation.objects.filter(source='DefenseFinder',
-                                      gene_id__genome__name__in=genome_names
-                                      ).delete()
-            self.add_custom_annotations(defensefinder_annotations)
-
-        # Run MacsyFinder
-        if 'macsyfinder' in plugins_available:
-            macsyfinder_annotations = macsyfinder(self, genomes)
-            print(macsyfinder_annotations, 'ready for upload')
-            Annotation.objects.filter(source='MacsyFinder',
-                                      gene_id__genome__name__in=genome_names
-                                      ).delete()
-            self.add_custom_annotations(macsyfinder_annotations)
+                plugins_enabled.add(tool)
                 
+        plugins_available = self.plugins
+        
+        if plugin_name is None:
+            logger.info('Run all available plugins: %s',
+                        ','.join(list(plugins_enabled))
+                        )
+        elif plugin_name in plugins_enabled:
+            logger.info('Run only %s', plugin_name)
+            plugins_enabled = set()
+            plugins_enabled.add(plugin_name)
+
+        genome_names = list(genomes.keys())
+        
+        for plugin_name in plugins_enabled:
+            plugin_module_name = 'browser.pipeline.plugins.cgcms_' + plugin_name
+            if plugin_module_name in plugins_available:
+                plugin = plugins_available[plugin_module_name]
+                plugin_output = plugin.application(self, genomes)
+                display_name = self.config['plugins.' + plugin_name + '.display_name']
+                Annotation.objects.filter(source=display_name,
+                                          gene_id__genome__name__in=genome_names
+                                          ).delete()
+                self.add_custom_annotations(plugin_output)
+            else:
+                logger.warning('%s module not found. Skipping the plugin', plugin_name)
+                logger.info('Available modules: %s', str(plugins_available))
+                logger.info('Enabled modules: %s', str(plugins_enabled))
+
+
 def autovivify(levels=1, final=dict):
     return (defaultdict(final) if levels < 2 else
             defaultdict(lambda: autovivify(levels - 1, final)))

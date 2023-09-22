@@ -11,28 +11,14 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-#import json
 from decouple import config, Csv
 
 # Normally you should not import ANYTHING from Django directly
 # into your settings, but ImproperlyConfigured is an exception.
-from django.core.exceptions import ImproperlyConfigured
+# from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# JSON-based secrets module
-#with open(os.path.join(BASE_DIR, "secrets.json")) as f:
-#    secrets = json.loads(f.read())
-
-#def get_secret(setting, secrets=secrets):
-#    """Get the secret variable or return explicit exception."""
-#    try:
-#        return secrets[setting]
-#    except KeyError:
-#        error_msg = "Set the {0} environment variable".format(setting)
-#        raise ImproperlyConfigured(error_msg)
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -186,6 +172,45 @@ Q_CLUSTER = {
     'max_attempts': 1,
     'attempt_count': 1,
     'orm': 'default',
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'django.log'),
+            'formatter': 'verbose',
+        },
+        'email': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'CGCMS': {
+            'handlers': ['console', 'file', 'email'],
+            'level': 'DEBUG',
+        },
+    },
 }
 
 DEBUG_TOOLBAR_PANELS = [

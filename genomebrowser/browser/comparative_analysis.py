@@ -1,5 +1,6 @@
 import io
 import parasail
+import logging
 from datetime import datetime
 from collections import defaultdict
 from subprocess import Popen, PIPE, STDOUT
@@ -13,6 +14,8 @@ import toyplot
 from django.db.models import Q
 from .models import Gene
 from django.urls import reverse
+
+logger = logging.getLogger("CGCMS")
 
 
 COLORS = [(51, 34, 136),
@@ -146,9 +149,9 @@ def add_gene(gene, gene_uid, track_uid, offset, reverse_gene,
 def make_muscle_alignment(infasta):
     result = None
     muscle_cline = MuscleCommandline()
-    print(muscle_cline)
+    logger.debug(str(muscle_cline))
     
-    print('Running MUSCLE')
+    logger.info('Running MUSCLE')
     with Popen(str(muscle_cline),
                stdin=PIPE,
                stdout=PIPE,
@@ -156,9 +159,9 @@ def make_muscle_alignment(infasta):
                bufsize=1,
                universal_newlines=True) as p:
         outfasta, err = p.communicate(infasta)
-    print('MUSCLE finished')
+    logger.info('MUSCLE finished')
     if p.returncode != 0:
-        print('[' + 
+        logger.error('[' + 
               datetime.now().strftime("%d/%m/%Y %H:%M:%S") +
               '] MUSCLE finished with error:\n' +
               ' '.join(err) +
@@ -204,7 +207,7 @@ def make_protein_tree(proteins):
     tree = toytree.mtree(newick.getvalue(), tree_format=1)
     tip_labels = [item.split('|')[0] for item in tree.treelist[0].get_tip_labels()]
     nodes.reverse()
-    print('Node IDs', node_ids)
+    logger.debug('Node IDs %s', str(node_ids))
     canvas, axes, marks = tree.draw(width=200,
                                     height=70 + 56 * len(nodes),
                                     fixed_order=node_ids,
@@ -271,15 +274,13 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
             if gene_count >= genelist_size:
                 break
     tree_nodes, tree_svg, tree_newick = make_protein_tree(tree_proteins)
-    #print(tree_svg)
     if tree_nodes[0] == pivot_gene.id:
-        print('First gene is ', pivot_gene.locus_tag)
+        logger.debug('First gene is %s', pivot_gene.locus_tag)
     else:
-        print('First gene is ',
-              genes[tree_nodes[0]],
-              'instead of',
-              pivot_gene.locus_tag
-              )
+        logger.debug('First gene is %s instead of %s',
+                     genes[tree_nodes[0]],
+                     pivot_gene.locus_tag
+                     )
     for gene_id in tree_nodes:
         if gene_id == pivot_gene.id:
             continue
@@ -287,9 +288,9 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
     return ret_genes, len(genes), tree_svg, tree_newick
 
 def collect_genes(tree, taxon2genes, visited_taxa, taxon):
-    print('Visiting ' + taxon)
+    logger.debug('Visiting ' + taxon)
     if taxon in visited_taxa:
-        print(taxon + ' has been visited before')
+        logger.debug(taxon + ' has been visited before')
         return [], visited_taxa
     ordered_genes = []
     if taxon in taxon2genes and taxon not in visited_taxa:

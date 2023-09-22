@@ -5,7 +5,7 @@ from browser.models import Protein
 from browser.models import Genome
 from browser.models import Strain
 from browser.models import Sample
-from browser.dataimport.importer import Importer
+from browser.pipeline.genome_import import Importer
 
 class Command(BaseCommand):
     help = 'Deletes a genome with all genes and annotations from the database'

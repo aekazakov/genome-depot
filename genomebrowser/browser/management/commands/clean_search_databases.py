@@ -2,7 +2,7 @@ import os
 import shutil
 from django.core.management.base import BaseCommand, CommandError
 from browser.models import Contig
-from browser.dataimport.importer import Importer
+from browser.pipeline.genome_import import Importer
 
 class Command(BaseCommand):
     help = '''
