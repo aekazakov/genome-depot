@@ -71,20 +71,20 @@ def preprocess(annotator, genomes, working_dir):
         outfile.write('export PATH=' + 
                       '/'.join(annotator.config['cgcms.conda_path'].split('/')[:-3]) +
                       '/envs/' +
-                      annotator.config['plugins.hmmsearch-pfam.conda_env'] + 
+                      annotator.config['plugins.hmmsearch_pfam.conda_env'] + 
                       '/bin:$PATH\n'
                       )
         outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
         outfile.write('conda activate ' +
-                      annotator.config['plugins.hmmsearch-pfam.conda_env'] +
+                      annotator.config['plugins.hmmsearch_pfam.conda_env'] +
                       '\n'
                       )
-        outfile.write(' '.join([self.config['plugins.hmmsearch-pfam.hmmsearch_command'],
+        outfile.write(' '.join([annotator.config['plugins.hmmsearch_pfam.hmmsearch_command'],
                                 '--domtblout', hmmsearch_outfile,
                                 '-o', '/dev/null', '--cut_tc',
-                                '--cpu', self.config['cgcms.threads'],
+                                '--cpu', annotator.config['cgcms.threads'],
                                 '--noali', '--notextw',
-                                self.config['plugins.hmmsearch_pfam.hmm_lib'],
+                                annotator.config['plugins.hmmsearch_pfam.hmm_lib'],
                                 input_file
                                 ]) + '\n')
         outfile.write('conda deactivate\n')
@@ -120,7 +120,7 @@ def postprocess(annotator, genomes, working_dir):
                                'hmmsearch-pfam-plugin-output.txt'
                                )
     ref_hmm = {}
-    with open(self.config['plugins.hmmsearch_pfam.ref_data'], 'r') as infile:
+    with open(annotator.config['plugins.hmmsearch_pfam.ref_data'], 'r') as infile:
         for line in infile:
             if line.startswith('#'):
                 continue

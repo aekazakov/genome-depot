@@ -781,7 +781,7 @@ class Importer(object):
         cmd = ['/bin/bash', eggnog_mapper_script]
         with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
             for line in proc.stdout:
-                logger.info(line)
+                logger.info(line.rstrip('\n\r'))
         if proc.returncode != 0:
             # Suppress false positive no-member error
             # (see https://github.com/PyCQA/pylint/issues/1860)
@@ -1675,7 +1675,7 @@ class Importer(object):
         cmd = ['bash', script_path]
         with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
             for line in proc.stdout:
-                logger.info(line)
+                logger.info(line.rstrip('\n\r'))
         if proc.returncode != 0:
             # Suppress false positive no-member error
             # (see https://github.com/PyCQA/pylint/issues/1860)
@@ -1710,7 +1710,7 @@ class Importer(object):
             logger.info(' '.join(cmd))
             with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
                 for line in proc.stdout:
-                    logger.info(line)
+                    logger.info(line.rstrip('\n\r'))
             if proc.returncode != 0:
                 # Suppress false positive no-member error
                 # (see https://github.com/PyCQA/pylint/issues/1860)
@@ -1732,7 +1732,7 @@ class Importer(object):
             logger.info(' '.join(cmd))
             with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
                 for line in proc.stdout:
-                    logger.info(line)
+                    logger.info(line.rstrip('\n\r'))
             if proc.returncode != 0:
                 # Suppress false positive no-member error
                 # (see https://github.com/PyCQA/pylint/issues/1860)
@@ -1830,10 +1830,10 @@ class Importer(object):
         # may run for days resulting in "MySQL server has gone away" error
         connection.close()
         # run eggnog-mapper for all proteins
-        eggnog_outfile = self.run_eggnog_mapper()
+        # eggnog_outfile = self.run_eggnog_mapper()
         # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
-        # eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
-        # 'eggnog_mapper_output.emapper.annotations')
+        eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
+        'eggnog_mapper_output.emapper.annotations')
         
         logger.info('Reading eggnog-mapper output')
         # separate eggnog-mapper output by genome?
@@ -1888,7 +1888,7 @@ class Importer(object):
         #                  in Genome.objects.filter(
         #                                           name__in = self.genome_data.keys()
         #                                           ).values('id')
-                          ]
+        #                  ]
         #annotator.update_pfam_domains(new_genome_ids)
         #annotator.update_tigrfam_domains(new_genome_ids)
         
@@ -2051,7 +2051,7 @@ class Importer(object):
         connection.close()
         with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
             for line in proc.stdout:
-                logger.info(line)
+                logger.info(line.rstrip('\n\r'))
         if proc.returncode != 0:
             # Suppress false positive no-member error 
             # (see https://github.com/PyCQA/pylint/issues/1860)

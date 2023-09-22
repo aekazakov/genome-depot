@@ -50,6 +50,7 @@ class Annotator(object):
                         in pkgutil.iter_modules(browser.pipeline.plugins.__path__,
                                                 browser.pipeline.plugins.__name__ + "."
                                                 )
+                        if name.startswith('browser.pipeline.plugins.cgcms_')
                         }
         
         
