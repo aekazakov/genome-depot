@@ -49,12 +49,12 @@ def preprocess(annotator, genomes, working_dir):
     
     with open(macsyfinder_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
-        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
         outfile.write('conda activate ' +
                       annotator.config['plugins.macsyfinder.macsyfinder_env'] +
                       '\n'
                       )
-        outfile.write('cd ' + working_dir + '\n\n')
+        outfile.write('cd "' + working_dir + '"\n\n')
         
         for genome in sorted(genomes.keys()):
             if os.path.getsize(input_fasta_files[genome]) == 0:
@@ -66,13 +66,13 @@ def preprocess(annotator, genomes, working_dir):
                                     annotator.config['plugins.macsyfinder.model'],
                                     'all',
                                     '--models-dir',
-                                    annotator.config['plugins.macsyfinder.models_dir'],
+                                    '"' + annotator.config['plugins.macsyfinder.models_dir'] + '"',
                                     '--out-dir',
-                                    genome_dir,
+                                    '"' + genome_dir + '"',
                                     '--db-type',
                                     'unordered',
                                     '--sequence-db',
-                                    input_fasta_files[genome]]) + '\n')
+                                    '"' + input_fasta_files[genome] + '"']) + '\n')
         outfile.write('\nconda deactivate\n')
     return macsyfinder_script
     

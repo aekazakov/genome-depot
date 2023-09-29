@@ -1,3 +1,4 @@
+import os
 import hashlib
 from unittest import skip
 #from contextlib import contextmanager
@@ -32,7 +33,8 @@ from browser.models import Tc_family
 from browser.models import Protein
 from browser.models import Gene
 from browser.models import Site
-from browser.dataimport.importer import Importer
+from genomebrowser.settings import BASE_DIR
+from browser.pipeline.genome_import import Importer
 from browser.comparative_analysis import _get_color, make_muscle_alignment
 
 # Create your tests here.
@@ -47,6 +49,7 @@ class BrowserTestCase(TransactionTestCase):
         self.client = Client()
         
     def test_config(self):
+        print('Testing Config object creation')
         config = Config(param='parameter name', value='parameter value')
         self.assertEqual(config.param, 'parameter name')
         config.save()
@@ -54,6 +57,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(config_saved.value, 'parameter value')
 
     def test_taxon(self):
+        print('Testing Taxon object creation')
         taxon = Taxon(taxonomy_id='10',
                       eggnog_taxid='10',
                       rank='genus',
@@ -67,8 +71,9 @@ class BrowserTestCase(TransactionTestCase):
         taxon_saved = Taxon.objects.get(taxonomy_id='10')
         self.assertEqual(taxon_saved.name, 'Cellvibrio')
         self.assertEqual(taxon_saved.taxonomy_id, '10')
-        
+
     def test_strain(self):
+        print('Testing Strain object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -89,6 +94,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(strain_saved.taxon.name, 'Rhodanobacter denitrificans')
         
     def test_sample(self):
+        print('Testing Sample object creation')
         sample = Sample(sample_id='FW106-02',
                         full_name='FW106 groundwater metagenome'
                         )
@@ -100,6 +106,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(sample_saved.sample_id, 'FW106-02')
 
     def test_strain_metadata(self):
+        print('Testing Strain object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -129,6 +136,7 @@ class BrowserTestCase(TransactionTestCase):
                          )
 
     def test_sample_metadata(self):
+        print('Testing Sample_metadata object creation')
         sample = Sample(sample_id='FW106-02', full_name='FW106 groundwater metagenome')
         sample.description = 'Metagenomic sample from groundwater of FW106 well, ' +\
         'site Y-12 West, collection date 2014-06-09, 0.2 micron filter'
@@ -149,6 +157,7 @@ class BrowserTestCase(TransactionTestCase):
                          )
 
     def test_genome(self):
+        print('Testing Genome object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -188,6 +197,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(genome_saved.genes, 0)
         
     def test_contig(self):
+        print('Testing Contig object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -229,6 +239,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(contig_saved.genome.contigs, 1)
 
     def test_operon(self):
+        print('Testing Operon object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -278,6 +289,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(operon_saved.contig.name, 'scaffold0001')
 
     def test_cog_class(self):
+        print('Testing Cog_class object creation')
         cog_class = Cog_class(cog_id='X', description='Test description')
         self.assertEqual(cog_class.cog_id, 'X')
         cog_class.save()
@@ -285,6 +297,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(cog_class_saved.description, 'Test description')
 
     def test_kegg_reaction(self):
+        print('Testing Kegg_reaction object creation')
         kegg_reaction = Kegg_reaction(kegg_id='R00001', description='Test description')
         self.assertEqual(kegg_reaction.kegg_id, 'R00001')
         kegg_reaction.save()
@@ -292,6 +305,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(kegg_reaction_saved.description, 'Test description')
 
     def test_kegg_pathway(self):
+        print('Testing Kegg_pathway object creation')
         kegg_pathway = Kegg_pathway(kegg_id='map00001', description='Test description')
         self.assertEqual(kegg_pathway.kegg_id, 'map00001')
         kegg_pathway.save()
@@ -299,6 +313,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(kegg_pathway_saved.description, 'Test description')
 
     def test_kegg_ortholog(self):
+        print('Testing Kegg_ortholog object creation')
         kegg_ortholog = Kegg_ortholog(kegg_id='KO0001', description='Test description')
         self.assertEqual(kegg_ortholog.kegg_id, 'KO0001')
         kegg_ortholog.save()
@@ -306,6 +321,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(kegg_ortholog_saved.description, 'Test description')
 
     def test_go_term(self):
+        print('Testing Go_term object creation')
         go_term = Go_term(go_id='GO:0000001',
                           go_namespace='Test name',
                           description='Test description'
@@ -316,6 +332,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(go_term_saved.description, 'Test description')
 
     def test_cazy_family(self):
+        print('Testing Cazy_family object creation')
         cazy_family = Cazy_family(cazy_id='GT99', description='Test description')
         self.assertEqual(cazy_family.cazy_id, 'GT99')
         cazy_family.save()
@@ -323,6 +340,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(cazy_family_saved.description, 'Test description')
 
     def test_ec_number(self):
+        print('Testing Ec_number object creation')
         ec_number = Ec_number(ec_number='99.1.1.1', description='Test description')
         self.assertEqual(ec_number.ec_number, '99.1.1.1')
         ec_number.save()
@@ -330,6 +348,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(ec_number_saved.description, 'Test description')
 
     def test_tc_family(self):
+        print('Testing Tc_family object creation')
         tc_family = Tc_family(tc_id='GT99', description='Test description')
         self.assertEqual(tc_family.tc_id, 'GT99')
         tc_family.save()
@@ -337,6 +356,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(tc_family_saved.description, 'Test description')
 
     def test_ortholog_group(self):
+        print('Testing Ortholog_group object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -353,6 +373,7 @@ class BrowserTestCase(TransactionTestCase):
                          )
 
     def test_eggnog_description(self):
+        print('Testing Eggnog_description object creation')
         description='Test description'
         eggnog_description = Eggnog_description(
             fingerprint=hashlib.md5(description.encode('utf-8')).hexdigest(),
@@ -366,6 +387,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(eggnog_description_saved.description, 'Test description')
 
     def test_protein(self):
+        print('Testing Protein object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -484,6 +506,7 @@ class BrowserTestCase(TransactionTestCase):
             protein.save()
 
     def test_gene(self):
+        print('Testing Gene object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -568,6 +591,7 @@ class BrowserTestCase(TransactionTestCase):
                     operon=operon)
 
     def test_regulon(self):
+        print('Testing Regulon object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -641,6 +665,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(regulon_saved.genome.name, 'FW104-10B01')
 
     def test_site(self):
+        print('Testing Site object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -730,6 +755,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertEqual(site_saved.regulon.name, 'TesT')
 
     def test_annotation(self):
+        print('Testing Annotation object creation')
         taxon = Taxon(taxonomy_id='666685',
                       eggnog_taxid='666685',
                       rank='species',
@@ -795,61 +821,75 @@ class BrowserTestCase(TransactionTestCase):
         annotation_saved = Annotation.objects.get(value='group_name')
         self.assertEqual(annotation_saved.gene_id.locus_tag, 'Aaa_0001')
         self.assertEqual(annotation_saved.key, 'group')
+
+    '''
+        Views testing
+    '''
         
-    def test_homepage(self):
+    def test_start_page(self):
+        print('Testing Start page view')
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<a href="/genomes/">Click here for a list of')
 
     def test_genomes_page(self):
+        print('Testing Genomes list page view')
         response = self.client.get('/genomes/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Genomes</h2>')
         self.assertContains(response, 'E_coli_BW2952')
 
     def test_strains_page(self):
+        print('Testing Strains list page view')
         response = self.client.get('/strains/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Strains</h2>')
         self.assertContains(response, 'BW2952')
 
     def test_samples_page(self):
+        print('Testing Samples list page view')
         response = self.client.get('/samples/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Samples</h2>')
         self.assertContains(response, 'No samples found.')
 
     def test_genome_page(self):
+        print('Testing Genome page view')
         response = self.client.get('/genome/E_coli_BW2952')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genome viewer')
         self.assertContains(response, 'E_coli_BW2952')
 
     def test_gene_page(self):
+        print('Testing Gene page view')
         response = self.client.get('/gene/E_coli_BW2952/BWG_RS00020/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genome viewer')
         self.assertContains(response, 'BWG_RS00020')
 
     def test_operonlist_page(self):
+        print('Testing Operons list page view')
         response = self.client.get('/operons/E_coli_BW2952/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Operons in')
         self.assertContains(response, 'NC_012759: 190..5020')
 
     def test_sitelist_page(self):
+        print('Testing Sites list page view')
         response = self.client.get('/sites/E_coli_BW2952/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Sites in')
         self.assertContains(response, 'NC_012759: complement(70130..70146)')
 
     def test_regulonlist_page(self):
+        print('Testing Regulons list page view')
         response = self.client.get('/regulons/E_coli_BW2952/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Regulons in')
         self.assertContains(response, 'AraC')
 
     def test_genelist1_page(self):
+        print('Testing Genes list for a genome view')
         # Gene list for a genome
         response = self.client.get('/searchgene/',
                                    {'genome':'E_coli_BW2952', 'type':'gene'}
@@ -861,7 +901,8 @@ class BrowserTestCase(TransactionTestCase):
                             '\'genome\': "E_coli_BW2952", \'page\': "" }'
                             )
 
-    def test_genelist2_page(self):
+    def test_gene_search_byregulator_page(self):
+        print('Testing Genes list for a regulator view')
         # Gene list for "regulator" text query
         response = self.client.get('/searchgene/',
                                    {'query':'regulator', 'type':'gene'}
@@ -874,6 +915,7 @@ class BrowserTestCase(TransactionTestCase):
                             )
 
     def test_annotationlist_page(self):
+        print('Testing Annotation list view')
         # Annotation list for "Pfam" text query
         response = self.client.get('/searchannotation/',
                                    {'annotation_query':'Pfam'}
@@ -886,6 +928,7 @@ class BrowserTestCase(TransactionTestCase):
                             )
 
     def test_operon_page(self):
+        print('Testing Operon page view')
         operon_id = Operon.objects.values_list('name', flat=True)[0]
         response = self.client.get('/operon/' + operon_id + '/')
         self.assertEqual(response.status_code, 200)
@@ -893,6 +936,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertContains(response, operon_id)
 
     def test_site_page(self):
+        print('Testing Site page view')
         genome_id = 'E_coli_BW2952'
         site_id = Site.objects.filter(
             genome__name=genome_id
@@ -905,6 +949,7 @@ class BrowserTestCase(TransactionTestCase):
         self.assertContains(response, site_id)
 
     def test_regulon_page(self):
+        print('Testing Regulon page view')
         genome_id = 'E_coli_BW2952'
         response = self.client.get('/regulon/' + genome_id + '/AraC/')
         self.assertEqual(response.status_code, 200)
@@ -912,76 +957,91 @@ class BrowserTestCase(TransactionTestCase):
         self.assertContains(response, 'AraC')
 
     def test_textsearch_page(self):
+        print('Testing search page view')
         response = self.client.get('/textsearch/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Search genes by name or function')
+        self.assertContains(response, 'Find genes by name, locus tag or function')
 
     def test_kolist_page1(self):
+        print('Testing KEGG orthologs list page view')
         response = self.client.get('/kos/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'K00052')
 
     def test_kolist_page2(self):
+        print('Testing KEGG orthologs list page view with a text query')
         response = self.client.get('/kos/', {'query':'isopropylmalate'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'K00052')
 
     def test_pathwayslist_page1(self):
+        print('Testing KEGG pathways list page view')
         response = self.client.get('/pathways/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'map00030')
 
     def test_pathwayslist_page2(self):
+        print('Testing KEGG pathways list page view with a text query')
         response = self.client.get('/pathways/', {'query':'Pentose'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'map00030')
 
     def test_reactionslist_page1(self):
+        print('Testing KEGG reactions list page view')
         response = self.client.get('/reactions/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'R00006')
 
     def test_reactionslist_page2(self):
+        print('Testing KEGG reactions list page view with a text query')
         response = self.client.get('/reactions/', {'query':'tetrahydrobiopterin'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'R11765')
 
     def test_enzymeslist_page1(self):
+        print('Testing EC numbers list page view')
         response = self.client.get('/enzymes/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '1.1.1.262')
 
     def test_enzymeslist_page2(self):
+        print('Testing EC numbers list page view with a text query')
         response = self.client.get('/enzymes/', {'query':'homoserine'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '1.1.1.3')
 
     def test_transporterslist_page1(self):
+        print('Testing TC families list page view')
         response = self.client.get('/transporters/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '1.A.33.1')
 
     def test_cazylist_page(self):
+        print('Testing CAZy families list page view')
         response = self.client.get('/cazy/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'CAZymes')
 
     def test_cogslist_page1(self):
+        print('Testing COG classes list page view')
         response = self.client.get('/cogs/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Energy production and conversion')
 
     def test_golist_page1(self):
+        print('Testing GO terms list page view')
         response = self.client.get('/gos/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '[GO:0000003]')
+        self.assertContains(response, 'GO:0000003')
 
     def test_proteinsearch_page(self):
+        print('Testing protein sequence search page view')
         response = self.client.get('/protsearchform/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Sequence search')
 
     def test_nucleotidesearch_page(self):
+        print('Testing nucleotide sequence search page view')
         response = self.client.get('/nuclsearchform/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response,
@@ -989,11 +1049,13 @@ class BrowserTestCase(TransactionTestCase):
                             )
 
     def test_help_page(self):
+        print('Testing help page view')
         response = self.client.get('/help/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'ENIGMA genome browser')
+        self.assertContains(response, 'About this site')
 
     def test_comparative_view(self):
+        print('Testing non-existant page view')
         response = self.client.get('/comparative/',
                                    {'genome':'E_coli_BW2952',
                                     'locus_tag':'BWG_RS00020',
@@ -1002,17 +1064,26 @@ class BrowserTestCase(TransactionTestCase):
                                     'lines':'50'
                                     }
                                    )
-        print(response.content)
+        #print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Comparative analysis</h2>')
 
+    def test_pagenotfound(self):
+        response = self.client.get('/nonexistingpage')
+        self.assertEqual(response.status_code, 404)
+
+    '''
+        Accessory functions testing
+    '''
     def test_comparative_get_color(self):
+        print('Testing get_color function for comparative plot')
         color = _get_color(6)
         self.assertEqual(color,
             '.setColorGradient(\'rgb(255, 182, 199)\', \'rgb(204, 102, 119)\')'
             )
 
     def test_make_muscle_alignment(self):
+        print('Testing multiple alignment with muscle')
         proteins = '>1\nMKRISTTITTTTITTGNGAG\n' +\
         '>2\nMKRISTTITTTITITTGNGAG\n' +\
         '>3\nMKRISTTITTTITITTGNGAG'
@@ -1022,14 +1093,19 @@ class BrowserTestCase(TransactionTestCase):
 
 
 class ImporterTestCase(TransactionTestCase):
+    '''
+        Testing genome import pipeline
+    '''
+    
     fixtures = ['testdata.json']
     
     def setUp(self):
         self.importer = Importer()
 
-    @skip("working")
+    #@skip("working")
     def test_find_taxonomic_order(self):
         """Taxonomic order correctly identified"""
+        print('Testing find_taxonomic_order function')
         pseudomonadales = self.importer.get_taxonomic_order('286')
         self.assertEqual(pseudomonadales, 'Pseudomonadales')
         pseudomonadales = self.importer.get_taxonomic_order('72274')
@@ -1043,9 +1119,11 @@ class ImporterTestCase(TransactionTestCase):
         unknown = self.importer.get_taxonomic_order('0')
         self.assertEqual(unknown, 'Unknown')
 
-    @skip("working")
+    #@skip("working")
     def test_generate_strain_data(self):
         """Read GBK file and return correct strain data"""
+        print('Testing generate_strain_data function')
+        # Test NCBI genome
         p_aeruginosa = self.importer.generate_strain_data(
             '/mnt/data2/Bacteriocins/genomes/Pseudomonas_aeruginosa_PAO1.gb',
             'PAO1',
@@ -1055,6 +1133,7 @@ class ImporterTestCase(TransactionTestCase):
         self.assertEqual(p_aeruginosa.full_name, 'Pseudomonas aeruginosa PAO1')
         self.assertEqual(p_aeruginosa.taxon.taxonomy_id, '208964')
         self.assertEqual(p_aeruginosa.order, 'Pseudomonadales')
+        # Test KBase genome
         isolate = self.importer.generate_strain_data(
             '/mnt/data2/ENIGMA/genome_files/genbank/DP16D-E2.genome.gbff.gz',
             'DP16D-E2',
@@ -1065,14 +1144,24 @@ class ImporterTestCase(TransactionTestCase):
         self.assertEqual(isolate.taxon.taxonomy_id, '48479')
         self.assertEqual(isolate.order, 'Unknown')
 
-    @skip("fix perl version incompatibility later")
-    def test_importer(self):
+    @skip("this is a very long test")
+    def test_genome_import_pipeline(self):
+        '''
+            This test runs the entire genome import pipeline for three minigenomes
+        '''
+        print('Testing the entire genome import pipeline')
         lines = []
-        with open('/mnt/data2/CGCMS/test_data/test_genome_import.txt', 'r') as infile:
+        with open(os.path.join(BASE_DIR, '../testdata/import_minigenomes.txt'), 'r') as infile:
             for line in infile:
                 lines.append(line.rstrip('\n\r'))
+                print(line)
         result = self.importer.import_genomes(lines)
-        self.assertEqual(len(self.importer.inputgenomes), 1)
+        self.assertEqual(len(self.importer.inputgenomes), 3)
         self.assertEqual(result, 'Done!')
 
+    def test_create_parent_taxa(self):
+        print('Testing create_parent_taxa function')
+        taxonomy_id = '75309'
+        self.importer.create_parent_taxa(taxonomy_id)
+        self.assertEqual(Taxon.objects.get(taxonomy_id='135614').taxonomy_id, '135614')
 

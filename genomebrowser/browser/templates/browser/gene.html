@@ -132,49 +132,49 @@
                 {% if protein.kegg_orthologs.all %}
                 <span>KEGG Orthologs</span>
                 {% for kegg_ortholog in protein.kegg_orthologs.all %}
-                    <h5><a href="{% url 'searchgene' %}?type=ko_id$query={{ kegg_ortholog.kegg_id }}">[{{ kegg_ortholog.kegg_id }}]</a> {{ kegg_ortholog.description }}</h5>
+                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=ko_id$query={{ kegg_ortholog.kegg_id }}" title="Show all genes for {{ kegg_ortholog.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_ortholog.kegg_id }}]</a> {{ kegg_ortholog.description }}</h5>
                 {% endfor %}
                 {% endif %}
                 {% if protein.kegg_pathways.all %}
                 <span>KEGG Pathways</span>
                 {% for kegg_pathway in protein.kegg_pathways.all %}
-                    <h5><a href="{% url 'searchgene' %}?type=kp_id&query={{ kegg_pathway.kegg_id }}">[{{ kegg_pathway.kegg_id }}]</a> {{ kegg_pathway.description }}</h5>
+                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=kp_id&query={{ kegg_pathway.kegg_id }}" title="Show all genes for {{ kegg_pathway.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_pathway.kegg_id }}]</a> {{ kegg_pathway.description }}</h5>
                 {% endfor %}
                 {% endif %}
                 {% if protein.kegg_reactions.all %}
                 <span>KEGG Reactions</span>
                 {% for kegg_reaction in protein.kegg_reactions.all %}
-                    <h5><a href="{% url 'searchgene' %}?type=kr_id&query={{ kegg_reaction.kegg_id }}">[{{ kegg_reaction.kegg_id }}]</a> {{ kegg_reaction.description }}</h5>
+                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=kr_id&query={{ kegg_reaction.kegg_id }}" title="Show all genes for {{ kegg_reaction.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_reaction.kegg_id }}]</a> {{ kegg_reaction.description }}</h5>
                 {% endfor %}
                 {% endif %}
                 {% if protein.ec_numbers.all %}
                 <span>EC number</span>
                 {% for ec_number in protein.ec_numbers.all %}
-                    <h5><a href="{% url 'searchgene' %}?type=ec_id&query={{ ec_number.ec_number }}">EC: {{ ec_number.ec_number }}</a> ({{ ec_number.description }})</h5>
+                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=ec_id&query={{ ec_number.ec_number }}" title="Show all genes for {{ ec_number.ec_number }} in {{ gene.genome.name }}">EC: {{ ec_number.ec_number }}</a> ({{ ec_number.description }})</h5>
                 {% endfor %}
                 {% endif %}
                 {% if protein.tc_families.all %}
                 <span>TC class</span>
                 {% for tc_family in protein.tc_families.all %}
-                    <h5><a href="{% url 'searchgene' %}?type=tc_id&query={{ tc_family.tc_id }}">TC: {{ tc_family.tc_id }}</a> ({{ tc_family.description }})</h5>
+                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=tc_id&query={{ tc_family.tc_id }}" title="Show all genes for {{ tc_family.tc_id }} in {{ gene.genome.name }}">TC: {{ tc_family.tc_id }}</a> ({{ tc_family.description }})</h5>
                 {% endfor %}
                 {% endif %}
                 {% if protein.cazy_families.all %}
                 <span>CAZy family</span>
                 {% for cazy_family in protein.cazy_families.all %}
-                    <h5><a href="{% url 'searchgene' %}?type=cazy_id&query={{ cazy_family.cazy_id }}">{{ cazy_family.cazy_id }}</a> ({{ cazy_family.description }})</h5>
+                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=cazy_id&query={{ cazy_family.cazy_id }}" title="Show all genes for {{ cazy_family.cazy_id }} in {{ gene.genome.name }}">{{ cazy_family.cazy_id }}</a> ({{ cazy_family.description }})</h5>
                 {% endfor %}
                 {% endif %}
                 {% if protein.cog_classes.all %}
                 <span>COG class</span>
                 {% for cog_class in protein.cog_classes.all %}
-                    <h5><a href="{% url 'searchgene' %}?type=cog_id&query={{ cog_class.cog_id }}">[{{ cog_class.cog_id }}]</a> {{ cog_class.description }}</h5>
+                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=cog_id&query={{ cog_class.cog_id }}" title="Show all genes for {{ cog_class.description }} in {{ gene.genome.name }}">[{{ cog_class.cog_id }}]</a> {{ cog_class.description }}</h5>
                 {% endfor %}
                 {% endif %}
                 {% if protein.go_terms.all %}
                 <span>GO terms</span>
                 {% for go_term in protein.go_terms.all %}
-                    <h5><a href="{% url 'searchgene' %}?type=go_id&query={{ go_term.go_id }}">[{{ go_term.go_id }}]</a> {{ go_term.description }} ({{go_term.go_namespace}})</h5>
+                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=go_id&query={{ go_term.go_id }}" title="Show all genes for {{ go_term.go_id }} in {{ gene.genome.name }}">[{{ go_term.go_id }}]</a> {{ go_term.description }} ({{go_term.go_namespace}})</h5>
                 {% endfor %}
                 {% endif %}
             </div>

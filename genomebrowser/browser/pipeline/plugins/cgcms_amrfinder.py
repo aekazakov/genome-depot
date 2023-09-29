@@ -52,7 +52,7 @@ def preprocess(annotator, genomes, working_dir):
     
     with open(amrfinder_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
-        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
         outfile.write('conda activate ' +
                       annotator.config['plugins.amrfinder.conda_env'] +
                       '\n'
@@ -62,14 +62,14 @@ def preprocess(annotator, genomes, working_dir):
                                     '--threads',
                                     annotator.config['plugins.amrfinder.threads'],
                                     '-p',
-                                    input_fasta_files[genome],
+                                    '"' + input_fasta_files[genome] + '"',
                                     '-o',
-                                    os.path.join(output_dir,
-                                                 genome + '.amrfinder.tsv'
+                                    '"' + os.path.join(output_dir,
+                                                 genome + '.amrfinder.tsv"'
                                                  ),
                                     '--log',
-                                    os.path.join(working_dir,
-                                                 genome + '_log.txt'
+                                    '"' + os.path.join(working_dir,
+                                                 genome + '_log.txt"'
                                                  )
                                     ]) + '\n')
         outfile.write('conda deactivate\n')

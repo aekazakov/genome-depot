@@ -46,16 +46,16 @@ def preprocess(annotator, genomes, working_dir):
     
     with open(abricate_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
-        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
         outfile.write('conda activate ' +
                       annotator.config['plugins.abricate.conda_env'] + '\n'
                       )
         for genome in sorted(genomes.keys()):
             outfile.write(' '.join(['abricate', '--threads',
                                     annotator.config['plugins.abricate.threads'],
-                                    genomes[genome],
+                                    '"' + genomes[genome] + '"',
                                     '>',
-                                    os.path.join(output_dir, genome + '.abricate.tsv')]
+                                    '"' + os.path.join(output_dir, genome + '.abricate.tsv') + '"']
                                     )
                           + '\n')
         outfile.write('conda deactivate\n')

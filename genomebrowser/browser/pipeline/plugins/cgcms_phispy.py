@@ -50,18 +50,18 @@ def preprocess(annotator, genomes, working_dir):
     
     with open(phispy_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
-        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
         outfile.write('conda activate ' +
                       annotator.config['plugins.phispy.conda_env'] + '\n'
                       )
         for genome in sorted(genomes.keys()):
             outfile.write(' '.join(['PhiSpy.py',
                                     '-o',
-                                    os.path.join(output_dir, genome),
+                                    '"' + os.path.join(output_dir, genome) + '"',
                                     '--threads',
                                     annotator.config['plugins.phispy.threads'],
                                     '--output_choice', '9', '-k', 'KEEP',
-                                    genomes[genome]]) + '\n')
+                                    '"' + genomes[genome] + '"']) + '\n')
         outfile.write('conda deactivate\n')
 
         # Run HMMSearch for each protein fasta file against pVOG HMMs
@@ -70,7 +70,7 @@ def preprocess(annotator, genomes, working_dir):
             domfile = os.path.join(output_dir, genome + '.domtblout.txt')
             outfile.write(' '.join(['hmmsearch',
                   '--domtblout',
-                  domfile,
+                  '"' + domfile + '"',
                   '-o',
                   '/dev/null',
                   '-E',
@@ -79,8 +79,8 @@ def preprocess(annotator, genomes, working_dir):
                   annotator.config['plugins.phispy.threads'],
                   '--noali',
                   '--notextw',
-                  annotator.config['plugins.phispy.pvog_path'],
-                  faa_file
+                  '"' + annotator.config['plugins.phispy.pvog_path'] + '"',
+                  '"' + faa_file + '"'
                   ]) + '\n')
         
     return phispy_script

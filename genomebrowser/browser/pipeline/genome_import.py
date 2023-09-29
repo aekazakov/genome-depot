@@ -39,6 +39,7 @@ from browser.models import Cazy_family
 from browser.models import Cog_class
 from browser.models import Operon
 from browser.models import Annotation
+from browser.models import Tag
 from genomebrowser.settings import BASE_URL
 from browser.pipeline.annotate import Annotator
 from browser.pipeline.taxonomy import load_taxonomy
@@ -189,6 +190,17 @@ class Importer(object):
                 logger.error(genome)
             raise ValueError('Check and fix errors:\n' + '\n'.join(problem_genomes))
         self.genomefiles = result
+    
+    def create_tag(self):
+        current_date = timezone.now().isoformat()
+        tag_name = 'imported' + current_date
+        try:
+            self.tag = Tag.objects.get(name=tag_name)
+        except Tag.DoesNotExist:
+            tag = Tag(name=tag_name,
+                      description='Genomes imported on ' + current_date)
+            tag.save()
+            self.tag = tag
         
     def get_taxonomic_order(self, taxonomy_id):
         result = 'Unknown'
@@ -261,6 +273,22 @@ class Importer(object):
             organism_data['tax_id'] = '0'
         return organism_data
     
+    def create_parent_taxa(self, taxonomy_id):
+        parent_id = self.taxonomy[taxonomy_id]['parent']
+        while parent_id != '1':
+            try:
+                taxon = Taxon.objects.get(taxonomy_id = parent_id)
+                break
+            except Taxon.DoesNotExist:
+                taxon = Taxon(taxonomy_id=parent_id,
+                    eggnog_taxid=self.taxonomy[parent_id]['eggnog_taxid'],
+                    name=self.taxonomy[parent_id]['name'],
+                    rank=self.taxonomy[parent_id]['rank'],
+                    parent_id=self.taxonomy[parent_id]['parent']
+                    )
+                taxon.save()
+            parent_id = self.taxonomy[parent_id]['parent']
+        
     def generate_strain_data(self, gbk_file, strain_id, order):
         """
             Generates strain data, if the strain was not found 
@@ -302,6 +330,7 @@ class Importer(object):
                 parent_id=self.taxonomy[organism_data['tax_id']]['parent']
                 )
             taxon.save()
+            self.create_parent_taxa(organism_data['tax_id'])
         strain = Strain(strain_id=strain_id,
                         full_name=organism_data['organism'],
                         order=organism_data['order'],
@@ -350,6 +379,7 @@ class Importer(object):
                                 parent_id=self.taxonomy[taxonomy_id]['parent']
                                 )
                             taxon.save()
+                            self.create_parent_taxa(taxonomy_id)
                         strain = Strain.objects.get(strain_id=strain_id)
                         strain.taxon = taxon
                         strain.full_name = organism_data['organism']
@@ -407,7 +437,6 @@ class Importer(object):
     def prepare_taxonomy_data(self):
         for strain_id, strain in self.strain_instances.items():
             taxon_id = strain.taxon.taxonomy_id
-            parent_id = self.taxonomy[taxon_id]['parent']
             try:
                 taxon = Taxon.objects.get(taxonomy_id = taxon_id)
             except Taxon.DoesNotExist:
@@ -415,22 +444,10 @@ class Importer(object):
                     eggnog_taxid=self.taxonomy[taxon_id]['eggnog_taxid'],
                     name=self.taxonomy[taxon_id]['name'],
                     rank=self.taxonomy[taxon_id]['rank'],
-                    parent_id=parent_id
+                    parent_id=self.taxonomy[taxon_id]['parent']
                     )
                 taxon.save()
-
-            while parent_id != '1':
-                try:
-                    taxon = Taxon.objects.get(taxonomy_id = parent_id)
-                except Taxon.DoesNotExist:
-                    taxon = Taxon(taxonomy_id=parent_id,
-                        eggnog_taxid=self.taxonomy[parent_id]['eggnog_taxid'],
-                        name=self.taxonomy[parent_id]['name'],
-                        rank=self.taxonomy[parent_id]['rank'],
-                        parent_id=self.taxonomy[parent_id]['parent']
-                        )
-                    taxon.save()
-                parent_id = self.taxonomy[parent_id]['parent']
+                self.create_parent_taxa(taxon_id)
     
     def process_protein(self, sequence, protein_name):
         '''
@@ -621,6 +638,7 @@ class Importer(object):
                     parent_id=self.taxonomy[organism_data['tax_id']]['parent']
                     )
                 taxon.save()
+                self.create_parent_taxa(organism_data['tax_id'])
 
             if gbk_file.endswith('.gz'):
                 shutil.copy(gbk_file, gbk_copy)
@@ -974,7 +992,8 @@ class Importer(object):
     def prepare_og_data(self):
         self.mappings['og'] = {}
         self.relations['og'] = set()
-        saved_taxonomy_ids = set([taxon.taxonomy_id for taxon in Taxon.objects.all()])
+        saved_taxonomy_ids = set(list(Taxon.objects.values_list('taxonomy_id',
+                                                                flat=True)))
         for protein_hash in self.protein_data:
             if 'eggnog.eggNOG_OG' not in self.protein_data[protein_hash]:
                 continue
@@ -995,6 +1014,19 @@ class Importer(object):
                         rank=self.taxonomy[taxonomy_id]['rank'],
                         parent_id=self.taxonomy[taxonomy_id]['parent']
                         )
+                    parent_id=self.taxonomy[taxonomy_id]['parent']
+                    while parent_id != '1':
+                        if parent_id in saved_taxonomy_ids \
+                        or parent_id in self.taxon_instances:
+                            break
+                        self.taxon_instances[parent_id] = Taxon(
+                            taxonomy_id=parent_id,
+                            eggnog_taxid = self.taxonomy[parent_id]['eggnog_taxid'],
+                            name=self.taxonomy[parent_id]['name'],
+                            rank=self.taxonomy[parent_id]['rank'],
+                            parent_id=self.taxonomy[parent_id]['parent']
+                            )
+                        parent_id = self.taxonomy[parent_id]['parent']
                 self.mappings['og'][eggnog_id + '@' + taxonomy_id] = \
                 (eggnog_id, taxonomy_id)
                 self.relations['og'].add((protein_hash, eggnog_id, taxonomy_id))
@@ -1009,13 +1041,26 @@ class Importer(object):
             self.protein_data[protein_hash]['taxonomic_group'] = taxonomy_id
             if taxonomy_id not in saved_taxonomy_ids \
             and taxonomy_id not in self.taxon_instances:
+                parent_id=self.taxonomy[taxonomy_id]['parent']
                 self.taxon_instances[taxonomy_id] = Taxon(
                     taxonomy_id=taxonomy_id,
                     eggnog_taxid = self.taxonomy[taxonomy_id]['eggnog_taxid'],
                     name=self.taxonomy[taxonomy_id]['name'],
                     rank=self.taxonomy[taxonomy_id]['rank'],
-                    parent_id=self.taxonomy[taxonomy_id]['parent']
+                    parent_id=parent_id
                     )
+                while parent_id != '1':
+                    if parent_id in saved_taxonomy_ids \
+                    or parent_id in self.taxon_instances:
+                        break
+                    self.taxon_instances[parent_id] = Taxon(
+                        taxonomy_id=parent_id,
+                        eggnog_taxid = self.taxonomy[parent_id]['eggnog_taxid'],
+                        name=self.taxonomy[parent_id]['name'],
+                        rank=self.taxonomy[parent_id]['rank'],
+                        parent_id=self.taxonomy[parent_id]['parent']
+                        )
+                    parent_id = self.taxonomy[parent_id]['parent']
         
     def prepare_eggnog_description_data(self):
         self.mappings['description'] = {}
@@ -1099,6 +1144,8 @@ class Importer(object):
                 taxon=genome_data['taxon']
                 ))
         Genome.objects.bulk_create(genome_instances, batch_size=1000)
+        new_genomes = Genome.objects.filter(name__in=[item.name for item in genome_instances])
+        self.tag.genome_set.add(*new_genomes)
         print('Genomes imported')
 
         # write eggnog descriptions
@@ -1165,7 +1212,7 @@ class Importer(object):
         for gene_id,gene_entry in self.gene_data.items():
             gene_instance = Gene(name=gene_entry['name'],
                 locus_tag=gene_entry['locus_tag'],
-                contig_id=contig_ids[(gene_entry['genome_id'], gene_entry['contig_id'])],
+                contig_id=contig_ids[(gene_entry['genome_id'],gene_entry['contig_id'])],
                 type=gene_entry['type'],
                 start=gene_entry['start'],
                 end=gene_entry['end'],
@@ -1771,6 +1818,8 @@ class Importer(object):
                 empty_dirs.append(dirpath)
         for directory in empty_dirs:
             os.rmdir(directory)
+        if os.path.exists(os.path.join(self.config['cgcms.temp_dir'], 'poem-temp')):
+            shutil.rmtree(os.path.join(self.config['cgcms.temp_dir'], 'poem-temp'))
             
         
     def import_genomes(self, lines):
@@ -1804,6 +1853,9 @@ class Importer(object):
         logger.info('Checking genome names')
         # check if any genomes already exist in the database
         self.check_genomes()
+        
+        # generate a tag for this batch of genomes
+        self.create_tag()
         
         logger.info('Preparing strain data')
         # make strain data for upload

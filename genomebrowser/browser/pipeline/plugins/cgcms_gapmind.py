@@ -51,12 +51,12 @@ def preprocess(annotator, genomes, working_dir):
     
     with open(gapmind_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
-        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
         outfile.write('conda activate ' +
                       annotator.config['plugins.gapmind.gapmind_env'] +
                       '\n'
                       )
-        outfile.write('cd ' + annotator.config['plugins.gapmind.gapmind_dir'] + '\n')
+        outfile.write('cd "' + annotator.config['plugins.gapmind.gapmind_dir'] + '"\n')
         
         for genome in sorted(genomes.keys()):
             if os.path.getsize(input_fasta_files[genome]) == 0:
@@ -66,7 +66,7 @@ def preprocess(annotator, genomes, working_dir):
             outfile.write('\n' + ' '.join(['perl',
                                            'bin/buildorgs.pl',
                                            '-out',
-                                           os.path.join(output_dir, genome, 'orgs'),
+                                           '"' + os.path.join(output_dir, genome, 'orgs') + '"',
                                            '-orgs',
                                            "'file:" + input_fasta_files[genome] +
                                            ":" + genome + "'"
@@ -75,9 +75,9 @@ def preprocess(annotator, genomes, working_dir):
             outfile.write(' '.join(['diamond',
                                     'makedb',
                                     '--in',
-                                    os.path.join(output_dir, genome, 'orgs.faa'),
+                                    '"' + os.path.join(output_dir, genome, 'orgs.faa') + '"',
                                     '--db',
-                                    os.path.join(output_dir, genome, 'orgs.faa')
+                                    '"' + os.path.join(output_dir, genome, 'orgs.faa') + '"'
                                     ]) + '\n')
                                     
             for collection in GAPMIND_REFERENCE:
@@ -85,13 +85,13 @@ def preprocess(annotator, genomes, working_dir):
                 outfile.write(' '.join(['perl',
                                         'bin/gapsearch.pl',
                                         '-orgs',
-                                        os.path.join(output_dir, genome, 'orgs'),
+                                        '"' + os.path.join(output_dir, genome, 'orgs') + '"',
                                         '-set',
                                         collection, 
                                         '-out',
-                                        os.path.join(output_dir, 
+                                        '"' + os.path.join(output_dir, 
                                                      genome,
-                                                     collection + '.hits'),
+                                                     collection + '.hits') + '"',
                                         '-nCPU',
                                         annotator.config['plugins.gapmind.threads']
                                         ]) + '\n')
@@ -100,25 +100,25 @@ def preprocess(annotator, genomes, working_dir):
                 outfile.write(' '.join(['perl',
                     'bin/gaprevsearch.pl',
                     '-orgs',
-                    os.path.join(output_dir,
+                    '"' + os.path.join(output_dir,
                                  genome,
                                  'orgs'
-                                 ),
+                                 ) + '"',
                     '-hits',
-                    os.path.join(output_dir, 
+                    '"' + os.path.join(output_dir, 
                                  genome,
                                  collection + '.hits'
-                                 ),
+                                 ) + '"',
                     '-curated',
-                    os.path.join(annotator.config['plugins.gapmind.gapmind_dir'],
+                    '"' + os.path.join(annotator.config['plugins.gapmind.gapmind_dir'],
                                  'tmp',
                                  'path.' + collection,
-                                 'curated.faa.udb.dmnd'),
+                                 'curated.faa.udb.dmnd') + '"',
                     '-out',
-                    os.path.join(output_dir,
+                    '"' + os.path.join(output_dir,
                                  genome,
                                  collection + '.revhits'
-                                 ),
+                                 ) + '"',
                     '-nCPU',
                     annotator.config['plugins.gapmind.threads']
                     ]) + '\n')
@@ -127,25 +127,27 @@ def preprocess(annotator, genomes, working_dir):
                 outfile.write(' '.join(['perl',
                                         'bin/gapsummary.pl',
                                         '-orgs',
-                                        os.path.join(output_dir,
+                                        '"' + os.path.join(output_dir,
                                                      genome,
                                                      'orgs'
-                                                     ),
+                                                     ) + '"',
                                         '-set',
                                         collection,
                                         '-hits',
-                                        os.path.join(output_dir,
+                                        '"' + os.path.join(output_dir,
                                                      genome,
                                                      collection + '.hits'
-                                                     ),
-                                        '-rev', os.path.join(output_dir,
+                                                     ) + '"',
+                                        '-rev',
+                                        '"' + os.path.join(output_dir,
                                                              genome,
                                                              collection + '.revhits'
-                                                             ),
-                                        '-out', os.path.join(output_dir,
+                                                             ) + '"',
+                                        '-out',
+                                        '"' + os.path.join(output_dir,
                                                              genome,
                                                              collection + '.sum'
-                                                             )
+                                                             ) + '"'
                                         ]) + '\n')
             
         outfile.write('conda deactivate\n')

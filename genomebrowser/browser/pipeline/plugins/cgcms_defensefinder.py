@@ -51,12 +51,12 @@ def preprocess(annotator, genomes, working_dir):
     
     with open(defensefinder_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
-        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
         outfile.write('conda activate ' +
                       annotator.config['plugins.defensefinder.defensefinder_env'] +
                       '\n'
                       )
-        outfile.write('cd ' + working_dir + '\n\n')
+        outfile.write('cd "' + working_dir + '"\n\n')
         
         for genome in sorted(genomes.keys()):
             if os.path.getsize(input_fasta_files[genome]) == 0:
@@ -66,10 +66,10 @@ def preprocess(annotator, genomes, working_dir):
             outfile.write(' '.join(['defense-finder',
             'run',
             '--models-dir',
-            annotator.config['plugins.defensefinder.defensefinder_models_dir'],
+            '"' + annotator.config['plugins.defensefinder.defensefinder_models_dir'] + '"',
             '-o',
-            genome_dir,
-            input_fasta_files[genome]])
+            '"' + genome_dir + '"',
+            '"' + input_fasta_files[genome] + '"'])
             + '\n')
         outfile.write('\nconda deactivate\n')
     return defensefinder_script

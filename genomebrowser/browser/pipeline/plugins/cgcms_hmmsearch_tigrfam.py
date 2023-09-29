@@ -74,18 +74,19 @@ def preprocess(annotator, genomes, working_dir):
                       annotator.config['plugins.hmmsearch_tigrfam.conda_env'] + 
                       '/bin:$PATH\n'
                       )
-        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
         outfile.write('conda activate ' +
                       annotator.config['plugins.hmmsearch_tigrfam.conda_env'] +
                       '\n'
                       )
-        outfile.write(' '.join([annotator.config['plugins.hmmsearch_tigrfam.hmmsearch_command'],
-                                '--domtblout', hmmsearch_outfile,
+        outfile.write(' '.join([annotator.config[\
+                                 'plugins.hmmsearch_tigrfam.hmmsearch_command'],
+                                '--domtblout', '"' + hmmsearch_outfile + '"',
                                 '-o', '/dev/null', '--cut_tc',
                                 '--cpu', annotator.config['cgcms.threads'],
                                 '--noali', '--notextw',
-                                annotator.config['plugins.hmmsearch_tigrfam.hmm_lib'],
-                                input_file
+                                '"' + annotator.config['plugins.hmmsearch_tigrfam.hmm_lib'] + '"',
+                                '"' + input_file + '"'
                                 ]) + '\n')
         outfile.write('conda deactivate\n')
     return hmmsearch_script

@@ -67,6 +67,7 @@ urlpatterns = [
     path('comparative/', views.ComparativeView.as_view(), name='comparative'),
     path('loadingscribl/',views.ComparativeView.ajax_view,name="loadingscribl"),
     path('cregulon/', views.cregulon_view, name='cregulon'),
+    path('pathway/', views.pathway_view, name='pathway'),
     path('help/', views.show_help, name='help'),
     path('nuclsearchform/',views.nucleotidesearchform,name="nucleotidesearchform"),
     path('nuclsearch/',views.NsearchResultView.as_view(),name="nucleotidesearch"),

@@ -80,7 +80,7 @@ def preprocess(annotator, genomes, working_dir):
                       '/envs/' + annotator.config['plugins.fama.conda_env'] + 
                       '/bin:$PATH\n'
                       )
-        outfile.write('source ' + annotator.config['cgcms.conda_path'] + '\n')
+        outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
         outfile.write('conda activate ' +
                       annotator.config['plugins.fama.conda_env'] +
                       '\n'
@@ -90,20 +90,20 @@ def preprocess(annotator, genomes, working_dir):
                                              'project_' + collection + '.ini'
                                              )
             outfile.write(' '.join(['python',
-                  os.path.join(annotator.config['plugins.fama.fama_dir'],
+                  '"' + os.path.join(annotator.config['plugins.fama.fama_dir'],
                                'fama_prepare.py'
-                               ),
+                               ) + '"',
                   '-c', annotator.config['plugins.fama.fama_config'],
                   '-p', collection,
-                  '-i', seqlist_file,
+                  '-i', '"' + seqlist_file + '"',
                   '-r', collection,
                   '--prot'
                   ]) + '\n')
             outfile.write(' '.join(['python',
-                        os.path.join(
+                        '"' + os.path.join(
                                      annotator.config['plugins.fama.fama_dir'],
                                      'fama.py'
-                                     ),
+                                     ) + '"',
                         '-c', annotator.config['plugins.fama.fama_config'],
                         '-p', fama_project_file,
                         '--prot'
