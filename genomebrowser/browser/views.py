@@ -2723,7 +2723,7 @@ def generate_external_link(query, query_type, genome=None):
                 if ext_kegg_map_url != '':
                     external = ext_kegg_map_url
                 if external != '':
-                    external = '<a href="/pathway/?genome=' + genome + '&pathway=' + kp_ids[0]['kegg_id'] + '">' + link_text + '</a>'  #'<a href="' + external + '" target="blank_">' + link_text + '</a>'
+                    external = '<a href="'+ reverse('pathway') + '?genome=' + genome + '&pathway=' + kp_ids[0]['kegg_id'] + '">' + link_text + '</a>'  #'<a href="' + external + '" target="blank_">' + link_text + '</a>'
         elif query_type=='ko_id':
             external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query + '" target="blank_">Search for "' + query + '" in KEGG</a>'
         elif query_type=='kp_id':
