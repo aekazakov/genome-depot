@@ -1867,6 +1867,8 @@ def pathway_view(request):
         kp = Kegg_pathway.objects.get(kegg_id=query)
         #kp_id = kp.kegg_id
         ext_kegg_map_url = ''
+        context['pathway'] = kp
+        context['genome'] = genome
         gene_list = Gene.objects.filter(
                     genome__name=genome, protein__kegg_pathways__kegg_id=kp.kegg_id
                     ).select_related(
@@ -1896,7 +1898,14 @@ def pathway_view(request):
                 item['bg'] = color[0]
                 item['fg'] = color[1]
                 ko_count += 1
+        context['iframeheight'] = 850
+        if ko_count > 18:
+            context['iframeheight'] = 50*ko_count
         kegg_map_url += 'default%3dpink'
+        
+        if len(kegg_map_url) > 2559:
+            context['error'] = 'The pathway URL cannot be displayed by KEGG mapper tool because it is too long (' + str(len(kegg_map_url)) + ' symbols). Try another pathway with smaller number of genes.'
+            return render(request, 'browser/pathway.html', context)
         context['external'] = kegg_map_url
         context['items'] = items
 
@@ -2680,65 +2689,56 @@ def generate_external_link(query, query_type, genome=None):
     link_text = ''
     if query is None:
         query = ''
-    if genome is None:
-        if query_type=='ko_id':
-            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
-            link_text = 'Search for "' + query + '" in KEGG'
-        elif query_type=='kp_id':
-            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
-            link_text = 'Search for "' + query + '" in KEGG'
-        elif query_type=='kr_id':
-            external = 'https://www.kegg.jp/dbget-bin/www_bget?' + query
-            link_text = 'Search for "' + query + '" in KEGG'
-        elif query_type=='ec_id':
-            external = 'https://www.kegg.jp/dbget-bin/www_bget?ec:' + query
-            link_text = 'Search for "' + query + '" in KEGG'
-        elif query_type=='tc_id':
-            external = 'http://www.tcdb.org/search/result.php?tc=' + query + \
-                       '#' + query
-            link_text = 'Search for "' + query + '" in TCDB'
-        elif query_type=='cazy_id':
-            external = 'http://www.cazy.org/' + query + '.html'
-            link_text = 'View ' + query + ' page in CAZy'
-        elif query_type=='cog_id':
-            external = 'https://ftp.ncbi.nih.gov/pub/COG/COG2014/static/lists/list' +\
-                       query + '.html'
-            link_text = 'View ' + query + ' page in NCBI'
-        elif query_type=='go_id':
-            external = 'https://www.ebi.ac.uk/QuickGO/search/' + query
-            link_text = 'Search for "' + query + '" in Gene Onthology'
     else:
         if query_type=='kp' or query_type=='kp_id':
-            kp_ids = Kegg_pathway.objects.filter(
-                Q(kegg_id__icontains=query) |
-                Q(description__icontains=query)
-            ).values('kegg_id')
-            ext_kegg_map_url = ''
-            if kp_ids.count() == 1:
-                gene_list = Gene.objects.filter(
-                    genome__name=genome, protein__kegg_pathways__kegg_id__in=kp_ids
-                ).select_related(
-                    'protein'
-                ).prefetch_related(
-                    'protein__kegg_orthologs'
-                )
-                logger.debug(kp_ids[0]['kegg_id'])
-                kegg_map_url = 'https://www.kegg.jp/pathway/' + \
-                               kp_ids[0]['kegg_id'] + '+'
-                logger.debug(kegg_map_url)
-                ko_ids = set()
-                for gene in gene_list:
-                    for ko in gene.protein.kegg_orthologs.all():
-                        ko_ids.add(ko.kegg_id)
-                if ko_ids:
-                    ext_kegg_map_url = kegg_map_url + \
-                                       '+'.join(sorted(list(ko_ids)))
-            if ext_kegg_map_url != '':
-                external = ext_kegg_map_url
-            link_text = 'View KEGG map ' + kp_ids[0]['kegg_id'] + ' for these functions'
-    if link_text == '':
-        link_text = 'External link'
-    if external != '':
-        external = '<a href="' + external + '" target="blank_">' + link_text + '</a>'
+            if genome is None:
+                if query_type=='kp_id':
+                    external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query  + '" target="blank_">Search for "' + query + '" in KEGG</a>'
+            else:
+                kp_ids = Kegg_pathway.objects.filter(
+                    Q(kegg_id__icontains=query) |
+                    Q(description__icontains=query)
+                ).values('kegg_id')
+                ext_kegg_map_url = ''
+                if kp_ids.count() == 1:
+                    gene_list = Gene.objects.filter(
+                        genome__name=genome, protein__kegg_pathways__kegg_id__in=kp_ids
+                    ).select_related(
+                        'protein'
+                    ).prefetch_related(
+                        'protein__kegg_orthologs'
+                    )
+                    logger.debug(kp_ids[0]['kegg_id'])
+                    kegg_map_url = 'https://www.kegg.jp/pathway/' + \
+                                   kp_ids[0]['kegg_id'] + '+'
+                    logger.debug(kegg_map_url)
+                    ko_ids = set()
+                    for gene in gene_list:
+                        for ko in gene.protein.kegg_orthologs.all():
+                            ko_ids.add(ko.kegg_id)
+                    if ko_ids:
+                        ext_kegg_map_url = kegg_map_url + \
+                                           '+'.join(sorted(list(ko_ids)))
+                    link_text = 'View KEGG map ' + kp_ids[0]['kegg_id'] + ' for these functions'
+                if ext_kegg_map_url != '':
+                    external = ext_kegg_map_url
+                if external != '':
+                    external = '<a href="/pathway/?genome=' + genome + '&pathway=' + kp_ids[0]['kegg_id'] + '">' + link_text + '</a>'  #'<a href="' + external + '" target="blank_">' + link_text + '</a>'
+        elif query_type=='ko_id':
+            external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query + '" target="blank_">Search for "' + query + '" in KEGG</a>'
+        elif query_type=='kp_id':
+            external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query + '" target="blank_">Search for "' + query + '" in KEGG</a>'
+        elif query_type=='kr_id':
+            external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query + '" target="blank_">Search for "' + query + '" in KEGG</a>'
+        elif query_type=='ec_id':
+            external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?ec:' + query + '" target="blank_">Search for "' + query + '" in KEGG</a>'
+        elif query_type=='tc_id':
+            external = '<a href="http://www.tcdb.org/search/result.php?tc=' + query + '#' + query + '" target="blank_">Search for "' + query + '" in TCDB</a>'
+        elif query_type=='cazy_id':
+            external = '<a href="http://www.cazy.org/' + query + '.html" target="blank_">View "' + query + '" page in CAZy</a>'
+        elif query_type=='go_id':
+            external = '<a href="https://www.ebi.ac.uk/QuickGO/search/' + query + '" target="blank_">Search for "' + query + '" in Gene Onthology</a>'
+        else:
+            external = ''
     return external
 
