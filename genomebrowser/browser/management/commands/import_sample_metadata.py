@@ -2,9 +2,11 @@ from django.core.management.base import BaseCommand
 from browser.pipeline.annotate import Annotator
 
 class Command(BaseCommand):
-    help = """For samples uploaded into Django database,
-    this program adds metadata from tab-separated file.
-    Metadata file must contain the following fields:
+    help = """This command imports sample metadata from tab-separated file
+    into the Django database.
+    Samples must be created in advance.
+    
+    The input file must contain the following fields:
     1. Sample name (as in the database).
     2. Metadata source.
     3. Metadata URL (external).

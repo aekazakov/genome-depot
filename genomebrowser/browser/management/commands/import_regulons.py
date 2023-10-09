@@ -2,9 +2,10 @@ from django.core.management.base import BaseCommand
 from browser.pipeline.annotate import Annotator
 
 class Command(BaseCommand):
-    help = """For genomes uploaded into Django database, 
-    this program imports regulons from tab-separated file.
-    Metadata file must contain the following fields:
+    help = """This command imports regulons from a tab-separated file.
+    Genomes must be uploaded into the CGCMS database in advance. 
+
+    The input file must contain the following fields:
     1. Regulon name.
     2. Genome name  (as in the database).
     3. Regulatory gene locus_tag.
@@ -12,12 +13,12 @@ class Command(BaseCommand):
     5. Contig ID (as in the database).
     6. Site start.
     7. Site end.
-    8. Strand.
-    9. Sequence.
+    8. Site strand.
+    9. Site sequence.
     """
 
     def add_arguments(self, parser):
-        parser.add_argument('-i', help='Path to regulons file')
+        parser.add_argument('-i', help='Path to the input file')
 
     def handle(self, *args, **options):
         annotator = Annotator()
