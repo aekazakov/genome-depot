@@ -7,7 +7,7 @@ class Command(BaseCommand):
     For metaghenomic samples uploaded to Django database,
     this program changes sample descriptions.
     Input file must contain the following fields (tab-separated):
-    1. Sample name  (as in the database).
+    1. Sample name (as in the database).
     2. Full name.
     3. Description text
     '''

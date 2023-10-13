@@ -1,3 +1,4 @@
+import sys
 from django.core.management.base import BaseCommand
 from browser.models import Annotation
 from browser.models import Eggnog_description
@@ -17,11 +18,26 @@ from browser.models import Strain_metadata
 from browser.models import Strain
 from browser.models import Sample_metadata
 from browser.models import Sample
+from browser.models import Tag
 from browser.models import Taxon
 
 class Command(BaseCommand):
-    help = 'Deletes all genome browser entries from the database'
+    help = '''Deletes all data except configuration settings 
+    from the CGCMS database
+    '''
     def handle(self, *args, **options):
+        print('')
+        while True:
+            answer = input('All data in the CGCMS database will be deleted.'
+                'This action cannot be reversed. Continue? (y/n)'
+            )
+            if answer.lower() in ["y","yes"]:
+                break
+            elif answer.lower() in ["n","no"]:
+                print('Exiting.')
+                sys.exit()
+            else:
+                print('Please answer yes or no.')
         # Delete all mappings before deleting genes
         Annotation.objects.all().delete()
         Eggnog_description.objects.all().delete()
@@ -48,3 +64,5 @@ class Command(BaseCommand):
         Sample.objects.all().delete()
         # Delete taxonomy entries
         Taxon.objects.all().delete()
+        # Delete tags
+        Tag.objects.all().delete()

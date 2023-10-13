@@ -1,8 +1,10 @@
+import gzip
 import os
 import shutil
-from django.core.management.base import BaseCommand, CommandError
-from browser.models import Contig
+from Bio import GenBank
+from django.core.management.base import BaseCommand
 from browser.pipeline.genome_import import Importer
+from browser.models import Genome
 
 class Command(BaseCommand):
     help = '''
@@ -14,7 +16,6 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
         importer = Importer()
-        gbff_dir = os.path.join(importer.config['cgcms.static_dir'], 'gbff')
         nucl_db_fasta = importer.config['cgcms.search_db_nucl']
         os.remove(nucl_db_fasta)
         with open(nucl_db_fasta, 'w') as outfile:
@@ -42,4 +43,3 @@ class Command(BaseCommand):
                         importer.config['cgcms.search_db_prot']
                         )
         importer.create_search_databases()
-        print('Done!')

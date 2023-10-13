@@ -4,8 +4,8 @@ from browser.models import Tag, Genome
 
 class Command(BaseCommand):
     help = '''
-    For protein sequences from selected genomes uploaded to Django
-    database, this program runs one of annotation tool plugins.
+    This command assign one or more tags to genomes listed
+    in a text or tab-separated file.
     '''
 
     def add_arguments(self, parser):

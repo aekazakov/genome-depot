@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from browser.dataimport.taxonomy import update_taxonomy
+from browser.pipeline.taxonomy import update_taxonomy
 
 class Command(BaseCommand):
     help = """

@@ -3,7 +3,7 @@ from browser.models import Genome
 from browser.pipeline.genome_import import Importer
 
 class Command(BaseCommand):
-    help = 'Deletes and re-creates static files for genome viewer'
+    help = '''Deletes and re-creates static files for genome viewer'''
 
     def add_arguments(self, parser):
         parser.add_argument('-g', default='', help='Genome name')

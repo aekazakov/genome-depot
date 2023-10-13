@@ -1,6 +1,7 @@
 from django import forms
 from django.forms.widgets import TextInput
 from browser.models import Tag
+from browser.models import Config
 
 
 class TsvImportForm(forms.Form):
@@ -22,6 +23,7 @@ class GenomeImportForm(forms.Form):
                                       label='Email for NCBI genome downloads (optional)'
                                       )
 
+
 class TagModelForm(forms.ModelForm):
     class Meta:
         model = Tag
@@ -31,9 +33,22 @@ class TagModelForm(forms.ModelForm):
             "textcolor": TextInput(attrs={"type": "color"}),
         }
 
+
 class AddTagForm(forms.Form):
     tag = forms.ModelChoiceField(queryset=Tag.objects.all(), empty_label='Not selected')
+
 
 class RemoveTagForm(forms.Form):
     tag = forms.ModelChoiceField(queryset=Tag.objects.all(), empty_label='Not selected')
 
+
+class ChooseAnnotationToolForm(forms.Form):
+    choices = []
+    for item in Config.objects.values_list('param', 'value'):
+        if item[0].startswith('plugins.') and item[0].endswith('.display_name'):
+            choices.append((item[0].split('.')[1], item[1]))
+    tools = forms.MultipleChoiceField(
+        choices = choices,
+        widget=forms.CheckboxSelectMultiple,
+    )
+    

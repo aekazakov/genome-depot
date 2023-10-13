@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 from django.core.management.base import BaseCommand, CommandError
 from browser.models import Protein
@@ -14,6 +15,17 @@ class Command(BaseCommand):
         parser.add_argument('-i', default='', help='File with list of genomes')
 
     def handle(self, *args, **options):
+        while True:
+            answer = input('All genomes listed in the input file '
+                'will be deleted. This action cannot be reversed. Continue? (y/n)'
+            )
+            if answer.lower() in ["y","yes"]:
+                break
+            elif answer.lower() in ["n","no"]:
+                print('Exiting.')
+                sys.exit()
+            else:
+                print('Please answer yes or no.')
         genomes_file = options['i']
         if not os.path.exists(genomes_file):
             raise CommandError(genomes_file + ' not found')

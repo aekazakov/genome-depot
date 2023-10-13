@@ -37,7 +37,10 @@ def load_taxonomy(taxonomy_file, eggnog_taxonomy_file):
 
 
 def update_taxonomy():
-    """
+    """ 
+        Downloads taxonomy dump from NCBI FTP and updates taxonomy 
+        data in the CGCMS database.
+        
         1. Create temporary folder
         2. Download fresh NCBI taxonomy archive.
         3. Extract files.

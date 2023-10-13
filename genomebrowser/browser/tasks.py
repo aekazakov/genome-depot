@@ -9,7 +9,8 @@ import logging
 from Bio import GenBank
 from django.conf import settings
 from django.core.mail import mail_admins
-from browser.pipeline.genome_import import Importer, download_ncbi_assembly
+from browser.util import download_ncbi_assembly
+from browser.pipeline.genome_import import Importer
 from browser.pipeline.annotate import Annotator
 from browser.models import Strain, Sample, Genome, Protein, Config
 
@@ -33,9 +34,32 @@ def test_task_impl(request, genome_names):
         raise
     return 'Genomes:' + genome_names
 
+def run_annotation_pipeline_impl(args):
+    logger.debug('Asynchronous task run_annotation_tools received. Starting the pipeline.')
+    (genomes, plugins) = args
+    annotator = Annotator()
+    try:
+        for plugin_ind, plugin in enumerate(plugins):
+            logger.debug('Starting tool ' + str(plugin_ind + 1) + ' of ' + str(len(plugins)) + ':' + plugin)
+            print('SIMULATED FUNCTION CALL IN tasks.py:44')  #annotator.run_external_tools(genomes, plugin_name=plugin)
+        subject = 'CGCMS task finished successfuly'
+        message = '"Run annotation tools" task finished successfuly at ' + \
+        f'{settings.BASE_URL}'
+        mail_admins(subject, message)
+    except Exception:
+        subject = 'CGCMS task finished with error'
+        message = f'CGCMS "Run annotation tools" task at {settings.BASE_URL} finished ' +\
+        f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
+        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
+        f'{sys.exc_info()[2].tb_lineno}'
+        mail_admins(subject, message)
+        raise
+    return 'Annotation pipeline finished.'
+    
+
 def import_genomes_impl(args):
     lines, email = args
-    logger.debug('Asynchronous task received. Starting import.')
+    logger.debug('Asynchronous task import_genomes received. Starting import.')
     temp_dir = Config.objects.get(param='cgcms.temp_dir').value
     try:
         upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))

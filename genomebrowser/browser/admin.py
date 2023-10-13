@@ -9,6 +9,7 @@ from django.urls import path
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.http import HttpResponseRedirect
 # Import your models here
 from browser.models import Strain
 from browser.models import Sample
@@ -41,6 +42,7 @@ from browser.forms import ExcelImportForm
 from browser.forms import GenomeImportForm
 from browser.forms import TagModelForm
 from browser.forms import AddTagForm
+from browser.forms import ChooseAnnotationToolForm
 from browser.async_tasks import test_async_task
 from browser.async_tasks import async_import_genomes
 from browser.async_tasks import async_delete_genomes
@@ -50,6 +52,7 @@ from browser.async_tasks import async_import_sample_descriptions
 from browser.async_tasks import async_update_strain_metadata
 from browser.async_tasks import async_import_annotations
 from browser.async_tasks import async_import_regulon
+from browser.async_tasks import async_run_annotation_tools
 from django_q.models import OrmQ
 from django_q.monitor import Stat
 
@@ -60,7 +63,6 @@ admin.site.site_title = "CGCMS Admin Portal"
 admin.site.index_title = "Welcome to CGCMS administration interface"
 
 
-
 @admin.action(description = 'Test sync action')
 def test_task(self, request, queryset):
     task_id = test_async_task(request, queryset)
@@ -69,24 +71,53 @@ def test_task(self, request, queryset):
                   "Check the task " + task_id + 
                   " in the list of queued tasks for progress."
                   )
-    
+
+
+@admin.action(description = 'Run annotation tools')
+def run_annotation_tools(self, request, queryset):
+    if 'do_action' in request.POST:
+        form = ChooseAnnotationToolForm(request.POST)
+        if form.is_valid():
+            tools = form.cleaned_data['tools']
+            task_id = async_run_annotation_tools(request, queryset, tools)
+            messages.info(request,
+                          "The annotation pipeline is running for selected genomes. " +
+                          "Check the status of the task " + task_id + 
+                          " in the list of queued tasks for progress."
+                          )
+            
+        return HttpResponseRedirect(request.get_full_path())
+    else:
+        form = ChooseAnnotationToolForm()
+        context = {'title': u'Choose tools', 'form': form}
+        active_tasks = OrmQ.objects.all().count()
+        context['genomes'] = queryset
+        context['active_tasks'] = str(active_tasks)
+        return render(request,
+            'admin/choose_annotation_tool_form.html',
+            context
+        )
+
+
 @admin.action(description = 'Delete genomes')
 def delete_genomes(self, request, queryset):
     task_id = async_delete_genomes(request, queryset)
     messages.info(request,
                   "Selected genomes are being deleted. " +
-                  "Check the task " + task_id + 
+                  "Check the status of the task " + task_id + 
                   " in the list of queued tasks for progress."
                   )
+
 
 @admin.action(description = 'Update static files and re-build search databases')
 def update_static_files(self, request, queryset):
     task_id = async_update_static_files(request, queryset)
     messages.info(request,
                   "Static files for selected genomes are being re-created. " +
-                  "Check the task " + task_id + 
+                  "Check the status of the task " + task_id + 
                   " in the list of queued tasks for progress."
                   )
+
 
 @admin.action(description = 'Add a tag')
 def add_genome_tag(self, request, queryset):
@@ -107,6 +138,7 @@ def add_genome_tag(self, request, queryset):
              'objects': queryset,
              'form': form})
 
+
 @admin.action(description = 'Remove a tag')
 def remove_genome_tag(self, request, queryset):
     if 'do_action' in request.POST:
@@ -126,8 +158,10 @@ def remove_genome_tag(self, request, queryset):
              'objects': queryset,
              'form': form})
 
+
 def count_tasks(request):
     return str(OrmQ.objects.all().count())
+
 
 def count_clusters(request):
     result = 0
@@ -143,6 +177,7 @@ class GenomeAdmin(admin.ModelAdmin):
     actions = [test_task,
                add_genome_tag,
                remove_genome_tag,
+               run_annotation_tools,
                delete_genomes,
                update_static_files
                ]
@@ -176,7 +211,7 @@ class GenomeAdmin(admin.ModelAdmin):
         my_urls = [
             path('add/', self.import_genomes),
             path('delete-genomes/', self.delete_genomes),
-            path('update-static/', self.update_static_files)
+            path('update-static/', self.update_static_files),
         ]
         return my_urls + urls
 
@@ -226,7 +261,7 @@ class GenomeAdmin(admin.ModelAdmin):
         return render(
             request, "admin/import_genomes.html", payload
         )
-        
+
     def delete_genomes(self, request, queryset):
         self.message_user(request,
                           "You asked for removal of " +
@@ -643,6 +678,12 @@ def clusters_view(request):
         request, "admin/clusters.html", context
     )
 
+def tools_view(request):
+    context = {}
+    return render(
+        request, "admin/tools.html", context
+    )
+
 def handle_zip_upload(zipf, upload_dir):
     result = {}
     with zipfile.ZipFile(zipf, "r", zipfile.ZIP_STORED) as openzip:
@@ -654,3 +695,4 @@ def handle_zip_upload(zipf, upload_dir):
             result[str(member.filename)] = os.path.join(upload_dir, member.filename)
             os.chmod(os.path.join(upload_dir, member.filename), 0o777)
     return result
+

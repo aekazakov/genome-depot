@@ -11,6 +11,7 @@ from browser.tasks import import_sample_descriptions_impl
 from browser.tasks import update_strain_metadata_impl
 from browser.tasks import import_annotations_impl
 from browser.tasks import import_regulon_impl
+from browser.tasks import run_annotation_pipeline_impl
 
 logger = logging.getLogger("CGCMS")
 
@@ -35,6 +36,18 @@ def test_async_task(request, queryset):
     else:
         logger.debug('Time out! No result returned in 60 seconds.')
     return task_id
+
+def async_run_annotation_tools(request, queryset, plugins):
+    genomes = {item.name:item.id for item in queryset}
+    args = (genomes, plugins)
+    timestamp = str(timezone.now())
+    task_name = 'run-annotation-pipeline-' + timestamp.replace(' ', '_')
+    task_id = async_task(run_annotation_pipeline_impl,
+                         args,
+                         task_name=task_name,
+                         sync=False
+                         )
+    return task_name
 
 def async_import_genomes(lines, email):
     logger.debug('Starting asynchronous task for genome list:')
