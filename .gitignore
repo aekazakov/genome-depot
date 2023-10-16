@@ -84,4 +84,9 @@ Control.ca-bundle
 Control.system-ca-bundle 
 GitHub.sublime-settings 
 
+#Jekyll
+_site
+.sass-cache
 .jekyll-cache
+.jekyll-metadata
+vendor
