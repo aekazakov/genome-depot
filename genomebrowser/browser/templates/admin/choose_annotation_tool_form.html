@@ -1,0 +1,25 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+    <div>
+    <h2>Choose annotation tool.</h2>
+    <p>
+    Choose one or more annotation tools to run for the selected genomes:<br/>
+    </p>
+    <p>There are {{active_tasks}} task(s) in the queue right now.</p>
+    {% if active_tasks == "0" %}
+    <form action="" method="POST">
+        {{ form.tools }}
+        {% csrf_token %}
+        <input type="hidden" name="do_action" value="yes">
+        {% for object in genomes %}
+        <input type="hidden" name="_selected_action" value="{{ object.id }}">
+        {% endfor %}
+        <input type="hidden" name="action" value="run_annotation_tools" />
+        <button type="submit">Start tools</button>
+    </form>
+    {% else %}
+        <span style="color:red">There is an active task in the queue. You cannot start new tasks while the active task is running. Please wait until all current tasks are finished or delete the tasks and restart Django Q cluster.</span>
+    {% endif %}
+    </div>
+    <br />
+{% endblock %}

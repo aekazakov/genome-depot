@@ -1,0 +1,5 @@
+{% extends 'admin/base.html' %}
+{% block object-tools %}
+    {{ block.super }}
+    <a href="{% url "admin:index" %}">Index page</a>
+{% endblock %}

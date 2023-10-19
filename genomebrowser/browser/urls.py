@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from . import export_text
 
 urlpatterns = [
     path('', views.startpage, name='index'),
@@ -48,7 +49,7 @@ urlpatterns = [
          views.AnnotationSearchResultsAjaxView.ajax_view,
          name="loadingtextsearch"
          ),
-    path('export/', views.export_csv, name='export'),
+    path('export/', export_text.export_csv, name='export'),
     path('exportfasta/', views.export_fasta, name='exportfasta'),
     path('searchgenome/', views.GenomeSearchResultsView.as_view(), name='searchgenome'),
     path('searchstrain/', views.StrainSearchResultsView.as_view(), name='searchstrain'),

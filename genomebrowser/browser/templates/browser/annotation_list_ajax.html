@@ -18,6 +18,7 @@
             {% else %}
                 <form action="{% url 'searchannotation' %}" method="get">
                   <input name="annotation_query" type="text" placeholder="Search genes by annotation...">
+                  <input name="type" type="hidden" id="type" value = "annotation">
                 </form>
             {% endif %}
                 </header>
@@ -31,7 +32,7 @@
             url: "{% url 'loadingtextsearch' %}",
         type: "GET",
         datatype: 'json',
-        data: {'annotation_query': "{{ annotation_query }}", 'genome': "{{ genome }}", 'page': "{{ page }}" }
+        data: {'annotation_query': "{{ annotation_query }}", 'genome': "{{ genome }}", 'page': "{{ page }}", 'type': "annotation" }
         }).done(function(data){
             $('#loading-bar-area').remove();
             $('#run-time').append(data["time"].toFixed(2) + ' seconds')

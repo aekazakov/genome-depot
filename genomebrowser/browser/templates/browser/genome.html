@@ -162,6 +162,7 @@
             </form>
             <form action="{% url 'searchannotation' %}" method="get">
                 <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+                <input name="type" type="hidden" id="type" value = "annotation">
                 <label>Text search in annotations<input name="annotation_query" type="text" placeholder="Search in other annotations (domain, function, etc.) ..."></label>
             </form>
         </div>
