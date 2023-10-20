@@ -347,6 +347,7 @@ def get_scribl(start_gene, eggnog_og, request):
     # Add empty track to make space below scale
     scribl.append('\t\ttrack' + str(track_uid) + ' = chart.addTrack();')
     
+    treemap_gene_ids = []
     for gene in ordered_orthologs:
         # Create first track
         # Crete track for organism name
@@ -415,6 +416,7 @@ def get_scribl(start_gene, eggnog_og, request):
                         'protein__ortholog_groups'
                         )
         for locus_member in neigbor_genes:
+            treemap_gene_ids.append(locus_member.id)
             group = ''
             if locus_member in ordered_orthologs:
                 group = eggnog_og.eggnog_id
@@ -444,5 +446,4 @@ def get_scribl(start_gene, eggnog_og, request):
                                request,
                                locus_size
                                )
-
-    return '\n'.join(scribl), tree_canvas, tree_newick, og_gene_count, plot_gene_count
+    return '\n'.join(scribl), tree_canvas, tree_newick, og_gene_count, plot_gene_count, treemap_gene_ids

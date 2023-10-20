@@ -22,6 +22,7 @@ urlpatterns = [
           name='regulondetails'
           ),
     path('regulons/<str:genome>/', views.RegulonListView.as_view(), name='regulonlist'),
+    path('ogroup/<int:og_id>/', views.og_detail, name='ogdetails'),
     path('getgene/', views.gene_byname, name='genebyname'),
     path('strains/', views.StrainListView.as_view(), name='strain_list'),
     path('samples/', views.SampleListView.as_view(), name='sample_list'),

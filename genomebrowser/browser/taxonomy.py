@@ -1,15 +1,15 @@
 """ This file contains functions for search in taxonomy"""
+import plotly.graph_objects as go
+from io import StringIO
 from collections import defaultdict, Counter
 from django.urls import reverse
 from browser.models import Taxon, Genome
 
-def generate_sunburst(taxon_id=None, children = []):
+def generate_genome_sunburst(taxon_id=None, children = []):
     '''
     If taxon_id is None, it will choose root node as 
     the highest node that have more than one child.
     '''
-    import plotly.graph_objects as go
-    from io import StringIO
 
     if children:
         labels, parents, values, customdata = get_genomes_taxonomy(taxon_id, children)
@@ -63,6 +63,10 @@ def generate_sunburst(taxon_id=None, children = []):
     html = html.getvalue()
     return html
 
+
+def generate_genes_sunburst(taxon_id=None, children = []):
+    pass
+
 def get_taxon_children(taxonomy_id):
     '''
     Returns list of taxonomy ids in a subtree of a given taxon
@@ -97,6 +101,7 @@ def get_genomes_taxonomy(target_taxon_id, target_children = []):
     Parameters:
     target_taxon_id (str or None): taxonomy ID of root element. If target_taxon_id
     is None, place root at the highest level that have more than one child.
+
     target_children (list of str): list of taxonomy IDs that must be shown on 
     the sunburst graph
     

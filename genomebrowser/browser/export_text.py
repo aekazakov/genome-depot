@@ -49,10 +49,8 @@ def _export_annotations_csv(request):
     response = HttpResponse(content_type='text/tab-separated-values')
     response['Content-Disposition'] = 'attachment; filename="export.tab"'
     writer = csv.writer(response, delimiter='\t')
-    search_context = ('','')
     annotation_query = request.GET.get('annotation_query')
     genome = request.GET.get('genome')
-    search_context = ('Gene annotation query', annotation_query)
     # get objects
     if genome:
         object_list = Annotation.objects.filter(
@@ -122,7 +120,6 @@ def _export_genes_csv(request):
     response = HttpResponse(content_type='text/tab-separated-values')
     response['Content-Disposition'] = 'attachment; filename="export_genes.tab"'
     writer = csv.writer(response, delimiter='\t')
-    search_context = ('','')
     annotation_query = request.GET.get('annotation_query')
     query_type = request.GET.get('type')
     query = request.GET.get('query')
@@ -130,7 +127,6 @@ def _export_genes_csv(request):
 
     if query_type == 'gene':
         if query:
-            search_context = ('Query', query)
             if genome:
                 object_list = Gene.objects.filter(
                     genome__name=genome
@@ -146,7 +142,6 @@ def _export_genes_csv(request):
                 ).order_by('locus_tag')
         elif genome:
             # Generate gene list with all mappings and annotations
-            search_context = ('Genome', genome)
             object_list = Gene.objects.filter(
                 genome__name=genome
             ).order_by(
@@ -154,8 +149,7 @@ def _export_genes_csv(request):
             ).select_related(
                 'genome',
                 'contig',
-                'protein',
-                'protein__eggnog_description'
+                'protein'
             ).prefetch_related(
                 'protein__kegg_orthologs',
                 'protein__kegg_reactions',
@@ -178,7 +172,6 @@ def _export_genes_csv(request):
                 'Strand',
                 'Type',
                 'Function',
-                'EggNOG description'
                 'EggNOG families'
                 'KEGG Orthologs',
                 'KEGG Pathways',
@@ -191,7 +184,6 @@ def _export_genes_csv(request):
                 'Annotations'
             ])
             for gene in object_list:
-                eggnog_description = ''
                 eggnogs = ''
                 ko = ''
                 kp = ''
@@ -202,8 +194,6 @@ def _export_genes_csv(request):
                 tc = ''
                 cog = ''
                 if gene.protein:
-                    if gene.protein.eggnog_description:
-                        eggnog_description = gene.protein.eggnog_description.description
                     if gene.protein.ortholog_groups:
                         eggnogs = ';'.join([item.eggnog_id + '[' + item.taxon.name + ']' for item in gene.protein.ortholog_groups.all()])
                     if gene.protein.kegg_orthologs:
@@ -235,7 +225,6 @@ def _export_genes_csv(request):
                     str(gene.strand),
                     gene.type,
                     gene.function,
-                    eggnog_description,
                     eggnogs,
                     ko,
                     kp,
@@ -253,52 +242,42 @@ def _export_genes_csv(request):
             object_list = Gene.objects.none()
     else:
         if query_type == 'og':
-            search_context = ('Ortholog group', query)
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         ortholog_groups__id=query).values('protein_hash')
                         ]
         elif query_type == 'ko_id':
-            search_context = ('KEGG ortholog', query)
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         kegg_orthologs__kegg_id=query).values('protein_hash')
                         ]
         elif query_type == 'kp_id':
-            search_context = ('KEGG pathway', query)
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         kegg_pathways__kegg_id=query).values('protein_hash')
                         ]
         elif query_type == 'kr_id':
-            search_context = ('KEGG reaction', query)
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         kegg_reactions__kegg_id=query).values('protein_hash')
                         ]
         elif query_type == 'ec_id':
-            search_context = ('EC number', query)
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         ec_numbers__ec_number=query).values('protein_hash')
                         ]
         elif query_type == 'tc_id':
-            search_context = ('TCDB family', query)
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         tc_families__tc_id=query).values('protein_hash')
                         ]
         elif query_type == 'cazy_id':
-            search_context = ('CAZy family', query)
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         cazy_families__cazy_id=query).values('protein_hash')
                         ]
         elif query_type == 'cog_id':
-            search_context = ('COG class', query)
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         cog_classes__cog_id=query).values('protein_hash')
                         ]
         elif query_type == 'go_id':
-            search_context = ('GO term', query)
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         go_terms__go_id=query).values('protein_hash')
                         ]
         elif query_type == 'ko':
-            search_context = ('KEGG ortholog query', query)
             ko_ids = Kegg_ortholog.objects.filter(
                 Q(kegg_id__icontains=query) |
                 Q(description__icontains=query)
@@ -307,7 +286,6 @@ def _export_genes_csv(request):
                         kegg_orthologs__kegg_id__in=ko_ids).values('protein_hash')
                         ]
         elif query_type == 'kp':
-            search_context = ('KEGG pathway query', query)
             kp_ids = Kegg_pathway.objects.filter(
                 Q(kegg_id__icontains=query) |
                 Q(description__icontains=query)
@@ -316,7 +294,6 @@ def _export_genes_csv(request):
                         kegg_pathways__kegg_id__in=kp_ids).values('protein_hash')
                         ]
         elif query_type == 'kr':
-            search_context = ('KEGG reaction query', query)
             kr_ids = Kegg_reaction.objects.filter(
                 Q(kegg_id__icontains=query) |
                 Q(description__icontains=query)
@@ -325,7 +302,6 @@ def _export_genes_csv(request):
                         kegg_reactions__kegg_id__in=kr_ids).values('protein_hash')
                         ]
         elif query_type == 'ec':
-            search_context = ('EC number query', query)
             ec_ids = Ec_number.objects.filter(
                 Q(ec_number__icontains=query) |
                 Q(description__icontains=query)
@@ -334,7 +310,6 @@ def _export_genes_csv(request):
                 ec_numbers__ec_number__in=ec_ids
             ).values('protein_hash')]
         elif query_type == 'tc':
-            search_context = ('TCDB family query', query)
             tc_ids = Tc_family.objects.filter(
                 Q(tc_id__icontains=query) |
                 Q(description__icontains=query)
@@ -343,7 +318,6 @@ def _export_genes_csv(request):
                         tc_families__tc_id__in=tc_ids).values('protein_hash')
                         ]
         elif query_type == 'cazy':
-            search_context = ('CAZy family query', query)
             cazy_ids = Cazy_family.objects.filter(
                 Q(cazy_id__icontains=query) |
                 Q(description__icontains=query)
@@ -352,7 +326,6 @@ def _export_genes_csv(request):
                         cazy_families__cazy_id__in=cazy_ids).values('protein_hash')
                         ]
         elif query_type == 'cog':
-            search_context = ('COG class query', query)
             cog_ids = Cog_class.objects.filter(
                 Q(cog_id__icontains=query) |
                 Q(description__icontains=query)
@@ -361,7 +334,6 @@ def _export_genes_csv(request):
                         cog_classes__cog_id__in=cog_ids).values('protein_hash')
                         ]
         elif query_type == 'go':
-            search_context = ('GO term query', query)
             go_ids = Go_term.objects.filter(
                 Q(go_id__icontains=query) |
                 Q(description__icontains=query)
@@ -370,7 +342,6 @@ def _export_genes_csv(request):
                         go_terms__go_id__in=go_ids).values('protein_hash')
                         ]
         else:
-            search_context = ('Unknown', query)
             proteins = []
 
         if genome:
@@ -393,56 +364,29 @@ def _export_genes_csv(request):
                 ).select_related(
                     'genome', 'contig'
                 )
-    if search_context[0] == 'Genome':
-        writer.writerow(['Locus tag',
-                         'Name',
-                         'Organism',
-                         'Genome',
-                         'Contig',
-                         'Start',
-                         'End',
-                         'Strand',
-                         'Type',
-                         'Function'
+    writer.writerow(['Locus tag',
+                     'Name',
+                     'Organism',
+                     'Genome',
+                     'Contig',
+                     'Start',
+                     'End',
+                     'Strand',
+                     'Type',
+                     'Function'
+                     ])
+    for gene in object_list:
+        writer.writerow([gene.locus_tag,
+                         gene.name,
+                         gene.genome.taxon.name,
+                         gene.genome.name,
+                         gene.contig.contig_id,
+                         str(gene.start),
+                         str(gene.end),
+                         str(gene.strand),
+                         gene.type,
+                         gene.function
                          ])
-        for gene in object_list:
-            writer.writerow([gene.locus_tag,
-                             gene.name,
-                             gene.genome.taxon.name,
-                             gene.genome.name,
-                             gene.contig.contig_id,
-                             str(gene.start),
-                             str(gene.end),
-                             str(gene.strand),
-                             gene.type,
-                             gene.function])
-    else:
-        writer.writerow(['Locus tag',
-                         'Name',
-                         'Organism',
-                         'Genome',
-                         'Contig',
-                         'Start',
-                         'End',
-                         'Strand',
-                         'Type',
-                         'Function',
-                         search_context[0]
-                         ])
-        for gene in object_list:
-            writer.writerow([gene.locus_tag,
-                             gene.name,
-                             gene.genome.taxon.name,
-                             gene.genome.name,
-                             gene.contig.contig_id,
-                             str(gene.start),
-                             str(gene.end),
-                             str(gene.strand),
-                             gene.type,
-                             gene.function,
-                             search_context[1]
-                             ])
-
     return response
 
 
@@ -457,7 +401,6 @@ def _export_genomes_csv(request):
     response = HttpResponse(content_type='text/tab-separated-values')
     response['Content-Disposition'] = 'attachment; filename="genomes.tab"'
     writer = csv.writer(response, delimiter='\t')
-    search_context = ('','')
     annotation_query = request.GET.get('annotation_query')
     query_type = request.GET.get('type')
     query = request.GET.get('query')

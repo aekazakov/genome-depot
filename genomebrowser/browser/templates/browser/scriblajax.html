@@ -4,6 +4,7 @@
 {% block page-title %}<title>EggNOG family</title>{% endblock %}
 {% block script-header %}
     <script src="{% static 'assets/js/Scribl.1.1.4.min.js' %}"></script>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
     <script>
     function toggleDiv(divid){ 
     var div = document.getElementById(divid); 
@@ -63,7 +64,7 @@
                 <p class="align-center">EggNOG mappings</p>
                 </header>
                 <span>Ortholog group</span>
-                <h5>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}] </h5>
+                <h5><a href="{% url 'ogdetails' og_id=ortholog_group.id %}">{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</a></h5>
                 <h5><a href="{% url 'searchgene' %}?type=og&query={{ ortholog_group.id }}">Show all <span id="og_gene_count"></span> genes in the group {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></h5>
             </div>
             {% endif %}
@@ -125,16 +126,24 @@
                 <div id="scribl-container" class="content">
                     <canvas id="canvas" width="1000" height="600" style="padding: 10px 0px 10px 0px; -moz-border-radius:15px; border-radius:15px; background:-webkit-gradient(linear, left top, left bottom, from(rgb(33,99,102)), to(rgb(33,99,102)), color-stop(0.5, rgb(13,29,22)), color-stop(0.5, rgb(13,29,22))); background: -moz-linear-gradient(top, rgb(33,99,102), rgb(13,29,22), rgb(13,29,22), rgb(33,99,102));"></canvas>
                     </br><a id="pngexport">Export as gene plot as PNG image (right click Save As)</a>
+                    <hr>
+                    <div id="treemap" style="margin:auto">
+                        <header class="align-center">
+                            <p class="align-center">Gene function annotations in the genomic neighborhood</p>
+                        </header>
+                    </div>
+                    <hr>
                     <div>
                         <header class="align-center" id="showtree">
-                        <a onclick="Toggle()">Click to show phylogenetic tree in Newick format</a>
+                            <a onclick="Toggle()">Click to show phylogenetic tree in Newick format</a>
                         </header>
                         <div id="proteinsequence">
-                        <textarea id="treetext" name="treetext" rows="4" cols="50"></textarea>
+                            <textarea id="treetext" name="treetext" rows="4" cols="50"></textarea>
                         </div>
                     </div>
                 </div>
             </div>
+
             <label id="run-time">Run time: </label>
         </div>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -148,6 +157,8 @@
         }).done(function(data){
             $('#loading-bar-area').remove();
             $('#run-time').append(data["time"].toFixed(2) + ' seconds')
+            $('#treemap').append(data["treemap"])
+            $('#treemap').css({margin: '1px'})
             $('#og_gene_count').append(data["og_gene_count"])
             $('#plot_gene_count').append(data["plot_gene_count"])
             $('#treecanvas').append(data["tree_canvas"])

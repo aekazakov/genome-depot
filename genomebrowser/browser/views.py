@@ -11,10 +11,7 @@ from django.views import View, generic
 from django.db.models import Q
 from django.core.exceptions import SuspiciousOperation
 from django.urls import reverse
-from browser.seqsearch import run_protein_search, run_nucleotide_search
-from browser.comparative_analysis import get_scribl
-from browser.conserved_regulon import build_conserved_regulon
-from browser.taxonomy import generate_sunburst, get_taxon_children
+from genomebrowser.settings import TITLE
 from browser.models import Annotation
 from browser.models import Cazy_family
 from browser.models import Contig
@@ -39,8 +36,11 @@ from browser.models import Site
 from browser.models import Strain
 from browser.models import Strain_metadata
 from browser.colors import COLORS
-from genomebrowser.settings import TITLE
-
+from browser.treemap import generate_og_treemap, generate_genes_treemap
+from browser.seqsearch import run_protein_search, run_nucleotide_search
+from browser.comparative_analysis import get_scribl
+from browser.conserved_regulon import build_conserved_regulon
+from browser.taxonomy import generate_genome_sunburst, get_taxon_children
 # Create your views here.
 logger = logging.getLogger("CGCMS")
 
@@ -220,7 +220,7 @@ class GenomeListView(generic.ListView):
         if 'page_obj' not in context or context['page_obj'].number == 1:
             # Call generate_sunburst without parameters to let it
             # choose the root node
-            sunburst = generate_sunburst()
+            sunburst = generate_genome_sunburst()
             if sunburst:
                 context['sunburst'] = sunburst
         return context
@@ -1267,7 +1267,7 @@ def taxon_detail(request, taxonomy_id):
         'tags'
     )
     context['strains'] = Strain.objects.filter(taxon__taxonomy_id__in=children)
-    context['sunburst'] = generate_sunburst(taxonomy_id, children)
+    context['sunburst'] = generate_genome_sunburst(taxonomy_id, children)
     lineage = [taxon,]
     parent_id = taxon.parent_id
     iteration_count = 0
@@ -1532,6 +1532,15 @@ def regulon_detail(request, genome, name):
         )
     logger.debug(str([x.name for x in sites]))
     return render(request, 'browser/regulon.html', context)
+
+
+def og_detail(request, og_id):
+    context = {}
+    ortholog_group = Ortholog_group.objects.get(id=og_id)
+    context['ortholog_group'] = ortholog_group
+    context['treemap'] = generate_og_treemap(ortholog_group)
+    return render(request, 'browser/family.html', context)
+
 
 def gene_byname(request):
     '''
@@ -2027,9 +2036,14 @@ class ComparativeView(View):
             raise Http404('Gene not found')
         except Ortholog_group.DoesNotExist:
             raise Http404('Ortholog group not found')
-        scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count = \
+        scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count, treemap_gene_ids = \
             get_scribl(gene, og, request)
-        
+            
+        treemap = ''
+        if treemap_gene_ids:
+            print(len(treemap_gene_ids), 'genes for treemap generation')
+            treemap = generate_genes_treemap(treemap_gene_ids)
+
         if og_gene_count == 1:
             scribl='<script type="text/javascript">\nalert("Comparative plot cannot' +\
             ' be created for only one genome");</script>'
@@ -2051,7 +2065,8 @@ class ComparativeView(View):
                        'tree_newick':tree_newick,
                        'og_gene_count':og_gene_count,
                        'plot_gene_count':plot_gene_count,
-                       "time":time.time()-start_time
+                       'time':time.time()-start_time,
+                       'treemap':treemap,
                        }
         data = json.dumps(context)
         return HttpResponse(data,content_type="application/json")

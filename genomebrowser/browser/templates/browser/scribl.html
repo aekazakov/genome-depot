@@ -82,7 +82,7 @@
                 <p class="align-center">EggNOG mappings</p>
                 </header>
                 <span>Ortholog group</span>
-                <h5>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}] </h5>
+                <h5><a href="{% url 'ogdetails' og_id=ortholog_group.id %}">{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</a></h5>
                 <h5><a href="{% url 'searchgene' %}?type=og&query={{ ortholog_group.id }}">Show all {{ og_gene_count }} genes in the group {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></h5>
             </div>
             {% endif %}

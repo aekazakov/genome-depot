@@ -1,0 +1,48 @@
+{% extends "base_generic.html" %}
+{% load static %}
+{% block page-title %}<title>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</title>{% endblock %}
+{% block script-header %}
+<script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+{% endblock %}
+
+{% block title %}<div class="logo"><h2>Ortholog group</h2></div>{% endblock %}
+{% block content %}
+
+    <section id="two" class="wrapper style3">
+       <div class="inner">
+        <header class="align-center">
+            <h2>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</h2>
+            <h5>NCBI Taxonomy ID: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{ ortholog_group.taxon.taxonomy_id }}">{{ ortholog_group.taxon.taxonomy_id }}</a></h5>
+        </header>
+        <div class="grid-style">
+            <div class="content">
+                <header class="align-center">
+                <p class="align-center">Genes</p>
+                </header>
+                <span>List of genes</span>
+                <h5><a href="{% url 'searchgene' %}?type=og&query={{ ortholog_group.id }}">Show all genes in the {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]family</a></h5>
+            </div>
+            <div class="content">
+                <header class="align-center">
+                <p class="align-center">Right column title</p>
+                </header>
+                <span>Ortholog group</span>
+                <h5>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}] </h5>
+            </div>
+        </div>
+            
+        <hr>
+                {% if treemap %}
+                    <div class="align-center">
+                    {{ treemap | safe}}
+                    </div>
+                {% else %}
+                    <header class="align-center">
+                        <h5>Genes for {{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}] not found in the database.</h5>
+                    </header>
+                {% endif %}
+        <hr>
+       </div>
+    </section>
+
+{% endblock %}
