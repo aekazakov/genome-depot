@@ -78,7 +78,7 @@
             const blob = new Blob([data], {type: "octet/stream"});
             var url = window.URL.createObjectURL(blob);
             a.href = url;
-            a.download = 'export.tab';
+            a.download = 'exported_annotations.tab';
             document.body.append(a);
             a.click();
             a.remove();
@@ -112,7 +112,7 @@
             const blob = new Blob([data], {type: "octet/stream"});
             var url = window.URL.createObjectURL(blob);
             a.href = url;
-            a.download = 'export.faa';
+            a.download = 'exported_proteins.faa';
             document.body.append(a);
             a.click();
             a.remove();

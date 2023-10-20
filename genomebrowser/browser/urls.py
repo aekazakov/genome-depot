@@ -50,7 +50,8 @@ urlpatterns = [
          name="loadingtextsearch"
          ),
     path('export/', export_text.export_csv, name='export'),
-    path('exportfasta/', views.export_fasta, name='exportfasta'),
+    path('exportfasta/', export_text.export_fasta, name='exportfasta'),
+    path('exportgbk/<str:name>/', export_text.export_gbk, name='exportgbk'),
     path('searchgenome/', views.GenomeSearchResultsView.as_view(), name='searchgenome'),
     path('searchstrain/', views.StrainSearchResultsView.as_view(), name='searchstrain'),
     path('searchtaxon/', views.TaxonSearchResultsView.as_view(), name='searchtaxon'),
