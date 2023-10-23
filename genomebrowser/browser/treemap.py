@@ -30,6 +30,8 @@ def generate_og_treemap(ortholog_group):
         'protein__cog_classes',
         'protein__cazy_families'
     )
+    if not genes:
+        return '<h5>Genes for ' + ortholog_group.eggnog_id + '[' + ortholog_group.taxon.name + '] not found in the database.</h5>'
     return generate_annotations_treemap(genes)
 
 

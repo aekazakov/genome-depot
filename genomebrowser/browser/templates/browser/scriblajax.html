@@ -158,7 +158,6 @@
             $('#loading-bar-area').remove();
             $('#run-time').append(data["time"].toFixed(2) + ' seconds')
             $('#treemap').append(data["treemap"])
-            $('#treemap').css({margin: '1px'})
             $('#og_gene_count').append(data["og_gene_count"])
             $('#plot_gene_count').append(data["plot_gene_count"])
             $('#treecanvas').append(data["tree_canvas"])
@@ -166,6 +165,8 @@
             $('#scriblscript').append(data["scribl"])
             $('#comparativeplot').show();
         draw('canvas');
+		var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
+		Plotly.Plots.resize(plotlyGraph[0]);
         }).fail(function(data){
             $('#loading-bar-area').remove();
             $('#comparative').html('<div class="error box">Internal server error</div>')

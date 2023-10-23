@@ -30,19 +30,43 @@
                 <h5>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}] </h5>
             </div>
         </div>
-            
+        <hr>            
+				<header class="align-center">
+					<p class="align-center">Gene function annotations in ortholog group {{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</p>
+				</header>				<div id ="error-box" class="error box"></div>
+				<div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
+				<div class="align-center" id="treemap"></div>
         <hr>
-                {% if treemap %}
-                    <div class="align-center">
-                    {{ treemap | safe}}
-                    </div>
-                {% else %}
-                    <header class="align-center">
-                        <h5>Genes for {{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}] not found in the database.</h5>
-                    </header>
-                {% endif %}
-        <hr>
-       </div>
-    </section>
+       
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            url: "{% url 'loadingogtreemap' %}",
+            method: 'GET',
+			datatype: 'json',
+            data: {
+            "og": "{{ ortholog_group.id }}"
+            },
+            xhrFields: {
+            responseType: 'text'
+            },
+            beforeSend: function() {
+            $("#waitbox").show();
+            },
+            success: function (data) {
+            $("#waitbox").hide();
+			$('#treemap').append(data["treemap"])
+			var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
+			Plotly.Plots.resize(plotlyGraph[0]);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown){
+            $("#waitbox").hide();
+            $("#error-box").append(textStatus + ": " + errorThrown);
+            }
+        });
+	});
+</script>
+	   </section>
 
 {% endblock %}

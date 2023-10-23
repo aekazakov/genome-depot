@@ -36,6 +36,10 @@ urlpatterns = [
          views.GeneSearchResultsAjaxView.ajax_view,
          name='loadinggenesearch'
          ),
+    path('loadingogtreemap/',
+         views.get_og_treeview,
+         name='loadingogtreemap'
+         ),
     # For testing in synchronous mode, use AnnotationSearchResultsSubView.as_view() 
     # instead of AnnotationSearchResultsAjaxView.as_view()
     # path('searchannotation/',

@@ -1538,7 +1538,7 @@ def og_detail(request, og_id):
     context = {}
     ortholog_group = Ortholog_group.objects.get(id=og_id)
     context['ortholog_group'] = ortholog_group
-    context['treemap'] = generate_og_treemap(ortholog_group)
+    #context['treemap'] = generate_og_treemap(ortholog_group)
     return render(request, 'browser/family.html', context)
 
 
@@ -2184,6 +2184,16 @@ def generate_gene_search_context(query, query_type, genome=None):
             searchcontext = 'Genes from genome ' + genome
     return searchcontext
 
+    
+def get_og_treeview(request):
+    og_id = request.GET.get('og')
+    print('AJAX request for', og_id)
+    ortholog_group = Ortholog_group.objects.get(id=og_id)
+    context = {'treemap':generate_og_treemap(ortholog_group)}
+    data = json.dumps(context)
+    return HttpResponse(data,content_type="application/json")
+
+    
 def generate_external_link(query, query_type, genome=None):
     '''
         Generates search context string and external link for various query types
