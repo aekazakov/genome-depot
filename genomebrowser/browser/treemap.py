@@ -32,7 +32,8 @@ def generate_og_treemap(ortholog_group):
     )
     if not genes:
         return '<h5>Genes for ' + ortholog_group.eggnog_id + '[' + ortholog_group.taxon.name + '] not found in the database.</h5>'
-    return generate_annotations_treemap(genes)
+    gene_ids = [item.id for item in genes.all()]
+    return generate_annotations_treemap(genes), gene_ids
 
 
 def generate_genes_treemap(gene_ids):
@@ -60,10 +61,14 @@ def generate_annotations_treemap(genes):
     genedata = autovivify(2, int)
     root_node = 'Annotations'
     root_value = 0
+
     for gene in genes:
         genedata['Function'][(gene.function, gene.function)] += 1
         for annotation in Annotation.objects.filter(gene_id=gene):
-            genedata[annotation.source][(annotation.value, annotation.key + ':' + annotation.value)] += 1
+            label = annotation.note
+            if 'E-value' in label:
+                label = label.split('E-value')[0]
+            genedata[annotation.source][(annotation.value, annotation.key + ':' + label)] += 1
         if not gene.protein:
             continue
         for item in gene.protein.kegg_orthologs.all():
@@ -109,6 +114,6 @@ def generate_annotations_treemap(genes):
     fig.write_html(html, include_plotlyjs=False, full_html=False)
     fig.write_html("fig1.2.html", include_plotlyjs=True, full_html=True)
     html = html.getvalue()
-    print(html)
+    #print(html)
     return html
 

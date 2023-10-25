@@ -10,16 +10,17 @@ from browser.pipeline.annotate import autovivify
 
 logger = logging.getLogger("CGCMS")
 
+RANKS = ('species',
+         'genus',
+         'family',
+         'order',
+         'class',
+         'phylum',
+         'superkingdom',
+         'norank')
+
 def get_lowest_level_og(protein):
     result = None
-    RANKS = ('species',
-             'genus',
-             'family',
-             'order',
-             'class',
-             'phylum',
-             'superkingdom',
-             'norank')
     eggnog_ranks = {}
     for eggnog_group in protein.ortholog_groups.all():
         eggnog_ranks[eggnog_group.taxon.rank] = eggnog_group

@@ -30,7 +30,13 @@
                 <h5>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}] </h5>
             </div>
         </div>
-        <hr>            
+        <hr>
+				<header class="align-center">
+					<p class="align-center">Taxonomy profile</p>
+				</header>				<div id ="error-box" class="error box"></div>
+				<div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
+				<div class="align-center" id="sunburst"></div>
+        <hr>
 				<header class="align-center">
 					<p class="align-center">Gene function annotations in ortholog group {{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</p>
 				</header>				<div id ="error-box" class="error box"></div>
@@ -57,6 +63,7 @@
             success: function (data) {
             $("#waitbox").hide();
 			$('#treemap').append(data["treemap"])
+			$("#sunburst").append(data['sunburst'])
 			var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
 			Plotly.Plots.resize(plotlyGraph[0]);
             },

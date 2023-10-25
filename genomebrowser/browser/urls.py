@@ -37,7 +37,7 @@ urlpatterns = [
          name='loadinggenesearch'
          ),
     path('loadingogtreemap/',
-         views.get_og_treeview,
+         views.get_og_data,
          name='loadingogtreemap'
          ),
     # For testing in synchronous mode, use AnnotationSearchResultsSubView.as_view() 
@@ -74,6 +74,8 @@ urlpatterns = [
     path('comparative/', views.ComparativeView.as_view(), name='comparative'),
     path('loadingscribl/',views.ComparativeView.ajax_view,name="loadingscribl"),
     path('cregulon/', views.cregulon_view, name='cregulon'),
+    path('coperon/<int:operon_id>/', views.conserved_operon_view, name='coperon'),
+    path('conservoperondata/<int:operon_id>/', views.conserved_operon_data, name='conservoperondata'),
     path('pathway/', views.pathway_view, name='pathway'),
     path('help/', views.show_help, name='help'),
     path('nuclsearchform/',views.nucleotidesearchform,name="nucleotidesearchform"),

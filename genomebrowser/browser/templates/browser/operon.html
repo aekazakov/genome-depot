@@ -39,6 +39,13 @@
             <h5>{{ operon.contig.contig_id }}: {{ operon.start }}..{{ operon.end }}</h5>
             {% endif %}
             </div>
+            <div class="content">
+            <header class="align-center">
+                <p class="align-center">Conserved operon</p>
+            </header>
+            <span>Comparative analysis</span>
+            <h5><a href="{% url 'coperon' operon_id=operon.id %}">Build conserved operon for {{ operon.name }}</a></h5>
+            </div>
         </div>
 
     {% if genes %}

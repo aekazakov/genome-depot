@@ -69,19 +69,26 @@
             <div class="content">
             {% if protein %}
             <header class="align-center">
-                <p class="align-center">EggNOG mappings</p>
+                <p class="align-center">EggNOG families</p>
             </header>
             {% if protein.eggnog_description %}
                 <span>Description</span>
                 <h5>{{ protein.eggnog_description.description }}</h5>
             {% endif %}
             {% if protein.ortholog_groups.all %}
-                <span>EggNOG families (click to open comparative plot)</span>
-                <h5> 
+                <span>Families</span>
+				<h5>
+				<table>
                 {% for ortholog_group in protein.ortholog_groups.all %}
-                <a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}&size=10&lines=50">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a><br>
+				<tr>
+				<td>
+				<a href="{% url 'ogdetails' og_id=ortholog_group.id %}">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></td>
+				<td><a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}&size=10&lines=50">Show genome neighborhood conservation</a>
+				</td>
+				</tr>
                 {% endfor %}
-                </h5>
+				</table>
+				</h5>
             {% endif %}
             {% endif %}
             </div>

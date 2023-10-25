@@ -40,7 +40,8 @@ from browser.treemap import generate_og_treemap, generate_genes_treemap
 from browser.seqsearch import run_protein_search, run_nucleotide_search
 from browser.comparative_analysis import get_scribl
 from browser.conserved_regulon import build_conserved_regulon
-from browser.taxonomy import generate_genome_sunburst, get_taxon_children
+from browser.conserved_operon import build_conserved_operon 
+from browser.taxonomy import generate_genome_sunburst, get_taxon_children, generate_genes_sunburst
 # Create your views here.
 logger = logging.getLogger("CGCMS")
 
@@ -1857,14 +1858,47 @@ def proteinsearchform(request):
     return render(request,'browser/proteinsearchform.html')
 
 def cregulon_view(request):
-    """
-    Conserved regulon view
-    """
+    '''
+        Conserved regulon view
+    '''
     og_id = request.GET.get('og')
     #locus_tag = request.GET.get('locus_tag')
     context = build_conserved_regulon(og_id)
     return render(request, 'browser/cregulon.html', context)
 
+    
+def conserved_operon_view(request, operon_id):
+    '''
+        Conserved operon view
+    '''
+    context = {}
+    try:
+        context['start_operon'] = Operon.objects.get(id=operon_id)
+    except Operon.DoesNotExist:
+        raise Http404('Operon ' + str(operon_id) + ' does not exist')
+    return render(request, 'browser/coperon.html', context)
+
+
+def conserved_operon_data(request, operon_id):
+    '''
+        Returns conserved operon data for Ajax request
+    '''
+    context = {}
+    treemap, sunburst, operon_ids = build_conserved_operon(operon_id)
+    context['treemap'] = treemap
+    context['sunburst'] = sunburst
+    object_list = Operon.objects.filter(id__in=operon_ids).order_by(
+        'name'
+    ).select_related(
+        'genome', 'contig'
+    ).prefetch_related(
+        'genes', 'genome__tags'
+    )
+    context['operonlist'] = loader.render_to_string('browser/operon_list_subview.html', {'operonlist':object_list})
+    data = json.dumps(context)
+    return HttpResponse(data,content_type="application/json")
+
+    
 def pathway_view(request):
     context = {}
     items = []
@@ -2077,7 +2111,8 @@ def handler404(request, exception):
         Returns 404 page
     '''
     return render(request, '404.html', status=404)
-    
+
+
 def generate_gene_search_context(query, query_type, genome=None):
     '''
         Generates search context string and external link for various query types
@@ -2185,11 +2220,14 @@ def generate_gene_search_context(query, query_type, genome=None):
     return searchcontext
 
     
-def get_og_treeview(request):
+def get_og_data(request):
     og_id = request.GET.get('og')
     print('AJAX request for', og_id)
     ortholog_group = Ortholog_group.objects.get(id=og_id)
-    context = {'treemap':generate_og_treemap(ortholog_group)}
+    treemap, gene_ids = generate_og_treemap(ortholog_group)
+    context = {'treemap':treemap}
+    sunburst = generate_genes_sunburst(gene_ids)
+    context['sunburst'] = sunburst
     data = json.dumps(context)
     return HttpResponse(data,content_type="application/json")
 
