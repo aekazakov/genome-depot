@@ -342,6 +342,7 @@ def _export_genes_csv(request):
                         go_terms__go_id__in=go_ids).values('protein_hash')
                         ]
         else:
+            logger.warn('Unknown query type: "' + query_type + '"')
             proteins = []
 
         if genome:

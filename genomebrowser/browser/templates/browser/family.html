@@ -50,7 +50,7 @@
         $.ajax({
             url: "{% url 'loadingogtreemap' %}",
             method: 'GET',
-			datatype: 'json',
+            datatype: 'json',
             data: {
             "og": "{{ ortholog_group.id }}"
             },
@@ -62,10 +62,10 @@
             },
             success: function (data) {
             $("#waitbox").hide();
-			$('#treemap').append(data["treemap"])
-			$("#sunburst").append(data['sunburst'])
-			var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
-			Plotly.Plots.resize(plotlyGraph[0]);
+            $('#treemap').append(data["treemap"])
+            $("#sunburst").append(data['sunburst'])
+            var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
+            Plotly.Plots.resize(plotlyGraph[0]);
             },
             error: function(XMLHttpRequest, textStatus, errorThrown){
             $("#waitbox").hide();

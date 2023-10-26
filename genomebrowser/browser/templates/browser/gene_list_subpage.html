@@ -84,9 +84,6 @@
             a.remove();
             window.URL.revokeObjectURL(url);
             },
-            success: function (data) {
-            $("#waitbox").hide();
-            },
             error: function(XMLHttpRequest, textStatus, errorThrown){
             $("#waitbox").hide();
             $("#error-box").append(textStatus + ": " + errorThrown);

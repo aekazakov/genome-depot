@@ -1,5 +1,30 @@
 {% extends 'admin/base.html' %}
+{% block extrastyle %}
+{% endblock %}
 {% block object-tools %}
-    {{ block.super }}
+{{ block.super }}
     <a href="{% url "admin:index" %}">Index page</a>
+<div class="admin-shortcuts">
+    <ul class="shortcuts">
+        <h2>CGCMS settings</h2>
+        <ul>
+            <li>
+                <a href="/admin/browser/config/">
+                    <span class="icon">
+                        <i class="fas fa-edit"></i>
+                    </span>
+                    <span class="title">
+                        Configuration
+                    </span>
+                    <span class="count">
+                        <i class="Edit configs"></i>
+                    </span>
+
+                </a>
+            </li>
+        </ul>
+    </ul>
+</div>
+    
+    
 {% endblock %}

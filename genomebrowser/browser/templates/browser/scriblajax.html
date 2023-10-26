@@ -164,9 +164,9 @@
             $('#treetext').append(data["tree_newick"])
             $('#scriblscript').append(data["scribl"])
             $('#comparativeplot').show();
-        draw('canvas');
-		var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
-		Plotly.Plots.resize(plotlyGraph[0]);
+            draw('canvas');
+            var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
+            Plotly.Plots.resize(plotlyGraph[0]);
         }).fail(function(data){
             $('#loading-bar-area').remove();
             $('#comparative').html('<div class="error box">Internal server error</div>')

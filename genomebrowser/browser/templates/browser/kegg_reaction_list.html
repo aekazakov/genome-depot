@@ -12,7 +12,12 @@
                 <div class="inner">
                     <header class="align-center">
                         <form action="{% url 'krs' %}" method="get">
-                          <input name="query" type="text" placeholder="Search KEGG reactions by name or KEGG ID...">
+                          {% if genome %}
+                            <input name="query" type="text" placeholder="Search KEGG reactions by name or KEGG ID in {{ genome }} genome...">
+                            <input name="genome" type="hidden" id="genome" value="{{ genome }}">
+                          {% else %}
+                            <input name="query" type="text" placeholder="Search KEGG reactions by name or KEGG ID...">
+                          {% endif %}
                         </form>
                         {% if searchcontext %}
                         <h4>{{ searchcontext }}</h4>
@@ -31,7 +36,11 @@
                     <tbody>
     {% for item in annotationlist %}
                         <tr>
+                          {% if genome %}
+                            <td><a href="{% url 'searchgene' %}?type=kr_id&query={{ item.kegg_id }}&genome={{ genome }}">{{ item.kegg_id }}</a></td>
+                          {% else %}
                             <td><a href="{% url 'searchgene' %}?type=kr_id&query={{ item.kegg_id }}">{{ item.kegg_id }}</a></td>
+                          {% endif %}
                             <td>{{ item.description }}</td>
                         </tr>
     {% endfor %}
