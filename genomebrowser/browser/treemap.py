@@ -112,7 +112,6 @@ def generate_annotations_treemap(genes):
     )
     html = StringIO()
     fig.write_html(html, include_plotlyjs=False, full_html=False)
-    fig.write_html("fig1.2.html", include_plotlyjs=True, full_html=True)
     html = html.getvalue()
     #print(html)
     return html
