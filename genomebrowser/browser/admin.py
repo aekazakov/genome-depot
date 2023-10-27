@@ -190,7 +190,8 @@ class GenomeAdmin(admin.ModelAdmin):
                     'get_tags'
                     ]
     list_filter = (('strain', admin.EmptyFieldListFilter),
-                   ('sample', admin.EmptyFieldListFilter)
+                   ('sample', admin.EmptyFieldListFilter),
+                   ('tags')
                    )
     ordering = ['name']
     search_fields = ['name']
@@ -680,6 +681,8 @@ def clusters_view(request):
 
 def tools_view(request):
     context = {}
+    context['tasks'] = count_tasks(request)
+    context['clusters'] = count_clusters(request)
     return render(
         request, "admin/tools.html", context
     )

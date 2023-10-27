@@ -1,23 +1,310 @@
 {% extends 'admin/base.html' %}
 {% block extrastyle %}
+	{{ block.super }}
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/solid.css" integrity="sha384-fZFUEa75TqnWs6kJuLABg1hDDArGv1sOKyoqc7RubztZ1lvSU7BS+rc5mwf1Is5a" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/fontawesome.css" integrity="sha384-syoT0d9IcMjfxtHzbJUlNIuL19vD9XQAdOzftC+llPALVSZdxUpVXE0niLOiw/mn" crossorigin="anonymous">
+
+<style type="text/css">
+/* shortcuts */
+.admin_shortcuts .shortcuts { background: #50839e; padding: 10px 40px 20px; margin: 0; list-style: none;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.2) inset; }
+@media (max-width: 1024px) { .admin_shortcuts .shortcuts { padding-left: 30px; padding-right: 30px; } }
+.admin_shortcuts .shortcuts ul:after { content: "."; display: block; clear: both; visibility: hidden; line-height: 0;
+	height: 0; }
+.admin_shortcuts .shortcuts ul { padding: 0; margin: 5px 0 0 0; list-style: none; }
+.admin_shortcuts .shortcuts h2 { color: #fff; border-bottom: 1px solid #6093ae; line-height: 24px; margin: 10px 0 5px; }
+.admin_shortcuts .shortcuts li { padding: 0; margin: 0; float: left; list-style: none; }
+.admin_shortcuts .shortcuts li a { padding: 20px 0px 20px 55px; margin: 5px 10px 5px 0; display: block; float: left;
+	color: #fff; border: 1px solid #6b9db9; background: #6093ae 10px 50% no-repeat; font-size: 14px; line-height: 14px;
+	border-radius: 3px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); position: relative; min-height: 14px; }
+.admin_shortcuts .shortcuts li a .title { text-shadow: 0 0 1px rgba(0,0,0,0.5); padding-right: 25px; }
+.admin_shortcuts .shortcuts li a:hover, .admin_shortcuts .shortcuts li a:focus { background-color: #6b9db9; }
+.admin_shortcuts .shortcuts li a:active { background-color: #50839e; border-color: #6093ae; }
+
+
+/* count */
+.admin_shortcuts .shortcuts li a .count { position: absolute; right: 3px; bottom: 2px; color: #96c9e5; font-size: 10px; }
+.admin_shortcuts .shortcuts li a .count_new { position: absolute; right: -7px; top: -7px; color: #fff; font-size: 11px;
+	line-height: 14px; border-radius: 30px; display: block; overflow: hidden; max-width: 60px; min-width: 15px;
+	height: 20px; padding: 5px 5px 0 5px; background: #940f3a; text-align: center; font-weight: bold;
+	box-shadow: 0 0 3px rgba(0,0,0,0.2); }
+
+
+/* advanced button */
+.admin_shortcuts #toggle_app_list { display: block; text-align: center; padding: 2px 0; color: #fff; font-size: 11px;
+	font-weight: bold; background: #79aec8; }
+.admin_shortcuts #toggle_app_list:hover { text-decoration: none; }
+.admin_shortcuts #toggle_app_list .closed { display: inline; }
+.admin_shortcuts #toggle_app_list .open { display: none; }
+.admin_shortcuts #toggle_app_list.open .open { display: inline; }
+.admin_shortcuts #toggle_app_list.open .closed { display: none; }
+
+
+/* icons */
+.admin_shortcuts .shortcuts li a .icon { width: 34px; height: 32px; text-align: center; font-size: 24px; line-height: 32px; position: absolute; left: 10px; top: 10px; color: rgba(255,255,255,0.8); }
+
+</style>
 {% endblock %}
 {% block object-tools %}
 {{ block.super }}
-    <a href="{% url "admin:index" %}">Index page</a>
-<div class="admin-shortcuts">
+<div class="admin_shortcuts">
     <ul class="shortcuts">
-        <h2>CGCMS settings</h2>
+        <h2>View and manage data</h2>
+        <ul>
+            <li>
+                <a href="/admin/browser/genome/">
+                    <span class="icon">
+                        <i class="fas fa-circle-notch"></i>
+                    </span>
+                    <span class="title">
+                        Genomes
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/strain/">
+                    <span class="icon">
+                        <i class="fas fa-bug"></i>
+                    </span>
+                    <span class="title">
+                        Strains
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/strain_metadata/">
+                    <span class="icon">
+                        <i class="fas fa-archive"></i>
+                    </span>
+                    <span class="title">
+                        Strain metadata
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/sample/">
+                    <span class="icon">
+                        <i class="fas fa-flask"></i>
+                    </span>
+                    <span class="title">
+                        Samples
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/sample_metadata/">
+                    <span class="icon">
+                        <i class="fas fa-poo"></i>
+                    </span>
+                    <span class="title">
+                        Sample metadata
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/tag/">
+                    <span class="icon">
+                        <i class="fas fa-tag"></i>
+                    </span>
+                    <span class="title">
+                        Tags
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/strain_metadata/">
+                    <span class="icon">
+                        <i class="fas fa-arrow-alt-circle-right"></i>
+                    </span>
+                    <span class="title">
+                        Genes
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/annotation/">
+                    <span class="icon">
+                        <i class="fas fa-pen"></i>
+                    </span>
+                    <span class="title">
+                        Annotations
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/regulon/">
+                    <span class="icon">
+                        <i class="fas fa-sitemap"></i>
+                    </span>
+                    <span class="title">
+                        Regulons
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+        </ul>
+        <h2>Import data</h2>
+        <ul>
+            <li>
+                <a href="/admin/browser/genome/add/">
+                    <span class="icon">
+                        <i class="fas fa-circle-notch"></i>
+                    </span>
+                    <span class="title">
+                        Import genomes
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/strain_metadata/add">
+                    <span class="icon">
+                        <i class="fas fa-archive"></i>
+                    </span>
+                    <span class="title">
+                        Import strain metadata
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/sample/import-descriptions/">
+                    <span class="icon">
+                        <i class="fas fa-flask"></i>
+                    </span>
+                    <span class="title">
+                        Import sample descriptions
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/sample_metadata/add/">
+                    <span class="icon">
+                        <i class="fas fa-poo"></i>
+                    </span>
+                    <span class="title">
+                        Import sample metadata
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/annotation/import-annotations/">
+                    <span class="icon">
+                        <i class="fas fa-pen"></i>
+                    </span>
+                    <span class="title">
+                        Import annotations
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/browser/regulon/import-regulons/">
+                    <span class="icon">
+                        <i class="fas fa-sitemap"></i>
+                    </span>
+                    <span class="title">
+                        Import regulons
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+        </ul>
+        <h2>CGCMS configuration and user management</h2>
         <ul>
             <li>
                 <a href="/admin/browser/config/">
                     <span class="icon">
-                        <i class="fas fa-edit"></i>
+                        <i class="fas fa-wrench"></i>
                     </span>
                     <span class="title">
                         Configuration
                     </span>
                     <span class="count">
-                        <i class="Edit configs"></i>
+                        Manage CGCMS parameters
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin/django_q/ormq/">
+                    <span class="icon">
+                        <i class="fas fa-cog"></i>
+                    </span>
+                    <span class="title">
+                        Tasks queue
+                    </span>
+                    <span class="count">Check queue</span>
+                    <span class="count_new">{{ tasks }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="/clusters/">
+                    <span class="icon">
+                        <i class="fas fa-server"></i>
+                    </span>
+                    <span class="title">
+                        Workers
+                    </span>
+                    <span class="count">Django_q clusters</span>
+                    <span class="count_new">{{ clusters }}</span>
+                </a>
+            </li>
+            <li>
+                <a href="/admin/auth/user/">
+                    <span class="icon">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <span class="title">
+                        Users
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/auth/group/">
+                    <span class="icon">
+                        <i class="fas fa-users"></i>
+                    </span>
+                    <span class="title">
+                        User groups
+                    </span>
+                    <span class="count"></span>
+
+                </a>
+            </li>
+            <li>
+                <a href="/admin/auth/user/add/">
+                    <span class="icon">
+                        <i class="fas fa-user-plus"></i>
+                    </span>
+                    <span class="title">
+                        Add user
                     </span>
 
                 </a>
@@ -25,6 +312,7 @@
         </ul>
     </ul>
 </div>
-    
+    <br />
+    <a href="{% url "admin:index" %}">Back to home page</a>
     
 {% endblock %}

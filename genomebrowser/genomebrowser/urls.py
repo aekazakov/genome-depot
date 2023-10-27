@@ -22,7 +22,7 @@ from browser.admin import clusters_view, tools_view
 urlpatterns = [
     path('', include('browser.urls')),
     path(r'admin/clusters/', clusters_view),
-    path(r'admin/tools/', tools_view),
+    path(r'admin/tools/', tools_view, name='tools'),
     path('admin/', admin.site.urls),
     path('__debug__/', include(debug_toolbar.urls)),
 ]
