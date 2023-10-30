@@ -5,24 +5,23 @@
 
 {% block content %}
         <!-- Banner -->
-            <section class="banner full">
-                <article>
-                    <img src="{% static 'images/slide02.jpg' %}"  alt="" />
-                    <div class="inner">
+            <div style="background-image:url('{% static 'images/slide02.jpg' %}');background-size:cover;min-height:100vh;height:100vh;">
+                    <div class="box wrapper align-center" style="background-color:rgba(0,0,0,0.0)">
                         <header>
-                            <p>Welcome to {%if site_title %}{{ site_title }}{% else %}comparative genomic content management system{% endif %}</p>
-                            <h3>You can start with a list of  <a href="{% url 'genome_list' %}" style="text-decoration:underline;">{{ num_genomes }} available genomes</a>, or <a href="{% url 'strain_list' %}" style="text-decoration:underline;">strains</a> and <a href="{% url 'sample_list' %}" style="text-decoration:underline;">samples</a>.</h3>
-                            <br />
-                            <p>Looking for a specific gene?</p>
-                            <h3>You can <a href="{% url 'textsearch' %}"> <span style="text-decoration:underline;">go here</span> and search in gene annotations</a></h2>
-                            <br />
-                            <p>Have a sequence?</p>
-                            <h3><a href="{% url 'proteinsearchform' %}">Try <span style="text-decoration:underline;">protein</span></a> or <a href="{% url 'nucleotidesearchform' %}"><span style="text-decoration:underline;">nucleotide</span> search</a></h3>
-                            <br />
-                            <p>Still confused?</p>
-                            <h3><a href="{% url 'help' %}">Click here to open <span style="text-decoration:underline;">help page</span></a></h3>
-                        </header>
+							<p>Welcome to {%if site_title %}{{ site_title }}{% else %}comparative genomic content management system{% endif %}</p>
+						</header>
+						<br/>
+						<div class="inner align-center">
+							<a class="button 2u 12u$(medium) align-center" href="{% url 'genome_list' %}">Genomes</a>&nbsp;
+							<a class="button 2u 12u$(medium) align-center" href="{% url 'strain_list' %}">Strains</a>&nbsp;
+							<a class="button 2u 12u$(medium) align-center" href="{% url 'sample_list' %}">Samples</a>&nbsp;
+							<a class="button 2u 12u$(medium) align-center" href="{% url 'textsearch' %}">Text search</a>
+							<hr/>
+							<a class="button 2u 12u$(medium) align-center" href="{% url 'proteinsearchform' %}">Protein BLAST</a>&nbsp;
+							<a class="button 2u 12u$(medium) align-center" href="{% url 'nucleotidesearchform' %}">Nucleotide BLAST</a>&nbsp;
+							<a class="button 2u 12u$(medium) align-center" href="{% url 'help' %}">Quick help</a>&nbsp;
+							<a class="button 2u 12u$(medium) align-center" href="https://aekazakov.github.io/CGCMS/">Documentation</a>
+						</div>
                     </div>
-                </article>
-            </section>
+			</div>
 {% endblock %}
