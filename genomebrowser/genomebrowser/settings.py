@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 INTERNAL_IPS = config('INTERNAL_IPS', cast=Csv()) #['127.0.0.1',]
@@ -247,7 +247,7 @@ ADMIN_SHORTCUTS = [
             },
             {
                 'title': 'Clusters',
-                'url': 'clusters/',
+                'url': BASE_URL + '/admin/clusters/',
                 'count_new': 'browser.admin.count_clusters',
                 'count':'Django Q clusters',
             },

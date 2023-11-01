@@ -1385,8 +1385,8 @@ def startpage(request):
         Displays home page
     '''
     template = loader.get_template('browser/index.html')
-    num_genomes = Genome.objects.all().count()
-    context = {'num_genomes':num_genomes, 'site_title':TITLE}
+    #num_genomes = Genome.objects.all().count()
+    context = {'site_title':TITLE}
     return HttpResponse(template.render(context, request))
 
 def show_help(request):
@@ -1714,7 +1714,6 @@ def og_detail(request, og_id):
     context = {}
     ortholog_group = Ortholog_group.objects.get(id=og_id)
     context['ortholog_group'] = ortholog_group
-    #context['treemap'] = generate_og_treemap(ortholog_group)
     return render(request, 'browser/family.html', context)
 
 
@@ -2089,7 +2088,7 @@ def pathway_view(request):
         gene_list = Gene.objects.filter(
                     genome__name=genome, protein__kegg_pathways__kegg_id=kp.kegg_id
                     ).select_related(
-                        'protein'
+                        'protein', 'genome'
                     ).prefetch_related(
                         'protein__kegg_orthologs'
                     )
