@@ -14,31 +14,28 @@
             <h2>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</h2>
             <h5>NCBI Taxonomy ID: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{ ortholog_group.taxon.taxonomy_id }}">{{ ortholog_group.taxon.taxonomy_id }}</a></h5>
         </header>
-        <div class="grid-style">
-            <div class="content">
-                <header class="align-center">
-                <p class="align-center">Genes</p>
-                </header>
-                <span>List of genes</span>
-                <h5><a href="{% url 'searchgene' %}?type=og&query={{ ortholog_group.id }}">Show all genes in the {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]family</a></h5>
+        <div class="row">
+            <div class="6u align-center">
+            <a class="align-center" href="#taxonomy">Taxonomy profile</a>
             </div>
-            <div class="content">
-                <header class="align-center">
-                <p class="align-center">Right column title</p>
-                </header>
-                <span>Ortholog group</span>
-                <h5>{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}] </h5>
+            <div class="6u align-center">
+            <a class="align-center" href="#functions">Functional annotations</a>
             </div>
         </div>
         <hr>
 				<header class="align-center">
-					<p class="align-center">Taxonomy profile</p>
+					<p class="align-center">Genes</p>
+				</header>
+                <h5 class="align-center"><a href="{% url 'searchgene' %}?type=og&query={{ ortholog_group.id }}">Show list of all genes in the {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}] family</a></h5>
+        <hr>
+				<header class="align-center">
+					<p class="align-center" id="taxonomy">Taxonomy profile</p>
 				</header>				<div id ="error-box" class="error box"></div>
 				<div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
 				<div class="align-center" id="sunburst"></div>
         <hr>
 				<header class="align-center">
-					<p class="align-center">Gene function annotations in ortholog group {{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</p>
+					<p class="align-center" id="functions">Gene function annotations in ortholog group {{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</p>
 				</header>				<div id ="error-box" class="error box"></div>
 				<div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
 				<div class="align-center" id="treemap"></div>

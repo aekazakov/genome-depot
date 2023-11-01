@@ -235,7 +235,7 @@ ADMIN_SHORTCUTS = [
             {
                 'title': 'CGCMS Tools',
                 'icon': 'cog',
-                'url': '/admin/tools/',
+                'url': BASE_URL + '/admin/tools/',
                 'count': 'All tools in one place',
             },
             {
