@@ -1,5 +1,6 @@
 from django import forms
 from django.forms.widgets import TextInput
+from django.db.models import Q
 from browser.models import Tag
 from browser.models import Config
 
@@ -44,11 +45,8 @@ class RemoveTagForm(forms.Form):
 
 class ChooseAnnotationToolForm(forms.Form):
     choices = []
-    for item in Config.objects.values_list('param', 'value'):
-        if item[0].startswith('plugins.') and item[0].endswith('.display_name'):
-            choices.append((item[0].split('.')[1], item[1]))
     tools = forms.MultipleChoiceField(
-        choices = choices,
+        choices = Config.objects.filter(Q(param__startswith='plugins.')&Q(param__endswith='.display_name')).values_list('param','value'),
         widget=forms.CheckboxSelectMultiple,
     )
     

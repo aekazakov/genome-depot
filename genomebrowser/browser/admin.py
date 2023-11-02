@@ -78,7 +78,7 @@ def run_annotation_tools(self, request, queryset):
     if 'do_action' in request.POST:
         form = ChooseAnnotationToolForm(request.POST)
         if form.is_valid():
-            tools = form.cleaned_data['tools']
+            tools = ['.'.join(item.split('.')[1:-1]) for item in form.cleaned_data['tools']]
             task_id = async_run_annotation_tools(request, queryset, tools)
             messages.info(request,
                           "The annotation pipeline is running for selected genomes. " +

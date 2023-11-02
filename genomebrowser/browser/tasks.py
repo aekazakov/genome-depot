@@ -41,7 +41,8 @@ def run_annotation_pipeline_impl(args):
     try:
         for plugin_ind, plugin in enumerate(plugins):
             logger.debug('Starting tool ' + str(plugin_ind + 1) + ' of ' + str(len(plugins)) + ':' + plugin)
-            print('SIMULATED FUNCTION CALL IN tasks.py:44')  #annotator.run_external_tools(genomes, plugin_name=plugin)
+            #print('SIMULATED FUNCTION CALL IN tasks.py:44')  
+            annotator.run_external_tools(genomes, plugin_name=plugin)
         subject = 'CGCMS task finished successfuly'
         message = '"Run annotation tools" task finished successfuly at ' + \
         f'{settings.BASE_URL}'
