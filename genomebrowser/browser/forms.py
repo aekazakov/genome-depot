@@ -45,8 +45,9 @@ class RemoveTagForm(forms.Form):
 
 class ChooseAnnotationToolForm(forms.Form):
     choices = []
+    plugins_enabled = [item.replace('.enabled', '.display_name') for item in Config.objects.filter(Q(param__startswith='plugins.')&Q(param__endswith='.enabled')&Q(value__in=('1','yes','Yes','y','Y'))).values_list('param', flat=True)]
     tools = forms.MultipleChoiceField(
-        choices = Config.objects.filter(Q(param__startswith='plugins.')&Q(param__endswith='.display_name')).values_list('param','value'),
+        choices = Config.objects.filter(param__in=plugins_enabled).values_list('param','value'),
         widget=forms.CheckboxSelectMultiple,
     )
     

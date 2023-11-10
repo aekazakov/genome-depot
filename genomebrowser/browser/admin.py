@@ -10,6 +10,8 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
 # Import your models here
 from browser.models import Strain
 from browser.models import Sample
@@ -663,7 +665,7 @@ class TagAdmin(admin.ModelAdmin):
 
 admin.site.register(Tag, TagAdmin)
 
-
+@login_required(login_url=reverse_lazy("admin:login")) #('index') + "admin/login/")
 def clusters_view(request):
     cluster_count = 0
     clusters = []
@@ -679,6 +681,7 @@ def clusters_view(request):
         request, "admin/clusters.html", context
     )
 
+@login_required(login_url=reverse_lazy("admin:login"))  #('index') + "admin/login/")
 def tools_view(request):
     context = {}
     context['tasks'] = count_tasks(request)

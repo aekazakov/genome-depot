@@ -53,7 +53,7 @@ def preprocess(annotator, genomes, working_dir):
         outfile.write('#!/bin/bash\n')
         outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
         outfile.write('conda activate ' +
-                      annotator.config['plugins.defensefinder.defensefinder_env'] +
+                      annotator.config['plugins.defensefinder.conda_env'] +
                       '\n'
                       )
         outfile.write('cd "' + working_dir + '"\n\n')

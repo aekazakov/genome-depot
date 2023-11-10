@@ -2399,7 +2399,7 @@ def get_og_data(request):
     print('AJAX request for', og_id)
     ortholog_group = Ortholog_group.objects.get(id=og_id)
     treemap, gene_ids = generate_og_treemap(ortholog_group)
-    context = {'treemap':treemap}
+    context = {'treemap':treemap, 'og_gene_count':str(len(gene_ids))}
     sunburst = generate_genes_sunburst(gene_ids)
     context['sunburst'] = sunburst
     data = json.dumps(context)

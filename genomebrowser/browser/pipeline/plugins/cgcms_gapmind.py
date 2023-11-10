@@ -53,7 +53,7 @@ def preprocess(annotator, genomes, working_dir):
         outfile.write('#!/bin/bash\n')
         outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
         outfile.write('conda activate ' +
-                      annotator.config['plugins.gapmind.gapmind_env'] +
+                      annotator.config['plugins.gapmind.conda_env'] +
                       '\n'
                       )
         outfile.write('cd "' + annotator.config['plugins.gapmind.gapmind_dir'] + '"\n')

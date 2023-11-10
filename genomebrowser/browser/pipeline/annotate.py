@@ -693,7 +693,7 @@ class Annotator(object):
     def run_external_tools(self, genomes, plugin_name=None):
         plugins_enabled = set()
         for param in self.config:
-            if param.startswith('plugins.') and self.config[param] != '':
+            if param.startswith('plugins.') and param.endswith('.enabled') and self.config[param] in ('1', 'yes', 'Yes', 'y', 'Y'):
                 tool = param.split('.')[1]
                 plugins_enabled.add(tool)
                 

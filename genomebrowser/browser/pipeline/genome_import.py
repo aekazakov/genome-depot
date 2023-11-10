@@ -1878,10 +1878,10 @@ class Importer(object):
         # may run for days resulting in "MySQL server has gone away" error
         connection.close()
         # run eggnog-mapper for all proteins
-        # eggnog_outfile = self.run_eggnog_mapper()
+        eggnog_outfile = self.run_eggnog_mapper()
         # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
-        eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
-        'eggnog_mapper_output.emapper.annotations')
+        # eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
+        # 'eggnog_mapper_output.emapper.annotations')
         
         logger.info('Reading eggnog-mapper output')
         # separate eggnog-mapper output by genome?
@@ -2112,21 +2112,20 @@ class Importer(object):
             operon_index = Operon.objects.count() + 1
             operon = []
             for line in infile:
-                j = line[:-1].split('\t')
-                if len(j) != 11:
+                row = line.rstrip('\n\r').split('\t')
+                if len(row) != 11:
                     continue
-                if j[-1] != 'True' and j[-1] != 'False':
+                if row[-1] != 'True' and row[-1] != 'False':
                     continue
-                qid, strand, sid, label = j[0], j[2], j[5], j[-1]
+                qid, strand, sid, label = row[0], row[2], row[5], row[-1]
                 if label == 'False':
                     continue
-                contig_id, genome_id = j[1].split('|')
+                contig_id, genome_id = row[1].split('|')
                 if operon and operon[-1][1] == qid and operon[-1][2] == strand:
                     operon.append([qid, sid, strand])
                 else:
                     if operon:
                         operon_index += 1
-                        operon_id = genome_id + '_operon_' + str(operon_index)
                         operon_start = int(operon[0][0].split('|')[4])
                         operon_end = operon[-1][1].split('|')[5]
                         operon_end = int(operon_end.split('$$')[0])
@@ -2138,6 +2137,11 @@ class Importer(object):
                         for gene_data in [elem[0] for elem in operon] + \
                         [operon[-1][1]]:
                             operon_members.append(genes[gene_data[5:].split('|')[0]])
+                        #operon_id = genome_id + '_operon_' + str(operon_index)
+                        if operon_strand == 1:
+                            operon_id = operon_members[0] + '-' + operon_members[-1] + '_operon'
+                        elif operon_strand == -1:
+                            operon_id = operon_members[-1] + '-' + operon_members[0] + '_operon'
                         operons_data[operon[0][4]].append([operon_id,
                                                            operon_start,
                                                            operon_end,
@@ -2146,6 +2150,7 @@ class Importer(object):
                                                            operon_members
                                                            ])
                     operon = [[qid, sid, strand, contig_id, genome_id]]
+            # process last operon
             if operon:
                 operon_index += 1
                 operon_id = genome_id + '_operon_' + str(operon_index)
