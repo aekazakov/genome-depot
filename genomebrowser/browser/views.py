@@ -935,13 +935,29 @@ class GenomeSearchResultsView(generic.ListView):
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
                                        self.request.GET.get('query') + '"'
+        elif self.request.GET.get('taxon'):
+            taxon = Taxon.objects.get(taxonomy_id = self.request.GET.get('taxon'))
+            context['searchcontext'] = 'Search results for ' + \
+                                       taxon.name + ' [' + taxon.rank + ']'
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
+        taxon = self.request.GET.get('taxon')
         if query:
             object_list = Genome.objects.filter(
                 name__icontains=query
+            ).order_by(
+                'name'
+            ).select_related(
+                'strain', 'sample', 'taxon'
+            ).prefetch_related(
+                'tags'
+            )
+        elif taxon:
+            children = get_taxon_children(taxon)
+            object_list = Genome.objects.filter(
+                taxon__taxonomy_id__in=children
             ).order_by(
                 'name'
             ).select_related(
@@ -967,18 +983,60 @@ class StrainSearchResultsView(generic.ListView):
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
                                        self.request.GET.get('query') + '"'
+        elif self.request.GET.get('taxon'):
+            taxon = Taxon.objects.get(taxonomy_id = self.request.GET.get('taxon'))
+            context['searchcontext'] = 'Search results for ' + \
+                                       taxon.name + ' [' + taxon.rank + ']'
+        return context
+
+    def get_queryset(self): # new
+        query = self.request.GET.get('query')
+        taxon = self.request.GET.get('taxon')
+        if query:
+            object_list = Strain.objects.filter(
+                Q(strain_id__icontains=query) |
+                Q(full_name__icontains=query) |
+                Q(order__icontains=query)|
+                Q(strain_metadata__value__icontains=query)
+            ).order_by('strain_id')
+        elif taxon:
+            children = get_taxon_children(taxon)
+            object_list = Strain.objects.filter(
+                taxon__taxonomy_id__in=children
+            ).order_by(
+                'strain_id'
+            )
+        else:
+            object_list = Strain.objects.none()
+        return object_list
+
+
+class SampleSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in sample names, descriptions or metadata.
+    '''
+    model = Sample
+    context_object_name = 'samplelist'
+    paginate_by = 50
+
+    def get_context_data(self,**kwargs):
+        context = super(SampleSearchResultsView,self).get_context_data(**kwargs)
+        if self.request.GET.get('query'):
+            context['searchcontext'] = 'Search results for "' + \
+                                       self.request.GET.get('query') + '"'
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         if query:
-            object_list = Strain.objects.filter(
-                Q(strain_id__icontains=query) |
+            object_list = Sample.objects.filter(
+                Q(sample_id__icontains=query) |
                 Q(full_name__icontains=query) |
-                Q(order__icontains=query)
-            ).order_by('strain_id')
+                Q(description__icontains=query)|
+                Q(sample_metadata__value__icontains=query)
+            ).order_by('sample_id')
         else:
-            object_list = Strain.objects.none()
+            object_list = Sample.objects.none()
         return object_list
 
 
@@ -1437,12 +1495,6 @@ def taxon_detail(request, taxonomy_id):
         raise Http404('Taxon ' + taxonomy_id + ' does not exist')
     context = {'taxon': taxon}
     children = get_taxon_children(taxonomy_id)
-    context['genomes'] = Genome.objects.filter(
-        taxon__taxonomy_id__in=children
-    ).prefetch_related(
-        'tags'
-    )
-    context['strains'] = Strain.objects.filter(taxon__taxonomy_id__in=children)
     context['sunburst'] = generate_genome_sunburst(taxonomy_id, children)
     lineage = [taxon,]
     parent_id = taxon.parent_id

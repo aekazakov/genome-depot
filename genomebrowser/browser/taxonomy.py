@@ -308,7 +308,14 @@ def get_genomes_taxonomy(target_taxon_id, target_children = []):
         if taxon == '1':
             continue
         labels.append(taxon_lookup[taxon][0])
-        customdata.append([reverse('taxondetails', args=(taxon,)),
+        if taxon_counts[taxon] == 1:
+            customdata.append([reverse('taxondetails', args=(taxon,)),
+                           '<br>' + taxon_lookup[taxon][0] + ' [' + \
+                           taxon_lookup[taxon][3] + ']<br>' + \
+                           str(taxon_counts[taxon]) + ' genome'
+                           ])
+        else:
+            customdata.append([reverse('taxondetails', args=(taxon,)),
                            '<br>' + taxon_lookup[taxon][0] + ' [' + \
                            taxon_lookup[taxon][3] + ']<br>' + \
                            str(taxon_counts[taxon]) + ' genomes'

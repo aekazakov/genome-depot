@@ -186,8 +186,8 @@ class Importer(object):
         self.genomefiles = result
     
     def create_tag(self):
-        current_date = timezone.now().isoformat()
-        tag_name = 'imported' + current_date
+        current_date = str(timezone.localdate(timezone.now()))
+        tag_name = 'imported_' + current_date
         try:
             self.tag = Tag.objects.get(name=tag_name)
         except Tag.DoesNotExist:
@@ -1878,10 +1878,10 @@ class Importer(object):
         # may run for days resulting in "MySQL server has gone away" error
         connection.close()
         # run eggnog-mapper for all proteins
-        eggnog_outfile = self.run_eggnog_mapper()
+        # eggnog_outfile = self.run_eggnog_mapper()
         # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
-        # eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
-        # 'eggnog_mapper_output.emapper.annotations')
+        eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
+        'eggnog_mapper_output.emapper.annotations')
         
         logger.info('Reading eggnog-mapper output')
         # separate eggnog-mapper output by genome?
