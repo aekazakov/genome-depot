@@ -139,7 +139,7 @@
                 {% if protein.kegg_orthologs.all %}
                 <span>KEGG Orthologs</span>
                 {% for kegg_ortholog in protein.kegg_orthologs.all %}
-                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=ko_id$query={{ kegg_ortholog.kegg_id }}" title="Show all genes for {{ kegg_ortholog.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_ortholog.kegg_id }}]</a> {{ kegg_ortholog.description }}</h5>
+                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=ko_id&query={{ kegg_ortholog.kegg_id }}" title="Show all genes for {{ kegg_ortholog.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_ortholog.kegg_id }}]</a> {{ kegg_ortholog.description }}</h5>
                 {% endfor %}
                 {% endif %}
                 {% if protein.kegg_pathways.all %}

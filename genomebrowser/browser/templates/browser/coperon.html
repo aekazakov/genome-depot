@@ -27,21 +27,26 @@
         </div>
 
         <hr>            
-				<header class="align-center" id="sunburstheader">
-					<p class="align-center">Taxonomy profile of the conserved operon </p>
-				</header>				<div id ="error-box" class="error box"></div>
-				<div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
-				<div class="align-center" id="sunburst"></div>
+                <header class="align-center" id="sunburstheader">
+                    <p class="align-center">Taxonomy profile of the conserved operon </p>
+                </header>
+                <div id ="error-box" class="error box"></div>
+                <div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
+                <div class="align-center" id="sunburst"></div>
         <hr>
-				<header class="align-center" id="treemapheader">
-					<p class="align-center">Gene function annotations in the conserved operon </p>
-				</header>
-				<div class="align-center" id="treemap"></div>
+                <header class="align-center" id="treemapheader">
+                    <p class="align-center">Gene function annotations in the conserved operon </p>
+                </header>
+                <div class="align-center" id="treemap"></div>
         <hr>
-				<header class="align-center" id="operonlistheader">
-					<p class="align-center">Homologous operons </p>
-				</header>
-				<div id="operonlist"></div>
+                <div class="align-center">
+                    <button type="button" id="export-profile">Export functional profile as tab-separated text</button>
+                </div>
+        <hr>
+                <header class="align-center" id="operonlistheader">
+                    <p class="align-center">Homologous operons </p>
+                </header>
+                <div id="operonlist"></div>
         <hr>
 
        
@@ -51,29 +56,49 @@
         $.ajax({
             url: "{% url 'conservoperondata' operon_id=start_operon.id %}",
             method: 'GET',
-			datatype: 'json',
+            datatype: 'json',
             data: {},
             xhrFields: {
             responseType: 'text'
             },
             beforeSend: function() {
             $("#waitbox").show();
+            $("#export-profile").hide();
             },
             success: function (data) {
             $("#waitbox").hide()
-			$("#treemap").append(data['treemap'])
-			$("#sunburst").append(data['sunburst'])
-			$("#operonlist").append(data['operonlist'])
-			var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
-			Plotly.Plots.resize(plotlyGraph[0]);
+            $("#treemap").append(data['treemap'])
+            $("#sunburst").append(data['sunburst'])
+            $("#operonlist").append(data['operonlist'])
+            var tsvData = document.createElement('div');
+            tsvData.setAttribute('id', 'tsv_profile_data');
+            tsvData.style.display = 'none';
+            tsvData.append(data["tsv_profile"]);
+            $("#export-profile").append(tsvData);
+            $("#export-profile").show();
+            var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
+            Plotly.Plots.resize(plotlyGraph[0]);
             },
             error: function(XMLHttpRequest, textStatus, errorThrown){
             $("#waitbox").hide();
             $("#error-box").append(textStatus + ": " + errorThrown);
             }
         });
-	});
+    });
 </script>
-	   </section>
+<script>
+    $('#export-profile').on('click', function () {
+        var text = document.getElementById("tsv_profile_data").textContent;
+        var filename = "conserved_operon_functional_profile.tab";
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        pom.setAttribute('download', filename);
+        pom.style.display = 'none';
+        document.body.appendChild(pom);
+        pom.click();
+        document.body.removeChild(pom);
+    });    
+</script>
+        </section>
 
 {% endblock %}

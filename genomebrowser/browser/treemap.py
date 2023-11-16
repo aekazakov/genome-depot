@@ -33,7 +33,8 @@ def generate_og_treemap(ortholog_group):
     if not genes:
         return '<h5>Genes for ' + ortholog_group.eggnog_id + '[' + ortholog_group.taxon.name + '] not found in the database.</h5>'
     gene_ids = [item.id for item in genes.all()]
-    return generate_annotations_treemap(genes), gene_ids
+    treemap, result_table = generate_annotations_treemap(genes)
+    return treemap, result_table, gene_ids
 
 
 def generate_genes_treemap(gene_ids):
@@ -87,6 +88,7 @@ def generate_annotations_treemap(genes):
             genedata['CAZY'][(item.cazy_id, item.description)] += 1
     data = {'names':[root_node,], 'labels':[root_node,], 'parents':['',], 'values':[0,]}
     root_node = 'Annotations'
+    result_table = []
     for category, category_data in genedata.items():
         data['names'].append(category)
         data['labels'].append(category)
@@ -98,6 +100,7 @@ def generate_annotations_treemap(genes):
             data['labels'].append(item[1])
             data['parents'].append(category)
             data['values'].append(item_value)
+            result_table.append((category, item[0], item[1], item_value))
     fig = px.treemap(
         data_frame = pd.DataFrame.from_dict(data),
         names = 'names',
@@ -113,6 +116,8 @@ def generate_annotations_treemap(genes):
     html = StringIO()
     fig.write_html(html, include_plotlyjs=False, full_html=False)
     html = html.getvalue()
-    #print(html)
-    return html
+    result_table = sorted(result_table, key=lambda x: x[3], reverse=True)
+    result_table = '\n'.join(['\t'.join([str(item) for item in row]) for row in result_table])
+    result_table = 'Category\tFunction\tDescription\tGene count\n' + result_table
+    return html, result_table
 

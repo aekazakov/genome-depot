@@ -40,6 +40,10 @@
 				<div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
 				<div class="align-center" id="treemap"></div>
         <hr>
+                <div class="align-center">
+                    <button type="button" id="export-profile">Export functional profile as tab-separated text</button>
+                </div>
+        <hr>
        
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script>
@@ -56,12 +60,19 @@
             },
             beforeSend: function() {
             $("#waitbox").show();
+            $("#export-profile").hide();
             },
             success: function (data) {
             $("#waitbox").hide();
             $("#treemap").append(data["treemap"])
             $("#sunburst").append(data["sunburst"])
             $("#genecount").append(data["og_gene_count"])
+            var tsvData = document.createElement('div');
+            tsvData.setAttribute('id', 'tsv_profile_data');
+            tsvData.style.display = 'none';
+            tsvData.append(data["tsv_profile"]);
+            $("#export-profile").append(tsvData);
+            $("#export-profile").show();
             var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
             Plotly.Plots.resize(plotlyGraph[0]);
             },
@@ -70,8 +81,21 @@
             $("#error-box").append(textStatus + ": " + errorThrown);
             }
         });
-	});
+    });
 </script>
-	   </section>
+<script>
+    $('#export-profile').on('click', function () {
+        var text = document.getElementById("tsv_profile_data").textContent;
+        var filename = "{{ ortholog_group.eggnog_id }}_functional_profile.tab";
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        pom.setAttribute('download', filename);
+        pom.style.display = 'none';
+        document.body.appendChild(pom);
+        pom.click();
+        document.body.removeChild(pom);
+    });    
+</script>
+        </section>
 
 {% endblock %}

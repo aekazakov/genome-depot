@@ -21,7 +21,6 @@
       document.getElementById("showtree").style.display = "none";
     }
     </script>
-
 {% endblock %}
 {% block body-tag %}
     <body>
@@ -127,12 +126,6 @@
                     <canvas id="canvas" width="1000" height="600" style="padding: 10px 0px 10px 0px; -moz-border-radius:15px; border-radius:15px; background:-webkit-gradient(linear, left top, left bottom, from(rgb(33,99,102)), to(rgb(33,99,102)), color-stop(0.5, rgb(13,29,22)), color-stop(0.5, rgb(13,29,22))); background: -moz-linear-gradient(top, rgb(33,99,102), rgb(13,29,22), rgb(13,29,22), rgb(33,99,102));"></canvas>
                     </br><a id="pngexport">Export as gene plot as PNG image (right click Save As)</a>
                     <hr>
-                    <div id="treemap" style="margin:auto">
-                        <header class="align-center">
-                            <p class="align-center">Gene function annotations in the genomic neighborhood</p>
-                        </header>
-                    </div>
-                    <hr>
                     <div>
                         <header class="align-center" id="showtree">
                             <a onclick="Toggle()">Click to show phylogenetic tree in Newick format</a>
@@ -140,6 +133,16 @@
                         <div id="proteinsequence">
                             <textarea id="treetext" name="treetext" rows="4" cols="50"></textarea>
                         </div>
+                    </div>
+                    <hr>
+                    <div id="treemap" style="margin:auto">
+                        <header class="align-center">
+                            <p class="align-center">Gene function annotations in the genomic neighborhood</p>
+                        </header>
+                    </div>
+                    <hr>
+                    <div class="align-center">
+                        <button type="button" id="export-profile">Export functional profile as tab-separated text</button>
                     </div>
                 </div>
             </div>
@@ -151,9 +154,9 @@
     $(document).ready(function(){
         $.ajax({
             url: "{% url 'loadingscribl' %}",
-        type: "GET",
-        datatype: 'json',
-        data: {'locus_tag': "{{ locus_tag }}", 'genome': "{{ genome }}", 'og': "{{ og }}", "size": "{{ size }}", "lines": "{{ lines }}" }
+            method: 'GET',
+            datatype: 'json',
+            data: {"locus_tag": "{{ locus_tag }}", "genome": "{{ genome }}", "og": "{{ og }}", "size": "{{ size }}", "lines": "{{ lines }}" },
         }).done(function(data){
             $('#loading-bar-area').remove();
             $('#run-time').append(data["time"].toFixed(2) + ' seconds')
@@ -164,6 +167,12 @@
             $('#treetext').append(data["tree_newick"])
             $('#scriblscript').append(data["scribl"])
             $('#comparativeplot').show();
+            var tsvData = document.createElement('div');
+            tsvData.setAttribute('id', 'tsv_profile_data');
+            tsvData.style.display = 'none';
+            tsvData.append(data["tsv_profile"]);
+            $("#export-profile").append(tsvData);
+            $("#export-profile").show();
             draw('canvas');
             var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
             Plotly.Plots.resize(plotlyGraph[0]);
@@ -174,6 +183,20 @@
         });
     });
 </script>
+<script>
+    $('#export-profile').on('click', function () {
+        var text = document.getElementById("tsv_profile_data").textContent;
+        var filename = "{{ gene.locus_tag }}_conserved_locus_functional_profile.tab";
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        pom.setAttribute('download', filename);
+        pom.style.display = 'none';
+        document.body.appendChild(pom);
+        pom.click();
+        document.body.removeChild(pom);
+    });    
+</script>
+
     </section>
     
 {% endblock %}

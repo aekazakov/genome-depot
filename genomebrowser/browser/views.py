@@ -496,7 +496,7 @@ class GeneSearchResultsSubView(generic.ListView):
         elif query_type == 'ko_id':
             if genome:
                 object_list = Gene.objects.filter(
-                    genome__name=genome, protein__in=Protein.objects.filter(
+                    genome__name=genome,protein__in=Protein.objects.filter(
                         kegg_orthologs__kegg_id=query)
                 ).order_by(
                     'locus_tag'
@@ -2058,9 +2058,10 @@ def conserved_operon_data(request, operon_id):
         Returns conserved operon data for Ajax request
     '''
     context = {}
-    treemap, sunburst, operon_ids = build_conserved_operon(operon_id)
+    treemap, sunburst, operon_ids, functional_profile_tsv = build_conserved_operon(operon_id)
     context['treemap'] = treemap
     context['sunburst'] = sunburst
+    context['tsv_profile'] = functional_profile_tsv
     object_list = Operon.objects.filter(id__in=operon_ids).order_by(
         'name'
     ).select_related(
@@ -2250,7 +2251,7 @@ class ComparativeView(View):
         treemap = ''
         if treemap_gene_ids:
             print(len(treemap_gene_ids), 'genes for treemap generation')
-            treemap = generate_genes_treemap(treemap_gene_ids)
+            treemap, functional_profile = generate_genes_treemap(treemap_gene_ids)
 
         if og_gene_count == 1:
             scribl='<script type="text/javascript">\nalert("Comparative plot cannot' +\
@@ -2275,6 +2276,7 @@ class ComparativeView(View):
                        'plot_gene_count':plot_gene_count,
                        'time':time.time()-start_time,
                        'treemap':treemap,
+                       'tsv_profile': functional_profile
                        }
         data = json.dumps(context)
         return HttpResponse(data,content_type="application/json")
@@ -2398,8 +2400,8 @@ def get_og_data(request):
     og_id = request.GET.get('og')
     print('AJAX request for', og_id)
     ortholog_group = Ortholog_group.objects.get(id=og_id)
-    treemap, gene_ids = generate_og_treemap(ortholog_group)
-    context = {'treemap':treemap, 'og_gene_count':str(len(gene_ids))}
+    treemap, functional_profile, gene_ids = generate_og_treemap(ortholog_group)
+    context = {'treemap':treemap, 'og_gene_count':str(len(gene_ids)), 'tsv_profile':functional_profile}
     sunburst = generate_genes_sunburst(gene_ids)
     context['sunburst'] = sunburst
     data = json.dumps(context)

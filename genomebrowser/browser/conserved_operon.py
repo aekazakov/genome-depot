@@ -43,8 +43,8 @@ def build_conserved_operon(operon_id):
         ).values_list('id', flat=True))
 
     print(all_gene_ids)
-    treemap = generate_genes_treemap(all_gene_ids)
+    treemap, functional_profile_tsv = generate_genes_treemap(all_gene_ids)
     
     sunburst = generate_operons_sunburst(list(operons), list(monocistronic_genes))
     print('sunburst:', sunburst)
-    return treemap, sunburst, list(operons)
+    return treemap, sunburst, list(operons), functional_profile_tsv
