@@ -947,7 +947,7 @@ class GenomeSearchResultsView(generic.ListView):
         if query:
             object_list = Genome.objects.filter(
                 name__icontains=query
-            ).order_by(
+            ).distinct().order_by(
                 'name'
             ).select_related(
                 'strain', 'sample', 'taxon'
@@ -958,7 +958,7 @@ class GenomeSearchResultsView(generic.ListView):
             children = get_taxon_children(taxon)
             object_list = Genome.objects.filter(
                 taxon__taxonomy_id__in=children
-            ).order_by(
+            ).distinct().order_by(
                 'name'
             ).select_related(
                 'strain', 'sample', 'taxon'
@@ -998,12 +998,12 @@ class StrainSearchResultsView(generic.ListView):
                 Q(full_name__icontains=query) |
                 Q(order__icontains=query)|
                 Q(strain_metadata__value__icontains=query)
-            ).order_by('strain_id')
+            ).distinct().order_by('strain_id')
         elif taxon:
             children = get_taxon_children(taxon)
             object_list = Strain.objects.filter(
                 taxon__taxonomy_id__in=children
-            ).order_by(
+            ).distinct().order_by(
                 'strain_id'
             )
         else:
@@ -1034,7 +1034,7 @@ class SampleSearchResultsView(generic.ListView):
                 Q(full_name__icontains=query) |
                 Q(description__icontains=query)|
                 Q(sample_metadata__value__icontains=query)
-            ).order_by('sample_id')
+            ).distinct().order_by('sample_id')
         else:
             object_list = Sample.objects.none()
         return object_list
