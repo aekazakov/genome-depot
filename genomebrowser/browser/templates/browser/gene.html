@@ -63,7 +63,7 @@
             <h5>{{ gene.function }}</h5>
             {% if gene.operon %}
             <span>Operon</span>
-            <h5><a href="{% url 'operondetails' name=gene.operon.name %}">{{ gene.operon.name }}</a></h5>
+            <h5><a href="{% url 'operondetails' genome=gene.genome.name name=gene.operon.name %}">{{ gene.operon.name }}</a></h5>
             {% endif %}
             </div>
             <div class="content">

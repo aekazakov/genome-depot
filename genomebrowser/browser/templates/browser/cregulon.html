@@ -171,7 +171,7 @@
                             <a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a><br>
                             {% endfor %}
                             {%for operon in site.operons.all %}
-                            <a href="{% url 'operondetails' name=operon.name %}">{{ operon.name }}</a><br>
+                            <a href="{% url 'operondetails' genome=operon.genome.name name=operon.name %}">{{ operon.name }}</a><br>
                             {% endfor %}
                         </td>
                     </tr>

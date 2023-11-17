@@ -13,7 +13,6 @@ urlpatterns = [
     path('taxa/', views.TaxonListView.as_view(), name='taxa_list'),
     path('gene/<str:genome>/<str:locus_tag>/', views.gene_detail, name='genedetails'),
     path('operon/<str:genome>/<str:name>/', views.operon_detail, name='operondetails'),
-    path('operon/<str:name>/', views.operon_detail, name='operondetails'),
     path('operons/<str:genome>/', views.OperonListView.as_view(), name='operonlist'),
     path('site/<str:genome>/<str:name>/', views.site_detail, name='sitedetails'),
     path('sites/<str:genome>/', views.SiteListView.as_view(), name='sitelist'),

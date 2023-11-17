@@ -446,7 +446,7 @@ class StrainMetadataAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         my_urls = [
-            path('add/', self.update_strain_metadata),
+            path('import/', self.admin_site.admin_view(self.update_strain_metadata)),
         ]
         return my_urls + urls
 
@@ -481,7 +481,7 @@ class SampleMetadataAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         my_urls = [
-            path('add/', self.import_sample_metadata),
+            path('import/', self.admin_site.admin_view(self.import_sample_metadata)),
         ]
         return my_urls + urls
 
@@ -665,7 +665,7 @@ class TagAdmin(admin.ModelAdmin):
 
 admin.site.register(Tag, TagAdmin)
 
-@login_required(login_url=reverse_lazy("admin:login")) #('index') + "admin/login/")
+@login_required(login_url=reverse_lazy("admin:login"))
 def clusters_view(request):
     cluster_count = 0
     clusters = []
@@ -681,7 +681,7 @@ def clusters_view(request):
         request, "admin/clusters.html", context
     )
 
-@login_required(login_url=reverse_lazy("admin:login"))  #('index') + "admin/login/")
+@login_required(login_url=reverse_lazy("admin:login"))
 def tools_view(request):
     context = {}
     context['tasks'] = count_tasks(request)

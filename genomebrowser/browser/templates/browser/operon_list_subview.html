@@ -11,7 +11,7 @@
                     <tbody>
     {% for operon in operonlist %}
                         <tr>
-                            <td><a href="{% url 'operondetails' name=operon.name %}">{{ operon.name }}</a></td>
+                            <td><a href="{% url 'operondetails' genome=operon.genome.name name=operon.name %}">{{ operon.name }}</a></td>
                             <td><a href="{% url 'genomedetails' name=operon.genome.name %}">{{ operon.genome.name }} [{{ operon.genome.taxon.name }}]</a>{% for tag in operon.genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</td>
                         {% if operon.strand == -1 %}
                             <td>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</td>

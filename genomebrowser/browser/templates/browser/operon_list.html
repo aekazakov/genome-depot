@@ -32,7 +32,7 @@
                     <tbody>
     {% for operon in operonlist %}
                         <tr>
-                            <td><a href="{% url 'operondetails' name=operon.name %}">{{ operon.name }}</a></td>
+                            <td><a href="{% url 'operondetails' genome=genome.name name=operon.name %}">{{ operon.name }}</a></td>
                         {% if operon.strand == -1 %}
                             <td>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</td>
                         {% else %}
