@@ -12,6 +12,8 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
+from django.db.models import Q
+from django.forms import CheckboxSelectMultiple
 # Import your models here
 from browser.models import Strain
 from browser.models import Sample
@@ -60,9 +62,9 @@ from django_q.monitor import Stat
 
 logger = logging.getLogger("CGCMS")
 
-admin.site.site_header = "CGCMS admin"
-admin.site.site_title = "CGCMS Admin Portal"
-admin.site.index_title = "Welcome to CGCMS administration interface"
+admin.site.site_header = "CGCMS Administration panel"
+admin.site.site_title = "CGCMS administration"
+admin.site.index_title = "Welcome to CGCMS Administration panel"
 
 
 @admin.action(description = 'Test sync action')
@@ -79,18 +81,23 @@ def test_task(self, request, queryset):
 def run_annotation_tools(self, request, queryset):
     if 'do_action' in request.POST:
         form = ChooseAnnotationToolForm(request.POST)
+        # this hack is necessary because the tools field is empty on form initialization to prevent calling db server on startup
+        form.fields.get('tools').choices = [(item,item) for item in request.POST.getlist('tools')]
         if form.is_valid():
-            tools = ['.'.join(item.split('.')[1:-1]) for item in form.cleaned_data['tools']]
-            task_id = async_run_annotation_tools(request, queryset, tools)
+            task_id = ''#async_run_annotation_tools(request, queryset, tools)
             messages.info(request,
                           "The annotation pipeline is running for selected genomes. " +
                           "Check the status of the task " + task_id + 
                           " in the list of queued tasks for progress."
                           )
+        else:
+            logger.debug('Form not valid')
             
         return HttpResponseRedirect(request.get_full_path())
     else:
+        plugins_enabled = [item.replace('.enabled', '.display_name') for item in Config.objects.filter(Q(param__startswith='plugins.')&Q(param__endswith='.enabled')&Q(value__in=('1','yes','Yes','y','Y'))).values_list('param', flat=True)]
         form = ChooseAnnotationToolForm()
+        form.fields.get('tools').choices = Config.objects.filter(param__in=plugins_enabled).values_list('param','value')
         context = {'title': u'Choose tools', 'form': form}
         active_tasks = OrmQ.objects.all().count()
         context['genomes'] = queryset
@@ -278,7 +285,6 @@ class GenomeAdmin(admin.ModelAdmin):
                           str(len(queryset)) +
                           " genomes")
         return redirect("..")
-
         
     def get_actions(self, request):
         actions = super().get_actions(request)
@@ -286,7 +292,11 @@ class GenomeAdmin(admin.ModelAdmin):
             del actions['delete_selected']
         return actions
    
-    
+    def change_view(self, request, object_id=None, form_url='', extra_context=None):
+        return super().change_view(request, object_id, form_url,
+                               extra_context=dict(show_delete=False))    
+
+
 admin.site.register(Genome, GenomeAdmin)
 
 

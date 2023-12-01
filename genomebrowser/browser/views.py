@@ -172,7 +172,7 @@ class TaxonSearchResultsView(generic.ListView):
         query = self.request.GET.get('query')
         if query:
             object_list = Taxon.objects.filter(
-                Q(name__icontains=query) | Q(taxonomy_id__icontains=query)
+                Q(name__icontains=query) | Q(taxonomy_id__exact=query)
             ).order_by('name')
         else:
             object_list = Taxon.objects.none()
@@ -440,14 +440,15 @@ class GeneSearchResultsSubView(generic.ListView):
                     ).filter(
                         Q(name__icontains=query) |
                         Q(locus_tag__icontains=query) |
-                        Q(function__icontains=query)
+                        Q(function__icontains=query) |
+                        Q(contig__contig_id__icontains=query)
                     ).order_by(
                         'locus_tag'
                     ).select_related(
                         'genome', 'genome__taxon'
                     ).prefetch_related(
                         'genome__tags'
-                    )
+                    ).distinct()
             else:
                 object_list = Gene.objects.filter(
                     locus_tag__exact=query
@@ -462,14 +463,16 @@ class GeneSearchResultsSubView(generic.ListView):
                     object_list = Gene.objects.filter(
                         Q(name__icontains=query) |
                         Q(locus_tag__icontains=query) |
-                        Q(function__icontains=query)
+                        Q(function__icontains=query) |
+                        Q(genome__name__icontains=query) |
+                        Q(contig__contig_id__icontains=query)
                     ).order_by(
                         'locus_tag'
                     ).select_related(
                         'genome', 'genome__taxon'
                     ).prefetch_related(
                         'genome__tags'
-                    )
+                    ).distinct()
         elif query_type == 'og':
             if genome:
                 object_list = Gene.objects.filter(
@@ -1561,8 +1564,10 @@ def strain_detail(request, strain_id):
     '''
         Displays strain page.
     '''
+    context = {}
     try:
         strain = Strain.objects.get(id = strain_id)
+        context['strain'] = strain
         genomes = Genome.objects.filter(
             strain=strain
         ).order_by(
@@ -1570,6 +1575,7 @@ def strain_detail(request, strain_id):
         ).prefetch_related(
             'tags'
         )
+        context['genomes'] = genomes
         strain_metadata = Strain_metadata.objects.filter(strain=strain)
         metadata_entries = {}
         for metadata_entry in strain_metadata:
@@ -1583,7 +1589,19 @@ def strain_detail(request, strain_id):
         metadata = []
         for source in sorted(metadata_entries.keys()):
             metadata.append(metadata_entries[source])
+        context['metadata'] = metadata
         logger.debug(str(metadata))
+        lineage = [strain.taxon,]
+        parent_id = strain.taxon.parent_id
+        iteration_count = 0
+        while True:
+            parent_taxon = Taxon.objects.get(taxonomy_id = parent_id)
+            iteration_count += 1
+            if parent_taxon.taxonomy_id == parent_taxon.parent_id or parent_id == '1':
+                break
+            lineage.append(parent_taxon)
+            parent_id = parent_taxon.parent_id
+        context['lineage'] = reversed(lineage)
     except Strain.DoesNotExist:
         return render(request,
                       '404.html',
@@ -1591,7 +1609,7 @@ def strain_detail(request, strain_id):
                       )
     return render(request,
                   'browser/strain.html',
-                  {'strain': strain, 'genomes':genomes, 'metadata':metadata}
+                  context
                   )
 
 def sample_detail(request, sample_id):
@@ -1721,10 +1739,10 @@ def site_detail(request, genome, name):
             genome__name=genome, name = name
         )
         context = {'site': site}
-        viewer_start = site.start - 5000
+        viewer_start = site.start - 500
         if viewer_start < 0:
             viewer_start = 1
-        viewer_end = site.end + 5000
+        viewer_end = site.end + 500
         if viewer_end > site.contig.size:
             viewer_end = site.contig.size
         context['viewer_start'] = str(viewer_start)
@@ -2450,7 +2468,7 @@ def generate_gene_search_context(query, query_type, genome=None):
     
 def get_og_data(request):
     og_id = request.GET.get('og')
-    print('AJAX request for', og_id)
+    #print('AJAX request for', og_id)
     ortholog_group = Ortholog_group.objects.get(id=og_id)
     treemap, functional_profile, gene_ids = generate_og_treemap(ortholog_group)
     context = {'treemap':treemap, 'og_gene_count':str(len(gene_ids)), 'tsv_profile':functional_profile}

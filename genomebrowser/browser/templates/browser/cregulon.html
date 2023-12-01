@@ -3,7 +3,7 @@
 
 {% block page-title %}<title>Conserved regulon for {{ regulator_og.eggnog_id }} [{{ regulator_og.taxon.name }}] protein family</title>{% endblock %}
 {% block script-header %}
-    <style>#regulons {display:none;}</style>
+    <style>#showregulons {display:none;}</style>
     <script>
     function ToggleRegulons() {
       document.getElementById("regulons").style.display = "block";
@@ -16,7 +16,7 @@
       document.getElementById("showregulons").style.display = "block";
     }
     </script>
-    <style>#sites {display:none;}</style>
+    <style>#showsites {display:none;}</style>
     <script>
     function ToggleSites() {
       document.getElementById("sites").style.display = "block";

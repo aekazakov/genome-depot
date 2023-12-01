@@ -64,7 +64,7 @@ def generate_annotations_treemap(genes):
     root_value = 0
 
     for gene in genes:
-        genedata['Function'][(gene.function, gene.function)] += 1
+        genedata['Product'][(gene.function, gene.function)] += 1
         for annotation in Annotation.objects.filter(gene_id=gene):
             label = annotation.note
             if 'E-value' in label:

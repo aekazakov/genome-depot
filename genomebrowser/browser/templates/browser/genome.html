@@ -120,7 +120,7 @@
             </header>
             <form action="{% url 'searchgene' %}" method="get">
                 <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
-                <label>By gene name of function<input name="query" type="text" placeholder="Enter gene ID, name or function ..."></label>
+                <label>By gene name, contig or product<input name="query" type="text" placeholder="Enter gene name, locus tag, product or contig name ..."></label>
                 <input name="type" type="hidden" id="type" value = "gene">
             </form>
             <form action="{% url 'searchannotation' %}" method="get">

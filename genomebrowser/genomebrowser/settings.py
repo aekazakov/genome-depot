@@ -133,14 +133,14 @@ USE_L10N = True
 
 USE_TZ = True
 
+
 ADMINS = [tuple(config('ADMIN', cast=Csv()))]
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST = 'smtp.gmail.com'
-#sender's email-id
+# Email settings for sending log messages. This is not an admin's email!
+EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-#password associated with the email-id
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 # Static files (CSS, JavaScript, Images)

@@ -44,10 +44,10 @@ class RemoveTagForm(forms.Form):
 
 
 class ChooseAnnotationToolForm(forms.Form):
-    choices = []
-    plugins_enabled = [item.replace('.enabled', '.display_name') for item in Config.objects.filter(Q(param__startswith='plugins.')&Q(param__endswith='.enabled')&Q(value__in=('1','yes','Yes','y','Y'))).values_list('param', flat=True)]
+    # The tools field is empty on the form initialization to prevent calling db server on startup
+    # choices are populated when this form is called from views.py
     tools = forms.MultipleChoiceField(
-        choices = Config.objects.filter(param__in=plugins_enabled).values_list('param','value'),
+        choices = [],
         widget=forms.CheckboxSelectMultiple,
     )
     
