@@ -84,7 +84,8 @@ def run_annotation_tools(self, request, queryset):
         # this hack is necessary because the tools field is empty on form initialization to prevent calling db server on startup
         form.fields.get('tools').choices = [(item,item) for item in request.POST.getlist('tools')]
         if form.is_valid():
-            task_id = ''#async_run_annotation_tools(request, queryset, tools)
+            tools = ['.'.join(item.split('.')[1:-1]) for item in form.cleaned_data['tools']]
+            task_id = async_run_annotation_tools(request, queryset, tools)
             messages.info(request,
                           "The annotation pipeline is running for selected genomes. " +
                           "Check the status of the task " + task_id + 

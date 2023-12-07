@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from browser.models import Config
 
 class Command(BaseCommand):
-    help = '''This command exports configuration parameters into 
+    help = '''Exports configuration parameters into 
     a config file (text file with key/value entries separated by "=" symbol)'''
 
     def add_arguments(self, parser):

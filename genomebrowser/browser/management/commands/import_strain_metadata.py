@@ -2,10 +2,7 @@ from django.core.management.base import BaseCommand
 from browser.pipeline.annotate import Annotator
 
 class Command(BaseCommand):
-    help = """
-    For strain uploaded to Django database, this program updates metadata entries.
-    The metadata is taken from two sources. The first is a spreadsheet provided 
-    with -i parameter. The second is isolates.genomics.lbl.gov API.
+    help = """Imports strain metadata records from Excel spreadsheet and from isolates.genomics.lbl.gov API.
     The spreadsheet must contain strain identifier in the first column and names
     of metadata categories in the first row. All another non-empty cells will be
     considered values.

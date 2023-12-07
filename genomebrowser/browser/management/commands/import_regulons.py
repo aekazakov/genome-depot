@@ -2,8 +2,8 @@ from django.core.management.base import BaseCommand
 from browser.pipeline.annotate import Annotator
 
 class Command(BaseCommand):
-    help = """This command imports regulons from a tab-separated file.
-    Genomes must be uploaded into the CGCMS database in advance. 
+    help = """Imports regulons from a tab-separated file.
+    Genomes must be uploaded into the CGCMS database before running this command. 
 
     The input file must contain the following fields:
     1. Regulon name.

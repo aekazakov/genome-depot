@@ -3,7 +3,7 @@ from browser.pipeline.taxonomy import update_taxonomy
 
 class Command(BaseCommand):
     help = """
-    Update taxonomy with new data from NCBI.
+    Updates taxonomy with new data from NCBI.
     """
 
     def handle(self, *args, **options):

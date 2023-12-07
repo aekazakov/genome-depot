@@ -24,6 +24,7 @@ from browser.models import Site
 from browser.models import Strain
 from browser.models import Strain_metadata
 from genomebrowser.settings import BASE_DIR
+from browser.pipeline.util import autovivify
 import browser.pipeline.plugins
 
 """ 
@@ -726,6 +727,3 @@ class Annotator(object):
                 logger.info('Enabled modules: %s', str(plugins_enabled))
 
 
-def autovivify(levels=1, final=dict):
-    return (defaultdict(final) if levels < 2 else
-            defaultdict(lambda: autovivify(levels - 1, final)))

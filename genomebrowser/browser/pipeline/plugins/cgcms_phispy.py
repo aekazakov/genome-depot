@@ -3,7 +3,7 @@ import shutil
 from collections import defaultdict
 from subprocess import Popen, PIPE, CalledProcessError
 from django.db import connection
-from browser.models import Gene, Genome
+from browser.pipeline.util import export_proteins_bygenome
 """
     This plugin runs PhiSpy for a set of genomes.
 """
@@ -42,12 +42,11 @@ def preprocess(annotator, genomes, working_dir):
     output_dir = os.path.join(working_dir, 'out')
     os.mkdir(output_dir)
     # Create shell script
-    input_fasta_files = {}
-    for genome in genomes:
-        input_fasta_files[genome] = _export_proteins(genome, working_dir)
+    input_fasta_files = export_proteins_bygenome(genomes, working_dir)
 
     phispy_script = os.path.join(working_dir, 'run_phispy.sh')
     
+    print(genomes)
     with open(phispy_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
         outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
@@ -158,21 +157,6 @@ def postprocess(annotator, genomes, working_dir):
     _cleanup(working_dir)
     return output_file
 
-def _export_proteins(genome, output_dir):
-    """Creates protein FASTA file"""
-    try:
-        genome_id = Genome.objects.filter(name=genome).values('id')[0]['id']
-    except IndexError:
-        print(genome, 'not found')
-        raise
-    genes = Gene.objects.filter(genome__id = genome_id).select_related('protein')
-    out_path = os.path.join(output_dir, str(genome_id) + '.faa')
-    with open(out_path, 'w') as outfile:
-        for gene in genes:
-            if gene.protein is not None:
-                outfile.write('>' + gene.locus_tag + '\n')
-                outfile.write(gene.protein.sequence + '\n')
-    return out_path
 
 def overlaps(start1, end1, coordinates):
     # coordinates is a list of strings "start..end"

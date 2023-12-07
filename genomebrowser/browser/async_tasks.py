@@ -38,7 +38,7 @@ def test_async_task(request, queryset):
     return task_id
 
 def async_run_annotation_tools(request, queryset, plugins):
-    genomes = {item.name:item.id for item in queryset}
+    genomes = {item.name:item.gbk_filepath for item in queryset}
     args = (genomes, plugins)
     timestamp = str(timezone.now())
     task_name = 'run-annotation-pipeline-' + timestamp.replace(' ', '_')

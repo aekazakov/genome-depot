@@ -9,7 +9,7 @@ from browser.models import Sample
 from browser.pipeline.genome_import import Importer
 
 class Command(BaseCommand):
-    help = 'Deletes a genome with all genes and annotations from the database'
+    help = 'Deletes one or more genomes with all genes and annotations from the database'
     
     def add_arguments(self, parser):
         parser.add_argument('-i', default='', help='File with list of genomes')

@@ -8,8 +8,8 @@ from browser.models import Genome
 
 class Command(BaseCommand):
     help = '''
-    This command regenerates nucleotide and protein search
-    databases if the database files are missing or corrupted,
+    Removes and re-generates nucleotide and protein search
+    databases. Use it if the files are missing or corrupted,
     or if the genome import pipeline crashed before creating the 
     search database files.
     '''

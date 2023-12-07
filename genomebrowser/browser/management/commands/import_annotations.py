@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from browser.pipeline.annotate import Annotator
 
 class Command(BaseCommand):
-    help = """THis command imports annotations for protein-coding genes from 
+    help = """Imports annotations for protein-coding genes from 
     a tab-separated file and writes the annotations to the CGCMS database.
     The genes must be in the database.
 

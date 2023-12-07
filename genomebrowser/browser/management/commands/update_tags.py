@@ -4,7 +4,7 @@ from browser.models import Tag, Genome
 
 class Command(BaseCommand):
     help = '''
-    This command assign one or more tags to genomes listed
+    Assigns one or more tags to genomes listed
     in a text or tab-separated file.
     '''
 
