@@ -722,7 +722,7 @@ class Annotator(object):
                                           ).delete()
                 self.add_custom_annotations(plugin_output)
             else:
-                logger.warning('%s module not found. Skipping the plugin', plugin_name)
+                logger.warning('%s module not found. Skipping this plugin', plugin_name)
                 logger.info('Available modules: %s', str(plugins_available))
                 logger.info('Enabled modules: %s', str(plugins_enabled))
 

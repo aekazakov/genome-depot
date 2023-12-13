@@ -336,6 +336,31 @@ else
     conda deactivate
     cd "$CGCMSDIR/external_tools"
 fi
+# Install geNomad
+if conda env list | grep 'cgcms-genomad' >/dev/null 2>&1; then
+    echo "Found cgcms-genomad environment"
+    conda activate cgcms-genomad
+    if genomad | grep geNomad >/dev/null 2>&1; then
+                echo "geNomad found"
+    else
+                echo 'Conda environment cgcms-genomad exists but geNomad was not properly installed. Remove the environment and restart CGCMS installation script.'
+                echo 'To remove the environment, run:'
+                echo '   conda remove -n cgcms-genomad --all'
+                conda deactivate
+                exit 1
+    fi
+    conda deactivate
+else
+    echo "Installing geNomad"
+    conda create -y -n cgcms-genomad -c conda-forge -c bioconda genomad
+    conda activate cgcms-genomad
+    mkdir "$CGCMSDIR/external_refdata/geNomad"
+    cd "$CGCMSDIR/external_refdata/geNomad"
+    genomad download-database .
+    conda deactivate
+    cd "$CGCMSDIR/external_tools"
+fi
+
 # Download HMM libraries
 if ! [ -f "$CGCMSDIR/external_refdata/phispy/pvogs.hmm" ]; then
     echo "Downloading pVOG HMMs"
@@ -397,6 +422,7 @@ echo "plugins.phispy.pvog_path = $CGCMSDIR/external_refdata/phispy/pvogs.hmm" >>
 echo "plugins.gapmind.gapmind_dir = $CGCMSDIR/external_tools/PaperBLAST" >> configs.txt
 echo "plugins.defensefinder.defensefinder_models_dir = $CGCMSDIR/external_refdata/defensefinder/data" >> configs.txt
 echo "plugins.macsyfinder.models_dir = $CGCMSDIR/external_refdata/macsyfinder/data" >> configs.txt
+echo "plugins.genomad.genomad_db = $CGCMSDIR/external_refdata/geNomad/genomad_db" >> configs.txt
 echo "ref.cazy_file = $WORKDIR/ref_data/ref_cazy.txt" >> configs.txt
 echo "ref.cog_codes_file = $WORKDIR/ref_data/ref_cog_codes.txt" >> configs.txt
 echo "ref.ec_file = $WORKDIR/ref_data/ref_ec.txt" >> configs.txt
