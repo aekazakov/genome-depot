@@ -353,6 +353,8 @@ class Annotator(object):
                 continue
             locus_tag, genome_name, source, url, key, value, note = \
                 line.rstrip('\n\r').split('\t')
+            if len(value) > 50:
+                value = value[:47] + '...'
             existing_annotations = \
                 Annotation.objects.filter(
                                           gene_id__locus_tag = locus_tag,

@@ -1878,10 +1878,10 @@ class Importer(object):
         # may run for days resulting in "MySQL server has gone away" error
         connection.close()
         # run eggnog-mapper for all proteins
-        # eggnog_outfile = self.run_eggnog_mapper()
+        eggnog_outfile = self.run_eggnog_mapper()
         # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
-        eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
-        'eggnog_mapper_output.emapper.annotations')
+        #eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
+        #'eggnog_mapper_output.emapper.annotations')
         
         logger.info('Reading eggnog-mapper output')
         # separate eggnog-mapper output by genome?
