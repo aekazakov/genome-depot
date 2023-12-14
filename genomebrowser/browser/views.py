@@ -449,6 +449,8 @@ class GeneSearchResultsSubView(generic.ListView):
                     ).prefetch_related(
                         'genome__tags'
                     ).distinct()
+            elif query == '':
+                object_list = Gene.objects.none()
             else:
                 object_list = Gene.objects.filter(
                     locus_tag__exact=query
@@ -2368,7 +2370,10 @@ def generate_gene_search_context(query, query_type, genome=None):
         query = ''
     if genome is None:
         if query_type=='gene':
-            searchcontext = 'Search results for "' + query + '"'
+            if query == '':
+                searchcontext = 'Query string is empty'
+            else:
+                searchcontext = 'Search results for "' + query + '"'
         elif query_type=='og':
             eggnog_og = Ortholog_group.objects.get(id=query)
             searchcontext = 'Genes from Ortholog Group ' + eggnog_og.eggnog_id + \

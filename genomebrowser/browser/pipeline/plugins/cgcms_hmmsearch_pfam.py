@@ -148,9 +148,11 @@ def postprocess(annotator, genomes, working_dir):
     with open(output_file, 'w') as outfile:
         for hit in hits.values():
             for item in annotator.target_genes[hit['protein_hash']]:
+                pfam_accession = ref_hmm[hit['hmm_id']]['acc']
+                interpro_accession = pfam_accession.split('.')[0]
                 outfile.write('\t'.join([item[1], item[0], 'Pfam database',
                               'https://www.ebi.ac.uk/interpro/entry/pfam/' +
-                              ref_hmm[hit['hmm_id']]['acc'],
+                              interpro_accession,
                               'Pfam domain',
                               hit['hmm_id'],
                               hit['hmm_id'] + ' (' + ref_hmm[hit['hmm_id']]['acc'] +

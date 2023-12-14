@@ -126,7 +126,7 @@ def _export_genes_csv(request):
     genome = request.GET.get('genome')
 
     if query_type == 'gene':
-        if query:
+        if query and query != '':
             if genome:
                 object_list = Gene.objects.filter(
                     genome__name=genome
@@ -138,7 +138,8 @@ def _export_genes_csv(request):
             else:
                 object_list = Gene.objects.filter(
                     Q(name__icontains=query) |
-                    Q(locus_tag__icontains=query)
+                    Q(locus_tag__icontains=query) |
+                    Q(function__icontains=query)
                 ).order_by('locus_tag')
         elif genome:
             # Generate gene list with all mappings and annotations
@@ -493,7 +494,7 @@ def export_fasta(request):
                 'gene_id__protein'
             )
     elif query_type == 'gene':
-        if query:
+        if query and query != '':
             if genome:
                 object_list = Gene.objects.filter(genome__name=genome).filter(
                     Q(name__icontains=query) |
@@ -507,7 +508,8 @@ def export_fasta(request):
             else:
                 object_list = Gene.objects.filter(
                     Q(name__icontains=query) |
-                    Q(locus_tag__icontains=query)
+                    Q(locus_tag__icontains=query) |
+                    Q(function__icontains=query)
                 ).order_by(
                     'locus_tag'
                 ).select_related(
