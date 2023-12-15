@@ -2153,7 +2153,7 @@ class Importer(object):
             # process last operon
             if operon:
                 operon_index += 1
-                operon_id = genome_id + '_operon_' + str(operon_index)
+                #operon_id = genome_id + '_operon_' + str(operon_index)
                 operon_start = int(operon[0][0].split('|')[4])
                 operon_end = operon[-1][1].split('|')[5]
                 operon_end = int(operon_end.split('$$')[0])
@@ -2164,6 +2164,10 @@ class Importer(object):
                 operon_members = []
                 for gene_data in [elem[0] for elem in operon] + [operon[-1][1]]:
                     operon_members.append(genes[gene_data[5:].split('|')[0]])
+                if operon_strand == 1:
+                    operon_id = operon_members[0] + '-' + operon_members[-1] + '_operon'
+                elif operon_strand == -1:
+                    operon_id = operon_members[-1] + '-' + operon_members[0] + '_operon'
                 operons_data[operon[0][4]].append([operon_id,
                                                    operon_start,
                                                    operon_end,

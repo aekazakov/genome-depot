@@ -1008,9 +1008,7 @@ class StrainSearchResultsView(generic.ListView):
             children = get_taxon_children(taxon)
             object_list = Strain.objects.filter(
                 taxon__taxonomy_id__in=children
-            ).distinct().order_by(
-                'strain_id'
-            )
+            ).distinct().order_by('strain_id')
         else:
             object_list = Strain.objects.none()
         return object_list
@@ -1184,8 +1182,8 @@ class KrSearchResultsView(generic.ListView):
         elif query:
             object_list = Kegg_reaction.objects.filter(
                 Q(kegg_id__icontains=query) |
-                Q(description__icontains=query).distinct()
-            ).order_by('kegg_id')
+                Q(description__icontains=query)
+            ).order_by('kegg_id').distinct()
         else:
             object_list = Kegg_reaction.objects.order_by('kegg_id')
         return object_list
@@ -1233,8 +1231,8 @@ class EcSearchResultsView(generic.ListView):
         elif query:
             object_list = Ec_number.objects.filter(
                 Q(ec_number__icontains=query) |
-                Q(description__icontains=query).distinct()
-            ).order_by('ec_number')
+                Q(description__icontains=query)
+                ).order_by('ec_number').distinct()
         else:
             object_list = Ec_number.objects.order_by('ec_number')
         return object_list
@@ -1330,8 +1328,8 @@ class CazySearchResultsView(generic.ListView):
         elif query:
             object_list = Cazy_family.objects.filter(
                 Q(cazy_id__icontains=query) |
-                Q(description__icontains=query).distinct()
-            ).order_by('cazy_id')
+                Q(description__icontains=query)
+            ).order_by('cazy_id').distinct()
         else:
             object_list = Cazy_family.objects.order_by('cazy_id')
         return object_list
@@ -1379,8 +1377,8 @@ class GoSearchResultsView(generic.ListView):
         elif query:
             object_list = Go_term.objects.filter(
                 Q(go_id__icontains=query) |
-                Q(description__icontains=query).distinct()
-            ).order_by('go_id')
+                Q(description__icontains=query)
+            ).order_by('go_id').distinct()
         else:
             object_list = Go_term.objects.order_by('go_id')
         return object_list

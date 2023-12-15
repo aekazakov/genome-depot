@@ -142,7 +142,7 @@ fi
 if conda env list | grep 'cgcms-amrfinder' >/dev/null 2>&1; then
         echo "Found cgcms-amrfinder environment"
         conda activate cgcms-amrfinder
-        if amrfinder --version|grep "3.11.11" >/dev/null 2>&1; then
+        if amrfinder|grep "AMR" >/dev/null 2>&1; then
                 echo "AMRFinder found"
         else
                 echo 'Conda environment cgcms-amrfinder exists but AMRFinder was not properly installed. Remove the environment and restart CGCMS installation script.'
