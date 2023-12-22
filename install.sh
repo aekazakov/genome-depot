@@ -337,29 +337,29 @@ else
     cd "$CGCMSDIR/external_tools"
 fi
 # Install geNomad
-if conda env list | grep 'cgcms-genomad' >/dev/null 2>&1; then
-    echo "Found cgcms-genomad environment"
-    conda activate cgcms-genomad
-    if genomad | grep geNomad >/dev/null 2>&1; then
-                echo "geNomad found"
-    else
-                echo 'Conda environment cgcms-genomad exists but geNomad was not properly installed. Remove the environment and restart CGCMS installation script.'
-                echo 'To remove the environment, run:'
-                echo '   conda remove -n cgcms-genomad --all'
-                conda deactivate
-                exit 1
-    fi
-    conda deactivate
-else
-    echo "Installing geNomad"
-    conda create -y -n cgcms-genomad -c conda-forge -c bioconda genomad
-    conda activate cgcms-genomad
-    mkdir "$CGCMSDIR/external_refdata/geNomad"
-    cd "$CGCMSDIR/external_refdata/geNomad"
-    genomad download-database .
-    conda deactivate
-    cd "$CGCMSDIR/external_tools"
-fi
+#if conda env list | grep 'cgcms-genomad' >/dev/null 2>&1; then
+#    echo "Found cgcms-genomad environment"
+#    conda activate cgcms-genomad
+#    if genomad | grep geNomad >/dev/null 2>&1; then
+#                echo "geNomad found"
+#    else
+#                echo 'Conda environment cgcms-genomad exists but geNomad was not properly installed. Remove the environment and restart CGCMS installation script.'
+#                echo 'To remove the environment, run:'
+#                echo '   conda remove -n cgcms-genomad --all'
+#                conda deactivate
+#                exit 1
+#    fi
+#    conda deactivate
+#else
+#    echo "Installing geNomad"
+#    conda create -y -n cgcms-genomad -c conda-forge -c bioconda genomad
+#    conda activate cgcms-genomad
+#    mkdir "$CGCMSDIR/external_refdata/geNomad"
+#    cd "$CGCMSDIR/external_refdata/geNomad"
+#    genomad download-database .
+#    conda deactivate
+#    cd "$CGCMSDIR/external_tools"
+#fi
 
 # Download HMM libraries
 if ! [ -f "$CGCMSDIR/external_refdata/phispy/pvogs.hmm" ]; then
