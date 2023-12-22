@@ -432,10 +432,10 @@ echo "ref.kegg_pathways_file = $WORKDIR/ref_data/ref_kegg_pathways.txt" >> confi
 echo "ref.kegg_reactions_file = $WORKDIR/ref_data/ref_kegg_reactions.txt" >> configs.txt
 echo "ref.tc_file = $WORKDIR/ref_data/ref_tc.txt" >> configs.txt
 echo "ref.taxonomy = $WORKDIR/ref_data/ref_taxonomy.txt" >> configs.txt
-echo "ref.pfam_hmm_lib = $CGCMSDIR/external_refdata/pfam/Pfam-A.hmm" >> configs.txt
-echo "ref.pfam_hmm_list = $CGCMSDIR/external_refdata/pfam/ref_pfam.txt" >> configs.txt
-echo "ref.tigrfam_hmm_lib = $CGCMSDIR/external_refdata/tigrfam/TIGRFAM.HMM" >> configs.txt
-echo "ref.tigrfam_hmm_list = $CGCMSDIR/external_refdata/tigrfam/ref_tigrfam.txt" >> configs.txt
+echo "plugins.hmmsearch_pfam.hmm_lib = $CGCMSDIR/external_refdata/pfam/Pfam-A.hmm" >> configs.txt
+echo "plugins.hmmsearch_pfam.ref_data = $CGCMSDIR/external_refdata/pfam/ref_pfam.txt" >> configs.txt
+echo "plugins.hmmsearch_tigrfam.hmm_lib = $CGCMSDIR/external_refdata/tigrfam/TIGRFAM.HMM" >> configs.txt
+echo "plugins.hmmsearch_tigrfam.ref_data = $CGCMSDIR/external_refdata/tigrfam/ref_tigrfam.txt" >> configs.txt
 echo "configs.txt created."
 
 if [ -f "secrets.json" ]; then

@@ -243,6 +243,8 @@ def export_genome(genome, output_buffer):
                         id=site[0] + '_site_at_' + gene_id
                         )
                 site_feature.strand = site_feature.location.strand
+                if 'note' not in site_feature.qualifiers:
+                    site_feature.qualifiers['note'] = []
                 site_feature.qualifiers['note'].append('Regulon ' + 
                                                    site[0] +
                                                    '. Binding site of ' +

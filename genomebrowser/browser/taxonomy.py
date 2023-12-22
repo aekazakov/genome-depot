@@ -112,9 +112,6 @@ def generate_operons_sunburst(operon_ids, gene_ids):
         MONOCISTRONIC (not assigned to operon) genes 
     '''
     labels, parents, values, customdata = get_operons_taxonomy(operon_ids, gene_ids)
-    print(labels)
-    print(parents)
-    print(customdata)
     
     if not labels:
         return ''
@@ -441,7 +438,7 @@ def get_genes_taxonomy(gene_ids = []):
         
     # It's time to move root node
     if move_root_down:
-        print(children_nodes)
+        #print(children_nodes)
         remove_nodes= set()
         new_root_id = target_taxon_id
         '''
@@ -516,7 +513,7 @@ def get_operons_taxonomy(operon_ids = [], gene_ids = []):
     children = defaultdict(dict)
     taxon_lookup = {}
     move_root_down = True
-    print('operon_ids:', operon_ids)
+    #print('operon_ids:', operon_ids)
     operons = Operon.objects.filter(
         id__in=operon_ids
     ).values_list(
@@ -618,7 +615,7 @@ def get_operons_taxonomy(operon_ids = [], gene_ids = []):
         
     # It's time to move root node
     if move_root_down:
-        print(children_nodes)
+        #print(children_nodes)
         remove_nodes= set()
         new_root_id = target_taxon_id
         '''

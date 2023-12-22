@@ -369,19 +369,6 @@ class RegulonListView(generic.ListView):
         return object_list
 
 
-class GeneListView(generic.ListView):
-    '''
-        Class-based list view of Gene. Displays a table of genes.
-    '''
-    model = Gene
-    template_name = 'gene_list.html'
-    context_object_name = 'genelist'
-    paginate_by = 50
-
-    def get_queryset(self):
-        return Gene.objects.none()
-
-
 class GeneSearchResultsSubView(generic.ListView):
     '''
         Sub-page for AJAX-based view of gene search result
@@ -1605,7 +1592,7 @@ def strain_detail(request, strain_id):
     except Strain.DoesNotExist:
         return render(request,
                       '404.html',
-                      {'searchcontext': 'Sample not found: ' + strain_id}
+                      {'searchcontext': 'Sample not found: ' + str(strain_id)}
                       )
     return render(request,
                   'browser/strain.html',
@@ -1799,8 +1786,6 @@ def gene_byname(request):
     try:
         gene = Gene.objects.get(
             locus_tag = locus_tag, genome__name = genome_name
-        ).prefetch_related(
-            'genome__tags'
         )
         annotations = Annotation.objects.filter(
             gene_id = gene
@@ -2320,7 +2305,7 @@ class ComparativeView(View):
             
         treemap = ''
         if treemap_gene_ids:
-            print(len(treemap_gene_ids), 'genes for treemap generation')
+            #print(len(treemap_gene_ids), 'genes for treemap generation')
             treemap, functional_profile = generate_genes_treemap(treemap_gene_ids)
 
         if og_gene_count == 1:
