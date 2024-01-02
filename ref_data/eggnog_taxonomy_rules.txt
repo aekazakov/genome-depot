@@ -1,7 +1,7 @@
-35237	35237	dsDNA viruses, no RNA stage
+35237	51368	unclassified dsDNA viruses
 10239	10239	Viruses
 1	1	root
-358033	358033	Chryseobacterium
+358033	59732	Chryseobacterium
 59732	59732	Chryseobacterium
 49546	49546	Flavobacteriaceae
 200644	200644	Flavobacteriales
@@ -11,7 +11,7 @@
 1783270	1783270	FCB group
 2	2	Bacteria
 131567	131567	cellular organisms
-11989	11989	Leviviridae
+11989	2842319	Leviviridae
 35278	35278	ssRNA positive-strand viruses, no DNA stage
 439488	439488	ssRNA viruses
 200930	200930	Deferribacteres
@@ -125,16 +125,16 @@
 1100069	1100069	Bacteroidetes Order II. Incertae sedis
 28889	28889	Crenarchaeota
 1783275	1783275	TACK group
-28883	28883	Caudovirales
+28883	2731619	Caudovirales
 225057	225057	Acidithiobacillales
 1807140	1807140	Acidithiobacillia
 252301	252301	Oceanicola
-541000	541000	Ruminococcaceae
+541000	216572	Oscillospiraceae
 245186	245186	Loktanella
 182709	182709	Oceanobacillus
 117747	117747	Sphingobacteriia
 10841	10841	Microviridae
-29258	29258	ssDNA viruses
+29258	35342	unclassified ssDNA viruses
 76831	76831	Myroides
 651137	651137	Thaumarchaeota
 5796	5796	Coccidia
@@ -186,7 +186,7 @@
 33511	33511	Deuterostomia
 33554	33554	Carnivora
 314145	314145	Laurasiatheria
-34383	34383	Onygenales incertae sedis
+34383	1593277	Onygenales incertae sedis
 1593277	1593277	Onygenales incertae sedis
 33183	33183	Onygenales
 451871	451871	Eurotiomycetidae
@@ -206,7 +206,7 @@
 84998	84998	Coriobacteriia
 84995	84995	Rubrobacteria
 84992	84992	Acidimicrobiia
-10699	10699	Siphoviridae
+10699	2731619	Siphoviridae
 314294	314294	Cercopithecoidea
 9526	9526	Catarrhini
 314293	314293	Simiiformes
@@ -225,16 +225,16 @@
 68525	68525	delta/epsilon subdivisions
 85019	85019	Brevibacteriaceae
 85018	85018	Dermatophilaceae
-10662	10662	Myoviridae
+10662	2731619	Myoviridae
 28216	28216	Betaproteobacteria
 85010	85010	Pseudonocardiales
 85013	85013	Frankiales
-10744	10744	Podoviridae
+10744	2731619	Podoviridae
 85014	85014	Glycomycetales
 85017	85017	Promicromonosporaceae
 85016	85016	Cellulomonadaceae
 52959	52959	Polaribacter
-713636	713636	Nitrosomonadales
+713636	32003	Nitrosomonadales
 31993	31993	Methylocystaceae
 136843	136843	Pseudomonas fluorescens group
 71274	71274	asterids
@@ -279,13 +279,13 @@
 91836	91836	malvids
 71275	71275	rosids
 11157	11157	Mononegavirales
-35301	35301	ssRNA negative-strand viruses
+35301	988644	unclassified ssRNA negative-strand viruses
 302485	302485	Phaeobacter
-206350	206350	Nitrosomonadales
+206350	32003	Nitrosomonadales
 206351	206351	Neisseriales
 41294	41294	Bradyrhizobiaceae
 10404	10404	Hepadnaviridae
-35268	35268	Retro-transcribing viruses
+35268	2583835	unclassified Ortervirales
 58840	58840	unclassified Rhodobacteraceae
 539002	539002	Bacillales incertae sedis
 167375	167375	Cyanobium
@@ -371,7 +371,7 @@
 1386	1386	Bacillus
 2063	2063	Kitasatospora
 85004	85004	Bifidobacteriales
-85005	85005	Actinomycetales
+85005	2037	Actinomycetales
 2037	2037	Actinomycetales
 61432	61432	unclassified Flavobacteriaceae
 830	830	Butyrivibrio
@@ -396,7 +396,7 @@
 29547	29547	Epsilonproteobacteria
 255475	255475	Aurantimonadaceae
 506	506	Alcaligenaceae
-1212	1212	Prochloraceae
+1212	1213	Prochloraceae
 1213	1213	Prochloraceae
 31979	31979	Clostridiaceae
 468	468	Moraxellaceae
@@ -408,7 +408,7 @@
 544448	544448	Tenericutes
 85012	85012	Streptosporangiales
 326319	326319	Dokdonia
-81850	81850	Leuconostocaceae
+81850	33958	Lactobacillaceae
 81852	81852	Enterococcaceae
 11632	11632	Retroviridae
 68298	68298	Syntrophomonadaceae
@@ -621,7 +621,7 @@
 1094980	1094980	Methanolobus psychrophilus R15
 1097668	1097668	Burkholderia sp. YI23
 1104324	1104324	Pyrobaculum ferrireducens
-1104325	1104325	Enterococcus faecium ATCC 8459 = NRRL B-2354
+1104325	1158600	Enterococcus faecium ATCC 8459 = NRRL B-2354
 1105110	1105110	Rickettsia australis str. Cutlack
 110662	110662	Synechococcus sp. CC9605
 1108849	1108849	Penicillium rubens
@@ -792,7 +792,7 @@
 1230341	1230341	Salimicrobium jeotgali
 1231626	1231626	Cardinium endosymbiont cEper1 of Encarsia pergandiella
 123214	123214	Persephonella marina EX-H1
-1232666	1232666	Mammaliicoccus sciuri
+1232666	1296	Mammaliicoccus sciuri
 1234679	1234679	Carnobacterium maltaromaticum LMA28
 1235815	1235815	Prevotella enoeca JCM 12259
 1235990	1235990	Candidatus Pantoea carbekii
@@ -876,7 +876,7 @@
 1318617	1318617	Candidatus Mycoplasma girerdii
 132113	132113	Bombus impatiens
 1322246	1322246	Pseudodesulfovibrio piezophilus C1TLV30
-1331660	1331660	Acinetobacter haemolyticus CIP 64.3 = MTCC 9819
+1331660	1217659	Acinetobacter haemolyticus CIP 64.3 = MTCC 9819
 1332071	1332071	Serratia fonticola AU-AP2C
 13333	13333	Amborella trichopoda
 1333523	1333523	Salinarchaeum sp. Harcht-Bsk1
@@ -916,7 +916,7 @@
 1398491	1398491	Borreliella valaisiana Tom4006
 1399115	1399115	Exiguobacterium sp. MH3
 1399774	1399774	Enterobacter cloacae JD6301
-140110	140110	Fusarium haematococcum
+140110	984957	Fusarium haematococcum
 1401328	1401328	Candidatus Endolissoclinum faulkneri L5
 1402135	1402135	Sulfitobacter pseudonitzschiae
 1403313	1403313	Peribacillus simplex BA2H3
@@ -939,7 +939,7 @@
 1432056	1432056	Mannheimia sp. USDA-ARS-USMARC-1261
 1433126	1433126	Mucinivorans hirudinis
 1433287	1433287	Mannheimia varigena USDA-ARS-USMARC-1296
-1434929	1434929	Burkholderia sp. ABCPW 111
+1434929	1820025	Burkholderia sp. ABCPW 111
 1435356	1435356	Rhodococcus pyridinivorans SB3094
 1437605	1437605	Bifidobacterium actinocoloniiforme DSM 22766
 1437824	1437824	Castellaniella defragrans 65Phen
@@ -1196,7 +1196,7 @@
 262724	262724	Thermus thermophilus HB27
 262768	262768	Onion yellows phytoplasma OY-M
 263358	263358	Micromonospora maris AB-18-032
-263820	263820	Picrophilus torridus DSM 9790
+263820	1122961	Picrophilus torridus DSM 9790
 264198	264198	Cupriavidus pinatubonensis JMP134
 264199	264199	Streptococcus thermophilus LMG 18311
 264201	264201	Candidatus Protochlamydia amoebophila UWE25
@@ -1382,7 +1382,7 @@
 318829	318829	Pyricularia oryzae
 319224	319224	Shewanella putrefaciens CN-32
 319225	319225	Pelodictyon luteolum DSM 273
-319236	319236	Nonlabens tegetincola
+319236	323273	Nonlabens tegetincola
 31964	31964	Clavibacter michiganensis subsp. sepedonicus
 319795	319795	Deinococcus geothermalis DSM 11300
 32042	32042	Pseudomonas stutzeri ATCC 14405 = CCUG 16156
@@ -1431,7 +1431,7 @@
 335284	335284	Psychrobacter cryohalolentis K5
 335541	335541	Syntrophomonas wolfei subsp. wolfei str. Goettingen G311
 335543	335543	Syntrophobacter fumaroxidans MPOB
-335659	335659	Bradyrhizobium cosmicum
+335659	1404864	Bradyrhizobium cosmicum
 335992	335992	Candidatus Pelagibacter ubique HTCC1062
 336407	336407	Rickettsia bellii RML369-C
 337191	337191	Gordonia sp. KTR9
@@ -1448,7 +1448,7 @@
 340177	340177	Chlorobium chlorochromatii CaD3
 342113	342113	Burkholderia oklahomensis
 342451	342451	Staphylococcus saprophyticus subsp. saprophyticus ATCC 15305 = NCTC 7292
-342610	342610	Pseudoalteromonas atlantica T6c
+342610	3042615	Pseudoalteromonas atlantica T6c
 342949	342949	Pyrococcus sp. NA2
 343509	343509	Sodalis glossinidius str. 'morsitans'
 345073	345073	Vibrio cholerae O395
@@ -1479,7 +1479,7 @@
 353496	353496	Lactobacillus delbrueckii subsp. bulgaricus 2038
 354242	354242	Campylobacter jejuni subsp. jejuni 81-176
 35703	35703	Citrobacter amalonaticus
-35720	35720	Thermothielavioides terrestris
+35720	2587410	Thermothielavioides terrestris
 357244	357244	Orientia tsutsugamushi str. Boryong
 357276	357276	Phocaeicola dorei
 357804	357804	Psychromonas ingrahamii 37
@@ -1710,7 +1710,7 @@
 4432	4432	Nelumbo nucifera
 443218	443218	Hoyosella subflava DQS3-9A1
 443254	443254	Marinitoga piezophila KA3
-443255	443255	Streptomyces clavuligerus
+443255	1901	Streptomyces clavuligerus
 443906	443906	Clavibacter michiganensis subsp. michiganensis NCPPB 382
 444157	444157	Pyrobaculum neutrophilum V24Sta
 444158	444158	Methanococcus maripaludis C6
@@ -1744,7 +1744,7 @@
 4555	4555	Setaria italica
 455632	455632	Streptomyces griseus subsp. griseus NBRC 13350
 4558	4558	Sorghum bicolor
-45596	45596	Yamadazyma tenuis
+45596	2315449	Yamadazyma tenuis
 456320	456320	Methanococcus voltae A3
 456442	456442	Methanoregula boonei 6A8
 457405	457405	Fusobacterium nucleatum subsp. animalis 7_1
@@ -1850,7 +1850,7 @@
 512564	512564	Mycoplasma crocodyli MP145
 512565	512565	Actinoplanes missouriensis 431
 5141	5141	Neurospora crassa
-5145	5145	Podospora anserina
+5145	2587412	Podospora anserina
 51453	51453	Trichoderma reesei
 5147	5147	Sordaria macrospora
 515618	515618	Candidatus Riesia pediculicola USDA
@@ -2068,7 +2068,7 @@
 595494	595494	Tolumonas auensis DSM 9187
 595536	595536	Methylosinus trichosporium OB3b
 595537	595537	Variovorax paradoxus EPS
-595593	595593	Arthrobacter alpinus
+595593	656366	Arthrobacter alpinus
 596153	596153	Alicycliphilus denitrificans BC
 596154	596154	Alicycliphilus denitrificans K601
 59689	59689	Arabidopsis lyrata
@@ -2095,7 +2095,7 @@
 6239	6239	Caenorhabditis elegans
 626418	626418	Burkholderia glumae BGR1
 627192	627192	Sphingobium sp. SYK-6
-62928	62928	Azoarcus olearius
+62928	418699	Azoarcus olearius
 62977	62977	Acinetobacter baylyi ADP1
 630626	630626	Shimwellia blattae DSM 4481 = NBRC 105725
 632245	632245	Clostridium butyricum E4 str. BoNT E BL5262
@@ -2128,7 +2128,7 @@
 640081	640081	Azospira oryzae PS
 640132	640132	Segniliparus rotundus DSM 44985
 640510	640510	Burkholderia sp. CCGE1001
-640511	640511	Paraburkholderia atlantica
+640511	2654982	Paraburkholderia atlantica
 640512	640512	Burkholderia sp. CCGE1003
 640513	640513	Enterobacter asburiae LF7a
 6412	6412	Helobdella robusta
@@ -2163,7 +2163,7 @@
 65393	65393	Gloeothece citriformis PCC 7424
 655812	655812	Aerococcus viridans ATCC 11563 = CCUG 4311
 655815	655815	Zunongwangia profunda SM-A87
-656024	656024	Candidatus Frankia meridionalis
+656024	2714109	Candidatus Frankia meridionalis
 656519	656519	Halanaerobium hydrogeniformans
 657309	657309	Bacteroides xylanisolvens XB1A
 657322	657322	Faecalibacterium prausnitzii SL3/3
@@ -2212,7 +2212,7 @@
 682795	682795	Granulicella mallensis MP5ACTX8
 683083	683083	Campylobacter jejuni subsp. jejuni 414
 683837	683837	Listeria seeligeri serovar 1/2b str. SLCC3954
-68570	68570	Streptomyces albulus
+68570	1971	Streptomyces albulus
 685727	685727	Rhodococcus hoagii 103S
 688245	688245	Comamonas testosteroni CNB-2
 688269	688269	Pseudothermotoga thermarum DSM 5069
@@ -2271,7 +2271,7 @@
 710243	710243	Colletotrichum fioriniae
 710421	710421	Mycolicibacterium chubuense NBB4
 710685	710685	Mycolicibacterium rhodesiae NBB3
-710686	710686	Mycobacterium sp. JS623
+710686	212767	Mycobacterium sp. JS623
 710696	710696	Intrasporangium calvum DSM 43043
 71139	71139	Eucalyptus grandis
 712898	712898	Pantoea vagans C9-1
@@ -2311,7 +2311,7 @@
 72664	72664	Eutrema salsugineum
 73501	73501	Cordyceps militaris
 7370	7370	Musca domestica
-741091	741091	Rahnella sp. Y9602
+741091	2703885	Rahnella sp. Y9602
 7425	7425	Nasonia vitripennis
 742738	742738	Flavonifractor plautii 1_3_50AFAA
 743299	743299	Acidithiobacillus ferrivorans SS3
@@ -2423,7 +2423,7 @@
 827	827	Campylobacter ureolyticus
 82996	82996	Serratia plymuthica
 83332	83332	Mycobacterium tuberculosis H37Rv
-83344	83344	Pseudocercospora fijiensis
+83344	1873960	Pseudocercospora fijiensis
 83406	83406	gamma proteobacterium HdN1
 8364	8364	Xenopus tropicalis
 838561	838561	Spiroplasma mirum ATCC 29335
@@ -2433,7 +2433,7 @@
 84751	84751	Pseudozyma flocculosa
 8479	8479	Chrysemys picta
 8496	8496	Alligator mississippiensis
-85643	85643	Thauera sp. MZ1T
+85643	164330	Thauera sp. MZ1T
 856793	856793	Micavibrio aeruginosavorus ARL-13
 85681	85681	Citrus clementina
 857087	857087	Methylomonas methanica MC09
@@ -2448,7 +2448,7 @@
 85982	85982	Serpula lacrymans
 860228	860228	Capnocytophaga canimorsus Cc5
 86106	86106	endosymbiont of Acanthamoeba sp. UWC8
-861208	861208	Agrobacterium fabacearum
+861208	358	Agrobacterium fabacearum
 861299	861299	Gemmatirosa kalamazoonesis
 861360	861360	Glutamicibacter arilaitensis Re117
 862514	862514	Pediococcus acidilactici DSM 20284
@@ -2464,7 +2464,7 @@
 864564	864564	Parascardovia denticolens DSM 10105 = JCM 12538
 865938	865938	Weeksella virosa DSM 16922
 866536	866536	Belliella baltica DSM 15883
-866775	866775	Aerococcus urinae ACS-120-V-Col10a
+866775	2976812	Aerococcus urinae ACS-120-V-Col10a
 866776	866776	Veillonella atypica ACS-049-V-Sch6
 866895	866895	Halobacillus halophilus DSM 2266
 867900	867900	Cellulophaga lytica DSM 7489
