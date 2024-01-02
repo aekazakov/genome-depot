@@ -1,13 +1,16 @@
 """ This file contains functions for taxonomy import and update"""
 import os
 import tarfile
+import logging
 import urllib.request
 from pathlib import Path
 from collections import defaultdict
 from browser.models import Config, Taxon, Strain, Genome, Protein, Ortholog_group
 
+logger = logging.getLogger("CGCMS")
+
 def load_taxonomy(taxonomy_file, eggnog_taxonomy_file):
-    print('Loading taxonomy...')
+    logger.info('Loading taxonomy...')
     taxonomy = {}
     taxonomy_lookup = {}
     with open(taxonomy_file, 'r') as infile:
@@ -32,7 +35,7 @@ def load_taxonomy(taxonomy_file, eggnog_taxonomy_file):
             eggnog_lookup[row[0]] = row[1]
             taxonomy_lookup[row[2]] = row[1]
             taxonomy[row[1]]['eggnog_taxid'] = row[0]
-    print('Taxonomy loaded')
+    logger.info('Taxonomy loaded')
     return taxonomy, taxonomy_lookup, eggnog_lookup
 
 
@@ -80,15 +83,15 @@ def update_taxonomy():
             parent = row[3]
             old_taxonomy_names[taxonomy_id] = (name, parent)
 
-    print('Downloading', ncbi_url)
+    logger.info('Downloading ' + ncbi_url)
     _ = urllib.request.urlretrieve(url=ncbi_url, filename=ncbi_archive)
     tar = tarfile.open(ncbi_archive)
     for filename in filenames:
-        print('Extracting', filename)
+        logger.info('Extracting ' + filename)
         with open(os.path.join(tmp_dir, filename), 'wb') as outfile:
             outfile.write(tar.extractfile(filename).read())
 
-    print('Reading names.dmp')
+    logger.info('Reading names.dmp')
     with open(os.path.join(tmp_dir, 'names.dmp'), 'r') as f:
         for line in f:
             row = line.rstrip('\n\r').split('\t|\t')
@@ -97,13 +100,13 @@ def update_taxonomy():
                 taxonomy[row[0]] = {}
                 taxonomy[row[0]]['name'] = row[1]
                 if row[0] in taxonomy_id_lookup:
-                    print('Warining: non-unique taxon name', row[1],
-                          'with IDs', taxonomy_id_lookup[row[1]], row[0]
+                    logger.warn('Warining: non-unique taxon name ' + row[1] +
+                          ' with IDs ' + taxonomy_id_lookup[row[1]] + ',' + row[0]
                           )
             if row[3] in ('scientific name', 'synonym', 'includes', 'equivalent name'):
                 taxonomy_id_lookup[row[1]] = row[0]
     #initialize nodes
-    print('Reading nodes.dmp')
+    logger.info('Reading nodes.dmp')
     with open(os.path.join(tmp_dir, 'nodes.dmp'), 'r') as f:
         for line in f:
             row = line.rstrip('\n\r').split('\t|\t')
@@ -119,7 +122,7 @@ def update_taxonomy():
     taxonomy['0']['parent'] = '1'
     taxonomy['0']['rank'] = 'norank'
     taxonomy_id_lookup['Unknown'] = '0'
-    print('Reading merged.dmp')
+    logger.info('Reading merged.dmp')
     with open(os.path.join(tmp_dir, 'merged.dmp'), 'r') as f:
         for line in f:
             row = line.rstrip('\n\r').split('\t')
@@ -142,8 +145,8 @@ def update_taxonomy():
             if name in taxonomy_id_lookup:
                 eggnog_taxa[eggnog_id] = (taxonomy_id_lookup[name], name)
             else:
-                print(taxonomy_id, name,
-                      'cannot be located. Transferring mapping to the parent',
+                logger.warn(name + '(' + taxonomy_id + 
+                      ') cannot be located. Transferring mapping to parent ' +
                       parent
                       )
                 eggnog_taxa[eggnog_id] = (parent, taxonomy[parent]['name'])
@@ -176,7 +179,7 @@ def update_taxonomy():
             outfile.write('\t'.join([eggnog_id, eggnog_taxa[eggnog_id][0], eggnog_taxa[eggnog_id][1]]) + '\n')
         
     # Update Taxon entries
-    print('Updating taxonomy entries in the database')
+    logger.info('Updating taxonomy entries in the database')
     delete_taxonomy_ids = set()
     for taxon in Taxon.objects.all():
         # First, check by taxonomy ID in latest taxonomy merged records
@@ -184,7 +187,8 @@ def update_taxonomy():
             if 'merged' in taxonomy[taxon.taxonomy_id]:
                 new_name = taxonomy[taxon.taxonomy_id]['name']
                 new_id = taxonomy_id_lookup[new_name]
-                print('Change', taxon.name, ':', taxon.taxonomy_id, 'to', new_name, ':', new_id)
+                logger.info('Changing ' + taxon.name + ':' + taxon.taxonomy_id +
+                'to' + new_name + ':' + new_id)
                 # Check if new_id already exists in the database
                 try:
                     new_taxon = Taxon.objects.get(taxonomy_id=new_id)
@@ -208,9 +212,9 @@ def update_taxonomy():
         # First, check by taxonomy ID in latest taxonomy
         if taxon.taxonomy_id in taxonomy:
             if taxon.name != taxonomy[taxon.taxonomy_id]['name']:
-                print('Change',
-                      taxon.name,
-                      'to',
+                logger.info('Renaming ' +
+                      taxon.name +
+                      ' to ' +
                       taxonomy[taxon.taxonomy_id]['name']
                       )
                 taxon.name = taxonomy[taxon.taxonomy_id]['name']
@@ -224,23 +228,84 @@ def update_taxonomy():
         # Second, check by taxonomy ID in updated entries
         elif taxon.eggnog_taxid in eggnog_taxa:
             new_id = eggnog_taxa[taxon.eggnog_taxid]
-            print('Change', old_id, 'to', new_id)
+            logger.info('Changing ' + old_id + ' to ' + new_id)
             taxon.taxonomy_id = new_id
             taxon.name = taxonomy[new_id]['name']
             taxon.rank = taxonomy[new_id]['rank']
             taxon.parent_id = taxonomy[new_id]['parent']
             taxon.save()
         else:
-            print('Taxon not found:',
-                  taxon.name,
-                  '(',
-                  taxon.taxonomy_id,
-                  '). Fix manually.'
+            logger.error('Taxon ' +
+                  taxon.name +
+                  '(' +
+                  taxon.taxonomy_id +
+                  ') cannot be found in NCBI Taxonomy. Check the name and taxonomy ID'+
+                  ' and fix the record in the CGCMS database.'
                   )
+                  
+    # Taxonomy consistency check:
+    # All parents must exist in the database and be unique
+    create_ids = set()
+    for taxon in Taxon.objects.all():
+        if not Taxon.objects.filter(taxonomy_id=taxon.parent_id).exists():
+            create_ids.add(taxon.parent_id)
+    
+    for taxonomy_id in create_ids:
+        if taxonomy_id in taxonomy:
+            create_taxonomy_records(taxonomy_id, taxonomy, eggnog_taxa)
+        elif taxonomy_id in old_taxonomy_names:
+            old_name = old_taxonomy_names[taxonomy_id][0]
+            if old_name in taxonomy_id_lookup:
+                new_taxonomy_id = taxonomy_id_lookup[old_name]
+                create_taxonomy_records(new_taxonomy_id, taxonomy, eggnog_taxa)
+        else:
+            logger.error('Taxonomy ID' +
+                  taxonomy_id +
+                  'cannot be found in the downloaded NCBI Taxonomy. Check the NCBI web-site'+
+                  ' and fix the record in the CGCMS database.'
+                  )
+            
     os.rename(eggnog_taxonomy_temp_file, config['cgcms.eggnog_taxonomy'])
     os.rename(out_file, config['ref.taxonomy'])
+    
     #shutil.rmtree(tmp_dir)
 
+def create_taxonomy_records(taxonomy_id, taxonomy, eggnog_taxa):
+    if taxonomy_id not in taxonomy:
+        return
+    if Taxon.objects.filter(taxonomy_id=taxonomy_id).exists():
+        return
+    eggnog_taxid = taxonomy_id
+    if taxonomy_id in eggnog_taxa:
+        eggnog_taxid = eggnog_taxa[taxonomy_id][0]
+    logger.info('Creating ' + taxonomy[taxonomy_id]['name'] + '(' + taxonomy_id + ')')
+    new_parent_taxon=Taxon.objects.create(
+        taxonomy_id=taxonomy_id,
+        eggnog_taxid=eggnog_taxid,
+        name=taxonomy[taxonomy_id]['name'],
+        rank=taxonomy[taxonomy_id]['rank'],
+        parent_id=taxonomy[taxonomy_id]['parent']
+        )
+    new_parent_id = new_parent_taxon.parent_id
+    while new_parent_id != '1':
+        if new_parent_id not in taxonomy:
+            logger.error('Cannot create record for ' + new_parent_id + ': not in NCBI taxonomy')
+            break
+        if Taxon.objects.filter(taxonomy_id=new_parent_id).exists():
+            break
+        eggnog_taxid = new_parent_id
+        if new_parent_id in eggnog_taxa:
+            eggnog_taxid = eggnog_taxa[new_parent_id][0]
+        logger.info('Creating ' + taxonomy[new_parent_id]['name'] + '(' + new_parent_id + ')')
+        new_parent_taxon=Taxon.objects.create(
+            taxonomy_id=new_parent_id,
+            eggnog_taxid=eggnog_taxid,
+            name=taxonomy[new_parent_id]['name'],
+            rank=taxonomy[new_parent_id]['rank'],
+            parent_id=taxonomy[new_parent_id]['parent']
+            )
+        new_parent_id = new_parent_taxon.parent_id
+    
 
 def update_taxonomy_fields(old_taxon, new_taxon):
     for strain in Strain.objects.filter(taxon=old_taxon):
