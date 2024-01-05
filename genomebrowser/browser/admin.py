@@ -215,6 +215,7 @@ class GenomeAdmin(admin.ModelAdmin):
         'gbk_filepath',
         'tags'
     )
+    readonly_fields=('name', )
     autocomplete_fields = ('strain', 'sample', 'taxon', )
     
     def get_urls(self):
@@ -306,6 +307,7 @@ class GeneAdmin(admin.ModelAdmin):
     list_filter = ['type']
     ordering = ['locus_tag', 'genome']
     search_fields = ['locus_tag', 'genome__name']
+    readonly_fields=('locus_tag', )
     autocomplete_fields = ('genome', 'contig', 'protein', 'operon', )
 
 admin.site.register(Gene, GeneAdmin)
@@ -528,6 +530,7 @@ class ProteinAdmin(admin.ModelAdmin):
     ordering = ['protein_hash']
     search_fields = ['name', 'protein_hash', 'length']
     autocomplete_fields = ('taxonomy_id', )
+    readonly_fields=('protein_hash', )
     raw_id_fields = ('ortholog_groups',
                      'cog_classes',
                      'kegg_reactions',

@@ -34,27 +34,29 @@ def test_task_impl(request, genome_names):
         raise
     return 'Genomes:' + genome_names
 
+
 def run_annotation_pipeline_impl(args):
     logger.debug('Asynchronous task run_annotation_tools received. Starting the pipeline.')
     (genomes, plugins) = args
     annotator = Annotator()
-    try:
-        for plugin_ind, plugin in enumerate(plugins):
-            logger.debug('Starting tool ' + str(plugin_ind + 1) + ' of ' + str(len(plugins)) + ':' + plugin)
-            #print('SIMULATED FUNCTION CALL IN tasks.py:44')  
+    errors = []
+    for plugin_ind, plugin in enumerate(plugins):
+        logger.debug('Starting tool ' + str(plugin_ind + 1) + ' of ' + str(len(plugins)) + ':' + plugin)
+        try:
             annotator.run_external_tools(genomes, plugin_name=plugin)
-        subject = 'CGCMS task finished successfuly'
+        except Exception:
+            errors.append('CGCMS plugin "' +  plugin + f'" at {settings.BASE_URL} finished ' +\
+                f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
+                f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
+                f'{sys.exc_info()[2].tb_lineno}')
+    if errors:
+        subject = 'CGCMS annotation pipeline finished with error'
+        message = '\n'.join(errors)
+    else:
+        subject = 'CGCMS annotation pipeline finished successfuly'
         message = '"Run annotation tools" task finished successfuly at ' + \
         f'{settings.BASE_URL}'
-        mail_admins(subject, message)
-    except Exception:
-        subject = 'CGCMS task finished with error'
-        message = f'CGCMS "Run annotation tools" task at {settings.BASE_URL} finished ' +\
-        f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
-        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
-        f'{sys.exc_info()[2].tb_lineno}'
-        mail_admins(subject, message)
-        raise
+    mail_admins(subject, message)
     return 'Annotation pipeline finished.'
     
 
@@ -93,15 +95,14 @@ def import_genomes_impl(args):
         subject = 'CGCMS task finished successfuly'
         message = '"Import Genomes" task finished successfuly at ' + \
         f'{settings.BASE_URL}'
-        mail_admins(subject, message)
     except Exception:
+        result = 'Error!'
         subject = 'CGCMS task finished with error'
         message = f'CGCMS "Import Genomes" task at {settings.BASE_URL} finished ' +\
         f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
         f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
         f'{sys.exc_info()[2].tb_lineno}'
-        mail_admins(subject, message)
-        raise
+    mail_admins(subject, message)
     return result
 
 def update_static_files_impl(genome_names):
@@ -160,15 +161,13 @@ def update_static_files_impl(genome_names):
         subject = 'CGCMS task finished successfuly'
         message = '"Update static files" task finished successfuly ' +\
         f'at {settings.BASE_URL}'
-        mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
         message = f'CGCMS "Update static files" task at {settings.BASE_URL} finished' +\
         f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
         f'{sys.exc_info()[2].tb_frame.f_code.co_filename}: ' +\
         f'{sys.exc_info()[2].tb_lineno}'
-        mail_admins(subject, message)
-        raise
+    mail_admins(subject, message)
 
 def delete_genomes_impl(genome_names):
     '''
@@ -201,15 +200,13 @@ def delete_genomes_impl(genome_names):
         os.remove(importer.config['cgcms.search_db_prot'])
         subject = 'CGCMS task finished successfuly'
         message = f'"Delete genomes" task finished successfuly at {settings.BASE_URL}'
-        mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
         message = f'CGCMS "Delete genomes" task at {settings.BASE_URL} finished ' +\
         f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
         f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
         f'{sys.exc_info()[2].tb_lineno}'
-        mail_admins(subject, message)
-        raise
+    mail_admins(subject, message)
 
     
 def import_sample_metadata_impl(lines):
@@ -220,15 +217,14 @@ def import_sample_metadata_impl(lines):
         subject = 'CGCMS task finished successfuly'
         message = '"Import sample metadata" task finished successfuly ' +\
         f'at {settings.BASE_URL}'
-        mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
         message = f'CGCMS "Import sample metadata" task at {settings.BASE_URL} ' +\
         f'finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]},' +\
         f' {sys.exc_info()[2].tb_frame.f_code.co_filename}: ' +\
         f'{sys.exc_info()[2].tb_lineno}'
-        mail_admins(subject, message)
-        raise
+    mail_admins(subject, message)
+
 
 def import_sample_descriptions_impl(lines):
     logger.debug('Asynchronous task received. Starting import.')
@@ -238,15 +234,14 @@ def import_sample_descriptions_impl(lines):
         subject = 'CGCMS task finished successfuly'
         message = '"Import sample descriptions" task finished successfuly ' +\
         f'at {settings.BASE_URL}'
-        mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
         message = f'CGCMS "Import sample descriptions" task at {settings.BASE_URL} ' +\
         f'finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]},' +\
         f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
         f'{sys.exc_info()[2].tb_lineno}'
-        mail_admins(subject, message)
-        raise
+    mail_admins(subject, message)
+
 
 def update_strain_metadata_impl(xlsx_file):
     logger.debug('Asynchronous task received. Starting import.')
@@ -256,15 +251,14 @@ def update_strain_metadata_impl(xlsx_file):
         subject = 'CGCMS task finished successfuly'
         message = '"Update strain metadata" task finished successfuly ' +\
         f'at {settings.BASE_URL}'
-        mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
         message = f'CGCMS "Update strain metadata" task at {settings.BASE_URL} ' +\
         f'finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]},' +\
         f' {sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
         f'{sys.exc_info()[2].tb_lineno}'
-        mail_admins(subject, message)
-        raise
+    mail_admins(subject, message)
+
     
 def import_annotations_impl(lines):
     logger.debug('Asynchronous task received. Starting import.')
@@ -274,15 +268,14 @@ def import_annotations_impl(lines):
         subject = 'CGCMS task finished successfuly'
         message = '"Import annotations" task finished successfuly ' +\
         f'at {settings.BASE_URL}'
-        mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
         message = f'CGCMS "Import annotations" task at {settings.BASE_URL} finished' +\
         f' with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
         f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
         f'{sys.exc_info()[2].tb_lineno}'
-        mail_admins(subject, message)
-        raise
+    mail_admins(subject, message)
+
 
 def import_regulon_impl(lines):
     logger.debug('Asynchronous task received. Starting import.')
@@ -291,12 +284,10 @@ def import_regulon_impl(lines):
         annotator.add_regulons(lines)
         subject = 'CGCMS task finished successfuly'
         message = f'"Import regulon" task finished successfuly at {settings.BASE_URL}'
-        mail_admins(subject, message)
     except Exception:
         subject = 'CGCMS task finished with error'
         message = f'CGCMS "Import regulon" task at {settings.BASE_URL} finished ' +\
         f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
         f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
         f'{sys.exc_info()[2].tb_lineno}'
-        mail_admins(subject, message)
-        raise
+    mail_admins(subject, message)

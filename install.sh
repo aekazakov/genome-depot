@@ -142,7 +142,7 @@ fi
 if conda env list | grep 'cgcms-amrfinder' >/dev/null 2>&1; then
         echo "Found cgcms-amrfinder environment"
         conda activate cgcms-amrfinder
-        if amrfinder|grep "AMR" >/dev/null 2>&1; then
+        if amrfinder --version|grep "3.11.11" >/dev/null 2>&1; then
                 echo "AMRFinder found"
         else
                 echo 'Conda environment cgcms-amrfinder exists but AMRFinder was not properly installed. Remove the environment and restart CGCMS installation script.'
@@ -156,7 +156,7 @@ else
         echo "Installing AMRFinder"
         conda create -y -n cgcms-amrfinder python=3.8
         conda activate cgcms-amrfinder
-        conda install -y -c bioconda -c conda-forge ncbi-amrfinderplus
+        conda install -y -c bioconda -c conda-forge ncbi-amrfinderplus=3.11.11
         amrfinder -u
         conda deactivate
         cd "$CGCMSDIR/external_tools"
@@ -361,6 +361,29 @@ fi
 #    cd "$CGCMSDIR/external_tools"
 #fi
 
+# Install HMMER for Pfam and TIGRFAM plugins
+if conda env list | grep 'cgcms-hmmsearch' >/dev/null 2>&1; then
+    echo "Found cgcms-hmmsearch environment"
+    conda activate cgcms-hmmsearch
+    if hmmsearch -h|grep "HMMER" >/dev/null 2>&1; then
+        echo "hmmsearch found"
+    else
+        echo 'Conda environment cgcms-hmmsearch exists but HMMER was not properly installed. Remove the environment and restart CGCMS installation script.'
+        echo 'To remove the environment, run:'
+        echo '   conda remove -n cgcms-hmmsearch --all'
+        conda deactivate
+        exit 1
+    fi
+    conda deactivate
+else
+    echo "Installing HMMER"
+    conda create -y -n cgcms-hmmsearch
+    conda activate cgcms-hmmsearch
+    conda install -y -c bioconda hmmer
+    conda deactivate
+    cd "$CGCMSDIR/external_tools"
+fi
+
 # Download HMM libraries
 if ! [ -f "$CGCMSDIR/external_refdata/phispy/pvogs.hmm" ]; then
     echo "Downloading pVOG HMMs"
@@ -368,7 +391,9 @@ if ! [ -f "$CGCMSDIR/external_refdata/phispy/pvogs.hmm" ]; then
     cd "$CGCMSDIR/external_refdata/phispy"
     curl -LJO -q http://iseq.lbl.gov/mydocs/cgcms_downloads/pvogs.hmm.gz
     gunzip pvogs.hmm.gz
+    conda activate cgcms-phispy
     hmmpress pvogs.hmm
+    conda deactivate
 fi
 if ! [ -f "$CGCMSDIR/external_refdata/pfam/Pfam-A.hmm" ]; then
     echo "Downloading PFAM HMMs"
@@ -377,7 +402,9 @@ if ! [ -f "$CGCMSDIR/external_refdata/pfam/Pfam-A.hmm" ]; then
     curl -LJO -q http://iseq.lbl.gov/mydocs/cgcms_downloads/pfam35.tar.gz
     tar xvf pfam35.tar.gz
     rm pfam35.tar.gz
+    conda activate cgcms-hmmsearch
     hmmpress Pfam-A.hmm
+    conda deactivate
 fi
 if ! [ -f "$CGCMSDIR/external_refdata/tigrfam/TIGRFAM.HMM" ]; then
     echo "Downloading TIGRFAM HMMs"
@@ -386,7 +413,9 @@ if ! [ -f "$CGCMSDIR/external_refdata/tigrfam/TIGRFAM.HMM" ]; then
     curl -LJO -q http://iseq.lbl.gov/mydocs/cgcms_downloads/tigrfam.tar.gz
     tar xvf tigrfam.tar.gz
     rm tigrfam.tar.gz
+    conda activate cgcms-hmmsearch
     hmmpress TIGRFAM.HMM
+    conda deactivate
 fi
 echo "Activate virtual environment $CGCMSDIR/cgcms-venv and install Django before running CGCMS"
 cd "$WORKDIR/genomebrowser"

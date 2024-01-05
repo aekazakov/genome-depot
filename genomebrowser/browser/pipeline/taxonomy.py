@@ -267,8 +267,7 @@ def update_taxonomy():
             
     os.rename(eggnog_taxonomy_temp_file, config['cgcms.eggnog_taxonomy'])
     os.rename(out_file, config['ref.taxonomy'])
-    
-    #shutil.rmtree(tmp_dir)
+    shutil.rmtree(tmp_dir)
 
 def create_taxonomy_records(taxonomy_id, taxonomy, eggnog_taxa):
     if taxonomy_id not in taxonomy:

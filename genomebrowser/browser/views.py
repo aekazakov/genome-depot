@@ -1521,7 +1521,11 @@ def genome_detail(request, name):
     parent_id = genome.taxon.parent_id
     iteration_count = 0
     while True:
-        parent_taxon = Taxon.objects.get(taxonomy_id = parent_id)
+        try:
+            parent_taxon = Taxon.objects.get(taxonomy_id = parent_id)
+        except Taxon.DoesNotExist:
+            logger.error('Taxonomy ID ' + parent_id + ' does not exist. Update taxonomy records.')
+            break
         iteration_count += 1
         if parent_taxon.taxonomy_id == parent_taxon.parent_id or parent_id == '1':
             break

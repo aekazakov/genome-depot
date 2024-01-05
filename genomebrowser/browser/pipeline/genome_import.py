@@ -191,10 +191,8 @@ class Importer(object):
         try:
             self.tag = Tag.objects.get(name=tag_name)
         except Tag.DoesNotExist:
-            tag = Tag(name=tag_name,
+            self.tag = Tag.objects.create(name=tag_name,
                       description='Genomes imported on ' + current_date)
-            tag.save()
-            self.tag = tag
         
     def get_taxonomic_order(self, taxonomy_id):
         result = 'Unknown'
@@ -243,9 +241,9 @@ class Importer(object):
                                     logger.error(taxonomy_id + ' taxonomy ID not found in the taxonomy reference file. Run "Update taxonomy" command, then start genome import again.')
                                     raise KeyError(gbk_file + ' parsing error. ' +
                                                    taxonomy_id + ' not found in ' + 
-                                                   'taxonomy reference file. Stop' +
-                                                   'now and update taxonomy ' +
-                                                   'reference data.')
+                                                   'taxonomy reference file. Update the reference ' +
+                                                   'file by running update_taxonomy ' +
+                                                   'command, then start genome import again.')
                                 organism_data['tax_id'] = taxonomy_id
                     # Only the first occurrence of the 'source' feature is considered
                     break
@@ -271,17 +269,15 @@ class Importer(object):
     def create_parent_taxa(self, taxonomy_id):
         parent_id = self.taxonomy[taxonomy_id]['parent']
         while parent_id != '1':
-            try:
-                taxon = Taxon.objects.get(taxonomy_id = parent_id)
+            if Taxon.objects.filter(taxonomy_id = parent_id).exists():
                 break
-            except Taxon.DoesNotExist:
-                taxon = Taxon(taxonomy_id=parent_id,
+            else:
+                taxon = Taxon.objects.create(taxonomy_id=parent_id,
                     eggnog_taxid=self.taxonomy[parent_id]['eggnog_taxid'],
                     name=self.taxonomy[parent_id]['name'],
                     rank=self.taxonomy[parent_id]['rank'],
                     parent_id=self.taxonomy[parent_id]['parent']
                     )
-                taxon.save()
             parent_id = self.taxonomy[parent_id]['parent']
         
     def generate_strain_data(self, gbk_file, strain_id, order):
@@ -295,7 +291,7 @@ class Importer(object):
         # returns Strain object
         organism_data = self.get_gbk_organism(gbk_file)
 
-        if 'organism' not in organism_data:
+        if 'organism' not in organism_data or organism_data['organism'] == '.':
             if strain_id == '':
                 organism_data['organism'] = 'Unknown organism'
             else:
@@ -318,13 +314,12 @@ class Importer(object):
         try:
             taxon = Taxon.objects.get(taxonomy_id = organism_data['tax_id'])
         except Taxon.DoesNotExist:
-            taxon = Taxon(taxonomy_id=organism_data['tax_id'],
+            taxon = Taxon.objects.create(taxonomy_id=organism_data['tax_id'],
                 eggnog_taxid=self.taxonomy[organism_data['tax_id']]['eggnog_taxid'],
                 name=self.taxonomy[organism_data['tax_id']]['name'],
                 rank=self.taxonomy[organism_data['tax_id']]['rank'],
                 parent_id=self.taxonomy[organism_data['tax_id']]['parent']
                 )
-            taxon.save()
             self.create_parent_taxa(organism_data['tax_id'])
         strain = Strain(strain_id=strain_id,
                         full_name=organism_data['organism'],
@@ -365,7 +360,7 @@ class Importer(object):
                         try:
                             taxon = Taxon.objects.get(taxonomy_id = taxonomy_id)
                         except Taxon.DoesNotExist:
-                            taxon = Taxon(
+                            taxon = Taxon.objects.create(
                                 taxonomy_id=taxonomy_id,
                                 eggnog_taxid=\
                                     self.taxonomy[taxonomy_id]['eggnog_taxid'],
@@ -373,7 +368,6 @@ class Importer(object):
                                 rank=self.taxonomy[taxonomy_id]['rank'],
                                 parent_id=self.taxonomy[taxonomy_id]['parent']
                                 )
-                            taxon.save()
                             self.create_parent_taxa(taxonomy_id)
                         strain = Strain.objects.get(strain_id=strain_id)
                         strain.taxon = taxon
@@ -435,13 +429,12 @@ class Importer(object):
             try:
                 taxon = Taxon.objects.get(taxonomy_id = taxon_id)
             except Taxon.DoesNotExist:
-                taxon = Taxon(taxonomy_id=taxon_id,
+                taxon = Taxon.objects.create(taxonomy_id=taxon_id,
                     eggnog_taxid=self.taxonomy[taxon_id]['eggnog_taxid'],
                     name=self.taxonomy[taxon_id]['name'],
                     rank=self.taxonomy[taxon_id]['rank'],
                     parent_id=self.taxonomy[taxon_id]['parent']
                     )
-                taxon.save()
                 self.create_parent_taxa(taxon_id)
     
     def process_protein(self, sequence, protein_name):
@@ -626,13 +619,12 @@ class Importer(object):
             try:
                 taxon = Taxon.objects.get(taxonomy_id = organism_data['tax_id'])
             except Taxon.DoesNotExist:
-                taxon = Taxon(taxonomy_id=organism_data['tax_id'],
+                taxon = Taxon.objects.create(taxonomy_id=organism_data['tax_id'],
                     eggnog_taxid=self.taxonomy[organism_data['tax_id']]['eggnog_taxid'],
                     name=self.taxonomy[organism_data['tax_id']]['name'],
                     rank=self.taxonomy[organism_data['tax_id']]['rank'],
                     parent_id=self.taxonomy[organism_data['tax_id']]['parent']
                     )
-                taxon.save()
                 self.create_parent_taxa(organism_data['tax_id'])
 
             if gbk_file.endswith('.gz'):
@@ -1907,6 +1899,8 @@ class Importer(object):
         logger.info('Predict operons')
         # Export contigs and proteins and run POEM_py3
         operons_data = self.predict_operons()
+        if not operons_data:
+            logger.warn('Non-critical error: no operons found. Check if POEM was correctly installed and configured.')
         # Write operons to the database
         self.create_operons(operons_data)
         
@@ -1925,7 +1919,6 @@ class Importer(object):
         logger.info('Generating search databases')
         self.create_search_databases()
 
-#        self.append_eggnog_stored_data(new_eggnog_data)
         # delete temp files
         logger.info('Removing temporary files')
         self.cleanup()
@@ -1933,13 +1926,6 @@ class Importer(object):
 
         # Run annotation tools
         annotator = Annotator()
-        #new_genome_ids = [item['id'] for item
-        #                  in Genome.objects.filter(
-        #                                           name__in = self.genome_data.keys()
-        #                                           ).values('id')
-        #                  ]
-        #annotator.update_pfam_domains(new_genome_ids)
-        #annotator.update_tigrfam_domains(new_genome_ids)
         
         # Generate annotations with external tools
         new_genome_files = {item['name']:item['gbk_filepath'] for item
