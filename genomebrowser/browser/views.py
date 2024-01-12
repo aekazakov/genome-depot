@@ -2028,7 +2028,7 @@ class PsearchResultView(View):
 
         if hits:
             result.append('<table><thead><tr><th>Target gene</th><th>Genome</th>' +\
-                          '<th> +\%identity</th><th>Alignment length</th><th>' +\
+                          '<th>Function</th><th>%identity</th><th>Alignment length</th><th>' +\
                           '%Query coverage</th><th>E-value</th><th>Bit-score</th>' +\
                           '</tr></thead><tbody>'
                           )
@@ -2057,8 +2057,9 @@ class PsearchResultView(View):
                     reverse('genedetails',
                             args=(target.genome.name, target.locus_tag)) + \
                     '\">' + target.locus_tag + '</a></td><td align="left">' + \
-                    target.genome.name + ' [' + target.genome.taxon.name + ']' + \
-                    genome_tags + '</td><td>' + '{:.1f}'.format(float(row[2])) + \
+                     '<a href="' + reverse('genomedetails', args=(target.genome.name,)) + \
+                     '" title="' + target.genome.taxon.name + '">' + target.genome.name +  '</a> ' +\
+                     genome_tags + '</td><td>' + target.function + '</td><td>' + '{:.1f}'.format(float(row[2])) + \
                     '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) + \
                     '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
                     result.append(hit)

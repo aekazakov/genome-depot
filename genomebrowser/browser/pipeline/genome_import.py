@@ -1,4 +1,5 @@
 import os
+import re
 import gzip
 import json
 import shutil
@@ -105,6 +106,15 @@ class Importer(object):
         Path(self.config['cgcms.search_db_dir']).mkdir(parents=True,
                                                        exist_ok=True
                                                        )
+    def sanitize_genome_id(self, genome):
+        """
+            Replaces non-ASCII and non-word characters with 
+            underscores in genome identifiers
+        """
+        genome = ''.join([i if ord(i) < 128 else ' ' for i in genome])
+        genome = re.sub(r"[^^a-zA-Z0-9]", ' ', genome)
+        genome = "_".join( genome.split() )
+        return genome
         
     def load_proteins(self):
         """
@@ -115,7 +125,7 @@ class Importer(object):
         
     def load_genome_list(self, in_file):
         """
-            Reads file with genome paths, names and links.
+            Reads genome paths, names and links from tab-separated file.
         """
         with open(in_file, 'r') as infile:
             for line in infile:
@@ -123,6 +133,7 @@ class Importer(object):
                     continue
                 filepath, genome_id, strain_id, sample_id, url, external_id = \
                 line.rstrip('\n\r').split('\t')
+                genome_id = self.sanitize_genome_id(genome_id)
                 # Sanity check
                 if sample_id == '' and strain_id == '':
                     raise ValueError('Either strain ID or sample ID required for ' +
@@ -853,8 +864,9 @@ class Importer(object):
                         data_fields[row_index]] = row_value
         
     def prepare_mappings_data(self, ref_file, mapping_id):
-        """Loads file of KEGG reactions, collects IDs from self.gene_data,
-        makes list of cross-mappings
+        """
+            Reads file with reference records, collects IDs from self.gene_data,
+            makes list of cross-mappings
         """
         ref_data = defaultdict(dict)
         selected_ref_data = {}
@@ -892,8 +904,9 @@ class Importer(object):
         return selected_ref_data, relations
 
     def prepare_go_mappings_data(self, ref_file, mapping_id):
-        """Loads file of GO terms, collects IDs from self.gene_data,
-        makes list of cross-mappings
+        """
+            Loads file of GO terms, collects IDs from self.gene_data,
+            makes list of cross-mappings
         """
         ref_data = defaultdict(dict)
         selected_ref_data = {}
@@ -920,6 +933,11 @@ class Importer(object):
 
     
     def make_mappings(self):
+        """
+            Prepares mappings of proteins IDs to reference data IDs 
+            for functional classificationsc supported by EggNOG-mapper
+            for upload into DB
+        """
         mappings, relations = self.prepare_mappings_data(
             self.config['ref.kegg_reactions_file'],
             'eggnog.KEGG_Reaction'
@@ -977,6 +995,9 @@ class Importer(object):
         self.relations['go'] = relations
     
     def prepare_og_data(self):
+        """
+            Prepares mappings of proteins IDs to EggNOG families for upload into DB
+        """
         self.mappings['og'] = {}
         self.relations['og'] = set()
         saved_taxonomy_ids = set(list(Taxon.objects.values_list('taxonomy_id',
@@ -1050,6 +1071,10 @@ class Importer(object):
                     parent_id = self.taxonomy[parent_id]['parent']
         
     def prepare_eggnog_description_data(self):
+        """
+            Prepares mappings of proteins IDs to EggNOG descriptions
+            for upload into DB
+        """
         self.mappings['description'] = {}
         self.relations['description'] = set()
         saved_descriptions = set([description.fingerprint for description
@@ -1068,6 +1093,9 @@ class Importer(object):
                 self.protein_data[protein_hash]['eggnog_description'] = fingerprint
 
     def write_data(self):
+        """
+            Writes data records into DB
+        """
         # write taxonomy data
         Taxon.objects.bulk_create(self.taxon_instances.values(), batch_size=1000)
         logger.info('Taxonomy imported')
@@ -1103,8 +1131,6 @@ class Importer(object):
                             in Sample.objects.all()
                             }
 
-        # TODO: create sample metadata
-        
         # write genome data
         genome_instances = []
         for genome_id,genome_data in self.genome_data.items():
@@ -1525,6 +1551,16 @@ class Importer(object):
         return result
     
     def export_gff(self, genome_id, out_dir = None, feature_type=None):
+        """
+            Generates GFF file for a genome
+            genome_id(str): genome identifier
+            out_dir(str): output directory path (optional)
+            feature_type(str): feature type to export(optional) 
+            If called with no feature_type parameter, all features are exported
+            Returns:
+                output file path(str)
+        """
+
         if out_dir is None:
             out_dir = self.config['cgcms.temp_dir']
         if feature_type is None:
@@ -1597,6 +1633,10 @@ class Importer(object):
         return result
         
     def export_jbrowse_data(self):
+        """
+            Calls export_jbrowse_genome_data for each genome in 
+            the self.inputgenomes dictionary
+        """
         for genome in self.inputgenomes:
             self.export_jbrowse_genome_data(genome)
 
@@ -1726,6 +1766,10 @@ class Importer(object):
         shutil.rmtree(temp_dir)
 
     def copy_static_files(self):
+        """
+            Copies all generated static files into the static files directory
+            on the file server
+        """
         for directory in self.staticfiles:
             for filename in self.staticfiles[directory]:
                 shutil.copyfile(os.path.join(self.config['cgcms.temp_dir'],
@@ -1735,7 +1779,9 @@ class Importer(object):
                                  )
 
     def create_search_databases(self):
-        # Make blast search databases
+        """
+            Makes BLAST search databases
+        """
         if os.path.exists(self.config['cgcms.search_db_nucl'])\
         and os.stat(self.config['cgcms.search_db_nucl']).st_size > 0:
             cmd = ['makeblastdb', '-dbtype', 'nucl', '-in',
@@ -1780,6 +1826,9 @@ class Importer(object):
                         )
         
     def delete_search_databases(self):
+        """
+            Deletes existing BLAST search databases
+        """
         for filename in os.listdir(self.config['cgcms.search_db_dir']):
             if filename.startswith('mmseqs_') or filename.startswith('blast_'):
                 os.remove(os.path.join(self.config['cgcms.search_db_dir'], filename))
@@ -1800,6 +1849,9 @@ class Importer(object):
             genome_file = self.inputgenomes[genome_id]['gbk']
             if genome_file.startswith(self.config['cgcms.temp_dir']):
                 os.remove(genome_file)
+            fna_file = os.path.join(self.config['cgcms.temp_dir'], genome_id + '.fna')
+            if os.path.exists(fna_file):
+                os.remove(fna_file)
         # delete all empty directories in the temporary directory
         empty_dirs = []
         for (dirpath, dirnames, filenames) in os.walk(self.config['cgcms.temp_dir']):
@@ -1938,6 +1990,10 @@ class Importer(object):
         return 'Done!'
 
     def export_proteins(self):
+        """
+            Writes all protein sequences into FASTA file
+            for BLASTP database generation
+        """
         prot_db_file = self.config['cgcms.search_db_prot']
         with open(os.path.join(self.config['cgcms.temp_dir'],
                                os.path.basename(prot_db_file)
@@ -1952,6 +2008,10 @@ class Importer(object):
 
 
     def export_contigs(self):
+        """
+            Writes all nucleotide sequences into FASTA file
+            for megablast database generation
+        """
         result = set()
         nucl_db_file = self.config['cgcms.search_db_nucl']
         with open(os.path.join(self.config['cgcms.temp_dir'], 

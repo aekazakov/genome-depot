@@ -1,4 +1,5 @@
 import os
+import re
 import logging
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
@@ -15,6 +16,21 @@ def _verify_alphabet(sequence, alphabet):
     alphabet = set(alphabet) 
     return all(letter in alphabet for letter in sequence)
 
+def _sanitize_sequence(query):
+    '''
+        Remove all symbols except a-zA-Z
+    '''
+    query_lines = query.split('\n')
+    if query.startswith('>'):
+        sequence = ''.join([x.rstrip('\n\r') for x in query_lines[1:]])
+        query_id = query_lines[0][1:].rstrip('\r\n')
+    else:
+        sequence = ''.join([x.rstrip('\n\r') for x in query_lines])
+        query_id = 'temp_000'
+    sequence = ''.join([i if ord(i) < 128 else '' for i in sequence])
+    sequence = re.sub(r"[^^a-zA-Z]", ' ', sequence)
+    return query_id, sequence
+    
 def validate_params(params):
     '''
         Validates search parameters received from user.
@@ -95,10 +111,8 @@ def run_protein_search(params):
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
     blast_db = os.path.join(search_dir, 'blast_prot')
     searchcontext = ''
-    query_lines = query.split('\n')
-    seq_record = SeqRecord(Seq(''.join([x.rstrip('\n\r') for x in query_lines[1:]])),
-                           id=query_lines[0][1:].rstrip('\r\n')
-                           )
+    query_id, query_sequence = _sanitize_sequence(query)
+    seq_record = SeqRecord(Seq(query_sequence), id=query_id)
     if not _verify_alphabet(seq_record.seq.upper(), PROTEIN_ALPHABET):
         searchcontext = 'Wrong protein sequence format. ' +\
                         'FASTA header and valid sequence required.'
@@ -166,10 +180,8 @@ def run_nucleotide_search(params):
     DNA_ALPHABET = 'GATCRYWSMKHBVDN'
     blast_db = os.path.join(search_dir, 'blast_nucl')
     searchcontext = ''
-    query_lines = query.split('\n')
-    seq_record = SeqRecord(Seq(''.join([x.rstrip('\n\r') for x in query_lines[1:]])),
-                           id=query_lines[0][1:].rstrip('\r\n')
-                           )
+    query_id, query_sequence = _sanitize_sequence(query)
+    seq_record = SeqRecord(Seq(query_sequence), id=query_id)
     if not _verify_alphabet(seq_record.seq.upper(), DNA_ALPHABET):
         searchcontext = 'Wrong nucleotide sequence format. ' +\
                         'FASTA header and valid sequence required. ' +\
