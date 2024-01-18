@@ -1,4 +1,6 @@
-# Introduction
+# CGCMS
+
+## Introduction
 
 The comparative genomic content management system (CGCMS) is an open-source web-based platform for annotation, management and comparative analysis of microbial genomic sequences and associated data including ortholog families, protein domains, operons, regulatory interactions, metagenomic samples, strains taxonomy and metadata. 
 
@@ -7,18 +9,18 @@ CGCMS is a tool developed to create web portals for microbial genome collections
 [Demo CGCMS-based genome collection portal](https://iseq.lbl.gov/genomes)
 
 
-# Contents
+## Contents
 
 [CGCMS installation and configuration](installation)
 
-[User manual](user)
+[User guide](user)
 
-[Administrator manual](admin)
+[Administrator guide](admin)
 
-[For developer](developer)
+[Developer guide](developer)
 
 
-# Image Credits
+## Image Credits
 
 *Streptococcus pneumoniae* bacterial colonies that were grown on primary isolation medium. Photo by [Dr. Richard Facklam, USCDCP](https://pixnio.com/science/microscopy-images/streptococcus-pneumoniae/streptococcus-pneumoniae-bacterial-colonies-that-were-grown-on-primary-isolation-medium) on [Pixnio](https://pixnio.com/)
 

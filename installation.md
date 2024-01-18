@@ -98,7 +98,7 @@ python manage.py collectstatic
 python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser (Enter your desired username, email and password).
-python manage.py configure_cgcms -i configs.txt
+python manage.py import_config -i configs.txt
 python manage.py createcachetable
 ```
 

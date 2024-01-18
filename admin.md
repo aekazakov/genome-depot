@@ -1,4 +1,4 @@
-# Site administrator manual
+# Administrator guide
 
 There are two ways for administering a CGCMS-based web portal: the Django’s command-line utility and the CGCMS administration panel. The command-line utility works in an active virtual environment and supports a limited set of CGCMS commands mostly for import and export of large sets of data (see the command-line utility section). The CGCMS administration panel provides access to individual data entries and CGCMS tools for data import and analysis.
 
