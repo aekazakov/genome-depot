@@ -14,6 +14,7 @@ from browser.models import Config
 from browser.models import Strain
 from browser.models import Sample
 from browser.models import Strain_metadata
+from browser.models import Tag
 from browser.models import Genome
 from browser.models import Annotation
 from browser.models import Regulon
@@ -69,6 +70,10 @@ class BrowserModelsTest(TestCase):
                                           key='ghijkl',
                                           value='mnopqr'
                                           )
+        cls.tag = Tag.objects.create(name='Test tag',
+            description = 'Test tag description'
+        )
+
         cls.genome = Genome.objects.create(name='FW104-10B01',
                         description='Test description',
                         strain=cls.strain,
@@ -175,6 +180,7 @@ class BrowserModelsTest(TestCase):
         print('Testing Config object creation')
         self.assertEqual(self.config.param, 'parameter name')
         self.assertEqual(self.config.value, 'parameter value')
+        self.assertEqual(str(self.config), 'parameter name:parameter value')
 
     def test_taxon(self):
         print('Testing Taxon object creation')
@@ -183,32 +189,42 @@ class BrowserModelsTest(TestCase):
         self.assertEqual(self.taxon.parent_id, '75309')
         self.assertEqual(self.taxon.rank, 'species')
         self.assertEqual(self.taxon.eggnog_taxid, '666685')
+        self.assertEqual(str(self.taxon), 'Rhodanobacter denitrificans (666685)')
 
     def test_strain(self):
         print('Testing Strain object creation')
         self.assertEqual(self.strain.strain_id, 'FW104-10B01')
-        self.assertEqual(self.strain.strain_id, 'FW104-10B01')
+        self.assertEqual(self.strain.full_name, 'Rhodanobacter denitrificans str. FW104-10B01')
         self.assertEqual(self.strain.taxon.name, 'Rhodanobacter denitrificans')
-        
+        self.assertEqual(str(self.strain), 'FW104-10B01 (Xanthomonadales)')
+
     def test_sample(self):
         print('Testing Sample object creation')
         self.sample.description = 'Metagenomic sample from groundwater of FW106 well'
         self.sample.save()
         self.assertEqual(self.sample.sample_id, 'FW106-02')
+        self.assertEqual(str(self.sample), 'FW106-02 (FW106 groundwater metagenome)')
 
     def test_strain_metadata(self):
         print('Testing Strain object creation')
         self.assertEqual(self.strain_metadata.source, 'abcdef')
         self.assertEqual(self.strain_metadata.strain.strain_id, 'FW104-10B01')
+        self.assertEqual(str(self.strain_metadata), 'abcdef: mnopqr')
 
     def test_sample_metadata(self):
         print('Testing Sample_metadata object creation')
         self.assertEqual(self.sample_metadata.source, 'abcdef')
         self.assertEqual(self.sample_metadata.sample.sample_id, 'FW106-02')
-        sample_metadata_saved = Sample_metadata.objects.filter(source='abcdef')
-        self.assertEqual(len(list(sample_metadata_saved.all())), 1)
-        self.assertEqual(list(sample_metadata_saved.all())[0].sample.sample_id,
-            'FW106-02')
+        sample_metadata_saved = Sample_metadata.objects.get(source='abcdef')
+        self.assertEqual(sample_metadata_saved.sample.sample_id, 'FW106-02')
+        self.assertEqual(str(sample_metadata_saved), 'abcdef: mnopqr')
+
+    def test_tag(self):
+        print('Testing Tag model')
+        self.assertEqual(self.tag.name, 'Test tag')
+        tag_saved = Tag.objects.get(name='Test tag')
+        self.assertEqual(tag_saved.description, 'Test tag description')
+        self.assertEqual(str(tag_saved), 'Test tag')
 
     def test_genome(self):
         print('Testing Genome object creation')
@@ -218,6 +234,10 @@ class BrowserModelsTest(TestCase):
         self.assertEqual(genome_saved.contigs, 1)
         self.assertEqual(genome_saved.size, 1000)
         self.assertEqual(genome_saved.genes, 1)
+        self.assertEqual(str(genome_saved), 'FW104-10B01')
+        tag_saved = Tag.objects.get(name='Test tag')
+        genome_saved.tags.add(tag_saved)
+        self.assertEqual(genome_saved.get_tags(), 'Test tag')
         
     def test_contig(self):
         print('Testing Contig object creation')
@@ -227,6 +247,7 @@ class BrowserModelsTest(TestCase):
         self.assertEqual(contig_saved.genome.name, 'FW104-10B01')
         self.assertEqual(contig_saved.genome.size, 1000)
         self.assertEqual(contig_saved.genome.contigs, 1)
+        self.assertEqual(str(contig_saved), 'scaffold1')
 
     def test_operon(self):
         print('Testing Operon object creation')
@@ -235,42 +256,49 @@ class BrowserModelsTest(TestCase):
         self.assertEqual(operon_saved.name, 'operon_1')
         self.assertEqual(operon_saved.genome.name, 'FW104-10B01')
         self.assertEqual(operon_saved.contig.name, 'scaffold0001')
+        self.assertEqual(str(operon_saved), 'operon_1')
 
     def test_cog_class(self):
         print('Testing Cog_class object creation')
         self.assertEqual(self.cog_class.cog_id, 'X')
         cog_class_saved = Cog_class.objects.get(cog_id='X')
         self.assertEqual(cog_class_saved.description, 'Test description')
+        self.assertEqual(str(cog_class_saved), 'X')
 
     def test_kegg_reaction(self):
         print('Testing Kegg_reaction object creation')
         self.assertEqual(self.kegg_reaction.kegg_id, 'R00001')
         kegg_reaction_saved = Kegg_reaction.objects.get(kegg_id='R00001')
         self.assertEqual(kegg_reaction_saved.description, 'Test description')
+        self.assertEqual(str(kegg_reaction_saved), 'R00001')
 
     def test_kegg_pathway(self):
         print('Testing Kegg_pathway object creation')
         self.assertEqual(self.kegg_pathway.kegg_id, 'map00001')
         kegg_pathway_saved = Kegg_pathway.objects.get(kegg_id='map00001')
         self.assertEqual(kegg_pathway_saved.description, 'Test description')
+        self.assertEqual(str(kegg_pathway_saved), 'map00001')
 
     def test_kegg_ortholog(self):
         print('Testing Kegg_ortholog object creation')
         self.assertEqual(self.kegg_ortholog.kegg_id, 'KO0001')
         kegg_ortholog_saved = Kegg_ortholog.objects.get(kegg_id='KO0001')
         self.assertEqual(kegg_ortholog_saved.description, 'Test description')
+        self.assertEqual(str(kegg_ortholog_saved), 'KO0001')
 
     def test_go_term(self):
         print('Testing Go_term object creation')
         self.assertEqual(self.go_term.go_namespace, 'Test name')
         go_term_saved = Go_term.objects.get(go_id='GO:0000001')
         self.assertEqual(go_term_saved.description, 'Test description')
+        self.assertEqual(str(go_term_saved), 'GO:0000001')
 
     def test_cazy_family(self):
         print('Testing Cazy_family object creation')
         self.assertEqual(self.cazy_family.cazy_id, 'GT99')
         cazy_family_saved = Cazy_family.objects.get(cazy_id='GT99')
         self.assertEqual(cazy_family_saved.description, 'Test description')
+        self.assertEqual(str(cazy_family_saved), 'GT99')
 
     def test_ec_number(self):
         print('Testing Ec_number object creation')
@@ -278,12 +306,14 @@ class BrowserModelsTest(TestCase):
         self.assertEqual(self.ec_number.ec_number, '99.1.1.1')
         ec_number_saved = Ec_number.objects.get(ec_number='99.1.1.1')
         self.assertEqual(ec_number_saved.description, 'Test description')
+        self.assertEqual(str(ec_number_saved), '99.1.1.1')
 
     def test_tc_family(self):
         print('Testing Tc_family object creation')
         self.assertEqual(self.tc_family.tc_id, 'GT99')
         tc_family_saved = Tc_family.objects.get(tc_id='GT99')
         self.assertEqual(tc_family_saved.description, 'Test description')
+        self.assertEqual(str(tc_family_saved), 'GT99')
 
     def test_ortholog_group(self):
         print('Testing Ortholog_group object creation')
@@ -292,6 +322,7 @@ class BrowserModelsTest(TestCase):
         self.assertEqual(ortholog_group_saved.taxon.name,
                          'Rhodanobacter denitrificans'
                          )
+        self.assertEqual(str(ortholog_group_saved), 'COG001')
 
     def test_eggnog_description(self):
         print('Testing Eggnog_description object creation')
@@ -301,6 +332,7 @@ class BrowserModelsTest(TestCase):
             fingerprint=hashlib.md5(description.encode('utf-8')).hexdigest()
             )
         self.assertEqual(eggnog_description_saved.description, 'Test description')
+        self.assertEqual(str(eggnog_description_saved), 'Test description')
 
     def test_protein(self):
         print('Testing Protein object creation')
@@ -322,8 +354,11 @@ class BrowserModelsTest(TestCase):
         self.assertEqual(protein_saved.tc_families.all()[0].tc_id, 'GT99')
         self.assertEqual(protein_saved.ortholog_groups.all()[0].eggnog_id, 'COG001')
         self.assertEqual(protein_saved.eggnog_description.description,
-                         'Test description'
-                         )
+             'Test description'
+        )
+        self.assertEqual(str(protein_saved), hashlib.md5(
+            sequence.encode('utf-8')).hexdigest()
+        )
         # Tests for error on incomplete init args
         with transaction.atomic():
             with self.assertRaises(IntegrityError):
@@ -369,6 +404,7 @@ class BrowserModelsTest(TestCase):
         self.assertEqual(gene_saved.contig.name, 'scaffold0001')
         self.assertEqual(gene_saved.protein.name, 'ProT')
         self.assertEqual(gene_saved.operon.name, 'operon_1')
+        self.assertEqual(str(gene_saved), 'Aaa_0001')
 
     def test_regulon(self):
         print('Testing Regulon object creation')
@@ -376,6 +412,7 @@ class BrowserModelsTest(TestCase):
         regulon_saved = Regulon.objects.get(name='TesT')
         self.assertEqual(regulon_saved.description, 'Test regulon')
         self.assertEqual(regulon_saved.genome.name, 'FW104-10B01')
+        self.assertEqual(str(regulon_saved), 'TesT(FW104-10B01)')
 
     def test_site(self):
         print('Testing Site object creation')
@@ -383,6 +420,7 @@ class BrowserModelsTest(TestCase):
         site_saved = Site.objects.get(name='Test site 1')
         self.assertEqual(site_saved.genome.name, 'FW104-10B01')
         self.assertEqual(site_saved.regulon.name, 'TesT')
+        self.assertEqual(str(site_saved), 'Test site 1')
 
     def test_annotation(self):
         print('Testing Annotation object creation')
@@ -390,4 +428,4 @@ class BrowserModelsTest(TestCase):
         annotation_saved = Annotation.objects.get(value='group_name')
         self.assertEqual(annotation_saved.gene_id.locus_tag, 'Aaa_0001')
         self.assertEqual(annotation_saved.key, 'group')
-
+        self.assertEqual(str(annotation_saved), 'Personal communication: group_name')

@@ -28,7 +28,7 @@ def _sanitize_sequence(query):
         sequence = ''.join([x.rstrip('\n\r') for x in query_lines])
         query_id = 'temp_000'
     sequence = ''.join([i if ord(i) < 128 else '' for i in sequence])
-    sequence = re.sub(r"[^^a-zA-Z]", ' ', sequence)
+    sequence = re.sub(r"[^^a-zA-Z]", '', sequence)
     return query_id, sequence
     
 def validate_params(params):

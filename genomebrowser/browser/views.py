@@ -87,7 +87,7 @@ class AnnotationSearchResultsSubView(generic.ListView):
                 'gene_id__locus_tag'
             ).select_related(
                 'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
-            ).prefetch_related('gene_id__genome__tags')
+            ).prefetch_related('gene_id__genome__tags').distinct()
         else:
             object_list = Annotation.objects.filter(
                 Q(source__icontains=annotation_query) |
@@ -97,7 +97,7 @@ class AnnotationSearchResultsSubView(generic.ListView):
                 'gene_id__locus_tag'
             ).select_related(
                 'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
-            ).prefetch_related('gene_id__genome__tags')
+            ).prefetch_related('gene_id__genome__tags').distinct()
         return object_list
 
 
@@ -166,6 +166,8 @@ class TaxonSearchResultsView(generic.ListView):
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
             self.request.GET.get('query') + '"'
+        else:
+            context['searchcontext'] = 'Query string is empty'
         return context
 
     def get_queryset(self): # new
@@ -256,14 +258,15 @@ class OperonListView(generic.ListView):
             query = self.request.GET.get('query')
             object_list = Operon.objects.filter(genome__name=genome).filter(
                 Q(genes__name__icontains=query) | 
-                Q(genes__locus_tag__icontains=query)
+                Q(genes__locus_tag__icontains=query) |
+                Q(name__icontains=query)
             ).order_by(
                 'name'
             ).select_related(
                 'genome', 'contig'
             ).prefetch_related(
                 'genes', 'genome__tags'
-            )
+            ).distinct()
         else:
             object_list = Operon.objects.filter(genome__name=genome).order_by(
                 'name'
@@ -271,7 +274,7 @@ class OperonListView(generic.ListView):
                 'genome', 'contig'
             ).prefetch_related(
                 'genes', 'genome__tags'
-            )
+            ).distinct()
         return object_list
 
         
@@ -307,7 +310,7 @@ class SiteListView(generic.ListView):
                 'genome', 'contig'
             ).prefetch_related(
                 'genome__tags'
-            )
+            ).distinct()
         else:
             object_list = Site.objects.filter(genome__name=genome).order_by(
                 'name'
@@ -315,7 +318,7 @@ class SiteListView(generic.ListView):
                 'genome', 'contig'
             ).prefetch_related(
                 'genome__tags'
-            )
+            ).distinct()
         return object_list
 
 
@@ -355,7 +358,7 @@ class RegulonListView(generic.ListView):
                 'genome'
             ).prefetch_related(
                 'genome__tags'
-            )
+            ).distinct()
         else:
             object_list = Regulon.objects.filter(
                 genome__name=genome
@@ -365,7 +368,7 @@ class RegulonListView(generic.ListView):
                 'genome'
             ).prefetch_related(
                 'genome__tags'
-            )
+            ).distinct()
         return object_list
 
 
@@ -407,7 +410,7 @@ class GeneSearchResultsSubView(generic.ListView):
         query = query.strip()
         genome = self.request.GET.get('genome')
         query_type = self.request.GET.get('type')
-        logger.debug(', '.join([query, genome, query_type]))
+        #logger.debug(', '.join([query, genome, query_type]))
         if query_type == 'gene':
             if genome:
                 object_list = Gene.objects.filter(
@@ -1479,7 +1482,7 @@ def taxon_detail(request, taxonomy_id):
     '''
     try:
         taxon = Taxon.objects.get(taxonomy_id = taxonomy_id)
-        logger.debug('%s found', taxon.name)
+        #logger.debug('%s found', taxon.name)
     except Taxon.DoesNotExist:
         logger.error('Taxonomy ID %s not found', taxonomy_id)
         raise Http404('Taxon ' + taxonomy_id + ' does not exist')
@@ -1581,7 +1584,6 @@ def strain_detail(request, strain_id):
         for source in sorted(metadata_entries.keys()):
             metadata.append(metadata_entries[source])
         context['metadata'] = metadata
-        logger.debug(str(metadata))
         lineage = [strain.taxon,]
         parent_id = strain.taxon.parent_id
         iteration_count = 0
@@ -1629,7 +1631,6 @@ def sample_detail(request, sample_id):
         metadata = []
         for source in sorted(metadata_entries.keys()):
             metadata.append(metadata_entries[source])
-        logger.debug(str(metadata))
     except Sample.DoesNotExist:
         return render(request,
                       '404.html',
@@ -1740,7 +1741,6 @@ def site_detail(request, genome, name):
         context['viewer_end'] = str(viewer_end)
         context['highlight_start'] = site.start
         context['highlight_end'] = site.end
-        logger.debug(str(site.genes))
     except Site.DoesNotExist:
         raise Http404('Site not found')
     return render(request, 'browser/site.html', context)
@@ -1767,7 +1767,6 @@ def regulon_detail(request, genome, name):
     context['ortholog_groups'] = Ortholog_group.objects.filter(
         id__in=list(ortholog_groups)
         )
-    logger.debug(str([x.name for x in sites]))
     return render(request, 'browser/regulon.html', context)
 
 
@@ -1917,9 +1916,6 @@ class NsearchResultView(View):
                 row=row.split('\t')
                 contig_name, genome_name = row[1].split('|')
                 genome_name = genome_name.split('[')[0]
-                logger.debug('Search for contig %s in genome %s',
-                             contig_name, genome_name
-                             )
                 target = Contig.objects.select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -1968,7 +1964,7 @@ class NsearchResultView(View):
                        "query_len":query_len,
                        "time":time.time()-start_time
                        }
-        logger.debug(context)
+        #logger.debug(context)
         data = json.dumps(context)
         return HttpResponse(data,content_type="application/json")
 
@@ -1989,12 +1985,12 @@ class PsearchResultView(View):
             Takes a POST request and returns a webpage that will send AJAX request
         '''
         sequence = request.POST.get("sequence")
-        logger.debug('Sequence sent: %s', sequence)
+        #logger.debug('Sequence sent: %s', sequence)
         context = {'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')}
-        logger.debug('REQUEST1')
+        #logger.debug('REQUEST1')
         for key, val in request.POST.items():
             context[key] = val
-            logger.debug('%s:%s', key, val)
+            #logger.debug('%s:%s', key, val)
         return render(request,'browser/proteinsearchajax.html', context)
 
     def get(self,request):
@@ -2014,9 +2010,9 @@ class PsearchResultView(View):
         '''
         start_time = time.time()
         result = []
-        logger.debug('REQUEST2')
-        for key, val in request.POST.items():
-            logger.debug('%s,%s', key, val)
+        #logger.debug('REQUEST2')
+        #for key, val in request.POST.items():
+        #    logger.debug('%s,%s', key, val)
         params = {'sequence': request.POST.get("sequence"),
                   'evalue': request.POST.get("evalue"),
                   'hitstoshow': request.POST.get("hitstoshow")
@@ -2153,10 +2149,10 @@ def pathway_view(request):
                     ).prefetch_related(
                         'protein__kegg_orthologs'
                     )
-        logger.debug(kp.kegg_id)
+        #logger.debug(kp.kegg_id)
         kegg_map_url = 'https://www.kegg.jp/kegg-bin/show_pathway?' + \
                        kp.kegg_id + '/'
-        logger.debug(kegg_map_url)
+        #logger.debug(kegg_map_url)
         ko_ids = {}
         for gene in gene_list:
             for ko in gene.protein.kegg_orthologs.all():
@@ -2246,10 +2242,10 @@ class ComparativeView(View):
         except SuspiciousOperation as e:
             return render(request, '404.html', {'searchcontext': str(e)})
         
-        logger.debug('REQUEST1')
-        logger.debug('Request parameters: %s %s %s %s %s', og_id, genome,
-                     locus_tag, request.GET.get('size'), request.GET.get('lines')
-                     )
+        #logger.debug('REQUEST1')
+        #logger.debug('Request parameters: %s %s %s %s %s', og_id, genome,
+        #             locus_tag, request.GET.get('size'), request.GET.get('lines')
+        #             )
         context = {}
         for key, val in request.GET.items():
             context[key] = val
@@ -2274,9 +2270,9 @@ class ComparativeView(View):
     def ajax_view(request):
         start_time = time.time()
 
-        logger.debug('REQUEST2')
-        for key, val in request.GET.items():
-            logger.debug('%s:%s', key, val)
+        #logger.debug('REQUEST2')
+        #for key, val in request.GET.items():
+        #    logger.debug('%s:%s', key, val)
         try:
             ComparativeView.verify_parameters(request.GET.get('size'),
                                               request.GET.get('lines')
@@ -2498,10 +2494,10 @@ def generate_external_link(query, query_type, genome=None):
                     ).prefetch_related(
                         'protein__kegg_orthologs'
                     )
-                    logger.debug(kp_ids[0]['kegg_id'])
+                    #logger.debug(kp_ids[0]['kegg_id'])
                     kegg_map_url = 'https://www.kegg.jp/pathway/' + \
                                    kp_ids[0]['kegg_id'] + '+'
-                    logger.debug(kegg_map_url)
+                    #logger.debug(kegg_map_url)
                     ko_ids = set()
                     for gene in gene_list:
                         for ko in gene.protein.kegg_orthologs.all():
