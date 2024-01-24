@@ -424,4 +424,4 @@ python manage.py update_taxonomy
 Updates taxonomy with new data downloaded from NCBI. 
 
 
-[Back to start page](README)
+[Back to start page](README.md)

@@ -181,4 +181,4 @@ If you have more than one CGCMS-based portal, change “cgcmscluster” to a uni
 
 There are two background images in the repository, one for the dark mode (genomebrowser/static/images/background.jpg) and the other for the light mode (genomebrowser/static/images/background_light.jpg). You can replace them, then run `python manage.py collectstatic` command and restart Apache web server.
 
-[Back to start page](README)
+[Back to start page](README.md)

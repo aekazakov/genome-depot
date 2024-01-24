@@ -128,4 +128,4 @@ A conserved regulon app displays the result of comparative regulon analysis. Reg
 
 A site page has three sections. The site information section contains site coordinates, site sequence and a link to the genome page. The target operons section displays a link to the operon page, operon position and a list of genes for each target operon. The genome viewer section displays the genome with the site highlighted.
 
-[Back to start page](README)
+[Back to start page](README.md)

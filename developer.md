@@ -40,4 +40,4 @@ threads: number of threads for execution of the tool
 
 Some tools have additional configuration parameters storing location of reference data files, default threshold values etc.
 
-[Back to start page](README)
+[Back to start page](README.md)
