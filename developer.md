@@ -39,3 +39,5 @@ conda_env: the name of Conda environment where the tool is installed (typically,
 threads: number of threads for execution of the tool
 
 Some tools have additional configuration parameters storing location of reference data files, default threshold values etc.
+
+[Back to start page](README)
