@@ -125,6 +125,10 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'NCBI Taxonomy ID')
         self.assertContains(response, 'Escherichia coli')
+        # Taxon does not exist
+        response = self.client.get('/taxonomy/9999999999/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'does not exist')
         
     def test_sample_page(self):
         '''
@@ -137,6 +141,9 @@ class BrowserViewsTest(TestCase):
         self.assertContains(response, 'Test sample')
         self.assertContains(response, 'This metadata record is for testing only')
 
+        response = self.client.get('/sample/000000000000/')
+        self.assertEqual(response.status_code, 200)
+
     def test_strain_page(self):
         '''
             Testing Strain page view
@@ -147,6 +154,10 @@ class BrowserViewsTest(TestCase):
         self.assertContains(response, '<h2>Strain</h2>')
         self.assertContains(response, 'E_coli')
 
+        response = self.client.get('/strain/000000000000/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Sample not found')
+
     def test_genome_page(self):
         '''
             Testing Genome page view
@@ -156,6 +167,15 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genome viewer')
         self.assertContains(response, 'E_coli_BW2952')
+        
+        response = self.client.get('/genome/XXXXXXXXXXXX/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'does not exist')
+            
+        response = self.client.get('/genome/E_coli_CFT073/', {'contig':'NC_004431', 'start':'1048', 'end':'3510'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome viewer')
+        self.assertContains(response, 'E_coli_CFT073')
 
     def test_tag_page(self):
         '''
@@ -177,6 +197,10 @@ class BrowserViewsTest(TestCase):
         self.assertContains(response, 'Genome viewer')
         self.assertContains(response, 'BWG_RS00020')
 
+        response = self.client.get('/gene/E_coli_BW2952/XXXXXXXXXXX/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'does not exist')
+
     def test_operonlist_page(self):
         '''
             Testing Operons list page view
@@ -196,6 +220,10 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Operons in')
         self.assertContains(response, 'NC_012759: 190..5020')
+        # if genome does not exist
+        response = view(request, **{'genome':'XXXXXXXXXXXX', 'query':'BWG_RS00005'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'does not exist')
 
     def test_sitelist_page(self):
         '''
@@ -210,6 +238,12 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Sites in')
         self.assertContains(response, 'NC_012759: complement(70130..70146)')
+        # if genome does not exist
+        request = RequestFactory().get('/sites/XXXXXXXXXXXX/')
+        view = SiteListView.as_view()
+        response = view(request, **{'genome':'XXXXXXXXXXXX'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'does not exist')
 
     def test_regulonlist_page(self):
         '''
@@ -224,6 +258,10 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Regulons in')
         self.assertContains(response, 'AraC')
+        # if genome does not exist
+        response = view(request, **{'genome':'XXXXXXXXXXXX'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'does not exist')
 
     def test_gene_search_page(self):
         '''
@@ -240,6 +278,7 @@ class BrowserViewsTest(TestCase):
                             'data: {\'query\': "", \'type\': "gene", ' +\
                             '\'genome\': "E_coli_BW2952", \'page\': "" }'
                             )
+        # search in one genome 
         response = self.client.get('/searchgene/',
                                    {'genome':'E_coli_BW2952', 'type':'gene', 'query':'BWG_RS00010'}
                                    )
@@ -258,6 +297,11 @@ class BrowserViewsTest(TestCase):
                             'data: {\'query\': "thrl", \'type\': "gene", ' +\
                             '\'genome\': "E_coli_BW2952", \'page\': "" }'
                             )
+        response = self.client.get('/searchgene/',
+                                   {'genome':'E_coli_BW2952', 'type':'gene', 'query':''}
+                                   )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genes from genome E_coli_BW2952')
 
     def test_gene_search_byregulator_page(self):
         '''
@@ -290,13 +334,26 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genes from genome E_coli_BW2952')
         self.assertContains(response, 'bifunctional aspartate kinase')
-        # with text query
+        # with text query in one genome
         response = self.client.get('/loadinggenesearch/',
                                    {'genome':'E_coli_BW2952', 'type':'gene', 'query':'thr'}
                                    )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genes from genome E_coli_BW2952')
         self.assertContains(response, 'thr operon leader peptide')
+        # with text query in all genomes
+        response = self.client.get('/loadinggenesearch/',
+                                   {'type':'gene', 'query':'thrl'}
+                                   )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Search results for')
+        self.assertContains(response, 'thr operon leader peptide')
+        # with empty query string
+        response = self.client.get('/loadinggenesearch/',
+                                   {'type':'gene', 'query':''}
+                                   )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Query string is empty')
 
     def test_loading_gene_search_by_og_page(self):
         '''
@@ -373,7 +430,7 @@ class BrowserViewsTest(TestCase):
         self.assertContains(response, 'BWG_RS00010')
         self.assertContains(response, 'C_RS00015')
 
-    def test_loading_gene_search_by_kp_id_page(self):
+    def test_loading_gene_search_by_kr_id_page(self):
         '''
             Testing Genes search results for kp_id type
             path('loadinggenesearch/',
@@ -438,7 +495,7 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Gene ID')
         self.assertContains(response, 'BWG_RS00070')
-        self.assertNotContains(response, 'C_RS00015')
+        self.assertNotContains(response, 'C_RS00080')
         # without genome keyword
         response = self.client.get('/loadinggenesearch/',
                                    {'type':'tc_id', 'query':'1.A.33.1'}
@@ -446,7 +503,7 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Gene ID')
         self.assertContains(response, 'BWG_RS00070')
-        self.assertContains(response, 'C_RS00015')
+        self.assertContains(response, 'C_RS00080')
 
     def test_loading_gene_search_by_cazy_id_page(self):
         '''
@@ -664,6 +721,11 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genomes')
         self.assertContains(response, 'Escherichia coli BW2952')
+        # with empty query
+        response = self.client.get('/searchgenome/',{'query':''})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genomes')
+        self.assertContains(response, 'No genomes found.')
 
     def test_strain_search_page(self):
         '''
@@ -680,6 +742,11 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Strain')
         self.assertContains(response, 'Escherichia coli BW2952')
+        # with empty query
+        response = self.client.get('/searchstrain/',{'query':''})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Strain')
+        self.assertContains(response, 'No strains found.')
 
     def test_sample_search_page(self):
         '''
@@ -690,6 +757,11 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Sample')
         self.assertContains(response, 'Test sample')
+        # with empty query
+        response = self.client.get('/searchsample/',{'query':''})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Sample')
+        self.assertContains(response, 'No samples found.')
 
     def test_taxon_search_page(self):
         '''
@@ -795,6 +867,9 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Operon information')
         self.assertContains(response, operon_id)
+        response = self.client.get('/operon/' + genome_id + '/XXXXXXXXXXXXXX/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'does not exist')
 
     def test_conserved_operon_page(self):
         '''
@@ -844,6 +919,10 @@ class BrowserViewsTest(TestCase):
         self.assertContains(response, 'Site information')
         self.assertContains(response, site_id)
 
+        response = self.client.get('/site/' + genome_id + '/XXXXXXXXXXX/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'does not exist')
+
     def test_regulon_page(self):
         '''
             Testing Regulon page view
@@ -854,6 +933,10 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Regulon information')
         self.assertContains(response, 'AraC')
+
+        response = self.client.get('/regulon/' + genome_id + '/XXXXXXXXXXXXX/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'does not exist')
 
     def test_conserved_regulon_page(self):
         '''
@@ -876,6 +959,10 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Ortholog group')
         self.assertContains(response, '1RIFA')
+
+        response = self.client.get('/ogroup/0000000000/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'does not exist')
 
     def test_textsearch_page(self):
         '''
@@ -918,13 +1005,17 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'K00052')
 
+        response = self.client.get('/kos/', {'query':'isopropylmalate', 'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'K00052')
+
+
     def test_kolist_genome_page(self):
         '''
             Testing KEGG orthologs list page view for a genome
             path('kos/', views.KoSearchResultsView.as_view(), name='kos')
         '''
         response = self.client.get('/kos/', {'genome':'E_coli_CFT073'})
-        #print('test_kolist_genome_page response\n', response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'K00052')
 
@@ -943,6 +1034,10 @@ class BrowserViewsTest(TestCase):
             path('pathways/', views.KpSearchResultsView.as_view(), name='kps')
         '''
         response = self.client.get('/pathways/', {'query':'Pentose'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'map00030')
+
+        response = self.client.get('/pathways/', {'query':'Pentose', 'genome':'E_coli_CFT073'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'map00030')
 
@@ -973,6 +1068,10 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'R11765')
 
+        response = self.client.get('/reactions/', {'query':'tetrahydrobiopterin', 'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'R11765')
+
     def test_reactionslist_genome_page(self):
         '''
             Testing KEGG reactions list page view for a genome
@@ -1000,6 +1099,10 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '1.1.1.3')
 
+        response = self.client.get('/enzymes/', {'query':'homoserine', 'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '1.1.1.3')
+
     def test_enzymeslist_genome_page(self):
         '''
             Testing EC numbers list page view for a genome
@@ -1024,6 +1127,10 @@ class BrowserViewsTest(TestCase):
             path('transporters/', views.TcSearchResultsView.as_view(), name='transporters')
         '''
         response = self.client.get('/transporters/', {'query':'ABC'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '3.A.1')
+
+        response = self.client.get('/transporters/', {'query':'ABC', 'genome':'E_coli_CFT073'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '3.A.1')
 
@@ -1056,6 +1163,11 @@ class BrowserViewsTest(TestCase):
         self.assertContains(response, 'CAZymes')
         self.assertContains(response, 'cellobiose')
 
+        response = self.client.get('/cazy/', {'query':'GH94', 'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'CAZymes')
+        self.assertContains(response, 'cellobiose')
+
     def test_cazylist_genome_page(self):
         '''
             Testing CAZy families list page view for a genome
@@ -1084,6 +1196,10 @@ class BrowserViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Lipid transport and metabolism')
 
+        response = self.client.get('/cogs/', {'query':'I', 'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Lipid transport and metabolism')
+
     def test_cogslist_genome_page(self):
         '''
             Testing COG classes list page view for a genome
@@ -1108,6 +1224,11 @@ class BrowserViewsTest(TestCase):
             path('gos/', views.GoSearchResultsView.as_view(), name='gos')
         '''
         response = self.client.get('/gos/', {'query':'GO:0003824'})
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'GO:0000015')
+        self.assertContains(response, 'catalytic activity')
+
+        response = self.client.get('/gos/', {'query':'GO:0003824', 'genome':'E_coli_CFT073'})
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'GO:0000015')
         self.assertContains(response, 'catalytic activity')
@@ -1315,6 +1436,11 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
             path('export/', export_text.export_csv, name='export')
         '''
         response = self.client.get('/export/', {'query':'E_coli_CFT073','type':'genome'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Name\tTags\t')
+        self.assertContains(response, 'E_coli_CFT073')
+
+        response = self.client.get('/export/', {'type':'genome'})
         #print('Genome list export\n', response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Name\tTags\t')
@@ -1326,7 +1452,11 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
             path('export/', export_text.export_csv, name='export')
         '''
         response = self.client.get('/export/', {'annotation_query':'Pfam','type':'annotation'})
-        #print('Gene list export\n', response.content[:1000])
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '\tAnnotation_source\t')
+        self.assertContains(response, 'E_coli_CFT073')
+
+        response = self.client.get('/export/', {'annotation_query':'Pfam','type':'annotation', 'genome':'E_coli_CFT073'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '\tAnnotation_source\t')
         self.assertContains(response, 'E_coli_CFT073')
@@ -1337,19 +1467,217 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
             path('export/', export_text.export_csv, name='export')
         '''
         response = self.client.get('/export/', {'query':'C_RS00015','type':'gene'})
-        #print('Gene list export\n', response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genome')
         self.assertContains(response, 'E_coli_CFT073')
         self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'query':'C_RS00015','type':'gene', 'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'E_coli_CFT073')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'og', 'query':102482})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'ko_id', 'query':'K12524'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'kp_id', 'query':'map00300'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'kr_id', 'query':'R00480'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'ec_id', 'query':'1.1.1.3'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'tc_id', 'query':'1.A.33.1'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00070')
+        self.assertContains(response, 'C_RS00080')
+
+        response = self.client.get('/export/', {'type':'cazy_id', 'query':'GH94'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'C_RS00340')
+        
+        response = self.client.get('/export/', {'type':'cog_id', 'query':'C'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'go_id', 'query':'GO:0000028'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'ko', 'query':'thrA'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'kp', 'query':'Lysine'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'kr', 'query':'ATP:L-aspartate'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+        self.assertContains(response, 'C_RS00015')
+
+        response = self.client.get('/export/', {'type':'tc', 'query':'Hsp70'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00070')
+
+        response = self.client.get('/export/', {'type':'ec', 'query':'HSDH'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+
+        response = self.client.get('/export/', {'type':'cazy', 'query':'cellobiose'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'C_RS00340')
+
+        response = self.client.get('/export/', {'type':'cog', 'query':'Energy'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00200')
+
+        response = self.client.get('/export/', {'type':'go', 'query':'homoserine dehydrogenase activity'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'BWG_RS00010')
+
 
     def test_export_fasta(self):
         '''
             Testing export of protein fasta
             path('exportfasta/', export_text.export_fasta, name='exportfasta')
         '''
+        response = self.client.get('/exportfasta/', {'query':'C_RS00015','type':'gene', 'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'og', 'query':102482})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'ko_id', 'query':'K12524'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'kp_id', 'query':'map00300'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'kr_id', 'query':'R00480'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'ec_id', 'query':'1.1.1.3'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'tc_id', 'query':'1.A.33.1'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00070')
+        self.assertContains(response, 'MGKIIGIDLGTTNSCVAIMDGTTPRVLENAEG')
+
+        response = self.client.get('/exportfasta/', {'type':'cazy_id', 'query':'GH94'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>C_RS00340')
+        
+        response = self.client.get('/exportfasta/', {'type':'cog_id', 'query':'C'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'go_id', 'query':'GO:0000028'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'ko', 'query':'thrA'})
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'kp', 'query':'Lysine'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'kr', 'query':'ATP:L-aspartate'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'tc', 'query':'Hsp70'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00070')
+        self.assertContains(response, 'MGKIIGIDLGTTNSCVAIMDGTTPRVLENAEG')
+
+        response = self.client.get('/exportfasta/', {'type':'ec', 'query':'HSDH'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+
+        response = self.client.get('/exportfasta/', {'type':'cazy', 'query':'cellobiose'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>C_RS00340')
+
+        response = self.client.get('/exportfasta/', {'type':'cog', 'query':'Energy'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00200')
+
+        response = self.client.get('/exportfasta/', {'type':'go', 'query':'homoserine dehydrogenase activity'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>BWG_RS00010')
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
         response = self.client.get('/exportfasta/', {'query':'K12524','type':'ko_id', 'genome':'E_coli_CFT073'})
-        #print('Proteins FASTA export\n', response.content)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '>C_RS00015')
         self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
@@ -1361,6 +1689,10 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
         '''
         response = self.client.get('/exportgbk/E_coli_CFT073/')
         self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/exportgbk/XXXXXXXXXXX/')
+        self.assertEqual(response.status_code, 200)
+        
         #content = gzip.decompress(response.content)
         #print('GBK file export\n', content[:1000])
         #self.assertContains(content, 'LOCUS')

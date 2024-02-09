@@ -2,6 +2,7 @@
 import os
 import tarfile
 import logging
+import shutil
 import urllib.request
 from pathlib import Path
 from collections import defaultdict

@@ -62,10 +62,6 @@ COLORS = [(51, 34, 136),
 DARK_GREY = '.setColorGradient(\'rgb(119, 119, 119)\', \'rgb(199, 199, 199)\')'
 RED = '.setColorGradient(\'rgb(255, 85, 92)\', \'rgb(220, 5, 12)\')'
 
-def autovivify(levels=1, final=dict):
-    return (defaultdict(final) if levels < 2 else
-            defaultdict(lambda: autovivify(levels - 1, final)))
-
 def _get_color(index):
     color_index = index%len(COLORS)
     light_color = []
@@ -287,6 +283,7 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
         ret_genes.append(genes[int(gene_id)])
     return ret_genes, len(genes), tree_svg, tree_newick
 
+'''
 def collect_genes(tree, taxon2genes, visited_taxa, taxon):
     logger.debug('Visiting ' + taxon)
     if taxon in visited_taxa:
@@ -310,6 +307,7 @@ def collect_genes(tree, taxon2genes, visited_taxa, taxon):
             ordered_genes += child_ordered_genes
             visited_taxa = visited_taxa.union(child_visited_taxa)
     return ordered_genes, visited_taxa
+'''
 
 def get_scribl(start_gene, eggnog_og, request):
     locus_size = int(request.GET.get('size')) * 1000 #10000

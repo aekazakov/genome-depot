@@ -39,11 +39,13 @@ class Annotator(object):
         self.config = {}
         self._read_config()
         self.proteins = {}
+        '''
         self.hmmsearch_input_file = os.path.join(self.config['cgcms.temp_dir'],
                                                  'hmmsearch_input.faa'
                                                  )
         if os.path.exists(self.hmmsearch_input_file):
             os.remove(self.hmmsearch_input_file)
+        '''
         # Data tables
         self.annotations = []
         self.metadata = []
@@ -59,25 +61,27 @@ class Annotator(object):
     def _read_config(self):
         for item in Config.objects.values('param', 'value'):
             self.config[item['param']] = item['value']
-
-    def export_proteins(self, genome_ids):
+    '''
+    def export_proteins(self, genome_ids, out_filename):
         """Populates proteins dictionary and creates FASTA file"""
+        proteins = {}
         if genome_ids is None:
             for item in Protein.objects.all():
-                self.proteins[item['protein_hash']] = item
+                proteins[item['protein_hash']] = item
         else:
             target_genes = Gene.objects.filter(
                                                genome__id__in = genome_ids
                                                ).select_related('protein')
             for gene in target_genes:
                 if gene.protein is not None:
-                    self.proteins[gene.protein.protein_hash] = gene.protein
+                    proteins[gene.protein.protein_hash] = gene.protein
             
-        with open(self.hmmsearch_input_file, 'w') as outfile:
-            for protein_hash, protein in self.proteins.items():
+        with open(out_filename, 'w') as outfile:
+            for protein_hash, protein in proteins.items():
                 outfile.write('>' + protein_hash + '\n')
                 outfile.write(protein.sequence + '\n')
-        
+    '''
+    '''
     def run_hmmsearch(self, outfile, lib_path):
         """
         Runs hmmsearch for FASTA file of proteins.
@@ -98,7 +102,9 @@ class Annotator(object):
             # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
             # pylint: disable=no-member
             raise CalledProcessError(proc.returncode, proc.args)
-        
+    '''
+    
+    '''
     def parse_hmmsearch_output(self, hmmsearchfile):
         hits = {}
         with open(hmmsearchfile, 'r') as infile:
@@ -116,7 +122,8 @@ class Annotator(object):
                            'coords':[row[17] + '..' + row[18]]
                            }
         return hits.values()
-        
+    '''
+    '''
     def read_hmm_reference(self, ref_path):
         result = {}
         with open(ref_path, 'r') as infile:
@@ -128,13 +135,16 @@ class Annotator(object):
                 result[row[0]]['acc'] = row[1]
                 result[row[0]]['desc'] = row[-1]
         return result
-        
+    '''
+    '''
     def add_pfam_domains(self):
         self.proteins = {}
         logger.info('Deleting existing annotations')
         Annotation.objects.filter(source='Pfam database').delete()
         self._create_pfam_domains()
-        
+    '''
+    
+    '''
     def _create_pfam_domains(self, genome_ids=None):
         """Creates PFAM domain mappings for proteins in the database.
         The genome_ids parameter is a list of genome ids that 
@@ -188,7 +198,9 @@ class Annotator(object):
         annotations_written += len(self.annotations)
         logger.info('%d annotations created for PFAM domains', annotations_written)
         self.annotations = []
-        
+    '''
+    
+    '''    
     def update_pfam_domains(self, genome_ids=None):
         self.proteins = {}
         logger.info('Delete existing PFAM annotations')
@@ -199,7 +211,9 @@ class Annotator(object):
                                       gene_id__genome__id__in=genome_ids
                                       ).delete()
         self._create_pfam_domains(genome_ids)
-
+    '''
+    
+    '''
     def update_tigrfam_domains(self, genome_ids=None):
         self.proteins = {}
         logger.info('Delete existing TIGRFAM annotations')
@@ -210,13 +224,17 @@ class Annotator(object):
                                       gene_id__genome__id__in=genome_ids
                                       ).delete()
         self._create_tigrfam_domains(genome_ids)
-
+    '''
+    
+    '''
     def add_tigrfam_domains(self):
         self.proteins = {}
         logger.info('Deleting existing annotations')
         Annotation.objects.filter(source='TIGRFAM database').delete()
         self._create_tigrfam_domains()
+    '''
     
+    '''
     def _create_tigrfam_domains(self, genome_ids=None):
         batch_size=10000
         logger.info('Exporting proteins')
@@ -264,6 +282,9 @@ class Annotator(object):
         logger.info('%d annotations created for TIGRFAM families', annotations_written)
         self.annotations = []
     
+    '''
+    
+    '''
     def make_fitbrowser_annotations(self, strain, org_name, protein_path):
         result = []
         for seq_record in SeqIO.parse(protein_path, "fasta"):
@@ -288,7 +309,9 @@ class Annotator(object):
                             ))
         logger.info('%d genes found in %s', len(result), org_name)
         return result
-        
+    '''
+    
+    '''
     def add_fitbrowser_links(self):
         """ 
             This function adds gene annotations with links to
@@ -324,7 +347,8 @@ class Annotator(object):
                                 )
                     self.annotations = []
         self.annotations = []
-
+    '''
+    
     def add_custom_annotations(self, tsv_file):
         """ This function adds gene annotations from tab-separated file. 
         If such anotation already exists, the existing copy will be 
@@ -551,21 +575,22 @@ class Annotator(object):
                                 strain, source, key, value
                                 )
         # write metadata
-        logger.info('Writing metadata')
+        logger.info('Writing strain metadata')
         Strain_metadata.objects.bulk_create(self.metadata, batch_size=10000)
         logger.info('%s metadata entries written', len(self.metadata))
 
     def update_strain_metadata(self, xlsx_path=None, xlsx_file=None):
         """ 
             This function adds strain metadata from Excel file and
-            from isolates.genomics.lbl.gov API
+            from isolates.genomics.lbl.gov API (if the enigma module is configured)
         """
-        logger.info('Reading metadata from file %s', xlsx_file)
         metadata_imported = defaultdict(dict)
         if xlsx_path is not None:
+            logger.info('Reading metadata from file %s', xlsx_path)
             xlsx_path = Path(xlsx_path)
             wb_obj = openpyxl.load_workbook(xlsx_path)
         else:
+            logger.info('Reading metadata from file %s', xlsx_file)
             wb_obj = openpyxl.load_workbook(filename=BytesIO(xlsx_file.read()))
         sheet = wb_obj.active
         xlsx_header = []
@@ -656,7 +681,7 @@ class Annotator(object):
                     ))
                 logger.info('Metadata added %s %s %s %s', sample, source, key, value)
         # write metadata
-        logger.info('Writing metadata')
+        logger.info('Writing sample metadata')
         Sample_metadata.objects.bulk_create(self.metadata, batch_size=10000)
         logger.info('%d metadata entries written', len(self.metadata))
 

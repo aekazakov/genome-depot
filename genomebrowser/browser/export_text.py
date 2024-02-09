@@ -7,6 +7,8 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.core.exceptions import SuspiciousOperation
 from django.db.models import Q
+from django.shortcuts import render
+
 from browser.models import Annotation
 from browser.models import Gene
 from browser.models import Genome
@@ -684,7 +686,10 @@ def export_gbk(request, name):
         genome = Genome.objects.get(name = name)
     except Genome.DoesNotExist:
         logger.error('Genome not found: ' + str(name))
-        raise
+        return render(request,
+              '404.html',
+              {'searchcontext': 'Genome ' + name + ' does not exist'}
+              )
     gzip_buffer = BytesIO()
     with gzip.open(gzip_buffer, 'wt') as outfile:
         export_genome(genome, outfile)

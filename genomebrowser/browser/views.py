@@ -6,7 +6,6 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
-from django.http import Http404
 from django.views import View, generic
 from django.db.models import Q
 from django.core.exceptions import SuspiciousOperation
@@ -240,12 +239,13 @@ class OperonListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        genome_name = self.kwargs['genome']
         try:
             genome = Genome.objects.prefetch_related('tags').get(
-                name = self.kwargs['genome']
+                name = genome_name
                 )
         except Genome.DoesNotExist:
-            raise Http404('Genome ' + self.kwargs['genome'] + ' does not exist')
+            return {'searchcontext': 'Genome ' + genome_name + ' does not exist'}
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
@@ -290,7 +290,10 @@ class SiteListView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         genome_name = self.kwargs['genome']
-        genome = Genome.objects.prefetch_related('tags').get(name = genome_name)
+        try:
+            genome = Genome.objects.prefetch_related('tags').get(name = genome_name)
+        except Genome.DoesNotExist:
+            return {'searchcontext': 'Genome ' + genome_name + ' does not exist'}
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
@@ -334,7 +337,10 @@ class RegulonListView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         genome_name = self.kwargs['genome']
-        genome = Genome.objects.prefetch_related('tags').get(name = genome_name)
+        try:
+            genome = Genome.objects.prefetch_related('tags').get(name = genome_name)
+        except Genome.DoesNotExist:
+            return {'searchcontext': 'Genome ' + genome_name + ' does not exist'}
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
@@ -1045,6 +1051,8 @@ class KoSearchResultsView(generic.ListView):
         context = super(KoSearchResultsView,self).get_context_data(**kwargs)
         if self.request.GET.get('genome'):
             context['genome'] = self.request.GET.get('genome')
+            context['searchcontext'] = 'Search results for ' \
+                                       + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
@@ -1094,6 +1102,8 @@ class KpSearchResultsView(generic.ListView):
         context = super(KpSearchResultsView,self).get_context_data(**kwargs)
         if self.request.GET.get('genome'):
             context['genome'] = self.request.GET.get('genome')
+            context['searchcontext'] = 'Search results for ' \
+                                       + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
@@ -1142,6 +1152,8 @@ class KrSearchResultsView(generic.ListView):
         context = super(KrSearchResultsView,self).get_context_data(**kwargs)
         if self.request.GET.get('genome'):
             context['genome'] = self.request.GET.get('genome')
+            context['searchcontext'] = 'Search results for ' \
+                                       + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
@@ -1191,6 +1203,8 @@ class EcSearchResultsView(generic.ListView):
         context = super(EcSearchResultsView,self).get_context_data(**kwargs)
         if self.request.GET.get('genome'):
             context['genome'] = self.request.GET.get('genome')
+            context['searchcontext'] = 'Search results for ' \
+                                       + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
@@ -1240,6 +1254,8 @@ class TcSearchResultsView(generic.ListView):
         context = super(TcSearchResultsView,self).get_context_data(**kwargs)
         if self.request.GET.get('genome'):
             context['genome'] = self.request.GET.get('genome')
+            context['searchcontext'] = 'Search results for ' \
+                                       + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
@@ -1288,6 +1304,8 @@ class CazySearchResultsView(generic.ListView):
         context = super(CazySearchResultsView,self).get_context_data(**kwargs)
         if self.request.GET.get('genome'):
             context['genome'] = self.request.GET.get('genome')
+            context['searchcontext'] = 'Search results for ' \
+                                       + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
@@ -1337,6 +1355,8 @@ class GoSearchResultsView(generic.ListView):
         context = super(GoSearchResultsView,self).get_context_data(**kwargs)
         if self.request.GET.get('genome'):
             context['genome'] = self.request.GET.get('genome')
+            context['searchcontext'] = 'Search results for ' \
+                                       + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
@@ -1386,6 +1406,8 @@ class CogSearchResultsView(generic.ListView):
         context = super(CogSearchResultsView,self).get_context_data(**kwargs)
         if self.request.GET.get('genome'):
             context['genome'] = self.request.GET.get('genome')
+            context['searchcontext'] = 'Search results for ' \
+                                       + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
@@ -1482,10 +1504,11 @@ def taxon_detail(request, taxonomy_id):
     '''
     try:
         taxon = Taxon.objects.get(taxonomy_id = taxonomy_id)
-        #logger.debug('%s found', taxon.name)
     except Taxon.DoesNotExist:
-        logger.error('Taxonomy ID %s not found', taxonomy_id)
-        raise Http404('Taxon ' + taxonomy_id + ' does not exist')
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Taxon ' + taxonomy_id + ' does not exist'}
+                      )
     context = {'taxon': taxon}
     children = get_taxon_children(taxonomy_id)
     context['sunburst'] = generate_genome_sunburst(taxonomy_id, children)
@@ -1515,7 +1538,10 @@ def genome_detail(request, name):
             name = name
         )
     except Genome.DoesNotExist:
-        raise Http404('Genome ' + name + ' does not exist')
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Genome ' + name + ' does not exist'}
+                      )
     context = {'genome': genome}
     context['operons'] = Operon.objects.filter(genome=genome).count()
     context['sites'] = Site.objects.filter(genome=genome).count()
@@ -1634,7 +1660,7 @@ def sample_detail(request, sample_id):
     except Sample.DoesNotExist:
         return render(request,
                       '404.html',
-                      {'searchcontext': 'Sample not found: ' + sample_id}
+                      {'searchcontext': 'Sample not found: ' + str(sample_id)}
                       )
     return render(request,
                   'browser/sample.html',
@@ -1680,7 +1706,10 @@ def gene_detail(request, genome, locus_tag):
         context['viewer_start'] = str(viewer_start)
         context['viewer_end'] = str(viewer_end)
     except Gene.DoesNotExist:
-        raise Http404('Gene not found')
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Gene ' + locus_tag + ' does not exist'}
+                      )
     return render(request, 'browser/gene.html', context)
 
 def operon_detail(request, name, genome=None):
@@ -1715,7 +1744,10 @@ def operon_detail(request, name, genome=None):
         context['highlight_end'] = operon.end
         context['sites'] = operon.site_set.all()
     except Operon.DoesNotExist:
-        raise Http404('Operon not found')
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Operon ' + name + ' does not exist'}
+                      )
     return render(request, 'browser/operon.html', context)
 
 def site_detail(request, genome, name):
@@ -1742,7 +1774,10 @@ def site_detail(request, genome, name):
         context['highlight_start'] = site.start
         context['highlight_end'] = site.end
     except Site.DoesNotExist:
-        raise Http404('Site not found')
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Site ' + name + ' does not exist'}
+                      )
     return render(request, 'browser/site.html', context)
 
 def regulon_detail(request, genome, name):
@@ -1756,7 +1791,10 @@ def regulon_detail(request, genome, name):
             ).get(genome__name=genome, name = name)
         context = {'regulon': regulon}
     except Regulon.DoesNotExist:
-        raise Http404('Regulon not found')
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Regulon ' + name + ' does not exist'}
+                      )
     sites = Site.objects.filter(regulon = regulon).select_related(
         'contig').prefetch_related('genes', 'operons')
     context['sites'] = sites
@@ -1772,7 +1810,13 @@ def regulon_detail(request, genome, name):
 
 def og_detail(request, og_id):
     context = {}
-    ortholog_group = Ortholog_group.objects.get(id=og_id)
+    try:
+        ortholog_group = Ortholog_group.objects.get(id=og_id)
+    except Ortholog_group.DoesNotExist:
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Ortholog group does not exist'}
+                      )
     context['ortholog_group'] = ortholog_group
     return render(request, 'browser/family.html', context)
 
@@ -1785,7 +1829,10 @@ def gene_byname(request):
         genome_name = request.GET.get('genome')
         locus_tag = request.GET.get('locus')
     else:
-        raise Http404('Genome name or locus ID not provided')
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Genome name or locus ID not provided'}
+                      )
     try:
         gene = Gene.objects.get(
             locus_tag = locus_tag, genome__name = genome_name
@@ -1813,11 +1860,16 @@ def gene_byname(request):
         context['viewer_start'] = str(viewer_start)
         context['viewer_end'] = str(viewer_end)
     except Gene.DoesNotExist:
-        raise Http404('Gene not found for genome ' + genome_name +
-                      ' and locus tag ' + locus_tag
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Gene not found for genome ' + genome_name +
+                      ' and locus tag ' + locus_tag}
                       )
     except Gene.MultipleObjectsReturned:
-        raise Http404('More than one gene was found')
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'More than one gene was found'}
+                      )
     return render(request, 'browser/gene.html', context)
 
 def protein_search_external(request):
@@ -1859,7 +1911,10 @@ def protein_search_external(request):
                 result[row[0]].append(hit)
         context['searchresult'] = result
     else:
-        raise Http404('Provide protein sequence in FASTA format')
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Provide protein sequence in FASTA format'}
+                      )
     return render(request, 'browser/proteinsearch.html', context)
 
 
@@ -2105,7 +2160,10 @@ def conserved_operon_view(request, operon_id):
     try:
         context['start_operon'] = Operon.objects.get(id=operon_id)
     except Operon.DoesNotExist:
-        raise Http404('Operon ' + str(operon_id) + ' does not exist')
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Operon ' + str(operon_id) + ' does not exist'}
+                      )
     return render(request, 'browser/coperon.html', context)
 
 
@@ -2257,9 +2315,15 @@ class ComparativeView(View):
             )
             og = Ortholog_group.objects.get(id=og_id)
         except Gene.DoesNotExist:
-            raise Http404('Gene not found')
+            return render(request,
+                          '404.html',
+                          {'searchcontext': 'Gene not found'}
+                          )
         except Ortholog_group.DoesNotExist:
-            raise Http404('Ortholog group not found')
+            return render(request,
+                          '404.html',
+                          {'searchcontext': 'Ortholog group not found'}
+                          )
         context['gene'] = gene
         context['size' + request.GET.get('size')] = '1'
         context['lines' + request.GET.get('lines')] = '1'
@@ -2298,9 +2362,15 @@ class ComparativeView(View):
             )
             og = Ortholog_group.objects.get(id=og_id)
         except Gene.DoesNotExist:
-            raise Http404('Gene not found')
+            return render(request,
+                          '404.html',
+                          {'searchcontext': 'Gene not found'}
+                          )
         except Ortholog_group.DoesNotExist:
-            raise Http404('Ortholog group not found')
+            return render(request,
+                          '404.html',
+                          {'searchcontext': 'Ortholog group not found'}
+                          )
         scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count, treemap_gene_ids = \
             get_scribl(gene, og, request)
             

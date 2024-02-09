@@ -1,16 +1,28 @@
 import os
 import hashlib
 from Bio import GenBank
+from Bio.SeqIO.FastaIO import SimpleFastaParser
 from unittest import skip
+from collections import defaultdict
 
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 #from django.db.utils import IntegrityError
 
 from genomebrowser.settings import BASE_DIR
-from browser.pipeline.genome_import import Importer
+from browser.models import Annotation
 from browser.models import Taxon
+from browser.models import Genome
 from browser.models import Strain
 from browser.models import Sample
+from browser.models import Strain_metadata
+from browser.models import Sample_metadata
+from browser.models import Regulon
+
+
+from browser.pipeline.genome_import import Importer
+from browser.pipeline.annotate import Annotator
+from browser.pipeline.util import export_proteins_bygenome,export_nucl_bygenome,export_proteins
+from browser.pipeline.taxonomy import update_taxonomy
 
 # Create your tests here.
 
@@ -26,6 +38,7 @@ class ImporterTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.importer = Importer()
+        cls.annotator= Annotator()
 
     def test_sanitize_genome_id(self):
         '''
@@ -45,6 +58,7 @@ class ImporterTestCase(TestCase):
         '''
         print('Testing load_genome_list function')
         in_file = '../testdata/import_minigenomes.txt'
+        self.importer.inputgenomes = defaultdict(dict)
         self.importer.load_genome_list(in_file)
         self.assertEqual(self.importer.inputgenomes['E_coli_CFT073']['strain'], 'CFT073') # first line imported
         self.assertEqual(self.importer.inputgenomes['E_coli_BW2952']['strain'], 'BW2952') # last line imported
@@ -175,6 +189,229 @@ class ImporterTestCase(TestCase):
         self.importer.export_contigs()
         self.assertEqual(len(self.importer.staticfiles[self.importer.config['cgcms.search_db_dir']]), 1)
 
+    def test_export_proteins(self):
+        '''
+            Test the export_proteins function in util
+            It only checks the output file is not empty
+        '''
+        genome_id = 155
+        test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile.faa')
+
+        export_proteins([genome_id,], test_file)
+
+        with open(test_file, 'r') as infile:
+            for title, seq in SimpleFastaParser(infile):
+                self.assertNotEqual(title, '')
+                self.assertNotEqual(seq, '')
+
+    def test_export_proteins_bygenome(self):
+        '''
+            Test the export_proteins_bygenome function in util
+        '''
+        genome_name = 'E_coli_BW2952'
+        genome = Genome.objects.get(name=genome_name)
+        out_dir = self.importer.config['cgcms.temp_dir']
+        
+        export_proteins_bygenome({genome_name:genome.gbk_filepath}, out_dir)
+
+        out_file = os.path.join(out_dir, str(genome.id) + '.faa')
+        with open(out_file, 'r') as infile:
+            for title, seq in SimpleFastaParser(infile):
+                self.assertEqual(title[:3], 'BWG')
+                self.assertNotEqual(seq, '')
+        #os.remove(out_file)
+
+    def test_export_nucl_bygenome(self):
+        '''
+            Test the export_nucl_bygenome function in util
+            It only checks the output file is not empty
+        '''
+        genome_name = 'E_coli_BW2952'
+        genome = Genome.objects.get(name=genome_name)
+        test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile.fna')
+
+        out_dir = self.importer.config['cgcms.temp_dir']
+        
+        export_nucl_bygenome({genome_name:genome.gbk_filepath}, out_dir)
+
+        out_file = os.path.join(out_dir, str(genome.id) + '.fna')
+        with open(out_file, 'r') as infile:
+            for title, seq in SimpleFastaParser(infile):
+                self.assertNotEqual(title, '')
+                self.assertNotEqual(seq, '')
+        #os.remove(out_file)
+
+    def test_add_regulons(self):
+        '''
+            Test the add_regulons function in Annotator
+        '''
+        genome_name = 'E_coli_BW2952'
+        regulon_name = 'Test'
+        reg_gene_ids = 'BWG_RS00020'
+        target_gene_id = 'BWG_RS00005'
+        contig = 'NC_012759'
+        start = '187'
+        end = '189'
+        strand = '1'
+        sequence = 'TCC'
+        # Prepare the data
+        test_data = []
+        test_line = '\t'.join([regulon_name, genome_name, reg_gene_ids, target_gene_id, contig, \
+            start, end, strand, sequence]) + '\n'
+        test_data.append(test_line)
+        #Existing regulon
+        test_line = '\t'.join(['AraC', genome_name, reg_gene_ids, target_gene_id, contig, \
+            start, end, strand, sequence]) + '\n'
+        test_data.append(test_line)
+        #Non-existant gene
+        test_line = '\t'.join([regulon_name, genome_name, reg_gene_ids, 'fakegene', contig, \
+            start, end, strand, sequence]) + '\n'
+        test_data.append(test_line)
+        
+        self.annotator.add_regulons(test_data)
+        saved_regulon = Regulon.objects.get(name='Test')
+        self.assertEqual(saved_regulon.genome.name, genome_name)
+
+    def test_add_custom_annotations(self):
+        '''
+            Test the add_custom_annotations function in Annotator
+        '''
+        genome_id = 'E_coli_BW2952'
+        # Prepare the data
+        test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile_annot.tsv')
+        with open(test_file, 'w') as outfile:
+            outfile.write('#comment line\n')
+            outfile.write('\t'.join([
+                'BWG_RS00005', 
+                genome_id,
+                'Test source',
+                'Test_URL',
+                'Test',
+                'Test_value',
+                'Test description'
+                ]))
+        
+        self.annotator.add_custom_annotations(test_file)
+        os.remove(test_file)
+        saved_annotation = Annotation.objects.get(key='Test')
+        self.assertEqual(saved_annotation.note, 'Test description')
+        
+    def test_add_strain_metadata(self):
+        '''
+            Test the add_custom_annotations function in Annotator
+        '''
+        strain_id = 'CFT073'
+        # Prepare the data
+        test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile_meta.tsv')
+        with open(test_file, 'w') as outfile:
+            outfile.write('#comment line\n')
+            outfile.write('\t'.join([
+                strain_id,
+                'Test source',
+                'Test_URL',
+                'Test',
+                'Test_value'
+                ]))
+        
+        self.annotator.add_strain_metadata(test_file)
+        os.remove(test_file)
+        saved_metadata = Strain_metadata.objects.get(key='Test')
+        self.assertEqual(saved_metadata.value, 'Test_value')
+
+    def update_strain_metadata(self):
+        '''
+            Test the update_strain_metadata function in Annotator
+        '''
+        strain_id = 'BW2952'
+        test_file = 'test_strain_metadata.xlsx'
+        self.annotator.update_strain_metadata(xlsx_path=test_file)
+        saved_metadata = Strain_metadata.objects.get(key='Order')
+        self.assertEqual(saved_metadata.strain.strain_id, strain_id)
+        self.assertEqual(saved_metadata.value, 'Enterobacterales')
+
+    def test_add_sample_metadata(self):
+        '''
+            Test the add_sample_metadata function in Annotator
+        '''
+        # Prepare the data
+        test_line = '\t'.join(['test_sample', 'Test source', 'Test_URL', 'Test', 'Test_value']) + '\n'
+        test_data = [test_line, ]
+        
+        self.annotator.add_sample_metadata(test_data)
+        saved_metadata = Sample_metadata.objects.get(key='Test')
+        self.assertEqual(saved_metadata.value, 'Test_value')
+
+    def test_update_genome_descriptions(self):
+        '''
+            Test the update_genome_descriptions function in Annotator
+        '''
+        genome_id = 'E_coli_BW2952'
+        test_description = 'Updated genome description'
+        # Prepare the data
+        test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile_genome.tsv')
+        with open(test_file, 'w') as outfile:
+            outfile.write('#comment line\n')
+            outfile.write('\t'.join([
+                genome_id,
+                test_description
+                ]) + '\n')
+        
+        self.annotator.update_genome_descriptions(test_file)
+        os.remove(test_file)
+        genome = Genome.objects.get(name=genome_id)
+        self.assertEqual(genome.description, test_description)
+
+    def test_update_sample_descriptions(self):
+        '''
+            Test the update_sample_descriptions function in Annotator
+        '''
+        sample_id = 'test_sample'
+        test_fullname = 'Updated sample fullname'
+        test_description = 'Updated sample description'
+        # Prepare the data
+        test_line = '\t'.join([sample_id, test_fullname, test_description]) + '\n'
+        test_data = [test_line, ]
+
+        self.annotator.update_sample_descriptions(test_data)
+        
+        sample = Sample.objects.get(sample_id=sample_id)
+        self.assertEqual(sample.full_name, test_fullname)
+        self.assertEqual(sample.description, test_description)
+
+    def test_update_taxonomy(self):
+        '''
+            Test the update_taxonomy function
+        '''
+        taxon = Taxon.objects.get(taxonomy_id="1224")
+        self.assertEqual(taxon.name, "Proteobacteria")
+        update_taxonomy()
+        updated_taxon = Taxon.objects.get(taxonomy_id="1224")
+        self.assertEqual(updated_taxon.name, "Pseudomonadota")
+
+
+class PipelineTestCase(TransactionTestCase):
+    '''
+        Testing pipeline functions that require TransactionTestCase
+    '''
+    fixtures = ['minigenomes.testdata.json']
+    
+    @classmethod
+    def setUp(self):
+        self.importer = Importer()
+        self.annotator= Annotator()
+
+    @skip("skip for now")
+    def test_run_external_tools(self):
+        '''
+            Test the update_sample_descriptions function in Annotator
+        '''
+        genome_id = 'E_coli_BW2952'
+        genome = Genome.objects.get(name=genome_id)
+        test_plugin = 'amrfinder'
+        self.annotator.run_external_tools({genome_id:genome.gbk_filepath})
+        saved_annotations = list(Annotation.objects.filter(gene_id__genome__name=genome_id))
+        print('Annotations:', saved_annotations)
+        self.assertEqual(saved_annotations[0].value[:4], 'AMR:')
 
     @skip("this is a very long test")
     def test_genome_import_pipeline(self):
@@ -190,4 +427,6 @@ class ImporterTestCase(TestCase):
         result = self.importer.import_genomes(lines)
         self.assertEqual(len(self.importer.inputgenomes), 3)
         self.assertEqual(result, 'Done!')
+        
+        
 
