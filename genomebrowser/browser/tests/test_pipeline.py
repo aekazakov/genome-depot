@@ -400,7 +400,7 @@ class PipelineTestCase(TransactionTestCase):
         self.importer = Importer()
         self.annotator= Annotator()
 
-    @skip("skip for now")
+    #@skip("skip for now")
     def test_run_external_tools(self):
         '''
             Test the update_sample_descriptions function in Annotator
@@ -413,7 +413,7 @@ class PipelineTestCase(TransactionTestCase):
         print('Annotations:', saved_annotations)
         self.assertEqual(saved_annotations[0].value[:4], 'AMR:')
 
-    @skip("this is a very long test")
+    #@skip("this is a very long test")
     def test_genome_import_pipeline(self):
         '''
             This test runs the entire genome import pipeline for three minigenomes

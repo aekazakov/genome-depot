@@ -152,7 +152,8 @@ def _export_genes_csv(request):
             ).select_related(
                 'genome',
                 'contig',
-                'protein'
+                'protein',
+                'protein__eggnog_description'
             ).prefetch_related(
                 'protein__kegg_orthologs',
                 'protein__kegg_reactions',
@@ -175,7 +176,8 @@ def _export_genes_csv(request):
                 'Strand',
                 'Type',
                 'Function',
-                'EggNOG families'
+                'KEGG description',
+                'EggNOG families',
                 'KEGG Orthologs',
                 'KEGG Pathways',
                 'KEGG Reactions',
@@ -187,6 +189,7 @@ def _export_genes_csv(request):
                 'Annotations'
             ])
             for gene in object_list:
+                description = ''
                 eggnogs = ''
                 ko = ''
                 kp = ''
@@ -197,10 +200,14 @@ def _export_genes_csv(request):
                 tc = ''
                 cog = ''
                 if gene.protein:
+                    if gene.protein.eggnog_description:
+                        #description = gene.protein.eggnog_description.description
+                        pass
                     if gene.protein.ortholog_groups:
                         eggnogs = ';'.join([item.eggnog_id + '[' + item.taxon.name + ']' for item in gene.protein.ortholog_groups.all()])
                     if gene.protein.kegg_orthologs:
                         ko = ';'.join([item.kegg_id for item in gene.protein.kegg_orthologs.all()])
+                        description = ';'.join([item.description for item in gene.protein.kegg_orthologs.all()])
                     if gene.protein.kegg_pathways:
                         kp = ';'.join([item.kegg_id for item in gene.protein.kegg_pathways.all()])
                     if gene.protein.kegg_reactions:
@@ -228,6 +235,7 @@ def _export_genes_csv(request):
                     str(gene.strand),
                     gene.type,
                     gene.function,
+                    description,
                     eggnogs,
                     ko,
                     kp,

@@ -139,6 +139,23 @@ class Importer(object):
                     raise ValueError('Either strain ID or sample ID required for ' +
                                      'genome ' + genome_id
                                      )
+                if len(genome_id) > Genome._meta.get_field('name').max_length:
+                    raise ValueError(genome_id + ' name is too long')
+                if len(url) > Genome._meta.get_field('external_url').max_length:
+                    raise ValueError(url + ' name is too long')
+                if len(external_id) > Genome._meta.get_field('external_id').max_length:
+                    raise ValueError(external_id + ' name is too long')
+                if len(sample_id) > Sample._meta.get_field('sample_id').max_length:
+                    raise ValueError(sample_id + ' name is too long')
+                if len(strain_id) > Strain._meta.get_field('strain_id').max_length:
+                    raise ValueError(strain_id + ' name is too long')
+                if len(os.path.join(self.config['cgcms.static_dir'],
+                    'gbff', genome_id + '.genome.gbff.gz')
+                    ) > Genome._meta.get_field('gbk_filepath').max_length:
+                    raise ValueError('GBK filepath for genome ' + genome_id +
+                        ' must be less than ' +
+                        str(Genome._meta.get_field('gbk_filepath').max_length) +
+                        ' symbols long')
                 self.inputgenomes[genome_id]['strain'] = strain_id
                 self.inputgenomes[genome_id]['sample'] = sample_id
                 self.inputgenomes[genome_id]['gbk'] = filepath
@@ -154,6 +171,7 @@ class Importer(object):
                 continue
             filepath, genome_id, strain_id, sample_id, url, external_id = \
             line.rstrip('\n\r').split('\t')
+            genome_id = self.sanitize_genome_id(genome_id)
             # Sanity check
             if sample_id == '' and strain_id == '':
                 logger.error('Either strain ID or sample ID required for genome %s',
@@ -161,6 +179,23 @@ class Importer(object):
                 raise ValueError('Either strain ID or sample ID required for genome '
                                  + genome_id
                                  )
+            if len(genome_id) > Genome._meta.get_field('name').max_length:
+                raise ValueError(genome_id + ' name is too long')
+            if len(url) > Genome._meta.get_field('external_url').max_length:
+                raise ValueError(url + ' name is too long')
+            if len(external_id) > Genome._meta.get_field('external_id').max_length:
+                raise ValueError(external_id + ' name is too long')
+            if len(sample_id) > Sample._meta.get_field('sample_id').max_length:
+                raise ValueError(sample_id + ' name is too long')
+            if len(strain_id) > Strain._meta.get_field('strain_id').max_length:
+                raise ValueError(strain_id + ' name is too long')
+            if len(os.path.join(self.config['cgcms.static_dir'],
+                'gbff', genome_id + '.genome.gbff.gz')
+                ) > Genome._meta.get_field('gbk_filepath').max_length:
+                raise ValueError('GBK filepath for genome ' + genome_id +
+                    ' must be less than ' +
+                    str(Genome._meta.get_field('gbk_filepath').max_length) +
+                    ' symbols long')
             self.inputgenomes[genome_id]['strain'] = strain_id
             self.inputgenomes[genome_id]['sample'] = sample_id
             self.inputgenomes[genome_id]['gbk'] = filepath
@@ -1080,17 +1115,16 @@ class Importer(object):
         saved_descriptions = set([description.fingerprint for description
                                   in Eggnog_description.objects.all()
                                   ])
-        for protein_hash in self.protein_data:
-            if 'eggnog.description' not in self.protein_data[protein_hash]:
+        for protein_hash,protein_data in self.protein_data.items():
+            if 'eggnog.description' not in protein_data:
                 continue
-            description = self.protein_data[protein_hash]['eggnog.description']
+            description = protein_data['eggnog.description']
             if description == '':
                 continue
             fingerprint = hashlib.md5(description.encode('utf-8')).hexdigest()
-            if fingerprint not in saved_descriptions \
-            and fingerprint not in self.mappings['description']:
+            if fingerprint not in saved_descriptions:
                 self.mappings['description'][fingerprint] = description
-                self.protein_data[protein_hash]['eggnog_description'] = fingerprint
+            self.protein_data[protein_hash]['eggnog_description'] = fingerprint
 
     def write_data(self):
         """
@@ -1181,7 +1215,7 @@ class Importer(object):
         saved_proteins = set([item['protein_hash'] for item
                               in Protein.objects.values('protein_hash')
                               ])
-        eggnog_descriptions = {description.fingerprint:description for description
+        eggnog_descriptions = {item.fingerprint:item for item
                                in Eggnog_description.objects.all()
                                }
         for protein_hash, protein_data in self.protein_data.items():
@@ -1192,13 +1226,13 @@ class Importer(object):
                 protein_hash=protein_hash,
                 sequence=protein_data['sequence']
             )
-            if 'taxonomic_group' in self.protein_data[protein_hash]:
+            if 'taxonomic_group' in protein_data:
                 protein_instance.taxonomy_id = \
-                    taxon_instances[self.protein_data[protein_hash]['taxonomic_group']]
-            if 'eggnog_description' in self.protein_data[protein_hash]:
+                    taxon_instances[protein_data['taxonomic_group']]
+            if 'eggnog_description' in protein_data:
                 protein_instance.eggnog_description = \
                     eggnog_descriptions[
-                        self.protein_data[protein_hash]['eggnog_description']
+                        protein_data['eggnog_description']
                         ]
             protein_instances.append(protein_instance)
         Protein.objects.bulk_create(protein_instances, batch_size=1000)
