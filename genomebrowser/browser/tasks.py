@@ -102,6 +102,8 @@ def import_genomes_impl(args):
         f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
         f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
         f'{sys.exc_info()[2].tb_lineno}'
+        logger.error(subject)
+        logger.error(message)
     mail_admins(subject, message)
     return result
 

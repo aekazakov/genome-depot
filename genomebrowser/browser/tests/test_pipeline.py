@@ -398,6 +398,33 @@ class PipelineTestCase(TransactionTestCase):
     @classmethod
     def setUp(self):
         self.importer = Importer()
+        self.importer.config['plugins.macsyfinder.conda_env'] = 'cgcms-macsyfinder'
+        self.importer.config['plugins.macsyfinder.model'] = 'TXSScan'
+        self.importer.config['plugins.macsyfinder.models_dir'] = '/mnt/data/work/CGCMS/external_refdata/macsyfinder/data'
+        self.importer.config['plugins.defensefinder.conda_env'] = 'cgcms-defensefinder'
+        self.importer.config['plugins.defensefinder.defensefinder_models_dir'] = '/mnt/data/work/CGCMS/external_refdata/defensefinder/data'
+        self.importer.config['plugins.hmmsearch_tigrfam.conda_env'] = 'cgcms_hmmsearch'
+        self.importer.config['plugins.hmmsearch_tigrfam.hmmsearch_command'] = 'hmmsearch'
+        self.importer.config['plugins.hmmsearch_tigrfam.display_name'] = 'TIGRFAM database'
+        self.importer.config['plugins.hmmsearch_tigrfam.hmm_lib'] = '/mnt/data/work/CGCMS/external_refdata/tigrfam/TIGRFAM.HMM'
+        self.importer.config['plugins.hmmsearch_tigrfam.ref_data'] = '/mnt/data/work/CGCMS/external_refdata/tigrfam/ref_tigrfam.txt'
+        self.importer.config['plugins.hmmsearch_pfam.conda_env'] = 'cgcms_hmmsearch'
+        self.importer.config['plugins.hmmsearch_pfam.hmmsearch_command'] = 'hmmsearch'
+        self.importer.config['plugins.hmmsearch_pfam.display_name'] = 'Pfam database'
+        self.importer.config['plugins.hmmsearch_pfam.hmm_lib'] = '/mnt/data/work/CGCMS/external_refdata/pfam/Pfam-A.hmm'
+        self.importer.config['plugins.hmmsearch_pfam.ref_data'] = '/mnt/data/work/CGCMS/external_refdata/pfam/ref_pfam.txt'
+        self.importer.config['plugins.gapmind.conda_env'] = 'cgcms-gapmind'
+        self.importer.config['plugins.gapmind.gapmind_dir'] = '/mnt/data/work/CGCMS/external_tools/PaperBLAST'
+        self.importer.config['plugins.gapmind.threads'] = '8'
+        self.importer.config['plugins.phispy.conda_env'] = 'cgcms-phispy'
+        self.importer.config['plugins.fama.fama_dir'] = '/mnt/data/work/CGCMS/external_tools/fama/py'
+        self.importer.config['plugins.fama.fama_config'] = '/mnt/data/work/CGCMS/external_tools/fama/config.ini'
+        self.importer.config['plugins.antismash.conda_env'] = 'cgcms-antismash'
+        self.importer.config['plugins.antismash.antismash_cmd'] = 'antismash'
+        self.importer.config['plugins.amrfinder.enabled'] = '1'
+        self.importer.config['plugins.amrfinder.threads'] = '8'
+        self.importer.config['plugins.amrfinder.conda_env'] = 'cgcms-amrfinder'
+        self.importer.config['plugins.amrfinder.display_name'] = 'AMRFinderPlus'
         self.annotator= Annotator()
 
     #@skip("skip for now")
@@ -405,6 +432,11 @@ class PipelineTestCase(TransactionTestCase):
         '''
             Test the update_sample_descriptions function in Annotator
         '''
+        self.annotator.config['plugins.amrfinder.enabled'] = '1'
+        self.annotator.config['plugins.amrfinder.threads'] = '8'
+        self.annotator.config['plugins.amrfinder.conda_env'] = 'cgcms-amrfinder'
+        self.annotator.config['plugins.amrfinder.display_name'] = 'AMRFinderPlus'
+        
         genome_id = 'E_coli_BW2952'
         genome = Genome.objects.get(name=genome_id)
         test_plugin = 'amrfinder'
@@ -422,11 +454,14 @@ class PipelineTestCase(TransactionTestCase):
         lines = []
         with open(os.path.join(BASE_DIR, '../testdata/import_minigenomes.txt'), 'r') as infile:
             for line in infile:
-                lines.append(line.rstrip('\n\r'))
-                print(line)
+                row = line.rstrip('\n\r').split('\t')
+                row[1] = row[1] + '.test'
+                lines.append('\t'.join(row))
+                print('Test input ' + line)
         result = self.importer.import_genomes(lines)
         self.assertEqual(len(self.importer.inputgenomes), 3)
         self.assertEqual(result, 'Done!')
-        
-        
+        test_genome = Genome.objects.get(name = 'E_coli_CFT073.test')
+        self.assertEqual(test_genome.size, 100000)
+
 

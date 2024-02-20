@@ -9,14 +9,38 @@ from collections import defaultdict
 from Bio import Entrez
 from Bio import SeqIO
 from Bio import SeqFeature
+from django.core.management.base import CommandError
 
 from browser.models import Contig
-from browser.models import Gene
-from browser.models import Genome
 from browser.models import Site
 from browser.models import Annotation
+from browser.models import Eggnog_description
+from browser.models import Cog_class
+from browser.models import Kegg_reaction
+from browser.models import Kegg_pathway
+from browser.models import Kegg_ortholog
+from browser.models import Go_term
+from browser.models import Cazy_family
+from browser.models import Ec_number
+from browser.models import Tc_family
+from browser.models import Ortholog_group
+from browser.models import Gene
+from browser.models import Protein
+from browser.models import Genome
+from browser.models import Strain_metadata
+from browser.models import Strain
+from browser.models import Sample_metadata
+from browser.models import Sample
+from browser.models import Tag
+from browser.models import Taxon
+from browser.pipeline.genome_import import Importer
+
 
 logger = logging.getLogger("CGCMS")
+
+def autovivify(levels=1, final=dict):
+    return (defaultdict(final) if levels < 2 else
+            defaultdict(lambda: autovivify(levels - 1, final)))
 
 def export_genome(genome, output_buffer):
     '''
@@ -308,7 +332,103 @@ def download_ncbi_assembly(assembly_id, email, upload_dir):
     logger.info('Getting assembly from ' + str(link))
     urllib.request.urlretrieve(link, filename=outfile)
     return outfile
+
     
-def autovivify(levels=1, final=dict):
-    return (defaultdict(final) if levels < 2 else
-            defaultdict(lambda: autovivify(levels - 1, final)))
+def delete_all_data():
+    # Delete all mappings before deleting genes
+    Annotation.objects.all().delete()
+    Eggnog_description.objects.all().delete()
+    Cog_class.objects.all().delete()
+    Kegg_reaction.objects.all().delete()
+    Kegg_pathway.objects.all().delete()
+    Kegg_ortholog.objects.all().delete()
+    Go_term.objects.all().delete()
+    Cazy_family.objects.all().delete()
+    Ec_number.objects.all().delete()
+    Tc_family.objects.all().delete()
+    Ortholog_group.objects.all().delete()
+    # Delete genes before deleting proteins
+    Gene.objects.all().delete()
+    # Delete proteins
+    Protein.objects.all().delete()
+    # Delete genomes
+    Genome.objects.all().delete()
+    # Delete strains
+    Strain_metadata.objects.all().delete()
+    Strain.objects.all().delete()
+    # Delete samples
+    Sample_metadata.objects.all().delete()
+    Sample.objects.all().delete()
+    # Delete taxonomy entries
+    Taxon.objects.all().delete()
+    # Delete tags
+    Tag.objects.all().delete()
+    
+
+def delete_all_genomes():
+    # Delete all mappings before deleting genes
+    print("Deleting annotations...")
+    Annotation.objects.all().delete()
+    # Delete genes before deleting proteins
+    print("Deleting genes...")
+    Gene.objects.all().delete()
+    # Delete proteins
+    print("Deleting proteins...")
+    Protein.objects.all().delete()
+    # Delete genomes
+    print("Deleting genomes...")
+    Genome.objects.all().delete()
+    # Delete strains
+    print("Deleting strains...")
+    Strain_metadata.objects.all().delete()
+    Strain.objects.all().delete()
+    # Delete samples
+    print("Deleting samples...")
+    Sample_metadata.objects.all().delete()
+    Sample.objects.all().delete()
+    print("...done.")
+
+
+def delete_genome(genome_name):
+    if genome_name == '':
+        raise CommandError('Genome name required')
+    print('Looking for genome', genome_name)
+    genome_set = Genome.objects.filter(name=genome_name)
+    if genome_set.count() == 0:
+        print('Genome ' + genome_name + ' not found')
+        raise CommandError()
+    elif genome_set.count() > 1:
+        print('Not unique genome name: ' + genome_name)
+        raise CommandError()
+    importer = Importer()
+    print('''Note 1: Genome deletion removes contigs, genes and 
+    gene annotations for this genome. It also removes proteins 
+    not linked to any gene. But it does not remove a strain 
+    associated with this genome if the strain has other genomes.''')
+    print('Deleting genome...')
+    genome_set.delete()
+    print('Deleting proteins not linked to genes...')
+    Protein.objects.filter(gene=None).delete()
+    print('Deleting strains not linked to genomes...')
+    Strain.objects.filter(genome=None).delete()
+    print('Deleting samples not linked to genomes...')
+    Sample.objects.filter(genome=None).delete()
+    importer.export_proteins()
+    importer.export_contigs()
+    importer.delete_search_databases()
+    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                    os.path.basename(importer.config['cgcms.search_db_nucl'])),
+                    importer.config['cgcms.search_db_nucl']
+                    )
+    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                    os.path.basename(importer.config['cgcms.search_db_prot'])),
+                    importer.config['cgcms.search_db_prot']
+                    )
+    importer.create_search_databases()
+    shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'],
+                               genome_name
+                               ))
+    os.remove(importer.config['cgcms.search_db_nucl'])
+    os.remove(importer.config['cgcms.search_db_prot'])
+    # importer.cleanup()
+    print('Done!')

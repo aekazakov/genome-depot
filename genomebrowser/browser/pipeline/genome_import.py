@@ -210,22 +210,36 @@ class Importer(object):
                              ])
         for genome_id in self.inputgenomes:
             if genome_id in saved_genomes:
-                problem_genomes.append('Genome already exists in the database ' +
+                problem_genomes.append('Genome name already exists in the database: ' +
                                        genome_id
                                        )
             else:
                 result[genome_id] = self.inputgenomes[genome_id]
             genome_file = self.inputgenomes[genome_id]['gbk']
             if not os.path.exists(genome_file):
-                problem_genomes.append('Genome ' +
+                problem_genomes.append('File for ' +
                                        genome_id +
                                        ' not found: ' +
                                        genome_file
                                        )
+            else:
+                if genome_file.endswith('.gz'):
+                    gbk_handle = gzip.open(genome_file, 'rt')
+                else:
+                    gbk_handle = open(genome_file, 'r')
+                parser = GenBank.parse(gbk_handle)
+                seq_size = 0
+                for gbk_record in parser:
+                    seq_size += gbk_record.size
+                if seq_size == 0:
+                    problem_genomes.append('Input file for ' +
+                                           genome_id +
+                                           ' contains no sequences: ' +
+                                           genome_file
+                                           )
+
         if problem_genomes:
-            logger.error('CHECK INPUT LIST OF GENOMES. SOME GENOME ' + 
-                  'NAMES ALREADY EXIST IN THE DATABASE:'
-                  )
+            logger.error('ERROR: check input files')
             for genome in problem_genomes:
                 logger.error(genome)
             raise ValueError('Check and fix errors:\n' + '\n'.join(problem_genomes))

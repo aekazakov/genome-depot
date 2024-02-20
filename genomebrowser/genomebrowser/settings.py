@@ -205,6 +205,7 @@ LOGGING = {
         'django': {
             'handlers': ['console'],
             'level': 'INFO',
+	    'propagate': True,
         },
         'CGCMS': {
             'handlers': ['console', 'file', 'email'],
