@@ -310,8 +310,11 @@ class MyAdminTestCase(TestCase):
         import_regulon_impl(lines)
         self.assertEqual(Regulon.objects.get(name='TEST').genome.name, 'E_coli_BW2952')
 
-
-        
-
-
-
+    def test_update_strain_metadata_impl(self):
+        # Tests implementation of update_strain_metadata task
+        strain_id = 'BW2952'
+        test_file = 'test_strain_metadata.xlsx'
+        update_strain_metadata_impl(test_file)
+        saved_metadata = Strain_metadata.objects.get(key='Order', strain__strain_id=strain_id)
+        self.assertEqual(saved_metadata.strain.strain_id, strain_id)
+        self.assertEqual(saved_metadata.value, 'Enterobacterales')

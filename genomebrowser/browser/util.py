@@ -442,7 +442,7 @@ def delete_all_genomes(dontask=True):
 def delete_genome(genome_name):
     if genome_name == '':
         raise CommandError('Genome name required')
-    logger.info('Looking for genome', genome_name)
+    logger.info('Looking for genome ' + genome_name)
     genome_set = Genome.objects.filter(name=genome_name)
     if genome_set.count() == 0:
         logger.debug('Genome ' + genome_name + ' not found')
@@ -496,7 +496,7 @@ def delete_genomes(genomes_file):
             genome_name = line.rstrip('\n\r')
             if genome_name == '':
                 continue
-            logger.debug('Looking for genome', genome_name)
+            logger.debug('Looking for genome' + genome_name)
             genome_set = Genome.objects.filter(name=genome_name)
             if genome_set.count() == 0:
                 logger.debug('Genome ' + genome_name + ' not found')
@@ -540,7 +540,7 @@ def delete_genomes(genomes_file):
 def generate_static_files(genomes_file):
     if os.path.exists(genomes_file):
         importer = Importer()
-        logger.debug('Genomes file', genomes_file)
+        logger.debug('Genomes file ' + genomes_file)
         importer.generate_static_files(genomes_file)
     else:
         raise FileNotFoundError('Genomes file not found.')
@@ -551,7 +551,7 @@ def import_config(config_file, overwrite=False):
     (text file with key/value entries separated by "=" symbol)
     '''
     if os.path.exists(config_file):
-        logger.debug('Importing parameters from', config_file)
+        logger.debug('Importing parameters from' + config_file)
         configs = {}
         with open(config_file, 'r') as infile:
             for line in infile:
@@ -588,7 +588,7 @@ def regenerate_jbrowse_files(genome_id):
     # Check genome ID
     if genome_id == '':
         raise CommandError('Genome name required')
-    logger.debug('Looking for genome', genome_id)
+    logger.debug('Looking for genome' + genome_id)
     genome_set = Genome.objects.filter(name=genome_id)
     if genome_set.count() == 0:
         logger.debug('Genome ' + genome_id + ' not found')
@@ -596,7 +596,7 @@ def regenerate_jbrowse_files(genome_id):
     elif genome_set.count() > 1:
         logger.debug('Non-unique genome name: ' + genome_id)
         raise CommandError('Non-unique genome name: ' + genome_id)
-    logger.debug('Genome found:', genome_id)
+    logger.debug('Genome found:' + genome_id)
     genome = genome_set[0]
     # Configure importer
     importer = Importer()
