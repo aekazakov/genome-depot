@@ -1,7 +1,5 @@
-import os
-import sys
 from django.core.management.base import BaseCommand
-from browser.models import Config
+from browser.util import export_config
 
 class Command(BaseCommand):
     help = '''Exports configuration parameters into 
@@ -14,9 +12,4 @@ class Command(BaseCommand):
                             )
 
     def handle(self, *args, **options):
-        if os.path.exists(options['o']):
-            print('Output file already exists')
-            sys.exit()
-        with open(options['o'], 'w') as outfile:
-            for item in Config.objects.values_list('param', 'value'):
-                outfile.write('='.join((str(x) for x in item)) + '\n')
+        export_config(options['o'])

@@ -38,6 +38,7 @@ from browser.models import Tag
 from genomebrowser.settings import BASE_URL
 from browser.pipeline.annotate import Annotator
 from browser.pipeline.taxonomy import load_taxonomy
+from browser.pipeline.util import export_proteins
 
 """ Imports genomes into database from GenBank files.
 Input file must have six columns:
@@ -127,40 +128,12 @@ class Importer(object):
         """
             Reads genome paths, names and links from tab-separated file.
         """
+        lines = []
         with open(in_file, 'r') as infile:
             for line in infile:
-                if line.startswith('#'):
-                    continue
-                filepath, genome_id, strain_id, sample_id, url, external_id = \
-                line.rstrip('\n\r').split('\t')
-                genome_id = self.sanitize_genome_id(genome_id)
-                # Sanity check
-                if sample_id == '' and strain_id == '':
-                    raise ValueError('Either strain ID or sample ID required for ' +
-                                     'genome ' + genome_id
-                                     )
-                if len(genome_id) > Genome._meta.get_field('name').max_length:
-                    raise ValueError(genome_id + ' name is too long')
-                if len(url) > Genome._meta.get_field('external_url').max_length:
-                    raise ValueError(url + ' name is too long')
-                if len(external_id) > Genome._meta.get_field('external_id').max_length:
-                    raise ValueError(external_id + ' name is too long')
-                if len(sample_id) > Sample._meta.get_field('sample_id').max_length:
-                    raise ValueError(sample_id + ' name is too long')
-                if len(strain_id) > Strain._meta.get_field('strain_id').max_length:
-                    raise ValueError(strain_id + ' name is too long')
-                if len(os.path.join(self.config['cgcms.static_dir'],
-                    'gbff', genome_id + '.genome.gbff.gz')
-                    ) > Genome._meta.get_field('gbk_filepath').max_length:
-                    raise ValueError('GBK filepath for genome ' + genome_id +
-                        ' must be less than ' +
-                        str(Genome._meta.get_field('gbk_filepath').max_length) +
-                        ' symbols long')
-                self.inputgenomes[genome_id]['strain'] = strain_id
-                self.inputgenomes[genome_id]['sample'] = sample_id
-                self.inputgenomes[genome_id]['gbk'] = filepath
-                self.inputgenomes[genome_id]['url'] = url
-                self.inputgenomes[genome_id]['external_id'] = external_id
+                lines.append(line)
+        if lines:
+            self.read_genome_list(lines)
 
     def read_genome_list(self, lines):
         """
@@ -230,14 +203,14 @@ class Importer(object):
                 parser = GenBank.parse(gbk_handle)
                 seq_size = 0
                 for gbk_record in parser:
-                    seq_size += gbk_record.size
+                    seq_size += int(gbk_record.size)
                 if seq_size == 0:
                     problem_genomes.append('Input file for ' +
                                            genome_id +
                                            ' contains no sequences: ' +
                                            genome_file
                                            )
-
+                gbk_handle.close()
         if problem_genomes:
             logger.error('ERROR: check input files')
             for genome in problem_genomes:
@@ -1209,7 +1182,7 @@ class Importer(object):
             name__in=[item.name for item in genome_instances]
         )
         self.tag.genome_set.add(*new_genomes)
-        print('Genomes imported')
+        logger.info('Genomes imported')
 
         # write eggnog descriptions
         eggnog_description_instances = []
@@ -1222,7 +1195,7 @@ class Importer(object):
         Eggnog_description.objects.bulk_create(eggnog_description_instances,
                                                batch_size=1000
                                                )
-        print('Descriptions imported')
+        logger.info('Descriptions imported')
 
         # write protein data
         protein_instances = []
@@ -2021,7 +1994,7 @@ class Importer(object):
 
         # delete temp files
         logger.info('Removing temporary files')
-        self.cleanup()
+        #self.cleanup()
         logger.info('All genomes successfully imported')
 
         # Run annotation tools
@@ -2030,8 +2003,8 @@ class Importer(object):
         # Generate annotations with external tools
         new_genome_files = {item['name']:item['gbk_filepath'] for item
                             in Genome.objects.filter(
-                                                     name__in=self.genome_data.keys()
-                                                     ).values('name','gbk_filepath')
+                                name__in=self.genome_data.keys()
+                                ).values('name','gbk_filepath')
                             }
         annotator.run_external_tools(new_genome_files)
         logger.info('Done')
@@ -2043,14 +2016,10 @@ class Importer(object):
             for BLASTP database generation
         """
         prot_db_file = self.config['cgcms.search_db_prot']
-        with open(os.path.join(self.config['cgcms.temp_dir'],
-                               os.path.basename(prot_db_file)
-                               ), 'w') as outfile:
-            for protein in Protein.objects.values('protein_hash', 'sequence'):
-                outfile.write('>' + protein['protein_hash'] +
-                              '\n' + protein['sequence'] +
-                              '\n'
-                              )
+        out_file = os.path.join(self.config['cgcms.temp_dir'],
+            os.path.basename(prot_db_file)
+        )
+        export_proteins(None, out_file)
         self.staticfiles[self.config['cgcms.search_db_dir']]\
             .append(os.path.basename(prot_db_file))
 

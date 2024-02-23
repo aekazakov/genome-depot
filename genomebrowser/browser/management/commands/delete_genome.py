@@ -1,6 +1,4 @@
-import os
-import shutil
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from browser.util import delete_genome
 
 class Command(BaseCommand):
@@ -10,5 +8,4 @@ class Command(BaseCommand):
         parser.add_argument('-g', default='', help='Genome name')
 
     def handle(self, *args, **options):
-        genome_name = options['g']
-        delete_genome(genome_name)
+        delete_genome(options['g'])

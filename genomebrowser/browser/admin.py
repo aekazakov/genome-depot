@@ -562,7 +562,7 @@ class AnnotationAdmin(admin.ModelAdmin):
     def import_annotations(self, request):
         if request.method == 'POST':
             logger.debug(request.FILES)
-            tsv_file = request.FILES["csv_file"]
+            tsv_file = request.FILES["tsv_file"]
             lines = []
             for line in tsv_file:
                 line = line.decode()

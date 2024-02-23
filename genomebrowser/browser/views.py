@@ -2470,32 +2470,11 @@ def generate_gene_search_context(query, query_type, genome=None):
             searchcontext = 'Genes assigned to COG class containing "' + query + '"'
         elif query_type=='go':
             searchcontext = 'Genes assigned to GO terms containing "' + query + '"'
+        else:
+            searchcontext = 'This query type is not supported'
     else:
-        if query_type=='ko':
-            searchcontext = 'Genes from genome ' + genome + \
-                            ' assigned to KEGG Ortholog groups containing "' + \
-                            query + '"'
-        elif query_type=='kp':
-            searchcontext = 'Genes from genome ' + genome + \
-                            ' assigned to KEGG pathways containing "' + query + '"'
-        elif query_type=='kr':
-            searchcontext = 'Genes from genome ' + genome + \
-                            ' assigned to KEGG reactions containing "' + query + '"'
-        elif query_type=='ec':
-            searchcontext = 'Genes from genome ' + genome + \
-                            ' assigned to EC numbers containing "' + query + '"'
-        elif query_type=='tc':
-            searchcontext = 'Genes from genome ' + genome + \
-                            ' assigned to TCDB families containing "' + query + '"'
-        elif query_type=='cazy':
-            searchcontext = 'Genes from genome ' + genome + \
-                            ' assigned to CAZy families containing "' + query + '"'
-        elif query_type=='cog':
-            searchcontext = 'Genes from genome ' + genome + \
-                            ' assigned to COG class containing "' + query + '"'
-        elif query_type=='go':
-            searchcontext = 'Genes from genome ' + genome + \
-                            ' assigned to GO terms containing "' + query + '"'
+        if query_type=='gene':
+            searchcontext = 'Genes from genome ' + genome
         elif query_type=='ko_id':
             searchcontext = 'Genes from KEGG Ortholog Group ' + query + \
                             ' in genome ' +  genome
@@ -2520,8 +2499,8 @@ def generate_gene_search_context(query, query_type, genome=None):
         elif query_type=='go_id':
             searchcontext = 'Genes assigned to GO term ' + query + \
                             ' in genome ' +  genome
-        elif query_type=='gene':
-            searchcontext = 'Genes from genome ' + genome
+        else:
+            searchcontext = 'This query type is not supported'
     return searchcontext
 
     

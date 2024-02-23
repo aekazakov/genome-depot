@@ -107,6 +107,7 @@ def import_genomes_impl(args):
     mail_admins(subject, message)
     return result
 
+
 def update_static_files_impl(genome_names):
     '''
         Deletes and re-creates Jbrowse static files for an input list of

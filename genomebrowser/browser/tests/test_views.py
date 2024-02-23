@@ -2,46 +2,24 @@ import os
 import hashlib
 import gzip
 from unittest import skip
-#from contextlib import contextmanager
-
 from django.test import TestCase
 from django.test import Client
 from django.test import RequestFactory
 from django.utils import timezone
-#from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.db.utils import IntegrityError
-
 from browser.models import Operon
 from browser.models import Site
-
 from browser.views import StrainListView
-#from browser.models import Config
-#from browser.models import Strain
 from browser.views import SampleListView
-#from browser.models import Strain_metadata
 from browser.views import GenomeListView
 from browser.views import AnnotationSearchResultsSubView
 from browser.views import RegulonListView
-#from browser.models import Contig
-#from browser.models import Sample_metadata
-#from browser.models import Kegg_ortholog
-#from browser.models import Kegg_pathway
-#from browser.models import Kegg_reaction
-#from browser.models import Go_term
-#from browser.models import Cog_class
-#from browser.models import Ec_number
-#from browser.models import Cazy_family
 from browser.views import OperonListView
-#from browser.models import Ortholog_group
-#from browser.models import Eggnog_description
-#from browser.models import Tc_family
-#from browser.models import Protein
-#from browser.models import Gene
 from browser.views import SiteListView
 from genomebrowser.settings import BASE_DIR
 from browser.comparative_analysis import _get_color, make_muscle_alignment
 from browser.seqsearch import _sanitize_sequence
 
+from browser.util import recreate_search_databases
 # Create your tests here.
 
 class BrowserViewsTest(TestCase):
@@ -1256,6 +1234,7 @@ class BrowserViewsTest(TestCase):
             Testing protein search results page view
             path('protsearch/',views.PsearchResultView.as_view(),name="proteinsearch")
         '''
+        recreate_search_databases()
         sequence = '''>C_RS00020
 MVKVYAPASSANMSVGFDVLGAAVTPVDGALLGDVVTVEAAETFSLNNLGRFADKLPSEPRENIVYQCWERF
 CQELGKQIPVAMTLEKNMPIGSGLGSSACSVVAALMAMNEHCGKPLNDTRLLALMGELEGRISGSIHYDNVA
@@ -1276,6 +1255,7 @@ QNQEGFVHICRLDTAGARVLEN'''
             Testing actual protein search results page view
             path('loadingprotsearch/',views.PsearchResultView.ajax_view,name="loadingprotsearch")
         '''
+        recreate_search_databases()
         sequence = '''>C_RS00020
 MVKVYAPASSANMSVGFDVLGAAVTPVDGALLGDVVTVEAAETFSLNNLGRFADKLPSEPRENIVYQCWERF
 CQELGKQIPVAMTLEKNMPIGSGLGSSACSVVAALMAMNEHCGKPLNDTRLLALMGELEGRISGSIHYDNVA
@@ -1296,6 +1276,7 @@ QNQEGFVHICRLDTAGARVLEN'''
             Testing external protein search results page view
             path('seqsearch', views.protein_search_external, name='proteinsearchexternal')
         '''
+        recreate_search_databases()
         sequence = '''>C_RS00020%0AMVKVYAPASSANMSVGFDVLGAAVTPVDGALLGDVVTVEAAETFSLNNLGRFADKLPSEPRENIVYQCWERF\nCQELGKQIPVAMTLEKNMPIGSGLGSSACSVVAALMAMNEHCGKPLNDTRLLALMGELEGRISGSIHYDNVA\nPCFLGGMQLMIEENDIISQQVPGFDEWLWVLAYPGIKVSTAEARAILPAQYRRQDCIAHGRHLAGFIHACYS\nRQPELAANLMKDVIAEPYRERLLPGFRQARQAVAEIGAVASGISGSGPTLFALCDKPDTAQRVADWLGKNYL\nQNQEGFVHICRLDTAGARVLEN'''
         response = self.client.get('/seqsearch/', {'sequence':sequence})
         #print('External protein search\n', response.content)
@@ -1347,6 +1328,7 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
             Testing actual nucleotide sequence search results view
             path('loadingnuclsearch/',views.NsearchResultView.ajax_view,name="loadingnuclsearch")
         '''
+        recreate_search_databases()
         sequence = '''>NC_004431:3512..4444
 ATGGTTAAAGTTTATGCCCCGGCTTCCAGTGCCAATATGAGCGTCGGGTTTGATGTGCTCGGGGCGGCGGTGACACCT
 GTTGATGGTGCATTGCTCGGAGATGTAGTCACGGTTGAGGCGGCAGAGACATTCAGTCTCAACAACCTCGGACGCTTT
@@ -1466,6 +1448,12 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
             Testing CSV export of genes table
             path('export/', export_text.export_csv, name='export')
         '''
+        response = self.client.get('/export/', {'type':'gene', 'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Genome')
+        self.assertContains(response, 'E_coli_CFT073')
+        self.assertContains(response, 'C_RS00015')
+
         response = self.client.get('/export/', {'query':'C_RS00015','type':'gene'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genome')
@@ -1680,6 +1668,31 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
         self.assertContains(response, '>C_RS00015')
         self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
 
+        response = self.client.get('/exportfasta/', {'annotation_query':'AA_kinase', 'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'annotation_query':'AA_kinase'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'query':'C_RS00015','type':'gene'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'type':'gene', 'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
+        response = self.client.get('/exportfasta/', {'genome':'E_coli_CFT073'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '>C_RS00015')
+        self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
+
     def test_export_gbk(self):
         '''
             Testing GBK file export
@@ -1690,11 +1703,6 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
 
         response = self.client.get('/exportgbk/XXXXXXXXXXX/')
         self.assertEqual(response.status_code, 200)
-        
-        #content = gzip.decompress(response.content)
-        #print('GBK file export\n', content[:1000])
-        #self.assertContains(content, 'LOCUS')
-        #self.assertContains(content, 'C_RS00015')
 
     '''
         Accessory functions testing

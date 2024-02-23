@@ -6,6 +6,7 @@ from unittest import skip
 from collections import defaultdict
 
 from django.test import TestCase, TransactionTestCase
+from django.utils import timezone
 #from django.db.utils import IntegrityError
 
 from genomebrowser.settings import BASE_DIR
@@ -17,7 +18,6 @@ from browser.models import Sample
 from browser.models import Strain_metadata
 from browser.models import Sample_metadata
 from browser.models import Regulon
-
 
 from browser.pipeline.genome_import import Importer
 from browser.pipeline.annotate import Annotator
@@ -71,7 +71,7 @@ class ImporterTestCase(TestCase):
         self.importer.load_genome_list(in_file)
         self.assertRaises(ValueError,self.importer.check_genomes)
 
-    def create_tag(self):
+    def test_create_tag(self):
         '''
             Test the function creating genome tags
         '''
@@ -182,6 +182,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(locus_tag, 'BWG_RS00005')
         self.assertEqual(self.importer.gene_data[feature_uid]['locus_tag'], 'BWG_RS00005')
         
+    #@skip("skip for now")
     def test_export_contigs(self):
         '''
             Test the export_contigs function
@@ -189,6 +190,7 @@ class ImporterTestCase(TestCase):
         self.importer.export_contigs()
         self.assertEqual(len(self.importer.staticfiles[self.importer.config['cgcms.search_db_dir']]), 1)
 
+    #@skip("skip for now")
     def test_export_proteins(self):
         '''
             Test the export_proteins function in util
@@ -204,6 +206,7 @@ class ImporterTestCase(TestCase):
                 self.assertNotEqual(title, '')
                 self.assertNotEqual(seq, '')
 
+    #@skip("skip for now")
     def test_export_proteins_bygenome(self):
         '''
             Test the export_proteins_bygenome function in util
@@ -221,6 +224,7 @@ class ImporterTestCase(TestCase):
                 self.assertNotEqual(seq, '')
         #os.remove(out_file)
 
+    #@skip("skip for now")
     def test_export_nucl_bygenome(self):
         '''
             Test the export_nucl_bygenome function in util
@@ -318,7 +322,7 @@ class ImporterTestCase(TestCase):
         saved_metadata = Strain_metadata.objects.get(key='Test')
         self.assertEqual(saved_metadata.value, 'Test_value')
 
-    def update_strain_metadata(self):
+    def test_update_strain_metadata(self):
         '''
             Test the update_strain_metadata function in Annotator
         '''
@@ -378,6 +382,7 @@ class ImporterTestCase(TestCase):
         self.assertEqual(sample.full_name, test_fullname)
         self.assertEqual(sample.description, test_description)
 
+    #@skip("skip for now")
     def test_update_taxonomy(self):
         '''
             Test the update_taxonomy function
@@ -398,6 +403,7 @@ class PipelineTestCase(TransactionTestCase):
     @classmethod
     def setUp(self):
         self.importer = Importer()
+        self.importer.config['cgcms.generate_names_command'] = '/mnt/data/work/CGCMS/external_tools/jbrowse/bin/generate-names.pl'
         self.importer.config['plugins.macsyfinder.conda_env'] = 'cgcms-macsyfinder'
         self.importer.config['plugins.macsyfinder.model'] = 'TXSScan'
         self.importer.config['plugins.macsyfinder.models_dir'] = '/mnt/data/work/CGCMS/external_refdata/macsyfinder/data'
@@ -413,6 +419,7 @@ class PipelineTestCase(TransactionTestCase):
         self.importer.config['plugins.hmmsearch_pfam.display_name'] = 'Pfam database'
         self.importer.config['plugins.hmmsearch_pfam.hmm_lib'] = '/mnt/data/work/CGCMS/external_refdata/pfam/Pfam-A.hmm'
         self.importer.config['plugins.hmmsearch_pfam.ref_data'] = '/mnt/data/work/CGCMS/external_refdata/pfam/ref_pfam.txt'
+        self.importer.config['plugins.gapmind.enabled'] = '1'
         self.importer.config['plugins.gapmind.conda_env'] = 'cgcms-gapmind'
         self.importer.config['plugins.gapmind.gapmind_dir'] = '/mnt/data/work/CGCMS/external_tools/PaperBLAST'
         self.importer.config['plugins.gapmind.threads'] = '8'
@@ -421,7 +428,6 @@ class PipelineTestCase(TransactionTestCase):
         self.importer.config['plugins.fama.fama_config'] = '/mnt/data/work/CGCMS/external_tools/fama/config.ini'
         self.importer.config['plugins.antismash.conda_env'] = 'cgcms-antismash'
         self.importer.config['plugins.antismash.antismash_cmd'] = 'antismash'
-        self.importer.config['plugins.amrfinder.enabled'] = '1'
         self.importer.config['plugins.amrfinder.threads'] = '8'
         self.importer.config['plugins.amrfinder.conda_env'] = 'cgcms-amrfinder'
         self.importer.config['plugins.amrfinder.display_name'] = 'AMRFinderPlus'
@@ -430,26 +436,29 @@ class PipelineTestCase(TransactionTestCase):
     #@skip("skip for now")
     def test_run_external_tools(self):
         '''
-            Test the update_sample_descriptions function in Annotator
+            Test the run_external_tools function in Annotator.
+            Gapmind should find 5 hits in the E_coli_BW2952 minigenome
         '''
-        self.annotator.config['plugins.amrfinder.enabled'] = '1'
-        self.annotator.config['plugins.amrfinder.threads'] = '8'
-        self.annotator.config['plugins.amrfinder.conda_env'] = 'cgcms-amrfinder'
-        self.annotator.config['plugins.amrfinder.display_name'] = 'AMRFinderPlus'
+        self.annotator.config['plugins.gapmind.enabled'] = '1'
+        self.annotator.config['plugins.gapmind.conda_env'] = 'cgcms-gapmind'
+        self.annotator.config['plugins.gapmind.gapmind_dir'] = '/mnt/data/work/CGCMS/external_tools/PaperBLAST'
+        self.annotator.config['plugins.gapmind.threads'] = '8'
+        self.annotator.config['plugins.gapmind.display_name'] = 'GapMind'
         
         genome_id = 'E_coli_BW2952'
         genome = Genome.objects.get(name=genome_id)
-        test_plugin = 'amrfinder'
+        test_plugin = 'gapmind'
         self.annotator.run_external_tools({genome_id:genome.gbk_filepath})
-        saved_annotations = list(Annotation.objects.filter(gene_id__genome__name=genome_id))
+        saved_annotations = list(Annotation.objects.filter(gene_id__genome__name=genome_id, source='GapMind'))
         print('Annotations:', saved_annotations)
-        self.assertEqual(saved_annotations[0].value[:4], 'AMR:')
+        self.assertEqual(len(saved_annotations), 5)
 
     #@skip("this is a very long test")
     def test_genome_import_pipeline(self):
         '''
             This test runs the entire genome import pipeline for three minigenomes
         '''
+        Genome.objects.get(name = 'E_coli_CFT073').delete()
         print('Testing the entire genome import pipeline')
         lines = []
         with open(os.path.join(BASE_DIR, '../testdata/import_minigenomes.txt'), 'r') as infile:
@@ -457,11 +466,28 @@ class PipelineTestCase(TransactionTestCase):
                 row = line.rstrip('\n\r').split('\t')
                 row[1] = row[1] + '.test'
                 lines.append('\t'.join(row))
-                print('Test input ' + line)
+                print('Test input ' + '\t'.join(row))
         result = self.importer.import_genomes(lines)
         self.assertEqual(len(self.importer.inputgenomes), 3)
         self.assertEqual(result, 'Done!')
         test_genome = Genome.objects.get(name = 'E_coli_CFT073.test')
         self.assertEqual(test_genome.size, 100000)
 
-
+    def test_predict_operons(self):
+        '''
+            This test runs operon prediction for three minigenomes
+        '''
+        print('Testing the predict_operons function')
+        lines = []
+        genome_id = ''
+        with open(os.path.join(BASE_DIR, '../testdata/import_minigenomes.txt'), 'r') as infile:
+            for line in infile:
+                if line.startswith('#'):
+                    continue
+                row = line.rstrip('\n\r').split('\t')
+                genome_id = row[1]
+                self.importer.inputgenomes[genome_id]['gbk'] = row[0]
+                break
+        operons_data = self.importer.predict_operons()
+        print(operons_data)
+        self.assertEqual(len(operons_data[genome_id]), 23)

@@ -4,6 +4,7 @@ from collections import defaultdict
 from Bio import SeqIO
 from browser.models import Genome
 from browser.models import Gene
+from browser.models import Protein
 
 
 def autovivify(levels=1, final=dict):
@@ -63,6 +64,7 @@ def export_nucl_bygenome(genomes, out_dir):
         ret[genome_name] = outfasta
     return ret
 
+
 def export_proteins(genome_ids, out_filename):
     """
     Populates proteins dictionary and creates protein FASTA file
@@ -73,19 +75,20 @@ def export_proteins(genome_ids, out_filename):
     genome_names(list of int): list of genome ids
     out_filename(str): output file path
     """
-    proteins = {}
-    if genome_ids is None:
-        for item in Protein.objects.all():
-            proteins[item['protein_hash']] = item
-    else:
-        target_genes = Gene.objects.filter(
-                                           genome__id__in = genome_ids
-                                           ).select_related('protein')
-        for gene in target_genes:
-            if gene.protein is not None:
-                proteins[gene.protein.protein_hash] = gene.protein
-        
     with open(out_filename, 'w') as outfile:
-        for protein_hash, protein in proteins.items():
-            outfile.write('>' + protein_hash + '\n')
-            outfile.write(protein.sequence + '\n')
+        if genome_ids is None:
+            for protein in Protein.objects.all():
+                outfile.write('>' + protein.protein_hash + '\n')
+                outfile.write(protein.sequence + '\n')
+        else:
+            proteins = {}
+            target_genes = Gene.objects.filter(
+                                               genome__id__in = genome_ids
+                                               ).select_related('protein')
+            for gene in target_genes:
+                if gene.protein is not None:
+                    proteins[gene.protein.protein_hash] = gene.protein
+        
+            for protein_hash, protein in proteins.items():
+                outfile.write('>' + protein_hash + '\n')
+                outfile.write(protein.sequence + '\n')

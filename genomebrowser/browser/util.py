@@ -2,15 +2,19 @@
     Various utility functions
 """
 import os
+import sys
 import gzip
 import logging
+import shutil
 import urllib
 from collections import defaultdict
 from Bio import Entrez
 from Bio import SeqIO
 from Bio import SeqFeature
+from Bio import GenBank
 from django.core.management.base import CommandError
 
+from browser.models import Config
 from browser.models import Contig
 from browser.models import Site
 from browser.models import Annotation
@@ -44,9 +48,9 @@ def autovivify(levels=1, final=dict):
 
 def export_genome(genome, output_buffer):
     '''
-        Reads genome from GenBank file,
-        adds gene mappings and annotations from CGCMS,
-        writes genome in GenBank format into output buffer
+        Reads one genome from GenBank file,
+        adds gene mappings and annotations from the CGCMS database,
+        writes the genome in GenBank format into the output buffer
     '''
                                         
     # Put genes here genedata[contig_id][gene_id] = list of notes
@@ -57,11 +61,10 @@ def export_genome(genome, output_buffer):
     # Put sites here operondata[contig_id][gene_id] = 
     # list of (regulon, regulator, start, end, strand)
     sitedata = autovivify(2, list)
-    for contig_id in list(Contig.objects.values_list('contig_id',
-                                                 flat=True
-                                                 ).filter(
-                                                 genome=genome
-                                                 )):
+    for contig_id in list(Contig.objects
+        .values_list('contig_id',flat=True)
+        .filter(genome=genome)
+    ):
         operons_seen = {}
         sites_seen = set()
         for gene in Gene.objects.select_related(
@@ -84,12 +87,11 @@ def export_genome(genome, output_buffer):
         ):
             if gene.protein:
                 for item in gene.protein.ortholog_groups.all():
-                    genedata[contig_id][gene.locus_tag]\
-                        .append(
-                            'EGGNOG5:'
-                            + item.eggnog_id + '['
-                            + item.taxon.name + '] [CGCMS/eggNOG-mapper]'
-                        )
+                    genedata[contig_id][gene.locus_tag].append(
+                        'EGGNOG5:'
+                        + item.eggnog_id + '['
+                        + item.taxon.name + '] [CGCMS/eggNOG-mapper]'
+                    )
                 for item in gene.protein.kegg_orthologs.all():
                     genedata[contig_id][gene.locus_tag].append(
                         'KEGG:'
@@ -284,6 +286,8 @@ def export_genomes(out_dir, genome_ids = []):
     '''
         Exports genomes as genbank files
     '''
+    if not os.path.exists(out_dir):
+        raise ValueError('Output directory does not exist:', out_dir)
     if not genome_ids:
         genome_ids = list(Genome.objects.values_list('name',
                                                      flat=True
@@ -334,9 +338,29 @@ def download_ncbi_assembly(assembly_id, email, upload_dir):
     return outfile
 
     
-def delete_all_data():
+def delete_all_data(dontask=True):
+    '''
+    This function deletes all data from the CGCMS database except configs.
+    It would be called from CLI only.
+    User must explicitely confirm data deletion!
+    This function doesn't delete static files.
+    '''
+    print('')
+    while dontask:
+        answer = input('All data in the CGCMS database will be deleted.'
+            'This action cannot be reversed. Continue? (y/n)'
+        )
+        if answer.lower() in ["y","yes"]:
+            break
+        elif answer.lower() in ["n","no"]:
+            print('Exiting.')
+            sys.exit()
+        else:
+            print('Please answer yes/y or no/n.')
     # Delete all mappings before deleting genes
+    logger.info("Deleting annotations...")
     Annotation.objects.all().delete()
+    logger.info("Deleting classifications...")
     Eggnog_description.objects.all().delete()
     Cog_class.objects.all().delete()
     Kegg_reaction.objects.all().delete()
@@ -346,73 +370,100 @@ def delete_all_data():
     Cazy_family.objects.all().delete()
     Ec_number.objects.all().delete()
     Tc_family.objects.all().delete()
+    logger.info("Deleting ortholog families...")
     Ortholog_group.objects.all().delete()
     # Delete genes before deleting proteins
+    logger.info("Deleting genes...")
     Gene.objects.all().delete()
     # Delete proteins
+    logger.info("Deleting proteins...")
     Protein.objects.all().delete()
     # Delete genomes
+    logger.info("Deleting genomes...")
     Genome.objects.all().delete()
     # Delete strains
+    logger.info("Deleting strains...")
     Strain_metadata.objects.all().delete()
     Strain.objects.all().delete()
     # Delete samples
+    logger.info("Deleting samples...")
     Sample_metadata.objects.all().delete()
     Sample.objects.all().delete()
     # Delete taxonomy entries
+    logger.info("Deleting taxonomy...")
     Taxon.objects.all().delete()
     # Delete tags
     Tag.objects.all().delete()
+    logger.info("...done!")
     
 
-def delete_all_genomes():
+def delete_all_genomes(dontask=True):
+    '''
+    This function deletes all genomes and associated data from the CGCMS database.
+    It would be called from CLI only.
+    User must explicitely confirm data deletion!
+    This function doesn't delete static files.
+    '''
+    print('')
+    while dontask:
+        answer = input('All genomes, strains and samples in the CGCMS database '
+            'will be deleted. This action cannot be reversed. Continue? (y/n)'
+        )
+        if answer.lower() in ["y","yes"]:
+            break
+        elif answer.lower() in ["n","no"]:
+            print('Exiting.')
+            sys.exit()
+        else:
+            print('Please answer yes/y or no/n.')
     # Delete all mappings before deleting genes
-    print("Deleting annotations...")
+    logger.info("Deleting annotations...")
     Annotation.objects.all().delete()
     # Delete genes before deleting proteins
-    print("Deleting genes...")
+    logger.info("Deleting genes...")
     Gene.objects.all().delete()
     # Delete proteins
-    print("Deleting proteins...")
+    logger.info("Deleting proteins...")
     Protein.objects.all().delete()
     # Delete genomes
-    print("Deleting genomes...")
+    logger.debug("Deleting genomes...")
     Genome.objects.all().delete()
     # Delete strains
-    print("Deleting strains...")
+    logger.info("Deleting strains...")
     Strain_metadata.objects.all().delete()
     Strain.objects.all().delete()
     # Delete samples
-    print("Deleting samples...")
+    logger.info("Deleting samples...")
     Sample_metadata.objects.all().delete()
     Sample.objects.all().delete()
-    print("...done.")
+    logger.info("...done.")
 
 
 def delete_genome(genome_name):
     if genome_name == '':
         raise CommandError('Genome name required')
-    print('Looking for genome', genome_name)
+    logger.info('Looking for genome', genome_name)
     genome_set = Genome.objects.filter(name=genome_name)
     if genome_set.count() == 0:
-        print('Genome ' + genome_name + ' not found')
+        logger.debug('Genome ' + genome_name + ' not found')
         raise CommandError()
     elif genome_set.count() > 1:
-        print('Not unique genome name: ' + genome_name)
+        logger.debug('Genome name is not unique: ' + genome_name)
         raise CommandError()
     importer = Importer()
-    print('''Note 1: Genome deletion removes contigs, genes and 
+    logger.debug('''Note 1: Genome deletion removes contigs, genes and 
     gene annotations for this genome. It also removes proteins 
     not linked to any gene. But it does not remove a strain 
     associated with this genome if the strain has other genomes.''')
-    print('Deleting genome...')
+    logger.info('Deleting genome...')
     genome_set.delete()
-    print('Deleting proteins not linked to genes...')
+    logger.info('Deleting proteins not linked to genes...')
     Protein.objects.filter(gene=None).delete()
-    print('Deleting strains not linked to genomes...')
+    logger.info('Deleting strains not linked to genomes...')
     Strain.objects.filter(genome=None).delete()
-    print('Deleting samples not linked to genomes...')
+    logger.info('Deleting samples not linked to genomes...')
     Sample.objects.filter(genome=None).delete()
+    logger.info('Re-creating search databases...')
     importer.export_proteins()
     importer.export_contigs()
     importer.delete_search_databases()
@@ -425,10 +476,218 @@ def delete_genome(genome_name):
                     importer.config['cgcms.search_db_prot']
                     )
     importer.create_search_databases()
+    logger.info('Removing temporary files...')
     shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'],
                                genome_name
                                ))
     os.remove(importer.config['cgcms.search_db_nucl'])
     os.remove(importer.config['cgcms.search_db_prot'])
     # importer.cleanup()
-    print('Done!')
+    logger.debug('Done!')
+
+def delete_genomes(genomes_file):
+    # Deletes one or more genomes with all genes and annotations from the database
+    if not os.path.exists(genomes_file):
+        raise CommandError(genomes_file + ' not found')
+    logger.debug('Deleting genomes...')
+    importer = Importer()
+    with open(genomes_file, 'r') as infile:
+        for line in infile:
+            genome_name = line.rstrip('\n\r')
+            if genome_name == '':
+                continue
+            logger.debug('Looking for genome', genome_name)
+            genome_set = Genome.objects.filter(name=genome_name)
+            if genome_set.count() == 0:
+                logger.debug('Genome ' + genome_name + ' not found')
+                continue
+            elif genome_set.count() > 1:
+                logger.debug('Non-unique genome name: ' + genome_name)
+                continue
+            if os.path.exists(os.path.join(importer.config['cgcms.json_dir'],
+                                           genome_name
+                                           )):
+                shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'],
+                                           genome_name
+                                           ))
+            genome_set.delete()
+    logger.info('Deleting proteins not linked to genes...')
+    Protein.objects.filter(gene=None).delete()
+    logger.info('Deleting strains not linked to genomes...')
+    Strain.objects.filter(genome=None).delete()
+    logger.info('Deleting samples not linked to genomes...')
+    Sample.objects.filter(genome=None).delete()
+    logger.info('Re-creating search databases...')
+    importer.export_proteins()
+    importer.export_contigs()
+    importer.delete_search_databases()
+    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                    os.path.basename(importer.config['cgcms.search_db_nucl'])
+                    ),
+                    importer.config['cgcms.search_db_nucl']
+                    )
+    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                    os.path.basename(importer.config['cgcms.search_db_prot'])),
+                    importer.config['cgcms.search_db_prot']
+                    )
+    importer.create_search_databases()
+    os.remove(importer.config['cgcms.search_db_nucl'])
+    os.remove(importer.config['cgcms.search_db_prot'])
+    # importer.cleanup()
+    logger.info('Done!')
+
+
+def generate_static_files(genomes_file):
+    if os.path.exists(genomes_file):
+        importer = Importer()
+        logger.debug('Genomes file', genomes_file)
+        importer.generate_static_files(genomes_file)
+    else:
+        raise FileNotFoundError('Genomes file not found.')
+    
+
+def import_config(config_file, overwrite=False):
+    '''Imports settings from a config file
+    (text file with key/value entries separated by "=" symbol)
+    '''
+    if os.path.exists(config_file):
+        logger.debug('Importing parameters from', config_file)
+        configs = {}
+        with open(config_file, 'r') as infile:
+            for line in infile:
+                key, val = line.rstrip('\n\r').split('=')
+                configs[key.strip()] = val.strip()
+        configs_saved = set()
+        for item in Config.objects.all():
+            if item.param in configs:
+                configs_saved.add(item.param)
+                if overwrite:
+                    if item.value != configs[item.param]:
+                        item.value = configs[item.param]
+                        item.save()
+        for param in configs:
+            if param not in configs_saved:
+                _ = Config.objects.create(param=param, value=configs[param])
+    else:
+        raise FileNotFoundError('Input file not found:' + config_file)
+
+
+def export_config(out_file):
+    if os.path.exists(out_file):
+        logger.error('Output file already exists')
+        sys.exit()
+    with open(out_file, 'w') as outfile:
+        for item in Config.objects.values_list('param', 'value'):
+            outfile.write('='.join((str(x) for x in item)) + '\n')
+
+
+def regenerate_jbrowse_files(genome_id):
+    '''
+    Deletes JBrowse files for a genome and generates new files
+    '''
+    # Check genome ID
+    if genome_id == '':
+        raise CommandError('Genome name required')
+    logger.debug('Looking for genome', genome_id)
+    genome_set = Genome.objects.filter(name=genome_id)
+    if genome_set.count() == 0:
+        logger.debug('Genome ' + genome_id + ' not found')
+        raise CommandError('Genome ' + genome_id + ' not found')
+    elif genome_set.count() > 1:
+        logger.debug('Non-unique genome name: ' + genome_id)
+        raise CommandError('Non-unique genome name: ' + genome_id)
+    logger.debug('Genome found:', genome_id)
+    genome = genome_set[0]
+    # Configure importer
+    importer = Importer()
+    importer.inputgenomes[genome_id]['gbk'] = genome.gbk_filepath
+    importer.inputgenomes[genome_id]['url'] = genome.external_url
+    importer.inputgenomes[genome_id]['external_id'] = genome.external_id
+    if genome.strain is None:
+        importer.inputgenomes[genome_id]['strain'] = ''
+    else:
+        importer.inputgenomes[genome_id]['strain'] = genome.strain.strain_id
+    if genome.sample is None:
+        importer.inputgenomes[genome_id]['sample'] = ''
+    else:
+        importer.inputgenomes[genome_id]['sample'] = genome.sample.sample_id
+    importer.export_jbrowse_genome_data(genome_id)
+
+
+def recreate_search_databases():
+    '''Deletes and re-cretes nucleotide and protein search
+    databases. Use the function if the files are missing or corrupted,
+    or if the genome import pipeline crashed before creating the 
+    search database files.
+    '''
+    importer = Importer()
+    nucl_db_fasta = importer.config['cgcms.search_db_nucl']
+    os.remove(nucl_db_fasta)
+    with open(nucl_db_fasta, 'w') as outfile:
+        for genome_data in Genome.objects.values_list('name', 'gbk_filepath'):
+            if genome_data[1].endswith('.gz'):
+                gbk_handle = gzip.open(genome_data[1], 'rt')
+            else:
+                gbk_handle = open(genome_data[1], 'r')
+            parser = GenBank.parse(gbk_handle)
+            for gbk_record in parser:
+                contig_sequence = gbk_record.sequence
+                contig_id = gbk_record.locus
+                outfile.write('>' + contig_id + '|' +
+                              genome_data[0] + '\n' +
+                              ''.join(contig_sequence) + '\n'
+                              )
+    importer.export_proteins()
+    importer.delete_search_databases()
+    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                    os.path.basename(importer.config['cgcms.search_db_nucl'])),
+                    importer.config['cgcms.search_db_nucl']
+                    )
+    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
+                    os.path.basename(importer.config['cgcms.search_db_prot'])),
+                    importer.config['cgcms.search_db_prot']
+                    )
+    importer.create_search_databases()
+    
+
+def update_tags(genome_file, tag_names):
+    '''
+    Assigns one or more tags to genomes listed
+    in a text or tab-separated file.
+    '''
+    if not os.path.exists(genome_file):
+        raise CommandError('Genomes file ' + genome_file + ' not found.')
+    # create tags if missing
+    tags = {}
+    for tag_name in tag_names.split(','):
+        tag_name = tag_name.strip()
+        if tag_name == '':
+            continue
+        if not tag_name.isalnum():
+            raise CommandError('Tag must contain only alphabet letter (a-z)' +
+                                'and numbers (0-9). Correct the tag ' + tag_name)
+        try:
+            tag = Tag.objects.get(name=tag_name)
+            tags[tag_name] = tag
+        except Tag.DoesNotExist:
+            tag = Tag(name = tag_name, description = '')
+            tag.save()
+            tags[tag_name] = tag
+    # add tags to genome
+    with open(genome_file, 'r') as infile:
+        for line in infile:
+            if line.startswith('#'):
+                continue
+            row = line.rstrip('\n\r').split('\t')
+            if len(row) == 1:
+                genome_name = row[0]
+            else:
+                filepath, genome_name, _, _, _, _ = line.rstrip('\n\r').split('\t')
+            try:
+                genome = Genome.objects.get(name = genome_name)
+                for tag_name, tag in tags.items():
+                    genome.tags.add(tag)
+                genome.save()
+            except Genome.DoesNotExist:
+                print('Genome not found:', genome_name)
+                continue

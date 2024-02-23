@@ -1,4 +1,3 @@
-import os
 from django.core.management.base import BaseCommand
 from browser.util import export_genomes
 
@@ -15,8 +14,6 @@ class Command(BaseCommand):
                             )
     
     def handle(self, *args, **options):
-        if not os.path.exists(options['o']):
-            raise ValueError('Directory not exists:', options['o'])
         if options['g'] == '':
             genomes = []
         else:
