@@ -750,13 +750,13 @@ class Importer(object):
                               )
         work_dir = self.config['cgcms.eggnog_outdir']
         Path(work_dir).mkdir(parents=True, exist_ok=True)
+        for filename in os.listdir(work_dir):
+            os.remove(os.path.join(work_dir, filename))
         orthologs_file = os.path.join(work_dir,
                                       'input_file.emapper.seed_orthologs'
                                       )
         if os.path.exists(result):
             os.remove(result)
-        if os.path.exists(orthologs_file):
-            os.remove(orthologs_file)
         eggnog_mapper_script = os.path.join(self.config['cgcms.temp_dir'],
                                             'run_emapper.sh'
                                             )
@@ -2149,10 +2149,41 @@ class Importer(object):
                           self.config['cgcms.poem.conda_env'] +
                           '\n'
                           )
+            '''                          
+            fasta=$temp/input.fsa
+            $python $SCRIPTPATH/../lib/prod2gmk.py $fasta\_prod_aa.fsa > $fasta\_gmk_aa.fsa
+            $python $SCRIPTPATH/../lib/reid.py $fasta\_gmk_aa.fsa > $fasta\_aa.fsa
+            $python $SCRIPTPATH/../lib/to_list.py $fasta\_aa.fsa > $fasta\.locus
+            $python $SCRIPTPATH/../lib/predict_operon.py predict $fasta $fasta\.locus $SCRIPTPATH/../config/Operon_Predictor/model.hdf5 > $fasta\.adjacency
+
             outfile.write('bash ' + 
                           self.config['cgcms.poem_command'] +
                           ' -f ' + working_dir +
                           ' -a n -p pro >>poem.log\n'
+                          )
+            '''
+
+            outfile.write('python ' + 
+                          os.path.join(self.config['cgcms.poem_dir'], 'lib', 'prod2gmk.py') +
+                          ' ' + os.path.join(working_dir, 'input.fsa_prod_aa.fsa') +
+                          ' > ' +  os.path.join(working_dir, 'input.fsa_gmk_aa.fsa') + '\n'
+                          )
+            outfile.write('python ' + 
+                          os.path.join(self.config['cgcms.poem_dir'], 'lib', 'reid.py') +
+                          ' ' + os.path.join(working_dir, 'input.fsa_gmk_aa.fsa') +
+                          ' > ' +  os.path.join(working_dir, 'input.fsa_aa.fsa') + '\n'
+                          )
+            outfile.write('python ' + 
+                          os.path.join(self.config['cgcms.poem_dir'], 'lib', 'to_list.py') +
+                          ' ' + os.path.join(working_dir, 'input.fsa_aa.fsa') +
+                          ' > ' +  os.path.join(working_dir, 'input.fsa.locus') + '\n'
+                          )
+            outfile.write('python ' + 
+                          os.path.join(self.config['cgcms.poem_dir'], 'lib', 'predict_operon.py') +
+                          ' predict ' + os.path.join(working_dir, 'input.fsa') +
+                          ' ' + os.path.join(working_dir, 'input.fsa.locus') + 
+                          ' ' + os.path.join(self.config['cgcms.poem_dir'], 'config', 'Operon_Predictor', 'model.hdf5') +
+                          ' > ' + os.path.join(working_dir, 'input.fsa.adjacency') + '\n'
                           )
             outfile.write('conda deactivate\n')
             
@@ -2239,7 +2270,7 @@ class Importer(object):
                                                    operon[0][3],
                                                    operon_members
                                                    ])
-                #outfile.write(self.create_operon(operon, operon_index, genes))
+        # Save operon data into a file, for manual check
         with open(os.path.join(working_dir, 'poem_output.txt'), 'w') as outfile:
             for genome_id in operons_data:
                 for item in operons_data[genome_id]:
@@ -2292,7 +2323,7 @@ class Importer(object):
 
     def generate_static_files(self, in_file):
         if os.path.exists(in_file):
-            logger.debug('Genomes list file found', in_file)
+            logger.debug('Genomes list file found:' + in_file)
         self.load_genome_list(in_file)
         self.load_genome_data()
         self.process_gbk()

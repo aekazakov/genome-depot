@@ -18,6 +18,7 @@ from browser.models import Sample
 from browser.models import Strain_metadata
 from browser.models import Sample_metadata
 from browser.models import Regulon
+from browser.models import Tag
 
 from browser.pipeline.genome_import import Importer
 from browser.pipeline.annotate import Annotator
@@ -329,7 +330,7 @@ class ImporterTestCase(TestCase):
         strain_id = 'BW2952'
         test_file = 'test_strain_metadata.xlsx'
         self.annotator.update_strain_metadata(xlsx_path=test_file)
-        saved_metadata = Strain_metadata.objects.get(key='Order')
+        saved_metadata = Strain_metadata.objects.get(key='Phylogenetic Order')
         self.assertEqual(saved_metadata.strain.strain_id, strain_id)
         self.assertEqual(saved_metadata.value, 'Enterobacterales')
 
@@ -431,6 +432,9 @@ class PipelineTestCase(TransactionTestCase):
         self.importer.config['plugins.amrfinder.threads'] = '8'
         self.importer.config['plugins.amrfinder.conda_env'] = 'cgcms-amrfinder'
         self.importer.config['plugins.amrfinder.display_name'] = 'AMRFinderPlus'
+
+        self.importer.config['cgcms.poem_dir'] = '/mnt/data/work/sandbox/poem_py3k/POEM_py3k'
+
         self.annotator= Annotator()
 
     #@skip("skip for now")
@@ -475,19 +479,11 @@ class PipelineTestCase(TransactionTestCase):
 
     def test_predict_operons(self):
         '''
-            This test runs operon prediction for three minigenomes
+            Test the predict_operons function
         '''
-        print('Testing the predict_operons function')
-        lines = []
-        genome_id = ''
-        with open(os.path.join(BASE_DIR, '../testdata/import_minigenomes.txt'), 'r') as infile:
-            for line in infile:
-                if line.startswith('#'):
-                    continue
-                row = line.rstrip('\n\r').split('\t')
-                genome_id = row[1]
-                self.importer.inputgenomes[genome_id]['gbk'] = row[0]
-                break
+        self.importer.inputgenomes['E_coli_BW2952']['gbk'] = '../testdata/E_coli_BW2952.100000.gbk'
         operons_data = self.importer.predict_operons()
         print(operons_data)
-        self.assertEqual(len(operons_data[genome_id]), 23)
+        self.assertTrue('E_coli_BW2952' in operons_data)
+        self.assertEqual(len(operons_data['E_coli_BW2952']), 22)
+        

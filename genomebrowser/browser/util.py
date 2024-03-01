@@ -3,6 +3,7 @@
 """
 import os
 import sys
+import re
 import gzip
 import logging
 import shutil
@@ -38,7 +39,7 @@ from browser.models import Sample
 from browser.models import Tag
 from browser.models import Taxon
 from browser.pipeline.genome_import import Importer
-
+from browser.pipeline.util import export_proteins
 
 logger = logging.getLogger("CGCMS")
 
@@ -302,7 +303,7 @@ def export_genomes(out_dir, genome_ids = []):
                                     genome_id + '.gbff.gz'
                                     ), 'wt') as outfile:
             export_genome(genome, outfile)                            
-        logger.info(genome_id, 'exported')
+        logger.info(genome_id + ' exported')
     
 
 def download_ncbi_assembly(assembly_id, email, upload_dir):
@@ -338,7 +339,7 @@ def download_ncbi_assembly(assembly_id, email, upload_dir):
     return outfile
 
     
-def delete_all_data(dontask=True):
+def delete_all_data(confirm=True):
     '''
     This function deletes all data from the CGCMS database except configs.
     It would be called from CLI only.
@@ -346,7 +347,7 @@ def delete_all_data(dontask=True):
     This function doesn't delete static files.
     '''
     print('')
-    while dontask:
+    while confirm:
         answer = input('All data in the CGCMS database will be deleted.'
             'This action cannot be reversed. Continue? (y/n)'
         )
@@ -354,7 +355,7 @@ def delete_all_data(dontask=True):
             break
         elif answer.lower() in ["n","no"]:
             print('Exiting.')
-            sys.exit()
+            return
         else:
             print('Please answer yes/y or no/n.')
     # Delete all mappings before deleting genes
@@ -397,7 +398,7 @@ def delete_all_data(dontask=True):
     logger.info("...done!")
     
 
-def delete_all_genomes(dontask=True):
+def delete_all_genomes(confirm=True):
     '''
     This function deletes all genomes and associated data from the CGCMS database.
     It would be called from CLI only.
@@ -405,7 +406,7 @@ def delete_all_genomes(dontask=True):
     This function doesn't delete static files.
     '''
     print('')
-    while dontask:
+    while confirm:
         answer = input('All genomes, strains and samples in the CGCMS database '
             'will be deleted. This action cannot be reversed. Continue? (y/n)'
         )
@@ -413,7 +414,7 @@ def delete_all_genomes(dontask=True):
             break
         elif answer.lower() in ["n","no"]:
             print('Exiting.')
-            sys.exit()
+            return
         else:
             print('Please answer yes/y or no/n.')
     # Delete all mappings before deleting genes
@@ -477,9 +478,9 @@ def delete_genome(genome_name):
                     )
     importer.create_search_databases()
     logger.info('Removing temporary files...')
-    shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'],
-                               genome_name
-                               ))
+    json_dir = os.path.join(importer.config['cgcms.json_dir'], genome_name)
+    if os.path.exists(json_dir):
+        shutil.rmtree(json_dir)
     os.remove(importer.config['cgcms.search_db_nucl'])
     os.remove(importer.config['cgcms.search_db_prot'])
     # importer.cleanup()
@@ -575,7 +576,7 @@ def import_config(config_file, overwrite=False):
 def export_config(out_file):
     if os.path.exists(out_file):
         logger.error('Output file already exists')
-        sys.exit()
+        return
     with open(out_file, 'w') as outfile:
         for item in Config.objects.values_list('param', 'value'):
             outfile.write('='.join((str(x) for x in item)) + '\n')
@@ -621,8 +622,11 @@ def recreate_search_databases():
     search database files.
     '''
     importer = Importer()
-    nucl_db_fasta = importer.config['cgcms.search_db_nucl']
-    os.remove(nucl_db_fasta)
+    nucl_db_fasta = os.path.join(importer.config['cgcms.temp_dir'],
+        os.path.basename(importer.config['cgcms.search_db_nucl'])
+        )
+    if os.path.exists(nucl_db_fasta):
+        os.remove(nucl_db_fasta)
     with open(nucl_db_fasta, 'w') as outfile:
         for genome_data in Genome.objects.values_list('name', 'gbk_filepath'):
             if genome_data[1].endswith('.gz'):
@@ -637,7 +641,17 @@ def recreate_search_databases():
                               genome_data[0] + '\n' +
                               ''.join(contig_sequence) + '\n'
                               )
-    importer.export_proteins()
+
+    prot_db_fasta = os.path.join(importer.config['cgcms.temp_dir'],
+        os.path.basename(importer.config['cgcms.search_db_prot'])
+        )
+    if os.path.exists(prot_db_fasta):
+        os.remove(prot_db_fasta)
+    export_proteins(None, prot_db_fasta)
+    if os.path.exists(importer.config['cgcms.search_db_nucl']):
+        os.remove(importer.config['cgcms.search_db_nucl'])
+    if os.path.exists(importer.config['cgcms.search_db_prot']):
+        os.remove(importer.config['cgcms.search_db_prot'])
     importer.delete_search_databases()
     shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
                     os.path.basename(importer.config['cgcms.search_db_nucl'])),
@@ -663,9 +677,9 @@ def update_tags(genome_file, tag_names):
         tag_name = tag_name.strip()
         if tag_name == '':
             continue
-        if not tag_name.isalnum():
-            raise CommandError('Tag must contain only alphabet letter (a-z)' +
-                                'and numbers (0-9). Correct the tag ' + tag_name)
+        if not bool(re.match('[A-Za-z0-9\-\_]+$', 'tag_name')):
+            raise CommandError('Tag must contain only alphabet letters (a-z), ' +
+                                'numbers (0-9), hyphen or underscore. Correct the tag ' + tag_name)
         try:
             tag = Tag.objects.get(name=tag_name)
             tags[tag_name] = tag

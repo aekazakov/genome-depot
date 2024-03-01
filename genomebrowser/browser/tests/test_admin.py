@@ -3,18 +3,22 @@ from unittest import skip
 
 from django.test import TestCase
 from django.test import Client
+from django.test import RequestFactory
 
 from django.contrib.auth.models import User
 from django.contrib.admin.sites import AdminSite
 from django.shortcuts import reverse
 
 from genomebrowser.settings import BASE_DIR
+from browser.models import Config
 from browser.models import Genome
 from browser.models import Annotation
 from browser.models import Strain
 from browser.models import Sample
 from browser.models import Tag
 from browser.models import Sample_metadata
+from browser.models import Strain_metadata
+from browser.models import Regulon
 
 from browser.admin import GenomeAdmin
 from browser.tasks import test_task_impl
@@ -276,7 +280,7 @@ class MyAdminTestCase(TestCase):
         # Tests implementation of update_static_files task
         genomes = ['E_coli_BW2952',]
         update_static_files_impl(genomes)
-        json_dir = os.path.join(Config.objects.get(param='cgcms.json_dir'), genome)
+        json_dir = os.path.join(Config.objects.get(param='cgcms.json_dir').value, genomes[0])
         self.assertTrue(os.path.exists(json_dir))
 
     def test_delete_genomes_impl(self):
@@ -296,7 +300,7 @@ class MyAdminTestCase(TestCase):
         # Tests implementation of import_sample_metadata task
         lines = ['test_sample\ttest\ttest description',]
         import_sample_descriptions_impl(lines)
-        self.assertEqual(Sample.objects.get(name='test_sample').description, 'test description')
+        self.assertEqual(Sample.objects.get(sample_id='test_sample').description, 'test description')
 
     def test_import_annotations_impl(self):
         # Tests implementation of import_annotations task
@@ -315,6 +319,6 @@ class MyAdminTestCase(TestCase):
         strain_id = 'BW2952'
         test_file = 'test_strain_metadata.xlsx'
         update_strain_metadata_impl(test_file)
-        saved_metadata = Strain_metadata.objects.get(key='Order', strain__strain_id=strain_id)
+        saved_metadata = Strain_metadata.objects.get(key='Phylogenetic Order', strain__strain_id=strain_id)
         self.assertEqual(saved_metadata.strain.strain_id, strain_id)
         self.assertEqual(saved_metadata.value, 'Enterobacterales')
