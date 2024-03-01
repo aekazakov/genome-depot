@@ -48,8 +48,8 @@ class ImporterTestCase(TestCase):
         print('Testing sanitize_genome_id function')
         self.assertEqual(self.importer.sanitize_genome_id('E_coli_CFT073'), 'E_coli_CFT073')
         self.assertEqual(self.importer.sanitize_genome_id('E_coli CFT073'), 'E_coli_CFT073')
-        self.assertEqual(self.importer.sanitize_genome_id('E_coli.CFT073'), 'E_coli_CFT073')
-        self.assertEqual(self.importer.sanitize_genome_id('E_coli..CFT073'), 'E_coli_CFT073')
+        self.assertEqual(self.importer.sanitize_genome_id('E_coli!CFT073'), 'E_coli_CFT073')
+        self.assertEqual(self.importer.sanitize_genome_id('E_coli.CFT073'), 'E_coli.CFT073')
         self.assertEqual(self.importer.sanitize_genome_id('E_coli_α_CFT073'), 'E_coli_CFT073')
         self.assertEqual(self.importer.sanitize_genome_id('E_coli___CFT073'), 'E_coli_CFT073')
  
@@ -68,6 +68,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the function checking if genome names are unique
         '''
+        print('Testing check_genomes function')
         in_file = '../testdata/import_minigenomes.txt'
         self.importer.load_genome_list(in_file)
         self.assertRaises(ValueError,self.importer.check_genomes)
@@ -76,6 +77,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the function creating genome tags
         '''
+        print('Testing create_tag function')
         current_date = str(timezone.localdate(timezone.now()))
         tag_name = 'imported_' + str(timezone.localdate(timezone.now()))
         tag_description = 'Genomes imported on ' + current_date
@@ -86,7 +88,7 @@ class ImporterTestCase(TestCase):
         '''
             Test if taxonomic order is correctly identified
         '''
-        print('Testing find_taxonomic_order function')
+        print('Testing get_taxonomic_order function')
         pseudomonadales = self.importer.get_taxonomic_order('286')
         self.assertEqual(pseudomonadales, 'Pseudomonadales')
         pseudomonadales = self.importer.get_taxonomic_order('72274')
@@ -104,6 +106,7 @@ class ImporterTestCase(TestCase):
         '''
             Test if organism name is correctly identified
         '''
+        print('Testing get_gbk_organism function')
         in_file = '../testdata/E_coli_BW2952.100000.gbk'
         out = self.importer.get_gbk_organism(in_file)
         self.assertEqual(out['organism'], 'Escherichia coli BW2952')
@@ -135,6 +138,7 @@ class ImporterTestCase(TestCase):
         '''
             Test if a strain record is created
         '''
+        print('Testing prepare_strain_data function')
         self.importer.inputgenomes['Test_genome']['strain'] = 'Test'
         self.importer.inputgenomes['Test_genome']['gbk'] = '../testdata/E_coli_BW2952.100000.gbk'
         self.importer.prepare_strain_data()
@@ -144,6 +148,7 @@ class ImporterTestCase(TestCase):
         '''
             Test if a sample record is created
         '''
+        print('Testing prepare_sample_data function')
         in_file = '../testdata/import_minigenomes.txt'
         # Prepare the data
         self.importer.inputgenomes['Test']['sample'] = 'Test'
@@ -154,6 +159,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the parse_location function
         '''
+        print('Testing parse_location function')
         in_file = '../testdata/import_minigenomes.txt'
         # Prepare the data
         location = self.importer.parse_location('190..255', 100000)
@@ -173,6 +179,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the process_feature function
         '''
+        print('Testing process_feature function')
         in_file = '../testdata/E_coli_BW2952.100000.gbk'
         gbk_handle = open(in_file, 'r')
         gbk_record = GenBank.read(gbk_handle)
@@ -188,6 +195,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the export_contigs function
         '''
+        print('Testing export_contigs function')
         self.importer.export_contigs()
         self.assertEqual(len(self.importer.staticfiles[self.importer.config['cgcms.search_db_dir']]), 1)
 
@@ -197,6 +205,7 @@ class ImporterTestCase(TestCase):
             Test the export_proteins function in util
             It only checks the output file is not empty
         '''
+        print('Testing export_proteins function')
         genome_id = 155
         test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile.faa')
 
@@ -212,6 +221,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the export_proteins_bygenome function in util
         '''
+        print('Testing export_proteins_bygenome function')
         genome_name = 'E_coli_BW2952'
         genome = Genome.objects.get(name=genome_name)
         out_dir = self.importer.config['cgcms.temp_dir']
@@ -231,6 +241,7 @@ class ImporterTestCase(TestCase):
             Test the export_nucl_bygenome function in util
             It only checks the output file is not empty
         '''
+        print('Testing export_nucl_bygenome function')
         genome_name = 'E_coli_BW2952'
         genome = Genome.objects.get(name=genome_name)
         test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile.fna')
@@ -250,6 +261,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the add_regulons function in Annotator
         '''
+        print('Testing add_regulons function')
         genome_name = 'E_coli_BW2952'
         regulon_name = 'Test'
         reg_gene_ids = 'BWG_RS00020'
@@ -281,6 +293,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the add_custom_annotations function in Annotator
         '''
+        print('Testing add_custom_annotations function')
         genome_id = 'E_coli_BW2952'
         # Prepare the data
         test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile_annot.tsv')
@@ -305,6 +318,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the add_custom_annotations function in Annotator
         '''
+        print('Testing add_strain_metadata function')
         strain_id = 'CFT073'
         # Prepare the data
         test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile_meta.tsv')
@@ -327,6 +341,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the update_strain_metadata function in Annotator
         '''
+        print('Testing update_strain_metadata function')
         strain_id = 'BW2952'
         test_file = 'test_strain_metadata.xlsx'
         self.annotator.update_strain_metadata(xlsx_path=test_file)
@@ -338,6 +353,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the add_sample_metadata function in Annotator
         '''
+        print('Testing add_sample_metadata function')
         # Prepare the data
         test_line = '\t'.join(['test_sample', 'Test source', 'Test_URL', 'Test', 'Test_value']) + '\n'
         test_data = [test_line, ]
@@ -350,6 +366,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the update_genome_descriptions function in Annotator
         '''
+        print('Testing update_genome_descriptions function')
         genome_id = 'E_coli_BW2952'
         test_description = 'Updated genome description'
         # Prepare the data
@@ -370,6 +387,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the update_sample_descriptions function in Annotator
         '''
+        print('Testing update_sample_descriptions function')
         sample_id = 'test_sample'
         test_fullname = 'Updated sample fullname'
         test_description = 'Updated sample description'
@@ -388,6 +406,7 @@ class ImporterTestCase(TestCase):
         '''
             Test the update_taxonomy function
         '''
+        print('Testing update_taxonomy function')
         taxon = Taxon.objects.get(taxonomy_id="1224")
         self.assertEqual(taxon.name, "Proteobacteria")
         update_taxonomy()
@@ -443,6 +462,7 @@ class PipelineTestCase(TransactionTestCase):
             Test the run_external_tools function in Annotator.
             Gapmind should find 5 hits in the E_coli_BW2952 minigenome
         '''
+        print('Testing run_external_tools function')
         self.annotator.config['plugins.gapmind.enabled'] = '1'
         self.annotator.config['plugins.gapmind.conda_env'] = 'cgcms-gapmind'
         self.annotator.config['plugins.gapmind.gapmind_dir'] = '/mnt/data/work/CGCMS/external_tools/PaperBLAST'
@@ -462,8 +482,11 @@ class PipelineTestCase(TransactionTestCase):
         '''
             This test runs the entire genome import pipeline for three minigenomes
         '''
+        print('Testing genome_import_pipeline function')
         Genome.objects.get(name = 'E_coli_CFT073').delete()
+        Protein.objects.filter(gene=None).delete()
         print('Testing the entire genome import pipeline')
+        print('Genomes before import', str(Genome.objects.values_list('name', flat=True)))
         lines = []
         with open(os.path.join(BASE_DIR, '../testdata/import_minigenomes.txt'), 'r') as infile:
             for line in infile:
@@ -474,6 +497,7 @@ class PipelineTestCase(TransactionTestCase):
         result = self.importer.import_genomes(lines)
         self.assertEqual(len(self.importer.inputgenomes), 3)
         self.assertEqual(result, 'Done!')
+        print('Genomes after import', str(Genome.objects.values_list('name', flat=True)))
         test_genome = Genome.objects.get(name = 'E_coli_CFT073.test')
         self.assertEqual(test_genome.size, 100000)
 
@@ -481,9 +505,9 @@ class PipelineTestCase(TransactionTestCase):
         '''
             Test the predict_operons function
         '''
+        print('Testing predict_operons function')
         self.importer.inputgenomes['E_coli_BW2952']['gbk'] = '../testdata/E_coli_BW2952.100000.gbk'
         operons_data = self.importer.predict_operons()
         print(operons_data)
         self.assertTrue('E_coli_BW2952' in operons_data)
         self.assertEqual(len(operons_data['E_coli_BW2952']), 22)
-        

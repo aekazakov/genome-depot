@@ -61,7 +61,6 @@ class Importer(object):
         self.staticfiles = defaultdict(list)
         self.taxonomy, self.taxonomy_id_lookup, self.eggnog_taxonomy_lookup = \
         load_taxonomy(self.config['ref.taxonomy'], self.config['cgcms.eggnog_taxonomy'])
-        self.protein_hash2id = {}
         self.protein_hash2gene = defaultdict(list)
         self.eggnog_input_file = os.path.join(self.config['cgcms.temp_dir'],
                                               'eggnog_mapper_input.faa'
@@ -113,7 +112,7 @@ class Importer(object):
             underscores in genome identifiers
         """
         genome = ''.join([i if ord(i) < 128 else ' ' for i in genome])
-        genome = re.sub(r"[^^a-zA-Z0-9]", ' ', genome)
+        genome = re.sub(r"[^^a-zA-Z0-9\.\-]", ' ', genome)
         genome = "_".join( genome.split() )
         return genome
         
@@ -484,10 +483,6 @@ class Importer(object):
             self.protein_data[protein_hash]['name'] = protein_name
             self.protein_data[protein_hash]['length'] = len(sequence)
             self.protein_data[protein_hash]['sequence'] = sequence
-        if protein_hash not in self.protein_hash2id:
-            self.protein_hash2id[protein_hash] = protein_name
-            with open(self.eggnog_input_file, 'a') as outfile:
-                outfile.write('>' + protein_hash + '\n' + sequence + '\n')
         return protein_hash
         
     def parse_location(self, location, contig_size):
@@ -739,7 +734,24 @@ class Importer(object):
                     self.inputgenomes[genome_id]['sample']
             gbk_handle.close()
         nucl_db_file_handle.close()
-    
+
+    def make_eggnog_input(self):
+        '''
+        Generates protein FASTA file for eggnog-mapper
+        Returns number of proteins in the file
+        '''
+        ret_val = 0
+        protein_hash2id = set()
+        for item in Protein.objects.values_list('protein_hash'):
+            protein_hash2id.add(item[0])
+
+        with open(self.eggnog_input_file, 'w') as outfile:
+            for protein_hash in self.protein_data:
+                if protein_hash not in protein_hash2id:
+                    outfile.write('>' + protein_hash + '\n' + self.protein_data[protein_hash]['sequence'] + '\n')
+                    ret_val += 1
+        return ret_val
+
     def run_eggnog_mapper(self):
         """
         Runs eggnog-mapper for eggnog_mapper_input.faa file in the temp directory.
@@ -769,10 +781,7 @@ class Importer(object):
                           )
             outfile.write('cd ' + work_dir + '\n')
             outfile.write('split -l ' + chunk_size + ' -a 3 -d ' +
-                          os.path.join(self.config['cgcms.temp_dir'],
-                                       'eggnog_mapper_input.faa'
-                                       ) +
-                          ' input_file.chunk_ \n'
+                          self.eggnog_input_file + ' input_file.chunk_ \n'
                           )
             outfile.write('for f in input_file.chunk_*; do\n')
             outfile.write(self.config['cgcms.eggnog_command'] +
@@ -1186,56 +1195,59 @@ class Importer(object):
 
         # write eggnog descriptions
         eggnog_description_instances = []
-        for fingerprint, description in self.mappings['description'].items():
-            eggnog_description_instances\
-                .append(Eggnog_description(fingerprint=fingerprint,
-                                           description=description
-                                           )
-                )
-        Eggnog_description.objects.bulk_create(eggnog_description_instances,
-                                               batch_size=1000
+        if 'description' in self.mappings:
+            for fingerprint, description in self.mappings['description'].items():
+                eggnog_description_instances\
+                    .append(Eggnog_description(fingerprint=fingerprint,
+                                               description=description
                                                )
-        logger.info('Descriptions imported')
+                    )
+            Eggnog_description.objects.bulk_create(eggnog_description_instances,
+                                                   batch_size=1000
+                                                   )
+            logger.info('Descriptions imported')
 
         # write protein data
-        protein_instances = []
-        saved_proteins = set([item['protein_hash'] for item
-                              in Protein.objects.values('protein_hash')
-                              ])
-        eggnog_descriptions = {item.fingerprint:item for item
-                               in Eggnog_description.objects.all()
-                               }
-        for protein_hash, protein_data in self.protein_data.items():
-            if protein_hash in saved_proteins:
-                continue
-            protein_instance = Protein(name=protein_data['name'],
-                length=protein_data['length'],
-                protein_hash=protein_hash,
-                sequence=protein_data['sequence']
-            )
-            if 'taxonomic_group' in protein_data:
-                protein_instance.taxonomy_id = \
-                    taxon_instances[protein_data['taxonomic_group']]
-            if 'eggnog_description' in protein_data:
-                protein_instance.eggnog_description = \
-                    eggnog_descriptions[
-                        protein_data['eggnog_description']
-                        ]
-            protein_instances.append(protein_instance)
-        Protein.objects.bulk_create(protein_instances, batch_size=1000)
-        logger.info('Proteins imported')
+        if self.protein_data:
+            protein_instances = []
+            saved_proteins = set([item['protein_hash'] for item
+                                  in Protein.objects.values('protein_hash')
+                                  ])
+            eggnog_descriptions = {item.fingerprint:item for item
+                                   in Eggnog_description.objects.all()
+                                   }
+            for protein_hash, protein_data in self.protein_data.items():
+                if protein_hash in saved_proteins:
+                    continue
+                protein_instance = Protein(name=protein_data['name'],
+                    length=protein_data['length'],
+                    protein_hash=protein_hash,
+                    sequence=protein_data['sequence']
+                )
+                if 'taxonomic_group' in protein_data:
+                    protein_instance.taxonomy_id = \
+                        taxon_instances[protein_data['taxonomic_group']]
+                if 'eggnog_description' in protein_data:
+                    protein_instance.eggnog_description = \
+                        eggnog_descriptions[
+                            protein_data['eggnog_description']
+                            ]
+                protein_instances.append(protein_instance)
+            Protein.objects.bulk_create(protein_instances, batch_size=1000)
+            logger.info('Proteins imported')
         
         # write contig data
-        contig_instances = []
-        genome_ids = {genome.name:genome for genome in Genome.objects.all()}
-        for contig_uid,contig_entry in self.contig_data.items():
-            contig_instances.append(Contig(contig_id=contig_entry['contig_id'],
-                name=contig_entry['name'],
-                size=contig_entry['size'],
-                genome=genome_ids[contig_entry['genome']]
-                ))
-        Contig.objects.bulk_create(contig_instances, batch_size=1000)
-        logger.info('Contigs imported')
+        if self.contig_data:
+            contig_instances = []
+            genome_ids = {genome.name:genome for genome in Genome.objects.all()}
+            for contig_uid,contig_entry in self.contig_data.items():
+                contig_instances.append(Contig(contig_id=contig_entry['contig_id'],
+                    name=contig_entry['name'],
+                    size=contig_entry['size'],
+                    genome=genome_ids[contig_entry['genome']]
+                    ))
+            Contig.objects.bulk_create(contig_instances, batch_size=1000)
+            logger.info('Contigs imported')
         
         # write gene data
         gene_instances = []
@@ -1245,299 +1257,318 @@ class Importer(object):
         protein_ids = {protein.protein_hash:protein.id for protein
                        in Protein.objects.all()
                        }
-        for gene_id,gene_entry in self.gene_data.items():
-            gene_instance = Gene(name=gene_entry['name'],
-                locus_tag=gene_entry['locus_tag'],
-                contig_id=contig_ids[(gene_entry['genome_id'],gene_entry['contig_id'])],
-                type=gene_entry['type'],
-                start=gene_entry['start'],
-                end=gene_entry['end'],
-                strand=gene_entry['strand'],
-                genome=genome_ids[gene_entry['genome_id']]
-                )
-            if 'protein_hash' in gene_entry:
-                gene_instance.protein_id = protein_ids[gene_entry['protein_hash']]
-            if 'function' in gene_entry:
-                if len(gene_entry['function']) > 249:
-                    logger.warning('Function name too long: %s', gene_entry['function'])
-                    gene_entry['function'] = gene_entry['function'][:246] + '...'
-                gene_instance.function = gene_entry['function']
-            gene_instances.append(gene_instance)
-        Gene.objects.bulk_create(gene_instances, batch_size=1000)
-        logger.info('Genes imported')
+        if self.gene_data:
+            for gene_id,gene_entry in self.gene_data.items():
+                gene_instance = Gene(name=gene_entry['name'],
+                    locus_tag=gene_entry['locus_tag'],
+                    contig_id=contig_ids[(gene_entry['genome_id'],gene_entry['contig_id'])],
+                    type=gene_entry['type'],
+                    start=gene_entry['start'],
+                    end=gene_entry['end'],
+                    strand=gene_entry['strand'],
+                    genome=genome_ids[gene_entry['genome_id']]
+                    )
+                if 'protein_hash' in gene_entry:
+                    gene_instance.protein_id = protein_ids[gene_entry['protein_hash']]
+                if 'function' in gene_entry:
+                    if len(gene_entry['function']) > 249:
+                        logger.warning('Function name too long: %s', gene_entry['function'])
+                        gene_entry['function'] = gene_entry['function'][:246] + '...'
+                    gene_instance.function = gene_entry['function']
+                gene_instances.append(gene_instance)
+            Gene.objects.bulk_create(gene_instances, batch_size=1000)
+            logger.info('Genes imported')
 
         # write kegg reactions data
-        existing_ref_data_objects = set([item['kegg_id'] for item
-                                         in Kegg_reaction.objects.values('kegg_id')
-                                         ])
-        reference_data_instances = []
-        for reference_id,reference_name in self.mappings['kegg_reaction'].items():
-            if reference_id in existing_ref_data_objects:
-                continue
-            reference_data_instances.append(Kegg_reaction(kegg_id=reference_id,
-                description=reference_name
-                ))
-        Kegg_reaction.objects.bulk_create(reference_data_instances, batch_size=1000)
+        if 'kegg_reaction' in self.mappings:
+            existing_ref_data_objects = set([item['kegg_id'] for item
+                                             in Kegg_reaction.objects.values('kegg_id')
+                                             ])
+            reference_data_instances = []
+            for reference_id,reference_name in self.mappings['kegg_reaction'].items():
+                if reference_id in existing_ref_data_objects:
+                    continue
+                reference_data_instances.append(Kegg_reaction(kegg_id=reference_id,
+                    description=reference_name
+                    ))
+            Kegg_reaction.objects.bulk_create(reference_data_instances, batch_size=1000)
         
-        relations = []
-        reference_data_objects = {ref_object.kegg_id:ref_object.id for ref_object
-                                  in Kegg_reaction.objects.all()
-                                  }
-        for (protein_hash, reference_id) in self.relations['kegg_reaction']:
-            relations.append(Protein.kegg_reactions
-                             .through(protein_id=protein_ids[protein_hash],
-                                      kegg_reaction_id=reference_data_objects[reference_id]
-                                      )
-                             )
-        Protein.kegg_reactions.through.objects.bulk_create(relations,
-                                                           batch_size = 1000,
-                                                           ignore_conflicts=True
-                                                           )
-        logger.info('KEGG reactions imported')
+        if 'kegg_reaction' in self.relations:
+            relations = []
+            reference_data_objects = {ref_object.kegg_id:ref_object.id for ref_object
+                                      in Kegg_reaction.objects.all()
+                                      }
+            for (protein_hash, reference_id) in self.relations['kegg_reaction']:
+                relations.append(Protein.kegg_reactions
+                                 .through(protein_id=protein_ids[protein_hash],
+                                          kegg_reaction_id=reference_data_objects[reference_id]
+                                          )
+                                 )
+            Protein.kegg_reactions.through.objects.bulk_create(relations,
+                                                               batch_size = 1000,
+                                                               ignore_conflicts=True
+                                                               )
+            logger.info('KEGG reactions imported')
 
         # write kegg pathways data
-        existing_ref_data_objects = set([item['kegg_id'] for item
-                                         in Kegg_pathway.objects.values('kegg_id')
-                                         ])
-        reference_data_instances = []
-        for reference_id,reference_name in self.mappings['kegg_pathway'].items():
-            if reference_id in existing_ref_data_objects:
-                continue
-            reference_data_instances.append(Kegg_pathway(kegg_id=reference_id,
-                description=reference_name
-                ))
-        Kegg_pathway.objects.bulk_create(reference_data_instances,
-                                         batch_size=1000
-                                         )
+        if 'kegg_pathway' in self.mappings:
+            existing_ref_data_objects = set([item['kegg_id'] for item
+                                             in Kegg_pathway.objects.values('kegg_id')
+                                             ])
+            reference_data_instances = []
+            for reference_id,reference_name in self.mappings['kegg_pathway'].items():
+                if reference_id in existing_ref_data_objects:
+                    continue
+                reference_data_instances.append(Kegg_pathway(kegg_id=reference_id,
+                    description=reference_name
+                    ))
+            Kegg_pathway.objects.bulk_create(reference_data_instances,
+                                             batch_size=1000
+                                             )
 
-        relations = []
-        reference_data_objects = {ref_object.kegg_id:ref_object.id for ref_object
-                                  in Kegg_pathway.objects.all()
-                                  }
-        for (protein_hash, reference_id) in self.relations['kegg_pathway']:
-            relations.append(Protein.kegg_pathways
-                             .through(protein_id=protein_ids[protein_hash],
-                                      kegg_pathway_id=reference_data_objects[reference_id]
-                                      )
-                             )
-        Protein.kegg_pathways.through.objects.bulk_create(relations,
-                                                          batch_size = 1000,
-                                                          ignore_conflicts=True
-                                                          )
-        logger.info('KEGG pathways imported')
+        if 'kegg_pathway' in self.relations:
+            relations = []
+            reference_data_objects = {ref_object.kegg_id:ref_object.id for ref_object
+                                      in Kegg_pathway.objects.all()
+                                      }
+            for (protein_hash, reference_id) in self.relations['kegg_pathway']:
+                relations.append(Protein.kegg_pathways
+                                 .through(protein_id=protein_ids[protein_hash],
+                                          kegg_pathway_id=reference_data_objects[reference_id]
+                                          )
+                                 )
+            Protein.kegg_pathways.through.objects.bulk_create(relations,
+                                                              batch_size = 1000,
+                                                              ignore_conflicts=True
+                                                              )
+            logger.info('KEGG pathways imported')
 
         # write kegg orthologs data
-        existing_ref_data_objects = set([item['kegg_id'] for item
-                                         in Kegg_ortholog.objects.values('kegg_id')
-                                         ])
-        reference_data_instances = []
-        for reference_id,reference_name in self.mappings['kegg_ortholog'].items():
-            if reference_id in existing_ref_data_objects:
-                continue
-            reference_data_instances.append(Kegg_ortholog(kegg_id=reference_id,
-                description=reference_name
-                ))
-        Kegg_ortholog.objects.bulk_create(reference_data_instances,
-                                          batch_size=1000
-                                          )
+        if 'kegg_ortholog' in self.mappings:
+            existing_ref_data_objects = set([item['kegg_id'] for item
+                                             in Kegg_ortholog.objects.values('kegg_id')
+                                             ])
+            reference_data_instances = []
+            for reference_id,reference_name in self.mappings['kegg_ortholog'].items():
+                if reference_id in existing_ref_data_objects:
+                    continue
+                reference_data_instances.append(Kegg_ortholog(kegg_id=reference_id,
+                    description=reference_name
+                    ))
+            Kegg_ortholog.objects.bulk_create(reference_data_instances,
+                                              batch_size=1000
+                                              )
 
-        relations = []
-        reference_data_objects = {ref_object.kegg_id:ref_object.id for ref_object
-                                  in Kegg_ortholog.objects.all()
-                                  }
-        for (protein_hash, reference_id) in self.relations['kegg_ortholog']:
-            relations.append(Protein.kegg_orthologs
-                             .through(protein_id=protein_ids[protein_hash],
-                                      kegg_ortholog_id=reference_data_objects[reference_id]
-                                      )
-                             )
-        Protein.kegg_orthologs.through.objects.bulk_create(relations,
+        if 'kegg_ortholog' in self.relations:
+            relations = []
+            reference_data_objects = {ref_object.kegg_id:ref_object.id for ref_object
+                                      in Kegg_ortholog.objects.all()
+                                      }
+            for (protein_hash, reference_id) in self.relations['kegg_ortholog']:
+                relations.append(Protein.kegg_orthologs
+                                 .through(protein_id=protein_ids[protein_hash],
+                                          kegg_ortholog_id=reference_data_objects[reference_id]
+                                          )
+                                 )
+            Protein.kegg_orthologs.through.objects.bulk_create(relations,
+                                                               batch_size = 1000,
+                                                               ignore_conflicts=True
+                                                               )
+            logger.info('KEGG orthologs imported')
+
+        # write go data
+        if 'go' in self.mappings:
+            existing_ref_data_objects = set([item['go_id'] for item
+                                             in Go_term.objects.values('go_id')
+                                             ])
+            reference_data_instances = []
+            for reference_id,reference_name in self.mappings['go'].items():
+                if reference_id in existing_ref_data_objects:
+                    continue
+                reference_data_instances.append(Go_term(go_id=reference_id,
+                    go_namespace=reference_name[1],
+                    description=reference_name[0]
+                    ))
+            Go_term.objects.bulk_create(reference_data_instances, batch_size=1000)
+
+        if 'go' in self.relations:
+            relations = []
+            reference_data_objects = {ref_object.go_id:ref_object.id for ref_object
+                                      in Go_term.objects.all()
+                                      }
+            for (protein_hash, reference_id) in self.relations['go']:
+                relations.append(Protein.go_terms
+                                 .through(protein_id=protein_ids[protein_hash],
+                                          go_term_id=reference_data_objects[reference_id]
+                                          )
+                                 )
+            Protein.go_terms.through.objects.bulk_create(relations,
+                                                         batch_size = 1000,
+                                                         ignore_conflicts=True
+                                                         )
+            logger.info('GO terms imported')
+
+        # write og data
+        if 'og' in self.mappings:
+            # orthogroup id is eggnog_id + '@' + taxonomy_id
+            existing_ref_data_objects = set([item['eggnog_id'] + '@' +
+                                             item['taxon__taxonomy_id']
+                                             for item
+                                             in Ortholog_group.objects
+                                                 .values('eggnog_id',
+                                                         'taxon__taxonomy_id'
+                                                         )
+                                             ])
+            reference_data_instances = []
+            for reference_id,reference_name in self.mappings['og'].items():
+                if reference_id in existing_ref_data_objects:
+                    continue
+                reference_data_instances.append(
+                    Ortholog_group(eggnog_id=reference_name[0],
+                    taxon=taxon_instances[reference_name[1]]
+                    ))
+            Ortholog_group.objects.bulk_create(reference_data_instances, batch_size=1000)
+        
+        if 'og' in self.relations:
+            og_ids = {(og.eggnog_id, og.taxon.taxonomy_id):og.id for og
+                       in Ortholog_group.objects.all()
+                       }
+            relations = []
+            for (protein_hash, eggnog_id, taxonomy_id) in self.relations['og']:
+                relations.append(Protein.ortholog_groups
+                                 .through(
+                                          protein_id=protein_ids[protein_hash],
+                                          ortholog_group_id=og_ids[(eggnog_id, taxonomy_id)]
+                                          )
+                                 )
+            Protein.ortholog_groups.through.objects.bulk_create(relations,
+                                                                batch_size = 1000,
+                                                                ignore_conflicts=True
+                                                                )
+            logger.info('EggNOG orthologs imported')
+
+        # write ec data
+        if 'ec' in self.mappings:
+            existing_ref_data_objects = set([item['ec_number'] for item 
+                                             in Ec_number.objects.values('ec_number')
+                                             ])
+            reference_data_instances = []
+            for reference_id,reference_name in self.mappings['ec'].items():
+                if reference_id in existing_ref_data_objects:
+                    continue
+                reference_data_instances.append(Ec_number(ec_number=reference_id,
+                    description=reference_name
+                    ))
+            Ec_number.objects.bulk_create(reference_data_instances, batch_size=1000)
+
+        if 'ec' in self.relations:
+            relations = []
+            reference_data_objects = {ref_object.ec_number:ref_object.id for ref_object
+                                      in Ec_number.objects.all()
+                                      }
+            for (protein_hash, reference_id) in self.relations['ec']:
+                relations.append(Protein.ec_numbers
+                                 .through(protein_id=protein_ids[protein_hash],
+                                          ec_number_id=reference_data_objects[reference_id]
+                                          )
+                                 )
+            Protein.ec_numbers.through.objects.bulk_create(relations,
                                                            batch_size = 1000,
                                                            ignore_conflicts=True
                                                            )
-        logger.info('KEGG orthologs imported')
+            logger.info('EC numbers imported')
 
-        # write go data
-        existing_ref_data_objects = set([item['go_id'] for item
-                                         in Go_term.objects.values('go_id')
-                                         ])
-        reference_data_instances = []
-        for reference_id,reference_name in self.mappings['go'].items():
-            if reference_id in existing_ref_data_objects:
-                continue
-            reference_data_instances.append(Go_term(go_id=reference_id,
-                go_namespace=reference_name[1],
-                description=reference_name[0]
-                ))
-        Go_term.objects.bulk_create(reference_data_instances, batch_size=1000)
+        if 'tc' in self.mappings:
+            # write tc data
+            existing_ref_data_objects = set([item['tc_id'] for item 
+                                             in Tc_family.objects.values('tc_id')
+                                             ])
+            reference_data_instances = []
+            for reference_id,reference_name in self.mappings['tc'].items():
+                if reference_id in existing_ref_data_objects:
+                    continue
+                reference_data_instances.append(Tc_family(tc_id=reference_id,
+                    description=reference_name
+                    ))
+            Tc_family.objects.bulk_create(reference_data_instances, batch_size=1000)
 
-        relations = []
-        reference_data_objects = {ref_object.go_id:ref_object.id for ref_object
-                                  in Go_term.objects.all()
-                                  }
-        for (protein_hash, reference_id) in self.relations['go']:
-            relations.append(Protein.go_terms
-                             .through(protein_id=protein_ids[protein_hash],
-                                      go_term_id=reference_data_objects[reference_id]
-                                      )
-                             )
-        Protein.go_terms.through.objects.bulk_create(relations,
-                                                     batch_size = 1000,
-                                                     ignore_conflicts=True
-                                                     )
-        logger.info('GO terms imported')
-
-        # write og data
-        # orthogroup id is eggnog_id + '@' + taxonomy_id
-        existing_ref_data_objects = set([item['eggnog_id'] + '@' +
-                                         item['taxon__taxonomy_id']
-                                         for item
-                                         in Ortholog_group.objects
-                                             .values('eggnog_id',
-                                                     'taxon__taxonomy_id'
-                                                     )
-                                         ])
-        reference_data_instances = []
-        for reference_id,reference_name in self.mappings['og'].items():
-            if reference_id in existing_ref_data_objects:
-                continue
-            reference_data_instances.append(
-                Ortholog_group(eggnog_id=reference_name[0],
-                taxon=taxon_instances[reference_name[1]]
-                ))
-        Ortholog_group.objects.bulk_create(reference_data_instances, batch_size=1000)
-        
-        og_ids = {(og.eggnog_id, og.taxon.taxonomy_id):og.id for og
-                   in Ortholog_group.objects.all()
-                   }
-        relations = []
-        for (protein_hash, eggnog_id, taxonomy_id) in self.relations['og']:
-            relations.append(Protein.ortholog_groups
-                             .through(
-                                      protein_id=protein_ids[protein_hash],
-                                      ortholog_group_id=og_ids[(eggnog_id, taxonomy_id)]
-                                      )
-                             )
-        Protein.ortholog_groups.through.objects.bulk_create(relations,
+        if 'tc' in self.relations:
+            relations = []
+            reference_data_objects = {ref_object.tc_id:ref_object.id for ref_object
+                                      in Tc_family.objects.all()
+                                      }
+            for (protein_hash, reference_id) in self.relations['tc']:
+                relations.append(Protein.tc_families.through(
+                                 protein_id=protein_ids[protein_hash],
+                                 tc_family_id=reference_data_objects[reference_id])
+                                 )
+            Protein.tc_families.through.objects.bulk_create(relations,
                                                             batch_size = 1000,
                                                             ignore_conflicts=True
                                                             )
-        logger.info('EggNOG orthologs imported')
+            logger.info('TC families imported')
 
-        # write ec data
-        existing_ref_data_objects = set([item['ec_number'] for item 
-                                         in Ec_number.objects.values('ec_number')
-                                         ])
-        reference_data_instances = []
-        for reference_id,reference_name in self.mappings['ec'].items():
-            if reference_id in existing_ref_data_objects:
-                continue
-            reference_data_instances.append(Ec_number(ec_number=reference_id,
-                description=reference_name
-                ))
-        Ec_number.objects.bulk_create(reference_data_instances, batch_size=1000)
+        if 'cazy' in self.mappings:
+            # write cazy data
+            existing_ref_data_objects = set([item['cazy_id'] for item
+                                            in Cazy_family.objects.values('cazy_id')
+                                            ])
+            reference_data_instances = []
+            for reference_id,reference_name in self.mappings['cazy'].items():
+                if reference_id in existing_ref_data_objects:
+                    continue
+                reference_data_instances.append(Cazy_family(cazy_id=reference_id,
+                    description=reference_name
+                    ))
+            Cazy_family.objects.bulk_create(reference_data_instances, batch_size=1000)
 
-        relations = []
-        reference_data_objects = {ref_object.ec_number:ref_object.id for ref_object
-                                  in Ec_number.objects.all()
-                                  }
-        for (protein_hash, reference_id) in self.relations['ec']:
-            relations.append(Protein.ec_numbers
-                             .through(protein_id=protein_ids[protein_hash],
-                                      ec_number_id=reference_data_objects[reference_id]
-                                      )
-                             )
-        Protein.ec_numbers.through.objects.bulk_create(relations,
-                                                       batch_size = 1000,
-                                                       ignore_conflicts=True
-                                                       )
-        logger.info('EC numbers imported')
-
-        # write tc data
-        existing_ref_data_objects = set([item['tc_id'] for item 
-                                         in Tc_family.objects.values('tc_id')
-                                         ])
-        reference_data_instances = []
-        for reference_id,reference_name in self.mappings['tc'].items():
-            if reference_id in existing_ref_data_objects:
-                continue
-            reference_data_instances.append(Tc_family(tc_id=reference_id,
-                description=reference_name
-                ))
-        Tc_family.objects.bulk_create(reference_data_instances, batch_size=1000)
-
-        relations = []
-        reference_data_objects = {ref_object.tc_id:ref_object.id for ref_object
-                                  in Tc_family.objects.all()
-                                  }
-        for (protein_hash, reference_id) in self.relations['tc']:
-            relations.append(Protein.tc_families.through(
-                             protein_id=protein_ids[protein_hash],
-                             tc_family_id=reference_data_objects[reference_id])
-                             )
-        Protein.tc_families.through.objects.bulk_create(relations,
-                                                        batch_size = 1000,
-                                                        ignore_conflicts=True
-                                                        )
-        logger.info('TC families imported')
-
-        # write cazy data
-        existing_ref_data_objects = set([item['cazy_id'] for item
-                                        in Cazy_family.objects.values('cazy_id')
-                                        ])
-        reference_data_instances = []
-        for reference_id,reference_name in self.mappings['cazy'].items():
-            if reference_id in existing_ref_data_objects:
-                continue
-            reference_data_instances.append(Cazy_family(cazy_id=reference_id,
-                description=reference_name
-                ))
-        Cazy_family.objects.bulk_create(reference_data_instances, batch_size=1000)
-
-        relations = []
-        reference_data_objects = {ref_object.cazy_id:ref_object.id for ref_object
-                                  in Cazy_family.objects.all()
-                                  }
-        for (protein_hash, reference_id) in self.relations['cazy']:
-            relations.append(Protein.cazy_families.through(
-                                   protein_id=protein_ids[protein_hash],
-                                   cazy_family_id=reference_data_objects[reference_id]
-                                   )
-                             )
-        Protein.cazy_families.through.objects.bulk_create(relations,
-                                                          batch_size = 1000,
-                                                          ignore_conflicts=True
-                                                          )
-        logger.info('CAZy families imported')
+        if 'cazy' in self.relations:
+            relations = []
+            reference_data_objects = {ref_object.cazy_id:ref_object.id for ref_object
+                                      in Cazy_family.objects.all()
+                                      }
+            for (protein_hash, reference_id) in self.relations['cazy']:
+                relations.append(Protein.cazy_families.through(
+                                       protein_id=protein_ids[protein_hash],
+                                       cazy_family_id=reference_data_objects[reference_id]
+                                       )
+                                 )
+            Protein.cazy_families.through.objects.bulk_create(relations,
+                                                              batch_size = 1000,
+                                                              ignore_conflicts=True
+                                                              )
+            logger.info('CAZy families imported')
 
         # write cog data
-        existing_ref_data_objects = set([item['cog_id'] for item 
-                                        in Cog_class.objects.values('cog_id')
-                                        ])
-        reference_data_instances = []
-        for reference_id,reference_name in self.mappings['cog'].items():
-            if reference_id in existing_ref_data_objects:
-                continue
-            reference_data_instances.append(Cog_class(cog_id=reference_id,
-                description=reference_name
-                ))
-        Cog_class.objects.bulk_create(reference_data_instances, batch_size=1000)
+        if 'cog' in self.mappings:
+            existing_ref_data_objects = set([item['cog_id'] for item 
+                                            in Cog_class.objects.values('cog_id')
+                                            ])
+            reference_data_instances = []
+            for reference_id,reference_name in self.mappings['cog'].items():
+                if reference_id in existing_ref_data_objects:
+                    continue
+                reference_data_instances.append(Cog_class(cog_id=reference_id,
+                    description=reference_name
+                    ))
+            Cog_class.objects.bulk_create(reference_data_instances, batch_size=1000)
 
-        relations = []
-        reference_data_objects = {ref_object.cog_id:ref_object.id for ref_object
-                                  in Cog_class.objects.all()
-                                  }
-        for (protein_hash, reference_id) in self.relations['cog']:
-            relations.append(Protein.cog_classes.through(
-                                protein_id=protein_ids[protein_hash],
-                                cog_class_id=reference_data_objects[reference_id]
+        if 'cog' in self.relations:
+            relations = []
+            reference_data_objects = {ref_object.cog_id:ref_object.id for ref_object
+                                      in Cog_class.objects.all()
+                                      }
+            for (protein_hash, reference_id) in self.relations['cog']:
+                relations.append(Protein.cog_classes.through(
+                                    protein_id=protein_ids[protein_hash],
+                                    cog_class_id=reference_data_objects[reference_id]
+                                    )
                                 )
-                            )
-        Protein.cog_classes.through.objects.bulk_create(relations,
-                                                        batch_size = 1000,
-                                                        ignore_conflicts=True
-                                                        )
-        logger.info('COG classes imported')
+            Protein.cog_classes.through.objects.bulk_create(relations,
+                                                            batch_size = 1000,
+                                                            ignore_conflicts=True
+                                                            )
+            logger.info('COG classes imported')
 
     def export_genome_fasta(self, genome_id, out_file = None):
         '''
@@ -1931,40 +1962,42 @@ class Importer(object):
         # make taxonomy data file for upload
         self.prepare_taxonomy_data()
         
-        logger.info('Loading proteins from the database')
-        # read protein IDs and hashes
-        self.load_proteins()
-
         logger.info('Processing GBK files')
         # make genome, contigs, genes data files
         self.process_gbk()
+        
+        logger.info('Writing eggnog-mapper input file')
+        new_proteins = self.make_eggnog_input()
 
-        logger.info('Running eggnog-mapper')
-        # Close MySQL connection before starting eggnog-mapper because it 
-        # may run for days resulting in "MySQL server has gone away" error
-        connection.close()
-        # run eggnog-mapper for all proteins
-        eggnog_outfile = self.run_eggnog_mapper()
-        # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
-        #eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
-        #'eggnog_mapper_output.emapper.annotations')
-        
-        logger.info('Reading eggnog-mapper output')
-        # separate eggnog-mapper output by genome?
-        self.parse_eggnog_output(eggnog_outfile)
-        
-        logger.info('Prepare eggnog mappings')
-        # make mappings and relations data
-        self.make_mappings()
+        if new_proteins == 0:
+            logger.info('No new proteins; skipping eggnog-mapper run')
+        else:
+            logger.info('Running eggnog-mapper')
+            # Close MySQL connection before starting eggnog-mapper because it 
+            # may run for days resulting in "MySQL server has gone away" error
+            connection.close()
+            # run eggnog-mapper for all proteins
+            eggnog_outfile = self.run_eggnog_mapper()
+            # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
+            #eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
+            #'eggnog_mapper_output.emapper.annotations')
+            
+            logger.info('Reading eggnog-mapper output')
+            # separate eggnog-mapper output by genome?
+            self.parse_eggnog_output(eggnog_outfile)
+            
+            logger.info('Prepare eggnog mappings')
+            # make mappings and relations data
+            self.make_mappings()
 
-        logger.info('Prepare eggnog ortholog mappings')
-        # make og data file for upload
-        self.prepare_og_data()
-        
-        logger.info('Prepare eggnog descriptions')
-        # make eggnog description data file for upload
-        self.prepare_eggnog_description_data()
-        
+            logger.info('Prepare eggnog ortholog mappings')
+            # make og data file for upload
+            self.prepare_og_data()
+            
+            logger.info('Prepare eggnog descriptions')
+            # make eggnog description data file for upload
+            self.prepare_eggnog_description_data()
+            
         logger.info('Populating mysql database')
         # At this point, genes and annotations are actually written to the database
         self.write_data()

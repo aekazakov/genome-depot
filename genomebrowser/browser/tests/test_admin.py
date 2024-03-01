@@ -270,7 +270,7 @@ class MyAdminTestCase(TestCase):
         
     def test_import_genomes_impl(self):
         # Tests implementation of import_genomes task
-        lines = ['../testdata/E_coli_BW2952.100000.gbk\tE_coli_BW2952\tBW2952\t\thttps://www.ncbi.nlm.nih.gov/assembly/GCF_000022345.1\tNCBI:GCF_000022345.1',]
+        lines = ['../testdata/E_coli_BW2952.100000.gbk\tE_coli_BW2952.test\tBW2952\t\thttps://www.ncbi.nlm.nih.gov/assembly/GCF_000022345.1\tNCBI:GCF_000022345.1',]
         email = 'test@example.com'
         args = (lines, email)
         result = import_genomes_impl(args)
@@ -318,7 +318,8 @@ class MyAdminTestCase(TestCase):
         # Tests implementation of update_strain_metadata task
         strain_id = 'BW2952'
         test_file = 'test_strain_metadata.xlsx'
-        update_strain_metadata_impl(test_file)
-        saved_metadata = Strain_metadata.objects.get(key='Phylogenetic Order', strain__strain_id=strain_id)
+        with open(test_file, "rb") as fp:
+            update_strain_metadata_impl(fp)
+        saved_metadata = Strain_metadata.objects.get(key='Phylogenetic Order')
         self.assertEqual(saved_metadata.strain.strain_id, strain_id)
         self.assertEqual(saved_metadata.value, 'Enterobacterales')

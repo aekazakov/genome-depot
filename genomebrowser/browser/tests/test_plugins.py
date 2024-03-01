@@ -54,6 +54,9 @@ class MyAdminTestCase(TransactionTestCase):
         self.annotator.config['plugins.amrfinder.threads'] = '8'
         self.annotator.config['plugins.amrfinder.conda_env'] = 'cgcms-amrfinder'
         self.annotator.config['plugins.amrfinder.display_name'] = 'AMRFinderPlus'
+        self.annotator.config['plugins.ecis_screen.ecis-screen_cmd'] = '/mnt/data/work/CGCMS/external_tools/eCIS-screen/HMMsearch_genomesII_fast.pl'
+        self.annotator.config['plugins.ecis_screen.ecis_hmm'] = '/mnt/data/work/CGCMS/external_tools/eCIS-screen/eCIS.hmm'
+        self.annotator.config['plugins.ecis_screen.enabled'] = '1'
 
         #@skip("skip test")
     def test_amrfinder_plugin(self):
