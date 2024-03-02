@@ -13,6 +13,7 @@ from genomebrowser.settings import BASE_DIR
 from browser.models import Annotation
 from browser.models import Taxon
 from browser.models import Genome
+from browser.models import Protein
 from browser.models import Strain
 from browser.models import Sample
 from browser.models import Strain_metadata
@@ -420,9 +421,9 @@ class PipelineTestCase(TransactionTestCase):
     '''
     fixtures = ['minigenomes.testdata.json']
     
-    @classmethod
     def setUp(self):
         self.importer = Importer()
+        '''
         self.importer.config['cgcms.generate_names_command'] = '/mnt/data/work/CGCMS/external_tools/jbrowse/bin/generate-names.pl'
         self.importer.config['plugins.macsyfinder.conda_env'] = 'cgcms-macsyfinder'
         self.importer.config['plugins.macsyfinder.model'] = 'TXSScan'
@@ -453,7 +454,7 @@ class PipelineTestCase(TransactionTestCase):
         self.importer.config['plugins.amrfinder.display_name'] = 'AMRFinderPlus'
 
         self.importer.config['cgcms.poem_dir'] = '/mnt/data/work/sandbox/poem_py3k/POEM_py3k'
-
+        '''
         self.annotator= Annotator()
 
     #@skip("skip for now")
@@ -463,12 +464,13 @@ class PipelineTestCase(TransactionTestCase):
             Gapmind should find 5 hits in the E_coli_BW2952 minigenome
         '''
         print('Testing run_external_tools function')
+        '''
         self.annotator.config['plugins.gapmind.enabled'] = '1'
         self.annotator.config['plugins.gapmind.conda_env'] = 'cgcms-gapmind'
         self.annotator.config['plugins.gapmind.gapmind_dir'] = '/mnt/data/work/CGCMS/external_tools/PaperBLAST'
         self.annotator.config['plugins.gapmind.threads'] = '8'
         self.annotator.config['plugins.gapmind.display_name'] = 'GapMind'
-        
+        '''
         genome_id = 'E_coli_BW2952'
         genome = Genome.objects.get(name=genome_id)
         test_plugin = 'gapmind'

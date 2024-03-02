@@ -2,6 +2,7 @@ import os
 from unittest import skip
 
 from django.test import TestCase
+from django.test import TransactionTestCase
 from django.test import Client
 from django.test import RequestFactory
 
@@ -33,7 +34,7 @@ from browser.tasks import import_regulon_impl
 from browser.tasks import run_annotation_pipeline_impl
 
 
-class MyAdminTestCase(TestCase):
+class AdminTestCase(TestCase):
 
     fixtures = ['minigenomes.testdata.json']
 
@@ -268,14 +269,6 @@ class MyAdminTestCase(TestCase):
         out = run_annotation_pipeline_impl(args)
         self.assertEqual(out, 'Annotation pipeline finished.')
         
-    def test_import_genomes_impl(self):
-        # Tests implementation of import_genomes task
-        lines = ['../testdata/E_coli_BW2952.100000.gbk\tE_coli_BW2952.test\tBW2952\t\thttps://www.ncbi.nlm.nih.gov/assembly/GCF_000022345.1\tNCBI:GCF_000022345.1',]
-        email = 'test@example.com'
-        args = (lines, email)
-        result = import_genomes_impl(args)
-        self.assertEqual(result, 'Done!')
-        
     def test_update_static_files_impl(self):
         # Tests implementation of update_static_files task
         genomes = ['E_coli_BW2952',]
@@ -323,3 +316,23 @@ class MyAdminTestCase(TestCase):
         saved_metadata = Strain_metadata.objects.get(key='Phylogenetic Order')
         self.assertEqual(saved_metadata.strain.strain_id, strain_id)
         self.assertEqual(saved_metadata.value, 'Enterobacterales')
+
+
+class AdminTransactionTestCase(TransactionTestCase):
+    '''
+        Testing admin functions that require TransactionTestCase
+    '''
+
+    fixtures = ['minigenomes.testdata.json']
+    
+    def setUp(self):
+        self.site = AdminSite()
+
+    def test_import_genomes_impl(self):
+        # Tests implementation of import_genomes task
+        lines = ['../testdata/E_coli_BW2952.100000.gbk\tE_coli_BW2952.test\tBW2952\t\thttps://www.ncbi.nlm.nih.gov/assembly/GCF_000022345.1\tNCBI:GCF_000022345.1',]
+        email = 'test@example.com'
+        args = (lines, email)
+        result = import_genomes_impl(args)
+        self.assertEqual(result, 'Done!')
+        
