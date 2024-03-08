@@ -23,7 +23,7 @@ from browser.models import Cazy_family
 from browser.models import Go_term
 from browser.util import export_genome
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 
 def export_csv(request):

@@ -60,11 +60,11 @@ from browser.async_tasks import async_run_annotation_tools
 from django_q.models import OrmQ
 from django_q.monitor import Stat
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
-admin.site.site_header = "CGCMS Administration panel"
-admin.site.site_title = "CGCMS administration"
-admin.site.index_title = "Welcome to CGCMS Administration panel"
+admin.site.site_header = "GenomeDepot Administration panel"
+admin.site.site_title = "GenomeDepot administration"
+admin.site.index_title = "Welcome to GenomeDepot Administration panel"
 
 
 @admin.action(description = 'Test sync action')
@@ -233,7 +233,7 @@ class GenomeAdmin(admin.ModelAdmin):
             tsv_file = request.FILES["tsv_file"]
             zip_file = None
             zip_content = {}
-            temp_dir = Config.objects.get(param='cgcms.temp_dir').value
+            temp_dir = Config.objects.get(param='core.temp_dir').value
             upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
             if 'zip_file' in request.FILES:
                 logger.debug(upload_dir)

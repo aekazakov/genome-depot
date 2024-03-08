@@ -158,12 +158,12 @@ DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'cgcms_cache_table',
+        'LOCATION': 'genomedepot_cache_table',
     }
 }
 
 Q_CLUSTER = {
-    'name': 'cgcmsWorker',
+    'name': 'GenomeDepotWorker',
     'workers': 1,
     'timeout': 8640000,
     'retry': 8640001,
@@ -207,7 +207,7 @@ LOGGING = {
             'level': 'INFO',
 	    'propagate': True,
         },
-        'CGCMS': {
+        'GenomeDepot': {
             'handlers': ['console', 'file', 'email'],
             'level': 'DEBUG',
         },
@@ -234,7 +234,7 @@ ADMIN_SHORTCUTS = [
         'title': 'Tools',
         'shortcuts': [
             {
-                'title': 'CGCMS Tools',
+                'title': 'GenomeDepot Tools',
                 'icon': 'cog',
                 'url': BASE_URL + '/admin/tools/',
                 'count': 'All tools in one place',

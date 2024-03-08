@@ -1,7 +1,7 @@
 {% extends 'admin/base.html' %}
 {% block content %}
     <div>
-    <h2>Import genomes into CGCMS from GenBank files</h2>
+    <h2>Import genomes into GenomeDepot from GenBank files</h2>
     <p>
     All genome files must be accessible by Django Q cluster. Currently, there is no support for file download from external sources.<br />
     </p>
@@ -13,9 +13,9 @@
     </p>
     <ol>
     <li>Path to GenBank file (can be gzipped). This file must be accessible from Django Q cluster.</li>
-    <li>Genome ID for CGCMS. Must be unique </li>
-    <li>Strain ID for CGCMS. Can be blank if sample ID is not blank.</li>
-    <li>Sample ID for CGCMS. Can be blank if strain ID is not blank.</li>
+    <li>Genome ID for GenomeDepot. Must be unique </li>
+    <li>Strain ID for GenomeDepot. Can be blank if sample ID is not blank.</li>
+    <li>Sample ID for GenomeDepot. Can be blank if strain ID is not blank.</li>
     <li>URL for external reference of the genome sequence (can be blank).</li>
     <li>External identifier to be used as a text label for external reference. A format "datasource:accession" is strongly encouraged (for example NCBI:GCF_000019425.1). Can be blank, if no URL is provided.</li>
     </ol>

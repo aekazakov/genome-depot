@@ -7,10 +7,10 @@ from django.db import connection
 from browser.models import Gene, Genome
 
 """
-    This plugin runs HMMSEARCH with TIGRFAM HMM library for a set of genomes.
+    This plugin runs HMMSEARCH with Pfam HMM library for a set of genomes.
 """
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 def application(annotator, genomes):
     """
@@ -21,8 +21,8 @@ def application(annotator, genomes):
             as key and GBK path as value
         
     """
-    working_dir = os.path.join(annotator.config['cgcms.temp_dir'],
-                               'hmmsearch-tigrfam-temp'
+    working_dir = os.path.join(annotator.config['core.temp_dir'],
+                               'hmmsearch-pfam-temp'
                                )
     script_path = preprocess(annotator, genomes, working_dir)
     run(script_path)
@@ -42,9 +42,9 @@ def preprocess(annotator, genomes, working_dir):
         shutil.rmtree(working_dir)
     os.mkdir(working_dir)
     hmmsearch_outfile = os.path.join(working_dir,
-                                     'hmmsearch_tigrfam.domtblout.txt'
+                                     'hmmsearch_pfam.domtblout.txt'
                                      )
-    input_file = os.path.join(working_dir, 'hmmsearch-tigrfam_input.faa')
+    input_file = os.path.join(working_dir, 'hmmsearch-pfam_input.faa')
 
     annotator.target_genes = defaultdict(list)
     proteins_written = set()
@@ -64,28 +64,28 @@ def preprocess(annotator, genomes, working_dir):
                         outfile.write('>' + gene.protein.protein_hash + '\n')
                         outfile.write(gene.protein.sequence + '\n')
                         proteins_written.add(gene.protein.protein_hash)
-    hmmsearch_script = os.path.join(working_dir, 'run_hmmsearch-tigrfam.sh')
+    hmmsearch_script = os.path.join(working_dir, 'run_hmmsearch-pfam.sh')
     
     with open(hmmsearch_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
         outfile.write('export PATH=' + 
-                      '/'.join(annotator.config['cgcms.conda_path'].split('/')[:-3]) +
+                      '/'.join(annotator.config['core.conda_path'].split('/')[:-3]) +
                       '/envs/' +
-                      annotator.config['plugins.hmmsearch_tigrfam.conda_env'] + 
+                      annotator.config['plugins.hmmsearch_pfam.conda_env'] + 
                       '/bin:$PATH\n'
                       )
-        outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
+        outfile.write('source "' + annotator.config['core.conda_path'] + '"\n')
         outfile.write('conda activate ' +
-                      annotator.config['plugins.hmmsearch_tigrfam.conda_env'] +
+                      annotator.config['plugins.hmmsearch_pfam.conda_env'] +
                       '\n'
                       )
         outfile.write(' '.join([annotator.config[\
-                                 'plugins.hmmsearch_tigrfam.hmmsearch_command'],
+                                'plugins.hmmsearch_pfam.hmmsearch_command'],
                                 '--domtblout', '"' + hmmsearch_outfile + '"',
                                 '-o', '/dev/null', '--cut_tc',
-                                '--cpu', annotator.config['cgcms.threads'],
+                                '--cpu', annotator.config['core.threads'],
                                 '--noali', '--notextw',
-                                '"' + annotator.config['plugins.hmmsearch_tigrfam.hmm_lib'] + '"',
+                                '"' + annotator.config['plugins.hmmsearch_pfam.hmm_lib'] + '"',
                                 '"' + input_file + '"'
                                 ]) + '\n')
         outfile.write('conda deactivate\n')
@@ -116,12 +116,12 @@ def postprocess(annotator, genomes, working_dir):
     """
         Finds HMMSEARCH output file and creates file with annotations for upload into DB
     """
-    hmmsearch_outfile = os.path.join(working_dir, 'hmmsearch_tigrfam.domtblout.txt')
-    output_file = os.path.join(annotator.config['cgcms.temp_dir'],
-                               'hmmsearch-tigrfam-plugin-output.txt'
+    hmmsearch_outfile = os.path.join(working_dir, 'hmmsearch_pfam.domtblout.txt')
+    output_file = os.path.join(annotator.config['core.temp_dir'],
+                               'hmmsearch-pfam-plugin-output.txt'
                                )
     ref_hmm = {}
-    with open(annotator.config['plugins.hmmsearch_tigrfam.ref_data'], 'r') as infile:
+    with open(annotator.config['plugins.hmmsearch_pfam.ref_data'], 'r') as infile:
         for line in infile:
             if line.startswith('#'):
                 continue
@@ -148,14 +148,18 @@ def postprocess(annotator, genomes, working_dir):
     with open(output_file, 'w') as outfile:
         for hit in hits.values():
             for item in annotator.target_genes[hit['protein_hash']]:
-                outfile.write('\t'.join([item[1], item[0], 'TIGRFAM database',
-                              'http://tigrfams.jcvi.org/cgi-bin/HmmReportPage.cgi?acc='
-                              + hit['hmm_id'],
-                              'TIGRFAM family',
+                pfam_accession = ref_hmm[hit['hmm_id']]['acc']
+                interpro_accession = pfam_accession.split('.')[0]
+                outfile.write('\t'.join([item[1], item[0], 'Pfam database',
+                              'https://www.ebi.ac.uk/interpro/entry/pfam/' +
+                              interpro_accession,
+                              'Pfam domain',
                               hit['hmm_id'],
-                              hit['hmm_id'] + ': ' + ref_hmm[hit['hmm_id']]['desc'] +
-                             '. E-value: ' + hit['evalue'] + '. Coordinates: ' +
-                             ';'.join(hit['coords'])]) + '\n')
+                              hit['hmm_id'] + ' (' + ref_hmm[hit['hmm_id']]['acc'] +
+                              '): ' + ref_hmm[hit['hmm_id']]['desc'] +
+                              '. E-value: ' +
+                              hit['evalue'] + '. Coordinates: ' +
+                              ';'.join(hit['coords'])]) + '\n')
     return output_file
 
 def _cleanup(working_dir):

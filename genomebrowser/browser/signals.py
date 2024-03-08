@@ -6,7 +6,7 @@ from django.utils import timezone
 from browser.models import ChangeLog
 from browser.models import Genome, Strain, Sample
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 # this receiver is executed every-time some data is saved in Genome table
 @receiver(post_save, sender=Genome)

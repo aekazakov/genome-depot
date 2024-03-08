@@ -3,7 +3,7 @@ import logging
 from django.core.management.base import BaseCommand, CommandError
 from browser.models import Genome
 from browser.pipeline.annotate import Annotator
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 
 class Command(BaseCommand):

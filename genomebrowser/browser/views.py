@@ -42,7 +42,7 @@ from browser.conserved_regulon import build_conserved_regulon
 from browser.conserved_operon import build_conserved_operon 
 from browser.taxonomy import generate_genome_sunburst, get_taxon_children, generate_genes_sunburst
 # Create your views here.
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 
 class AnnotationSearchResultsSubView(generic.ListView):
@@ -1880,7 +1880,7 @@ def protein_search_external(request):
     if request.GET.get("sequence"):
         result = {}
         sequence = request.GET.get("sequence")
-        hits, searchcontext, query_len = run_protein_search(sequence)
+        hits, searchcontext, query_len, _ = run_protein_search(sequence)
         if searchcontext != '':
             context['searchcontext'] = searchcontext
         for row in hits:
@@ -1960,7 +1960,7 @@ class NsearchResultView(View):
         #sleep_timer = 0
         #logger.debug('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         #time.sleep(sleep_timer)
-        hits, searchcontext, query_len = run_nucleotide_search(params)
+        hits, searchcontext, query_len, query_name = run_nucleotide_search(params)
         if hits:
             result.append('<table><thead><tr><th>Target contig (click to see hit)' +
                           '</th><th>Genome</th><th>%identity</th><th>Alignment length'+
@@ -2007,16 +2007,20 @@ class NsearchResultView(View):
             context = {"searchresult":'\n'.join(result),
                        "searchcontext":searchcontext,
                        "query_len":query_len,
+                       "query_name":'Query: ' + query_name,
                        "time":time.time()-start_time
                        }
         elif searchcontext == '':
             context = {"searchresult":'',"searchcontext":'No hits found',
-                       "query_len":query_len,"time":time.time()-start_time
+                       "query_len":query_len,
+                       "query_name":'Query: ' + query_name,
+                       "time":time.time()-start_time
                        }
         else:
             context = {"searchresult":"",
                        "searchcontext":searchcontext,
                        "query_len":query_len,
+                       "query_name":'Query: ' + query_name,
                        "time":time.time()-start_time
                        }
         #logger.debug(context)
@@ -2075,7 +2079,7 @@ class PsearchResultView(View):
         #sleep_timer = 0
         #logger.debug('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         #time.sleep(sleep_timer)
-        hits, searchcontext, query_len = run_protein_search(params)
+        hits, searchcontext, query_len, query_name = run_protein_search(params)
 
         if hits:
             result.append('<table><thead><tr><th>Target gene</th><th>Genome</th>' +\
@@ -2118,18 +2122,21 @@ class PsearchResultView(View):
             context = {"searchresult":'\n'.join(result),
                        "searchcontext":searchcontext,
                        "query_len":query_len,
+                       "query_name":'Query: ' + query_name,
                        "time":time.time()-start_time
                        }
         elif searchcontext == '':
             context = {"searchresult":'',
                        "searchcontext":'No hits found',
                        "query_len":query_len,
+                       "query_name":'Query: ' + query_name,
                        "time":time.time()-start_time
                        }
         else:
             context = {"searchresult":"",
                        "searchcontext":searchcontext,
                        "query_len":query_len,
+                       "query_name":'Query: ' + query_name,
                        "time":time.time()-start_time
                        }
         data = json.dumps(context)

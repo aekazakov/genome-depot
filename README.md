@@ -1,5 +1,5 @@
-# CGCMS
-Compararive genomic content management system is a genome annotation pipeline and web-based genome browser.
+# GenomeDepot
+Data management system for microbial comparative genomics.
 
 ## Prerequisites
 
@@ -29,65 +29,65 @@ sudo apt install apache2 mysql-server muscle hmmer ncbi-blast+-legacy build-esse
 
 ## Installation
 
-1. Create a directory where CGCMS and external tools will be installed (for example, ~/cgcms). Create "app" subdirectory. Do it only for the first CGCMS installation.
+1. Create a directory where GenomeDepot and external tools will be installed (for example, ~/genomedepot). Create "app" subdirectory. Do it only for the first GenomeDepot installation.
 
 cd ~
 
-mkdir cgcms
+mkdir genomedepot
 
-cd cgcms
+cd genomedepot
 
 mkdir apps
 
 cd apps
 
 
-2. Create a directory for the new CGCMS installation in cgcms/apps (for example, mygenomes) and clone the repository into it.
+2. Create a directory for the new GenomeDepot installation in genomedepot/apps (for example, mygenomes) and clone the repository into it.
 
 mkdir mygenomes 
 
 cd mygenomes
 
-git clone https://github.com/aekazakov/CGCMS
+git clone https://github.com/aekazakov/genome-depot
 
 
 3. Install external tools and create virtual environment.
 
-cd CGSMS
+cd genomedepot
 
 bash install.sh
 
 
-4. Create mysql user (for example, cgcmsuser) or use existing mysql account.
+4. Create mysql user (for example, gduser) or use existing mysql account.
 
 
 5. Create database.
 
 log into mysql as root: mysql -u root -p
 
-CREATE DATABASE cgcms CHARACTER SET utf8;
+CREATE DATABASE genomedepot CHARACTER SET utf8;
 
-GRANT ALL PRIVILEGES ON cgcms.* TO 'cgcmsuser'@'localhost';
+GRANT ALL PRIVILEGES ON genomedepot.* TO 'gduser'@'localhost';
 
 quit
 
 
-6. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/secrets.json in a text editor. Enter secret key, hostname, database name (like cgcms), database username (like cgcmsuser), database password and URL to static files directory.
+6. Open genomedepot/apps/mygenomes/genome-depot/genomebrowser/secrets.json in a text editor. Enter secret key, hostname, database name (like genomedepot), database username (like gduser), database password and URL to static files directory.
 
-7. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/static/jbrowse/jbrowse.conf in a text editor. Find documentDomain parameter, uncomment it and enter hostname.
+7. Open genomedepot/apps/mygenomes/genome-depot/genomebrowser/static/jbrowse/jbrowse.conf in a text editor. Find documentDomain parameter, uncomment it and enter hostname.
 
-8. Open cgcms/apps/mygenomes/CGCMS/genomebrowser/configs.txt in a text editor. Check:
+8. Open genomedepot/apps/mygenomes/genome-depot/genomebrowser/configs.txt in a text editor. Check:
 
 paths to Jbrowse utilites: prepare-refseqs.pl, flatfile-to-json.pl, generate-names.pl,
 
 path to strain metadata file.
 
 
-9. Activate virtual environment cgcms-venv, change directory to cgcms/app/mygenomes/CGCMS/genomebrowser and run Django configuration commands
+9. Activate virtual environment genomedepot-venv, change directory to genomedepot/app/mygenomes/genome-depot/genomebrowser and run Django configuration commands
 
-source cgcms/cgcms-venv/bin/activate
+source genomedepot/genomedepot-venv/bin/activate
 
-cd cgcms/app/mygenomes/CGCMS/genomebrowser
+cd genomedepot/app/mygenomes/genome-depot/genomebrowser
 
 python manage.py collectstatic
 
@@ -97,23 +97,23 @@ python manage.py migrate
 
 python manage.py createsuperuser (Enter your desired username, email and password).
 
-python manage.py configure_cgcms -i configs.txt
+python manage.py import_config -i configs.txt
 
 python manage.py createcachetable
 
 
 9. Run python manage.py runserver 127.0.0.1:8000 and open in the browser http://127.0.0.1:8000/admin. You should be able to log in with the username you entered at the previous step.
 
-If test server cannot find static files, check if www-data user can read from the cgcms/static/my_genomes directory (giving rw permissions for www-data group would work).
+If test server cannot find static files, check if www-data user can read from the genomedepot/static/my_genomes directory (giving rw permissions for www-data group would work).
 
 
-10. Configure web-server for CGCMS. Open apache2 site configuration file (it may be default_ssl.conf) in a text editor and add the following (with correct paths):
+10. Configure web-server for GenomeDepot. Open apache2 site configuration file (it may be default_ssl.conf) in a text editor and add the following (with correct paths):
 
-	WSGIDaemonProcess cgcmspy python-home=/path/to/cgcms/cgcms-venv python-path=/path/to/cgcms/app/mygenomes/CGCMS/genomebrowser
+	WSGIDaemonProcess genomedepotpy python-home=/path/to/genomedepot/genomedepot-venv python-path=/path/to/genomedepot/app/mygenomes/genome-depot/genomebrowser
 
-	WSGIScriptAlias /mygenomes /path/to/cgcms/app/mygenomes/CGCMS/genomebrowser/genomebrowser/wsgi.py process-group=cgcmspy application-group=%{GLOBAL}
+	WSGIScriptAlias /mygenomes /path/to/genomedepot/app/mygenomes/genome-depot/genomebrowser/genomebrowser/wsgi.py process-group=genomedepotpy application-group=%{GLOBAL}
 
-	<Directory /path/to/cgcms/app/mygenomes/CGCMS/genomebrowser/genomebrowser/>
+	<Directory /path/to/genomedepot/app/mygenomes/genome-depot/genomebrowser/genomebrowser/>
 
 	    <Files wsgi.py>
 
@@ -123,7 +123,7 @@ If test server cannot find static files, check if www-data user can read from th
 
 	</Directory>
 
-	<Directory /path/to/cgcms/static/>
+	<Directory /path/to/genomedepot/static/>
 
 		Options -Indexes +FollowSymLinks
 
@@ -137,7 +137,7 @@ If test server cannot find static files, check if www-data user can read from th
 
 	</Directory>
 
-	Alias /cgcmsstatic /path/to/cgcms/static/
+	Alias /genomedepotstatic /path/to/genomedepot/static/
 
 You may have to add "Header always set X-Frame-Options "SAMEORIGIN"" to web server configuration if the embedded genome viewer is not properly displayed.
 
@@ -147,7 +147,7 @@ sudo systemctl restart apache2
 
 Now you would be able to open https://your.domain.name/mygenomes in a web browser.
 
-Note: If POEM fails to predict operons, and run_poem.sh script throws an error "AttributeError: module 'tensorflow' has no attribute 'get_default_graph'", it means the versions of keras and tensorflow are not compatible. Activate conda cgcms-poem environment and run "pip install tensorflow==1.13.1". 
+Note: If POEM fails to predict operons, and run_poem.sh script throws an error "AttributeError: module 'tensorflow' has no attribute 'get_default_graph'", it means the versions of keras and tensorflow are not compatible. Activate conda genomedepot-poem environment and run "pip install tensorflow==1.13.1". 
 
 ## Genome import from the command line
 
@@ -170,14 +170,14 @@ Note: If POEM fails to predict operons, and run_poem.sh script throws an error "
 
 activate virtual environment (source /path/to/virtualenv/bin/activate)
 
-cd cgcms/CGCMS/genomebrowser
+cd genomedepot/apps/mygenomes/genome-depot/genomebrowser
 
 python manage.py import_genomes -i genomes.txt
 
 Input file 
 Depending on the number of genomes, this command may run from several hours to several days. After that, you should see the genomes on the web site.
 
-In the process of genome import, CGCMS annotation pipeline runs eggnog-mapper to generate EggNOG, KEGG, GO, EC, TC, CAZy and COG mappings for all proteins annotated in the input file. The pipeline predicts operons with POEM, maps Pfam domains with hmmsearch and generates functional annotations with several annotation tools. 
+In the process of genome import, GenomeDepot annotation pipeline runs eggnog-mapper to generate EggNOG, KEGG, GO, EC, TC, CAZy and COG mappings for all proteins annotated in the input file. The pipeline predicts operons with POEM, maps Pfam domains with hmmsearch and generates functional annotations with several annotation tools. 
 
 
 ## Genome import from admin panel
@@ -188,7 +188,7 @@ Start qcluster process:
 
 activate virtual environment (source /path/to/virtualenv/bin/activate)
 
-cd cgcms/CGCMS/genomebrowser
+cd genomedepot/apps/mygenomes/genome-depot/genomebrowser
 
 python manage.py qcluster
 
@@ -204,7 +204,7 @@ For genome download from NCBI ftp, e-mail address should be provided. For securi
 
 # Other commands
 
-Note: activate virtual environment (source /path/to/virtualenv/bin/activate) before running any command, then change directory to cd cgcms/CGCMS/genomebrowser
+Note: activate virtual environment (source /path/to/virtualenv/bin/activate) before running any command, then change directory to  genomedepot/apps/mygenomes/genome-depot/genomebrowser
 
 
 1. Command to re-create Pfam and TIGRFAM domain mappings:
@@ -216,7 +216,7 @@ python manage.py update_domain_mappings -i genomes.txt
 
 python manage.py update_annotations -i genomes.txt
 
-3. Command to export genomes with CGCMS annotations in genbank format
+3. Command to export genomes with GenomeDepot annotations in genbank format
 
 python manage.py export_genomes -g <comma-separated list of genome names> -o <output directory>
 

@@ -15,6 +15,7 @@
     <section id="two" class="wrapper style3">
       <div class="inner" id="search-result-area">
         <header class="align-center">
+          <div id="query_name"></div>
           <div class="table-wrapper">
             <div id="hits"></div>
           </div>
@@ -37,6 +38,7 @@
         $('#loading-bar-area').remove();
         $('#run-time').append(data["time"].toFixed(2) + ' seconds')
         $('#hits').append(data["searchresult"])
+        $('#query_name').append(data["query_name"])
         $('#searchcontext').append(data["searchcontext"])
         $('#search-result-area').show();
       }).fail(function(data){

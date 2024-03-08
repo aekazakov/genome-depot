@@ -1,14 +1,14 @@
 {% extends "base_generic.html" %}
 {% load static %}
-{% block page-title %}<title>{%if site_title %}{{ site_title }}{% else %}CGCMS start page{% endif %}</title>{% endblock %}
-{% block title %} <div class="logo">Start page</div>{% endblock %}
+{% block page-title %}<title>{%if site_title %}{{ site_title }}{% else %}GenomeDepot start page{% endif %}</title>{% endblock %}
+{% block title %} <div class="logo">GenomeDepot</div>{% endblock %}
 
 {% block content %}
         <!-- Banner -->
             <div style="background-image:url('{% static 'images/slide02.jpg' %}');background-size:cover;min-height:100vh;height:100vh;">
                     <div class="box wrapper align-center" style="background-color:rgba(0,0,0,0.0)">
                         <header>
-							<p>Welcome to {%if site_title %}{{ site_title }}{% else %}comparative genomic content management system{% endif %}</p>
+							<p>Welcome to {%if site_title %}{{ site_title }}{% else %}GenomeDepot{% endif %}</p>
 						</header>
 						<br/>
 						<div class="inner align-center">
@@ -20,7 +20,7 @@
 							<a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'proteinsearchform' %}">Protein BLAST</a>&nbsp;
 							<a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'nucleotidesearchform' %}">Nucleotide BLAST</a>&nbsp;
 							<a class="button 2u 12u$(medium) align-center icon fa-info-circle" href="{% url 'help' %}">Quick help</a>&nbsp;
-							<a class="button 2u 12u$(medium) align-center icon fa-book" href="https://aekazakov.github.io/CGCMS/">Documentation</a>
+							<a class="button 2u 12u$(medium) align-center icon fa-book" href="https://aekazakov.github.io/genome-depot/">Documentation</a>
 						</div>
                     </div>
 			</div>

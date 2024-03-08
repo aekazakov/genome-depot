@@ -3,7 +3,7 @@ from browser.pipeline.annotate import Annotator
 
 class Command(BaseCommand):
     help = """Imports regulons from a tab-separated file.
-    Genomes must be uploaded into the CGCMS database before running this command. 
+    Genomes must be uploaded into the GenomeDepot database before running this command. 
 
     The input file must contain the following fields:
     1. Regulon name.

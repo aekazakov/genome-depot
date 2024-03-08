@@ -36,7 +36,7 @@ class UtilTestCase(TestCase):
     fixtures = ['minigenomes.testdata.json']
     
     def setUp(self) -> None:
-        self.temp_dir = Config.objects.get(param='cgcms.temp_dir').value
+        self.temp_dir = Config.objects.get(param='core.temp_dir').value
 
     def test_export_genome(self):
         '''
@@ -117,7 +117,7 @@ class UtilTestCase(TestCase):
             Test re-creating jbrowse files for a list of genomes from file
         '''
         genome = 'E_coli_BW2952'
-        json_dir = os.path.join(Config.objects.get(param='cgcms.json_dir').value, genome)
+        json_dir = os.path.join(Config.objects.get(param='core.json_dir').value, genome)
         if os.path.exists(json_dir):
             shutil.rmtree(json_dir)
         test_file = os.path.join(self.temp_dir, 'test.txt') 
@@ -153,7 +153,7 @@ class UtilTestCase(TestCase):
             Test re-creating jbrowse files for one genome
         '''
         genome = 'E_coli_BW2952'
-        json_dir = os.path.join(Config.objects.get(param='cgcms.json_dir').value, genome)
+        json_dir = os.path.join(Config.objects.get(param='core.json_dir').value, genome)
         if os.path.exists(json_dir):
             shutil.rmtree(json_dir)
         regenerate_jbrowse_files(genome)
@@ -163,11 +163,11 @@ class UtilTestCase(TestCase):
         '''
             Test re-creating search databases
         '''
-        os.remove(os.path.join(Config.objects.get(param='cgcms.search_db_dir').value, 'blast_nucl.ndb'))
-        os.remove(os.path.join(Config.objects.get(param='cgcms.search_db_dir').value, 'blast_prot.pdb'))
+        os.remove(os.path.join(Config.objects.get(param='core.search_db_dir').value, 'blast_nucl.ndb'))
+        os.remove(os.path.join(Config.objects.get(param='core.search_db_dir').value, 'blast_prot.pdb'))
         recreate_search_databases()
-        self.assertTrue(os.path.exists(os.path.join(Config.objects.get(param='cgcms.search_db_dir').value, 'blast_nucl.ndb')))
-        self.assertTrue(os.path.exists(os.path.join(Config.objects.get(param='cgcms.search_db_dir').value, 'blast_prot.pdb')))
+        self.assertTrue(os.path.exists(os.path.join(Config.objects.get(param='core.search_db_dir').value, 'blast_nucl.ndb')))
+        self.assertTrue(os.path.exists(os.path.join(Config.objects.get(param='core.search_db_dir').value, 'blast_prot.pdb')))
 
     def test_update_tags(self):
         '''

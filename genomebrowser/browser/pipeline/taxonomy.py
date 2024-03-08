@@ -8,7 +8,7 @@ from pathlib import Path
 from collections import defaultdict
 from browser.models import Config, Taxon, Strain, Genome, Protein, Ortholog_group
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 def load_taxonomy(taxonomy_file, eggnog_taxonomy_file):
     logger.info('Loading taxonomy...')
@@ -43,12 +43,12 @@ def load_taxonomy(taxonomy_file, eggnog_taxonomy_file):
 def update_taxonomy():
     """ 
         Downloads taxonomy dump from NCBI FTP and updates taxonomy 
-        data in the CGCMS database.
+        data in the GenomeDepot database.
         
         1. Create temporary folder
         2. Download fresh NCBI taxonomy archive.
         3. Extract files.
-        4. Read eggNOG taxonomy file from cgcms.eggnog_taxonomy.
+        4. Read eggNOG taxonomy file from core.eggnog_taxonomy.
         5. Read taxonomy data from database.
         6. Update taxon entries in the database, if needed.
         7. Generate new taxonomy file.
@@ -59,7 +59,7 @@ def update_taxonomy():
     config = {}
     for item in Config.objects.values('param', 'value'):
         config[item['param']] = item['value']
-    tmp_dir = os.path.join(config['cgcms.temp_dir'], 'taxonomy')
+    tmp_dir = os.path.join(config['core.temp_dir'], 'taxonomy')
 
     out_file = os.path.join(tmp_dir, 'ref_taxonomy.txt')
     eggnog_taxa = {}
@@ -71,7 +71,7 @@ def update_taxonomy():
     Path(tmp_dir).mkdir(parents=True, exist_ok=True)
 
     ncbi_archive = os.path.join(tmp_dir, 'taxdump.tar.gz')
-    with open(config['cgcms.eggnog_taxonomy'], 'r') as infile:
+    with open(config['core.eggnog_taxonomy'], 'r') as infile:
         for line in infile:
             row = line.rstrip('\n\r').split('\t')
             eggnog_taxa[row[0]] = (row[1], row[2])
@@ -241,7 +241,7 @@ def update_taxonomy():
                   '(' +
                   taxon.taxonomy_id +
                   ') cannot be found in NCBI Taxonomy. Check the name and taxonomy ID'+
-                  ' and fix the record in the CGCMS database.'
+                  ' and fix the record in the GenomeDepot database.'
                   )
                   
     # Taxonomy consistency check:
@@ -263,10 +263,10 @@ def update_taxonomy():
             logger.error('Taxonomy ID' +
                   taxonomy_id +
                   'cannot be found in the downloaded NCBI Taxonomy. Check the NCBI web-site'+
-                  ' and fix the record in the CGCMS database.'
+                  ' and fix the record in the GenomeDepot database.'
                   )
             
-    os.rename(eggnog_taxonomy_temp_file, config['cgcms.eggnog_taxonomy'])
+    os.rename(eggnog_taxonomy_temp_file, config['core.eggnog_taxonomy'])
     os.rename(out_file, config['ref.taxonomy'])
     shutil.rmtree(tmp_dir)
 

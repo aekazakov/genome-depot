@@ -16,7 +16,7 @@ class ChangeLog(models.Model):
 
 class Config(models.Model):
     '''
-        Stores CGCMS configuration parameters.
+        Stores GenomeDepot configuration parameters.
     '''
     param = models.CharField(max_length=255, unique=True)
     value = models.CharField(max_length=255)

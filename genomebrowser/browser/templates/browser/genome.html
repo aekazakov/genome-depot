@@ -30,7 +30,7 @@
         <div class="grid-style">
         {%if genome.strain %}
             <div class="content">
-            Strain: <a href="{% url 'straindetails' strain_id=genome.strain.id %}">{{ genome.strain.full_name }}</a><br><br>
+            Strain: <a href="{% url 'straindetails' strain_id=genome.strain.id %}">{{ genome.strain.strain_id }} ({{ genome.strain.full_name }})</a><br><br>
             Taxonomy:<br>
             {% if lineage %}
                 {% for parent in lineage %}
@@ -41,7 +41,7 @@
         {% endif %}
         {%if genome.sample %}
             <div class="content">
-            Sample: <a href="{% url 'sampledetails' sample_id=genome.sample.id %}">{{ genome.sample.full_name }}</a><br><br>
+            Sample: <a href="{% url 'sampledetails' sample_id=genome.sample.id %}">{{ genome.sample.sample_id }} ({{ genome.sample.full_name }})</a><br><br>
             Taxonomy:<br>
             {% if lineage %}
                 {% for parent in lineage %}

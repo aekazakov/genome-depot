@@ -3,7 +3,7 @@ from browser.pipeline.annotate import Annotator
 
 class Command(BaseCommand):
     help = """Imports annotations for protein-coding genes from 
-    a tab-separated file and writes the annotations to the CGCMS database.
+    a tab-separated file and writes the annotations into the GenomeDepot database.
     The genes must be in the database.
 
     Annotations file must contain the following fields:

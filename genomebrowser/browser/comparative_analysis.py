@@ -15,7 +15,7 @@ from django.db.models import Q
 from .models import Gene
 from django.urls import reverse
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 
 COLORS = [(51, 34, 136),

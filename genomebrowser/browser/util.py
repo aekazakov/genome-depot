@@ -41,7 +41,7 @@ from browser.models import Taxon
 from browser.pipeline.genome_import import Importer
 from browser.pipeline.util import export_proteins
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 def autovivify(levels=1, final=dict):
     return (defaultdict(final) if levels < 2 else
@@ -50,7 +50,7 @@ def autovivify(levels=1, final=dict):
 def export_genome(genome, output_buffer):
     '''
         Reads one genome from GenBank file,
-        adds gene mappings and annotations from the CGCMS database,
+        adds gene mappings and annotations from the GenomeDepot database,
         writes the genome in GenBank format into the output buffer
     '''
                                         
@@ -91,68 +91,68 @@ def export_genome(genome, output_buffer):
                     genedata[contig_id][gene.locus_tag].append(
                         'EGGNOG5:'
                         + item.eggnog_id + '['
-                        + item.taxon.name + '] [CGCMS/eggNOG-mapper]'
+                        + item.taxon.name + '] [GD/eggNOG-mapper]'
                     )
                 for item in gene.protein.kegg_orthologs.all():
                     genedata[contig_id][gene.locus_tag].append(
                         'KEGG:'
                         + item.kegg_id + ' ('
                         + item.description
-                        + ') [CGCMS/eggNOG-mapper]'
+                        + ') [GD/eggNOG-mapper]'
                     )
                 for item in gene.protein.kegg_pathways.all():
                     genedata[contig_id][gene.locus_tag].append(
                         'KEGG:'
                         + item.kegg_id + ' ('
                         + item.description
-                        + ') [CGCMS/eggNOG-mapper]'
+                        + ') [GD/eggNOG-mapper]'
                     )
                 for item in gene.protein.kegg_reactions.all():
                     genedata[contig_id][gene.locus_tag].append(
                         'KEGG:'
                         + item.kegg_id + ' ('
                         + item.description
-                        + ') [CGCMS/eggNOG-mapper]'
+                        + ') [GD/eggNOG-mapper]'
                     )
                 for item in gene.protein.ec_numbers.all():
                     genedata[contig_id][gene.locus_tag].append(
                         'EC:'
                         + item.ec_number + ' ('
                         + item.description
-                        + ') [CGCMS/eggNOG-mapper]'
+                        + ') [GD/eggNOG-mapper]'
                     )
                 for item in gene.protein.go_terms.all():
                     genedata[contig_id][gene.locus_tag].append(
                         ''
                         + item.go_id + ' ('
                         + item.description
-                        + ') [CGCMS/eggNOG-mapper]'
+                        + ') [GD/eggNOG-mapper]'
                     )
                 for item in gene.protein.tc_families.all():
                     genedata[contig_id][gene.locus_tag].append(
                         'TC:'
                         + item.tc_id + ' ('
                         + item.description
-                        + ') [CGCMS/eggNOG-mapper]'
+                        + ') [GD/eggNOG-mapper]'
                     )
                 for item in gene.protein.cog_classes.all():
                     genedata[contig_id][gene.locus_tag].append(
                         'COG:'
                         + item.cog_id + ' ('
                         + item.description
-                        + ') [CGCMS/eggNOG-mapper]'
+                        + ') [GD/eggNOG-mapper]'
                     )
                 for item in gene.protein.cazy_families.all():
                     genedata[contig_id][gene.locus_tag].append(
                         'CAZy:'
                         + item.cazy_id + ' ('
                         + item.description
-                        + ') [CGCMS/eggNOG-mapper]'
+                        + ') [GD/eggNOG-mapper]'
                     )
             for annotation in Annotation.objects.filter(gene_id=gene):
                 genedata[contig_id][gene.locus_tag].append(
                     annotation.source + ':' + annotation.value 
-                    + ' (' + annotation.note + ') [CGCMS/'
+                    + ' (' + annotation.note + ') [GD/'
                     + annotation.source + ']'
                 )
             if gene.operon:
@@ -341,14 +341,14 @@ def download_ncbi_assembly(assembly_id, email, upload_dir):
     
 def delete_all_data(confirm=True):
     '''
-    This function deletes all data from the CGCMS database except configs.
+    This function deletes all data from the GenomeDepot database except configs.
     It would be called from CLI only.
     User must explicitely confirm data deletion!
     This function doesn't delete static files.
     '''
     print('')
     while confirm:
-        answer = input('All data in the CGCMS database will be deleted.'
+        answer = input('All data in the GenomeDepot database will be deleted.'
             'This action cannot be reversed. Continue? (y/n)'
         )
         if answer.lower() in ["y","yes"]:
@@ -400,14 +400,14 @@ def delete_all_data(confirm=True):
 
 def delete_all_genomes(confirm=True):
     '''
-    This function deletes all genomes and associated data from the CGCMS database.
+    This function deletes all genomes and associated data from the GenomeDepot database.
     It would be called from CLI only.
     User must explicitely confirm data deletion!
     This function doesn't delete static files.
     '''
     print('')
     while confirm:
-        answer = input('All genomes, strains and samples in the CGCMS database '
+        answer = input('All genomes, strains and samples in the GenomeDepot database '
             'will be deleted. This action cannot be reversed. Continue? (y/n)'
         )
         if answer.lower() in ["y","yes"]:
@@ -468,21 +468,21 @@ def delete_genome(genome_name):
     importer.export_proteins()
     importer.export_contigs()
     importer.delete_search_databases()
-    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
-                    os.path.basename(importer.config['cgcms.search_db_nucl'])),
-                    importer.config['cgcms.search_db_nucl']
+    shutil.copyfile(os.path.join(importer.config['core.temp_dir'],
+                    os.path.basename(importer.config['core.search_db_nucl'])),
+                    importer.config['core.search_db_nucl']
                     )
-    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
-                    os.path.basename(importer.config['cgcms.search_db_prot'])),
-                    importer.config['cgcms.search_db_prot']
+    shutil.copyfile(os.path.join(importer.config['core.temp_dir'],
+                    os.path.basename(importer.config['core.search_db_prot'])),
+                    importer.config['core.search_db_prot']
                     )
     importer.create_search_databases()
     logger.info('Removing temporary files...')
-    json_dir = os.path.join(importer.config['cgcms.json_dir'], genome_name)
+    json_dir = os.path.join(importer.config['core.json_dir'], genome_name)
     if os.path.exists(json_dir):
         shutil.rmtree(json_dir)
-    os.remove(importer.config['cgcms.search_db_nucl'])
-    os.remove(importer.config['cgcms.search_db_prot'])
+    os.remove(importer.config['core.search_db_nucl'])
+    os.remove(importer.config['core.search_db_prot'])
     # importer.cleanup()
     logger.debug('Done!')
 
@@ -505,10 +505,10 @@ def delete_genomes(genomes_file):
             elif genome_set.count() > 1:
                 logger.debug('Non-unique genome name: ' + genome_name)
                 continue
-            if os.path.exists(os.path.join(importer.config['cgcms.json_dir'],
+            if os.path.exists(os.path.join(importer.config['core.json_dir'],
                                            genome_name
                                            )):
-                shutil.rmtree(os.path.join(importer.config['cgcms.json_dir'],
+                shutil.rmtree(os.path.join(importer.config['core.json_dir'],
                                            genome_name
                                            ))
             genome_set.delete()
@@ -522,18 +522,18 @@ def delete_genomes(genomes_file):
     importer.export_proteins()
     importer.export_contigs()
     importer.delete_search_databases()
-    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
-                    os.path.basename(importer.config['cgcms.search_db_nucl'])
+    shutil.copyfile(os.path.join(importer.config['core.temp_dir'],
+                    os.path.basename(importer.config['core.search_db_nucl'])
                     ),
-                    importer.config['cgcms.search_db_nucl']
+                    importer.config['core.search_db_nucl']
                     )
-    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
-                    os.path.basename(importer.config['cgcms.search_db_prot'])),
-                    importer.config['cgcms.search_db_prot']
+    shutil.copyfile(os.path.join(importer.config['core.temp_dir'],
+                    os.path.basename(importer.config['core.search_db_prot'])),
+                    importer.config['core.search_db_prot']
                     )
     importer.create_search_databases()
-    os.remove(importer.config['cgcms.search_db_nucl'])
-    os.remove(importer.config['cgcms.search_db_prot'])
+    os.remove(importer.config['core.search_db_nucl'])
+    os.remove(importer.config['core.search_db_prot'])
     # importer.cleanup()
     logger.info('Done!')
 
@@ -622,8 +622,8 @@ def recreate_search_databases():
     search database files.
     '''
     importer = Importer()
-    nucl_db_fasta = os.path.join(importer.config['cgcms.temp_dir'],
-        os.path.basename(importer.config['cgcms.search_db_nucl'])
+    nucl_db_fasta = os.path.join(importer.config['core.temp_dir'],
+        os.path.basename(importer.config['core.search_db_nucl'])
         )
     if os.path.exists(nucl_db_fasta):
         os.remove(nucl_db_fasta)
@@ -642,24 +642,24 @@ def recreate_search_databases():
                               ''.join(contig_sequence) + '\n'
                               )
 
-    prot_db_fasta = os.path.join(importer.config['cgcms.temp_dir'],
-        os.path.basename(importer.config['cgcms.search_db_prot'])
+    prot_db_fasta = os.path.join(importer.config['core.temp_dir'],
+        os.path.basename(importer.config['core.search_db_prot'])
         )
     if os.path.exists(prot_db_fasta):
         os.remove(prot_db_fasta)
     export_proteins(None, prot_db_fasta)
-    if os.path.exists(importer.config['cgcms.search_db_nucl']):
-        os.remove(importer.config['cgcms.search_db_nucl'])
-    if os.path.exists(importer.config['cgcms.search_db_prot']):
-        os.remove(importer.config['cgcms.search_db_prot'])
+    if os.path.exists(importer.config['core.search_db_nucl']):
+        os.remove(importer.config['core.search_db_nucl'])
+    if os.path.exists(importer.config['core.search_db_prot']):
+        os.remove(importer.config['core.search_db_prot'])
     importer.delete_search_databases()
-    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
-                    os.path.basename(importer.config['cgcms.search_db_nucl'])),
-                    importer.config['cgcms.search_db_nucl']
+    shutil.copyfile(os.path.join(importer.config['core.temp_dir'],
+                    os.path.basename(importer.config['core.search_db_nucl'])),
+                    importer.config['core.search_db_nucl']
                     )
-    shutil.copyfile(os.path.join(importer.config['cgcms.temp_dir'],
-                    os.path.basename(importer.config['cgcms.search_db_prot'])),
-                    importer.config['cgcms.search_db_prot']
+    shutil.copyfile(os.path.join(importer.config['core.temp_dir'],
+                    os.path.basename(importer.config['core.search_db_prot'])),
+                    importer.config['core.search_db_prot']
                     )
     importer.create_search_databases()
     

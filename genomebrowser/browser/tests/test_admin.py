@@ -273,7 +273,7 @@ class AdminTestCase(TestCase):
         # Tests implementation of update_static_files task
         genomes = ['E_coli_BW2952',]
         update_static_files_impl(genomes)
-        json_dir = os.path.join(Config.objects.get(param='cgcms.json_dir').value, genomes[0])
+        json_dir = os.path.join(Config.objects.get(param='core.json_dir').value, genomes[0])
         self.assertTrue(os.path.exists(json_dir))
 
     def test_delete_genomes_impl(self):

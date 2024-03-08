@@ -40,7 +40,7 @@ class BrowserViewsTest(TestCase):
         '''
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '<div class="logo">Start page</div>')
+        self.assertContains(response, '<div class="logo">GenomeDepot</div>')
 
     def test_genomes_page(self):
         '''

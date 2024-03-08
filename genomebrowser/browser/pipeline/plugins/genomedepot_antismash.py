@@ -17,7 +17,7 @@ def application(annotator, genomes):
             as key and GBK path as value
         
     """
-    working_dir = os.path.join(annotator.config['cgcms.temp_dir'],
+    working_dir = os.path.join(annotator.config['core.temp_dir'],
                                'antismash-plugin-temp'
                                )
     script_path = preprocess(annotator, genomes, working_dir)
@@ -46,7 +46,7 @@ def preprocess(annotator, genomes, working_dir):
     antismash_script = os.path.join(working_dir, 'run_antismash.sh')
     with open(antismash_script, 'w') as outfile:
         outfile.write('#!/bin/bash\n')
-        outfile.write('source "' + annotator.config['cgcms.conda_path'] + '"\n')
+        outfile.write('source "' + annotator.config['core.conda_path'] + '"\n')
         outfile.write('conda activate ' +
                       annotator.config['plugins.antismash.conda_env'] + '\n'
                       )
@@ -87,7 +87,7 @@ def postprocess(annotator, genomes, working_dir):
         Finds antiSMASH output files and creates file 
         with annotations for upload into DB
     """
-    output_file = os.path.join(annotator.config['cgcms.temp_dir'],
+    output_file = os.path.join(annotator.config['core.temp_dir'],
                                'antismash-plugin-output.txt'
                                )
     antismash_ref = {}

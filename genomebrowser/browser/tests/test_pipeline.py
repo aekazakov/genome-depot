@@ -198,7 +198,7 @@ class ImporterTestCase(TestCase):
         '''
         print('Testing export_contigs function')
         self.importer.export_contigs()
-        self.assertEqual(len(self.importer.staticfiles[self.importer.config['cgcms.search_db_dir']]), 1)
+        self.assertEqual(len(self.importer.staticfiles[self.importer.config['core.search_db_dir']]), 1)
 
     #@skip("skip for now")
     def test_export_proteins(self):
@@ -208,7 +208,7 @@ class ImporterTestCase(TestCase):
         '''
         print('Testing export_proteins function')
         genome_id = 155
-        test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile.faa')
+        test_file = os.path.join(self.importer.config['core.temp_dir'], 'testfile.faa')
 
         export_proteins([genome_id,], test_file)
 
@@ -225,7 +225,7 @@ class ImporterTestCase(TestCase):
         print('Testing export_proteins_bygenome function')
         genome_name = 'E_coli_BW2952'
         genome = Genome.objects.get(name=genome_name)
-        out_dir = self.importer.config['cgcms.temp_dir']
+        out_dir = self.importer.config['core.temp_dir']
         
         export_proteins_bygenome({genome_name:genome.gbk_filepath}, out_dir)
 
@@ -245,9 +245,9 @@ class ImporterTestCase(TestCase):
         print('Testing export_nucl_bygenome function')
         genome_name = 'E_coli_BW2952'
         genome = Genome.objects.get(name=genome_name)
-        test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile.fna')
+        test_file = os.path.join(self.importer.config['core.temp_dir'], 'testfile.fna')
 
-        out_dir = self.importer.config['cgcms.temp_dir']
+        out_dir = self.importer.config['core.temp_dir']
         
         export_nucl_bygenome({genome_name:genome.gbk_filepath}, out_dir)
 
@@ -297,7 +297,7 @@ class ImporterTestCase(TestCase):
         print('Testing add_custom_annotations function')
         genome_id = 'E_coli_BW2952'
         # Prepare the data
-        test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile_annot.tsv')
+        test_file = os.path.join(self.importer.config['core.temp_dir'], 'testfile_annot.tsv')
         with open(test_file, 'w') as outfile:
             outfile.write('#comment line\n')
             outfile.write('\t'.join([
@@ -322,7 +322,7 @@ class ImporterTestCase(TestCase):
         print('Testing add_strain_metadata function')
         strain_id = 'CFT073'
         # Prepare the data
-        test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile_meta.tsv')
+        test_file = os.path.join(self.importer.config['core.temp_dir'], 'testfile_meta.tsv')
         with open(test_file, 'w') as outfile:
             outfile.write('#comment line\n')
             outfile.write('\t'.join([
@@ -371,7 +371,7 @@ class ImporterTestCase(TestCase):
         genome_id = 'E_coli_BW2952'
         test_description = 'Updated genome description'
         # Prepare the data
-        test_file = os.path.join(self.importer.config['cgcms.temp_dir'], 'testfile_genome.tsv')
+        test_file = os.path.join(self.importer.config['core.temp_dir'], 'testfile_genome.tsv')
         with open(test_file, 'w') as outfile:
             outfile.write('#comment line\n')
             outfile.write('\t'.join([
@@ -423,38 +423,6 @@ class PipelineTestCase(TransactionTestCase):
     
     def setUp(self):
         self.importer = Importer()
-        '''
-        self.importer.config['cgcms.generate_names_command'] = '/mnt/data/work/CGCMS/external_tools/jbrowse/bin/generate-names.pl'
-        self.importer.config['plugins.macsyfinder.conda_env'] = 'cgcms-macsyfinder'
-        self.importer.config['plugins.macsyfinder.model'] = 'TXSScan'
-        self.importer.config['plugins.macsyfinder.models_dir'] = '/mnt/data/work/CGCMS/external_refdata/macsyfinder/data'
-        self.importer.config['plugins.defensefinder.conda_env'] = 'cgcms-defensefinder'
-        self.importer.config['plugins.defensefinder.defensefinder_models_dir'] = '/mnt/data/work/CGCMS/external_refdata/defensefinder/data'
-        self.importer.config['plugins.hmmsearch_tigrfam.conda_env'] = 'cgcms_hmmsearch'
-        self.importer.config['plugins.hmmsearch_tigrfam.hmmsearch_command'] = 'hmmsearch'
-        self.importer.config['plugins.hmmsearch_tigrfam.display_name'] = 'TIGRFAM database'
-        self.importer.config['plugins.hmmsearch_tigrfam.hmm_lib'] = '/mnt/data/work/CGCMS/external_refdata/tigrfam/TIGRFAM.HMM'
-        self.importer.config['plugins.hmmsearch_tigrfam.ref_data'] = '/mnt/data/work/CGCMS/external_refdata/tigrfam/ref_tigrfam.txt'
-        self.importer.config['plugins.hmmsearch_pfam.conda_env'] = 'cgcms_hmmsearch'
-        self.importer.config['plugins.hmmsearch_pfam.hmmsearch_command'] = 'hmmsearch'
-        self.importer.config['plugins.hmmsearch_pfam.display_name'] = 'Pfam database'
-        self.importer.config['plugins.hmmsearch_pfam.hmm_lib'] = '/mnt/data/work/CGCMS/external_refdata/pfam/Pfam-A.hmm'
-        self.importer.config['plugins.hmmsearch_pfam.ref_data'] = '/mnt/data/work/CGCMS/external_refdata/pfam/ref_pfam.txt'
-        self.importer.config['plugins.gapmind.enabled'] = '1'
-        self.importer.config['plugins.gapmind.conda_env'] = 'cgcms-gapmind'
-        self.importer.config['plugins.gapmind.gapmind_dir'] = '/mnt/data/work/CGCMS/external_tools/PaperBLAST'
-        self.importer.config['plugins.gapmind.threads'] = '8'
-        self.importer.config['plugins.phispy.conda_env'] = 'cgcms-phispy'
-        self.importer.config['plugins.fama.fama_dir'] = '/mnt/data/work/CGCMS/external_tools/fama/py'
-        self.importer.config['plugins.fama.fama_config'] = '/mnt/data/work/CGCMS/external_tools/fama/config.ini'
-        self.importer.config['plugins.antismash.conda_env'] = 'cgcms-antismash'
-        self.importer.config['plugins.antismash.antismash_cmd'] = 'antismash'
-        self.importer.config['plugins.amrfinder.threads'] = '8'
-        self.importer.config['plugins.amrfinder.conda_env'] = 'cgcms-amrfinder'
-        self.importer.config['plugins.amrfinder.display_name'] = 'AMRFinderPlus'
-
-        self.importer.config['cgcms.poem_dir'] = '/mnt/data/work/sandbox/poem_py3k/POEM_py3k'
-        '''
         self.annotator= Annotator()
 
     #@skip("skip for now")
@@ -464,13 +432,6 @@ class PipelineTestCase(TransactionTestCase):
             Gapmind should find 5 hits in the E_coli_BW2952 minigenome
         '''
         print('Testing run_external_tools function')
-        '''
-        self.annotator.config['plugins.gapmind.enabled'] = '1'
-        self.annotator.config['plugins.gapmind.conda_env'] = 'cgcms-gapmind'
-        self.annotator.config['plugins.gapmind.gapmind_dir'] = '/mnt/data/work/CGCMS/external_tools/PaperBLAST'
-        self.annotator.config['plugins.gapmind.threads'] = '8'
-        self.annotator.config['plugins.gapmind.display_name'] = 'GapMind'
-        '''
         genome_id = 'E_coli_BW2952'
         genome = Genome.objects.get(name=genome_id)
         test_plugin = 'gapmind'

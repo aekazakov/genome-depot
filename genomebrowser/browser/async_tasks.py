@@ -13,7 +13,7 @@ from browser.tasks import import_annotations_impl
 from browser.tasks import import_regulon_impl
 from browser.tasks import run_annotation_pipeline_impl
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 def test_async_task(request, queryset):
     timeout = 60

@@ -31,7 +31,7 @@ import browser.pipeline.plugins
     Various functions for generation and import of gene annotations.
 """
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 class Annotator(object):
 
@@ -39,13 +39,6 @@ class Annotator(object):
         self.config = {}
         self._read_config()
         self.proteins = {}
-        '''
-        self.hmmsearch_input_file = os.path.join(self.config['cgcms.temp_dir'],
-                                                 'hmmsearch_input.faa'
-                                                 )
-        if os.path.exists(self.hmmsearch_input_file):
-            os.remove(self.hmmsearch_input_file)
-        '''
         # Data tables
         self.annotations = []
         self.metadata = []
@@ -54,300 +47,13 @@ class Annotator(object):
                         in pkgutil.iter_modules(browser.pipeline.plugins.__path__,
                                                 browser.pipeline.plugins.__name__ + "."
                                                 )
-                        if name.startswith('browser.pipeline.plugins.cgcms_')
+                        if name.startswith('browser.pipeline.plugins.genomedepot_')
                         }
         
         
     def _read_config(self):
         for item in Config.objects.values('param', 'value'):
             self.config[item['param']] = item['value']
-    '''
-    def export_proteins(self, genome_ids, out_filename):
-        """Populates proteins dictionary and creates FASTA file"""
-        proteins = {}
-        if genome_ids is None:
-            for item in Protein.objects.all():
-                proteins[item['protein_hash']] = item
-        else:
-            target_genes = Gene.objects.filter(
-                                               genome__id__in = genome_ids
-                                               ).select_related('protein')
-            for gene in target_genes:
-                if gene.protein is not None:
-                    proteins[gene.protein.protein_hash] = gene.protein
-            
-        with open(out_filename, 'w') as outfile:
-            for protein_hash, protein in proteins.items():
-                outfile.write('>' + protein_hash + '\n')
-                outfile.write(protein.sequence + '\n')
-    '''
-    '''
-    def run_hmmsearch(self, outfile, lib_path):
-        """
-        Runs hmmsearch for FASTA file of proteins.
-        """
-        # Close MySQL connection before starting external process because 
-        # it may run for too long resulting in "MySQL server has gone away" error
-        connection.close()
-        cmd = [self.config['cgcms.hmmsearch_command'],
-              '--domtblout', outfile, '-o', '/dev/null',
-              '--cut_tc', '--cpu', self.config['cgcms.threads'], '--noali', '--notextw',
-              lib_path,
-              self.hmmsearch_input_file
-              ]
-        with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
-            for line in proc.stdout:
-                logger.info(line)
-        if proc.returncode != 0:
-            # Suppress false positive no-member error (see https://github.com/PyCQA/pylint/issues/1860)
-            # pylint: disable=no-member
-            raise CalledProcessError(proc.returncode, proc.args)
-    '''
-    
-    '''
-    def parse_hmmsearch_output(self, hmmsearchfile):
-        hits = {}
-        with open(hmmsearchfile, 'r') as infile:
-            for line in infile:
-                if line.startswith('#'):
-                    continue
-                row = line.rstrip('\n\r').split()
-                if (row[0], row[3]) in hits:
-                    hits[(row[0], row[3])]['coords'].append(row[17] + '..' + row[18])
-                else:
-                    hits[(row[0], row[3])] = {'protein_hash':row[0],
-                           'hmm_id':row[3],
-                           'hmm_acc':row[4],
-                           'evalue':row[6],
-                           'coords':[row[17] + '..' + row[18]]
-                           }
-        return hits.values()
-    '''
-    '''
-    def read_hmm_reference(self, ref_path):
-        result = {}
-        with open(ref_path, 'r') as infile:
-            for line in infile:
-                if line.startswith('#'):
-                    continue
-                row = line.rstrip('\n\r').split('\t')
-                result[row[0]] = {}
-                result[row[0]]['acc'] = row[1]
-                result[row[0]]['desc'] = row[-1]
-        return result
-    '''
-    '''
-    def add_pfam_domains(self):
-        self.proteins = {}
-        logger.info('Deleting existing annotations')
-        Annotation.objects.filter(source='Pfam database').delete()
-        self._create_pfam_domains()
-    '''
-    
-    '''
-    def _create_pfam_domains(self, genome_ids=None):
-        """Creates PFAM domain mappings for proteins in the database.
-        The genome_ids parameter is a list of genome ids that 
-        would be included in hmmsearch search
-        """
-        batch_size=10000
-        # export proteins as FASTA
-        logger.info('Exporting proteins')
-        self.export_proteins(genome_ids)
-        # run hmmscan
-        logger.info('Running HMMSEARCH')
-        hmmsearch_outfile = os.path.join(self.config['cgcms.temp_dir'],
-                                         'hmmsearch_pfam.out.txt'
-                                         )
-        if os.path.exists(hmmsearch_outfile):
-            os.remove(hmmsearch_outfile)
-        self.run_hmmsearch(hmmsearch_outfile, self.config['ref.pfam_hmm_lib'])
-        # parse result
-        logger.info('Reading HMMSEARCH output')
-        hits = self.parse_hmmsearch_output(hmmsearch_outfile)
-        # read HMM list
-        ref_hmm = self.read_hmm_reference(self.config['ref.pfam_hmm_list'])
-        # create Annotations
-        logger.info('Creating annotations')
-        annotations_written = 0
-        for hit in hits:
-            protein = self.proteins[hit['protein_hash']]
-            for gene in protein.gene_set.all():
-                if genome_ids is None or gene.genome.id in genome_ids:
-                    self.annotations.append(Annotation(gene_id=gene,
-                        source='Pfam database',
-                        url='https://www.ebi.ac.uk/interpro/entry/pfam/' + \
-                            ref_hmm[hit['hmm_id']]['acc'],
-                        key='Pfam domain',
-                        value=hit['hmm_id'],
-                        note=hit['hmm_id'] + ' (' + ref_hmm[hit['hmm_id']]['acc'] + \
-                             '): ' + ref_hmm[hit['hmm_id']]['desc'] + \
-                             '. E-value: ' + \
-                             hit['evalue'] + '. Coordinates: ' + \
-                             ';'.join(hit['coords'])
-                        ))
-                    if len(self.annotations) >= batch_size:
-                        Annotation.objects.bulk_create(self.annotations,
-                                                       batch_size=batch_size
-                                                       )
-                        annotations_written += len(self.annotations)
-                        self.annotations = []
-        # write Annotations
-        logger.info('Writing annotations')
-        Annotation.objects.bulk_create(self.annotations, batch_size=batch_size)
-        annotations_written += len(self.annotations)
-        logger.info('%d annotations created for PFAM domains', annotations_written)
-        self.annotations = []
-    '''
-    
-    '''    
-    def update_pfam_domains(self, genome_ids=None):
-        self.proteins = {}
-        logger.info('Delete existing PFAM annotations')
-        if genome_ids is None:
-            Annotation.objects.filter(source='Pfam database').delete()
-        else:
-            Annotation.objects.filter(source='Pfam database',
-                                      gene_id__genome__id__in=genome_ids
-                                      ).delete()
-        self._create_pfam_domains(genome_ids)
-    '''
-    
-    '''
-    def update_tigrfam_domains(self, genome_ids=None):
-        self.proteins = {}
-        logger.info('Delete existing TIGRFAM annotations')
-        if genome_ids is None:
-            Annotation.objects.filter(source='TIGRFAM database').delete()
-        else:
-            Annotation.objects.filter(source='TIGRFAM database',
-                                      gene_id__genome__id__in=genome_ids
-                                      ).delete()
-        self._create_tigrfam_domains(genome_ids)
-    '''
-    
-    '''
-    def add_tigrfam_domains(self):
-        self.proteins = {}
-        logger.info('Deleting existing annotations')
-        Annotation.objects.filter(source='TIGRFAM database').delete()
-        self._create_tigrfam_domains()
-    '''
-    
-    '''
-    def _create_tigrfam_domains(self, genome_ids=None):
-        batch_size=10000
-        logger.info('Exporting proteins')
-        self.export_proteins(genome_ids)
-        # run hmmscan
-        logger.info('Running HMMSEARCH')
-        hmmsearch_outfile = os.path.join(self.config['cgcms.temp_dir'],
-                                         'hmmsearch_tigrfam.out.txt'
-                                         )
-        if os.path.exists(hmmsearch_outfile):
-            os.remove(hmmsearch_outfile)
-        self.run_hmmsearch(hmmsearch_outfile, self.config['ref.tigrfam_hmm_lib'])
-        # parse result
-        logger.info('Reading HMMSEARCH output')
-        hits = self.parse_hmmsearch_output(hmmsearch_outfile)
-        # read HMM list
-        ref_hmm = self.read_hmm_reference(self.config['ref.tigrfam_hmm_list'])
-        # create Annotations
-        logger.info('Creating annotations')
-        annotations_written = 0
-        for hit in hits:
-            protein = self.proteins[hit['protein_hash']]
-            for gene in protein.gene_set.all():
-                if genome_ids is None or gene.genome.id in genome_ids:
-                    self.annotations.append(Annotation(gene_id=gene,
-                        source='TIGRFAM database',
-                        url='http://tigrfams.jcvi.org/cgi-bin/HmmReportPage.cgi?acc='\
-                            + hit['hmm_id'],
-                        key='TIGRFAM family',
-                        value=hit['hmm_id'],
-                        note=hit['hmm_id'] + ': ' + ref_hmm[hit['hmm_id']]['desc'] +\
-                             '. E-value: ' + hit['evalue'] + '. Coordinates: ' +\
-                             ';'.join(hit['coords'])
-                        ))
-                    if len(self.annotations) >= batch_size:
-                        Annotation.objects.bulk_create(self.annotations,
-                                                       batch_size=batch_size
-                                                       )
-                        annotations_written += len(self.annotations)
-                        self.annotations = []
-        # write Annotations
-        logger.info('Writing annotations')
-        Annotation.objects.bulk_create(self.annotations, batch_size=10000)
-        annotations_written += len(self.annotations)
-        logger.info('%d annotations created for TIGRFAM families', annotations_written)
-        self.annotations = []
-    
-    '''
-    
-    '''
-    def make_fitbrowser_annotations(self, strain, org_name, protein_path):
-        result = []
-        for seq_record in SeqIO.parse(protein_path, "fasta"):
-            protein_sequence = seq_record.seq
-            # Some protein sequences were translated incorrectly
-            if protein_sequence.startswith('V') or protein_sequence.startswith('L'):
-                protein_sequence = 'M' + protein_sequence[1:]
-            protein_hash = hashlib.md5(protein_sequence.encode('utf-8')).hexdigest()
-            if protein_hash in self.proteins:
-                seq_id = seq_record.id.split(' ')[0]
-                org_id, locus_id = seq_id.split(':')
-                for gene in self.proteins[protein_hash].gene_set.all():
-                    if gene.genome.strain == strain:
-                        url='http://fit.genomics.lbl.gov/cgi-bin/singleFit.cgi?orgId='\
-                        + org_id + '&locusId=' + locus_id
-                        result.append(Annotation(gene_id=gene,
-                            source='Fitness Browser',
-                            url=url,
-                            key='Fitness Browser gene',
-                            value=locus_id,
-                            note='Gene ' + locus_id + ' from ' + org_name
-                            ))
-        logger.info('%d genes found in %s', len(result), org_name)
-        return result
-    '''
-    
-    '''
-    def add_fitbrowser_links(self):
-        """ 
-            This function adds gene annotations with links to
-            Fitness Browser (http://fit.genomics.lbl.gov/)
-        """
-        self.annotations = []
-        # Delete existing annotations
-        logger.info('Deleting existing annotations')
-        Annotation.objects.filter(source='Fitness Browser').delete()
-        logger.info('Making protein list')
-        for protein in Protein.objects.all():
-            self.proteins[protein.protein_hash] = protein
-        strains = {item.strain_id:item for item in Strain.objects.all()}
-        logger.info('Reading organism list')
-        with open(self.config['ref.fitbrowser_orgs_file'], 'r') as infile:
-            for line in infile:
-                row = line.rstrip('\n\r').split('\t')
-                if row[0] in strains:
-                    logger.info(row[0] + ' found in database')
-                    self.annotations += \
-                        self.make_fitbrowser_annotations(strains[row[0]],
-                                                         row[1],
-                                                         row[3]
-                                                         )
-                    # write Annotations
-                    logger.info('Writing annotations')
-                    Annotation.objects.bulk_create(self.annotations,
-                                                   batch_size=10000
-                                                   )
-                    logger.info('%d annotations created for %s',
-                                len(self.annotations),
-                                row[0]
-                                )
-                    self.annotations = []
-        self.annotations = []
-    '''
     
     def add_custom_annotations(self, tsv_file):
         """ This function adds gene annotations from tab-separated file. 
@@ -739,7 +445,7 @@ class Annotator(object):
         genome_names = list(genomes.keys())
         
         for plugin_name in plugins_enabled:
-            plugin_module_name = 'browser.pipeline.plugins.cgcms_' + plugin_name
+            plugin_module_name = 'browser.pipeline.plugins.genomedepot_' + plugin_name
             if plugin_module_name in plugins_available:
                 plugin = plugins_available[plugin_module_name]
                 plugin_output = plugin.application(self, genomes)

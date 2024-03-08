@@ -7,7 +7,7 @@ from subprocess import Popen, PIPE, STDOUT
 from django.core.exceptions import SuspiciousOperation
 from browser.models import Config
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 def _verify_alphabet(sequence, alphabet):
     '''
@@ -107,7 +107,7 @@ def run_protein_search(params):
         return result, searchcontext, 0
     query = params['sequence']
 
-    search_dir = Config.objects.get(param='cgcms.search_db_dir').value
+    search_dir = Config.objects.get(param='core.search_db_dir').value
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
     blast_db = os.path.join(search_dir, 'blast_prot')
     searchcontext = ''
@@ -161,7 +161,7 @@ def run_protein_search(params):
         searchcontext = 'No hits found'
     if len(result) > int(params['hitstoshow']):
         result = result[:int(params['hitstoshow'])]
-    return result, searchcontext, query_len
+    return result, searchcontext, query_len, sequence_id
 
 def run_nucleotide_search(params):
     '''
@@ -176,7 +176,7 @@ def run_nucleotide_search(params):
         return result, searchcontext, 0
     query = params['sequence']
     
-    search_dir = Config.objects.get(param='cgcms.search_db_dir').value
+    search_dir = Config.objects.get(param='core.search_db_dir').value
     DNA_ALPHABET = 'GATCRYWSMKHBVDN'
     blast_db = os.path.join(search_dir, 'blast_nucl')
     searchcontext = ''
@@ -231,4 +231,4 @@ def run_nucleotide_search(params):
         searchcontext = 'No hits found'
     if len(result) > int(params['hitstoshow']):
         result = result[:int(params['hitstoshow'])]
-    return result, searchcontext, query_len
+    return result, searchcontext, query_len, sequence_id

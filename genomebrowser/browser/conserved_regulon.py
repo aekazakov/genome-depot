@@ -8,7 +8,7 @@ from browser.models import Regulon
 from browser.models import Site
 from browser.pipeline.annotate import autovivify
 
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 RANKS = ('species',
          'genus',

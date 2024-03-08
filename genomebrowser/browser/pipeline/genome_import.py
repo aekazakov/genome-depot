@@ -50,7 +50,7 @@ Input file must have six columns:
 6. External ID to be used as a label (can be blank)
 
 """
-logger = logging.getLogger("CGCMS")
+logger = logging.getLogger("GenomeDepot")
 
 class Importer(object):
 
@@ -60,9 +60,9 @@ class Importer(object):
         self.inputgenomes = defaultdict(dict)
         self.staticfiles = defaultdict(list)
         self.taxonomy, self.taxonomy_id_lookup, self.eggnog_taxonomy_lookup = \
-        load_taxonomy(self.config['ref.taxonomy'], self.config['cgcms.eggnog_taxonomy'])
+        load_taxonomy(self.config['ref.taxonomy'], self.config['core.eggnog_taxonomy'])
         self.protein_hash2gene = defaultdict(list)
-        self.eggnog_input_file = os.path.join(self.config['cgcms.temp_dir'],
+        self.eggnog_input_file = os.path.join(self.config['core.temp_dir'],
                                               'eggnog_mapper_input.faa'
                                               )
         if os.path.exists(self.eggnog_input_file):
@@ -88,22 +88,22 @@ class Importer(object):
         """
             Try to create directories for static files. 
         """
-        Path(self.config['cgcms.temp_dir']).mkdir(parents=True,
+        Path(self.config['core.temp_dir']).mkdir(parents=True,
                                                   exist_ok=True
                                                   )
-        Path(self.config['cgcms.eggnog_outdir']).mkdir(parents=True,
+        Path(self.config['core.eggnog_outdir']).mkdir(parents=True,
                                                        exist_ok=True
                                                        )
-        Path(self.config['cgcms.static_dir']).mkdir(parents=True,
+        Path(self.config['core.static_dir']).mkdir(parents=True,
                                                     exist_ok=True
                                                     )
-        Path(self.config['cgcms.static_dir'] + '/gbff').mkdir(parents=True,
+        Path(self.config['core.static_dir'] + '/gbff').mkdir(parents=True,
                                                               exist_ok=True
                                                               )
-        Path(self.config['cgcms.json_dir']).mkdir(parents=True,
+        Path(self.config['core.json_dir']).mkdir(parents=True,
                                                   exist_ok=True
                                                   )
-        Path(self.config['cgcms.search_db_dir']).mkdir(parents=True,
+        Path(self.config['core.search_db_dir']).mkdir(parents=True,
                                                        exist_ok=True
                                                        )
     def sanitize_genome_id(self, genome):
@@ -161,7 +161,7 @@ class Importer(object):
                 raise ValueError(sample_id + ' name is too long')
             if len(strain_id) > Strain._meta.get_field('strain_id').max_length:
                 raise ValueError(strain_id + ' name is too long')
-            if len(os.path.join(self.config['cgcms.static_dir'],
+            if len(os.path.join(self.config['core.static_dir'],
                 'gbff', genome_id + '.genome.gbff.gz')
                 ) > Genome._meta.get_field('gbk_filepath').max_length:
                 raise ValueError('GBK filepath for genome ' + genome_id +
@@ -633,12 +633,12 @@ class Importer(object):
     def process_gbk(self):
         strored_seq_uids = self.export_contigs()
         nucl_db_file = \
-            os.path.join(self.config['cgcms.temp_dir'],
-                         os.path.basename(self.config['cgcms.search_db_nucl'])
+            os.path.join(self.config['core.temp_dir'],
+                         os.path.basename(self.config['core.search_db_nucl'])
                          )
-        self.staticfiles[self.config['cgcms.search_db_dir']]\
+        self.staticfiles[self.config['core.search_db_dir']]\
             .append(os.path.basename(nucl_db_file))
-        gbff_dir = os.path.join(self.config['cgcms.static_dir'], 'gbff')
+        gbff_dir = os.path.join(self.config['core.static_dir'], 'gbff')
         nucl_db_file_handle = open(nucl_db_file, 'a')
         for genome_id in self.inputgenomes:
             gbk_file = self.inputgenomes[genome_id]['gbk']
@@ -671,7 +671,7 @@ class Importer(object):
             contig_sizes = []
             genome_sequence = []
             features = OrderedDict()
-            genome_fasta = os.path.join(self.config['cgcms.temp_dir'],
+            genome_fasta = os.path.join(self.config['core.temp_dir'],
                                         genome_id + '.fna'
                                         )
             locus_tags = set()
@@ -757,10 +757,10 @@ class Importer(object):
         Runs eggnog-mapper for eggnog_mapper_input.faa file in the temp directory.
         """
         chunk_size = '200000'
-        result = os.path.join(self.config['cgcms.temp_dir'],
+        result = os.path.join(self.config['core.temp_dir'],
                               'eggnog_mapper_output.emapper.annotations'
                               )
-        work_dir = self.config['cgcms.eggnog_outdir']
+        work_dir = self.config['core.eggnog_outdir']
         Path(work_dir).mkdir(parents=True, exist_ok=True)
         for filename in os.listdir(work_dir):
             os.remove(os.path.join(work_dir, filename))
@@ -769,14 +769,14 @@ class Importer(object):
                                       )
         if os.path.exists(result):
             os.remove(result)
-        eggnog_mapper_script = os.path.join(self.config['cgcms.temp_dir'],
+        eggnog_mapper_script = os.path.join(self.config['core.temp_dir'],
                                             'run_emapper.sh'
                                             )
         with open(eggnog_mapper_script, 'w') as outfile:
             outfile.write('#!/bin/bash\n')
-            outfile.write('source ' + self.config['cgcms.conda_path'] + '\n')
+            outfile.write('source ' + self.config['core.conda_path'] + '\n')
             outfile.write('conda activate ' +
-                          self.config['cgcms.eggnog-mapper.conda_env'] +
+                          self.config['core.eggnog-mapper.conda_env'] +
                           '\n'
                           )
             outfile.write('cd ' + work_dir + '\n')
@@ -784,31 +784,31 @@ class Importer(object):
                           self.eggnog_input_file + ' input_file.chunk_ \n'
                           )
             outfile.write('for f in input_file.chunk_*; do\n')
-            outfile.write(self.config['cgcms.eggnog_command'] +
+            outfile.write(self.config['core.eggnog_command'] +
                           ' -m diamond --no_annot --no_file_comments ' +
                           ' --dmnd_db ' +
-                          self.config['cgcms.eggnog-mapper.dmnd_db'] +
+                          self.config['core.eggnog-mapper.dmnd_db'] +
                           ' --data_dir ' +
-                          self.config['cgcms.eggnog-mapper.data_dir'] + 
+                          self.config['core.eggnog-mapper.data_dir'] + 
                           ' --cpu ' +
-                          self.config['cgcms.threads'] + ' -i $f -o $f;\n'
+                          self.config['core.threads'] + ' -i $f -o $f;\n'
                           )
             outfile.write('done\n')
             outfile.write('cat input_file.chunk_*.emapper.seed_orthologs >> ' +
                           orthologs_file + '\n'
                           )
-            outfile.write(self.config['cgcms.eggnog_command'] + 
+            outfile.write(self.config['core.eggnog_command'] + 
                           ' --dmnd_db ' +
-                          self.config['cgcms.eggnog-mapper.dmnd_db'] + 
+                          self.config['core.eggnog-mapper.dmnd_db'] + 
                           ' --data_dir ' +
-                          self.config['cgcms.eggnog-mapper.data_dir'] + 
+                          self.config['core.eggnog-mapper.data_dir'] + 
                           ' --annotate_hits_table ' +
                           orthologs_file +
                           ' --no_file_comments -o ' +
-                          os.path.join(self.config['cgcms.temp_dir'],
+                          os.path.join(self.config['core.temp_dir'],
                                        'eggnog_mapper_output'
                                        ) +
-                          ' --cpu 10\n')
+                          ' --cpu ' + self.config['core.threads'] + '\n')
             outfile.write('conda deactivate\n')
         '''
         Recipe from eggnog-mapper documentation
@@ -1580,7 +1580,7 @@ class Importer(object):
         '''
         result = []
         if out_file is None:
-            out_file = os.path.join(self.config['cgcms.temp_dir'], genome_id + '.fna')
+            out_file = os.path.join(self.config['core.temp_dir'], genome_id + '.fna')
         genome = Genome.objects.get(name=genome_id)
         if genome.gbk_filepath.endswith('.gz'):
             gbk_handle = gzip.open(genome.gbk_filepath, 'rt')
@@ -1614,7 +1614,7 @@ class Importer(object):
         """
 
         if out_dir is None:
-            out_dir = self.config['cgcms.temp_dir']
+            out_dir = self.config['core.temp_dir']
         if feature_type is None:
             result = os.path.join(out_dir, genome_id + '.gff3')
         else:
@@ -1697,7 +1697,7 @@ class Importer(object):
             Generates files for Jbrowse v.1 genome viewer
         '''
         # Make directory
-        temp_dir = os.path.join(self.config['cgcms.temp_dir'], genome_id)
+        temp_dir = os.path.join(self.config['core.temp_dir'], genome_id)
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir)
         os.mkdir(temp_dir)
@@ -1712,8 +1712,8 @@ class Importer(object):
         # Make shell script for processing genome files for Jbrowse.
         # Generate GFF files for Jbrowse tracks
         script_rows = ['#!/bin/bash', 
-                       'source ' + self.config['cgcms.conda_path'],
-                       'conda activate cgcms-jbrowse'
+                       'source ' + self.config['core.conda_path'],
+                       'conda activate genomedepot-jbrowse'
                       ]
         
         jbrowse_config = {'formatVersion' : 1,
@@ -1785,7 +1785,7 @@ class Importer(object):
             jbrowse_config['tracks'].append(jbrowse_track)
         # Generate_names for Jbrowse search
         script_rows.append('perl ' +
-                           self.config['cgcms.generate_names_command'] +
+                           self.config['core.generate_names_command'] +
                            ' --verbose --out ' + 
                            temp_dir
                            )
@@ -1794,7 +1794,7 @@ class Importer(object):
             json.dump(jbrowse_config, outfile, indent = 2)
         
         # Save shell script and run it immediately
-        script_path = os.path.join(self.config['cgcms.temp_dir'],
+        script_path = os.path.join(self.config['core.temp_dir'],
                                    'make_jbrowse_files.sh'
                                    )
         with open(script_path, 'w') as outfile:
@@ -1811,7 +1811,7 @@ class Importer(object):
             raise CalledProcessError(proc.returncode, proc.args)
 
         # Copy files to static dir and remove temp files
-        dest_dir = os.path.join(self.config['cgcms.json_dir'], genome_id)
+        dest_dir = os.path.join(self.config['core.json_dir'], genome_id)
         if os.path.exists(dest_dir):
             shutil.rmtree(dest_dir)
         shutil.copytree(temp_dir, dest_dir)
@@ -1824,7 +1824,7 @@ class Importer(object):
         """
         for directory in self.staticfiles:
             for filename in self.staticfiles[directory]:
-                shutil.copyfile(os.path.join(self.config['cgcms.temp_dir'],
+                shutil.copyfile(os.path.join(self.config['core.temp_dir'],
                                              filename),
                                 os.path.join(directory,
                                              os.path.basename(filename))
@@ -1834,11 +1834,11 @@ class Importer(object):
         """
             Makes BLAST search databases
         """
-        if os.path.exists(self.config['cgcms.search_db_nucl'])\
-        and os.stat(self.config['cgcms.search_db_nucl']).st_size > 0:
+        if os.path.exists(self.config['core.search_db_nucl'])\
+        and os.stat(self.config['core.search_db_nucl']).st_size > 0:
             cmd = ['makeblastdb', '-dbtype', 'nucl', '-in',
-                   self.config['cgcms.search_db_nucl'], '-out',
-                   os.path.join(self.config['cgcms.search_db_dir'],
+                   self.config['core.search_db_nucl'], '-out',
+                   os.path.join(self.config['core.search_db_dir'],
                    'blast_nucl')
                    ]
             logger.info(' '.join(cmd))
@@ -1852,15 +1852,15 @@ class Importer(object):
                 raise CalledProcessError(proc.returncode, proc.args)
         else:
             logger.warning('%s is missing or empty. Sequence database was not created.',
-                           self.config['cgcms.search_db_nucl']
+                           self.config['core.search_db_nucl']
                            )
 
-        if os.path.exists(self.config['cgcms.search_db_prot']) \
-        and os.stat(self.config['cgcms.search_db_prot']).st_size > 0:
+        if os.path.exists(self.config['core.search_db_prot']) \
+        and os.stat(self.config['core.search_db_prot']).st_size > 0:
             cmd = ['makeblastdb', '-dbtype', 'prot', '-in',
-                   self.config['cgcms.search_db_prot'],
+                   self.config['core.search_db_prot'],
                    '-out',
-                   os.path.join(self.config['cgcms.search_db_dir'],
+                   os.path.join(self.config['core.search_db_dir'],
                    'blast_prot')
                    ]
             logger.info(' '.join(cmd))
@@ -1874,45 +1874,45 @@ class Importer(object):
                 raise CalledProcessError(proc.returncode, proc.args)
         else:
             logger.info('%s is missing or empty. Sequence database was not created.',
-                        self.config['cgcms.search_db_prot']
+                        self.config['core.search_db_prot']
                         )
         
     def delete_search_databases(self):
         """
             Deletes existing BLAST search databases
         """
-        for filename in os.listdir(self.config['cgcms.search_db_dir']):
+        for filename in os.listdir(self.config['core.search_db_dir']):
             if filename.startswith('mmseqs_') or filename.startswith('blast_'):
-                os.remove(os.path.join(self.config['cgcms.search_db_dir'], filename))
+                os.remove(os.path.join(self.config['core.search_db_dir'], filename))
         
     def cleanup(self):
-        os.remove(os.path.join(self.config['cgcms.temp_dir'],
-                               os.path.basename(self.config['cgcms.search_db_nucl'])
+        os.remove(os.path.join(self.config['core.temp_dir'],
+                               os.path.basename(self.config['core.search_db_nucl'])
                                ))
-        os.remove(os.path.join(self.config['cgcms.temp_dir'],
-                               os.path.basename(self.config['cgcms.search_db_prot'])
+        os.remove(os.path.join(self.config['core.temp_dir'],
+                               os.path.basename(self.config['core.search_db_prot'])
                                ))
-        os.remove(self.config['cgcms.search_db_nucl'])
-        os.remove(self.config['cgcms.search_db_prot'])
-        for filename in os.listdir(self.config['cgcms.eggnog_outdir']):
-            os.remove(os.path.join(self.config['cgcms.eggnog_outdir'], filename))
+        os.remove(self.config['core.search_db_nucl'])
+        os.remove(self.config['core.search_db_prot'])
+        for filename in os.listdir(self.config['core.eggnog_outdir']):
+            os.remove(os.path.join(self.config['core.eggnog_outdir'], filename))
         # delete all genome files in the temporary directory
         for genome_id in self.inputgenomes:
             genome_file = self.inputgenomes[genome_id]['gbk']
-            if genome_file.startswith(self.config['cgcms.temp_dir']):
+            if genome_file.startswith(self.config['core.temp_dir']):
                 os.remove(genome_file)
-            fna_file = os.path.join(self.config['cgcms.temp_dir'], genome_id + '.fna')
+            fna_file = os.path.join(self.config['core.temp_dir'], genome_id + '.fna')
             if os.path.exists(fna_file):
                 os.remove(fna_file)
         # delete all empty directories in the temporary directory
         empty_dirs = []
-        for (dirpath, dirnames, filenames) in os.walk(self.config['cgcms.temp_dir']):
+        for (dirpath, dirnames, filenames) in os.walk(self.config['core.temp_dir']):
             if len(dirnames) == 0 and len(filenames) == 0 :
                 empty_dirs.append(dirpath)
         for directory in empty_dirs:
             os.rmdir(directory)
-        if os.path.exists(os.path.join(self.config['cgcms.temp_dir'], 'poem-temp')):
-            shutil.rmtree(os.path.join(self.config['cgcms.temp_dir'], 'poem-temp'))
+        if os.path.exists(os.path.join(self.config['core.temp_dir'], 'poem-temp')):
+            shutil.rmtree(os.path.join(self.config['core.temp_dir'], 'poem-temp'))
             
         
     def import_genomes(self, lines):
@@ -1979,7 +1979,7 @@ class Importer(object):
             # run eggnog-mapper for all proteins
             eggnog_outfile = self.run_eggnog_mapper()
             # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
-            #eggnog_outfile = os.path.join(self.config['cgcms.temp_dir'], 
+            #eggnog_outfile = os.path.join(self.config['core.temp_dir'], 
             #'eggnog_mapper_output.emapper.annotations')
             
             logger.info('Reading eggnog-mapper output')
@@ -2048,12 +2048,12 @@ class Importer(object):
             Writes all protein sequences into FASTA file
             for BLASTP database generation
         """
-        prot_db_file = self.config['cgcms.search_db_prot']
-        out_file = os.path.join(self.config['cgcms.temp_dir'],
+        prot_db_file = self.config['core.search_db_prot']
+        out_file = os.path.join(self.config['core.temp_dir'],
             os.path.basename(prot_db_file)
         )
         export_proteins(None, out_file)
-        self.staticfiles[self.config['cgcms.search_db_dir']]\
+        self.staticfiles[self.config['core.search_db_dir']]\
             .append(os.path.basename(prot_db_file))
 
 
@@ -2063,8 +2063,8 @@ class Importer(object):
             for megablast database generation
         """
         result = set()
-        nucl_db_file = self.config['cgcms.search_db_nucl']
-        with open(os.path.join(self.config['cgcms.temp_dir'], 
+        nucl_db_file = self.config['core.search_db_nucl']
+        with open(os.path.join(self.config['core.temp_dir'], 
                                os.path.basename(nucl_db_file)
                                ), 'w') as outfile:
             for item in Genome.objects.values('name', 'gbk_filepath'):
@@ -2079,7 +2079,7 @@ class Importer(object):
                                   '\n')
                     result.add(contig_uid)
                 gbk_handle.close()
-        self.staticfiles[self.config['cgcms.search_db_dir']]\
+        self.staticfiles[self.config['core.search_db_dir']]\
             .append(os.path.basename(nucl_db_file))
         return result
 
@@ -2125,7 +2125,7 @@ class Importer(object):
         return '\n'.join(result) + '\n'
     
     def predict_operons(self):
-        working_dir = os.path.join(self.config['cgcms.temp_dir'], 'poem-temp')
+        working_dir = os.path.join(self.config['core.temp_dir'], 'poem-temp')
         if os.path.exists(working_dir) and os.path.isdir(working_dir):
             shutil.rmtree(working_dir)
         os.mkdir(working_dir)
@@ -2177,9 +2177,9 @@ class Importer(object):
         poem_script = os.path.join(working_dir, 'run_poem.sh')
         with open(poem_script, 'w') as outfile:
             outfile.write('#!/bin/bash\ndeactivate\n')
-            outfile.write('source ' + self.config['cgcms.conda_path'] + '\n')
+            outfile.write('source ' + self.config['core.conda_path'] + '\n')
             outfile.write('conda activate ' +
-                          self.config['cgcms.poem.conda_env'] +
+                          self.config['core.poem.conda_env'] +
                           '\n'
                           )
             '''                          
@@ -2190,32 +2190,32 @@ class Importer(object):
             $python $SCRIPTPATH/../lib/predict_operon.py predict $fasta $fasta\.locus $SCRIPTPATH/../config/Operon_Predictor/model.hdf5 > $fasta\.adjacency
 
             outfile.write('bash ' + 
-                          self.config['cgcms.poem_command'] +
+                          self.config['core.poem_command'] +
                           ' -f ' + working_dir +
                           ' -a n -p pro >>poem.log\n'
                           )
             '''
 
             outfile.write('python ' + 
-                          os.path.join(self.config['cgcms.poem_dir'], 'lib', 'prod2gmk.py') +
+                          os.path.join(self.config['core.poem_dir'], 'lib', 'prod2gmk.py') +
                           ' ' + os.path.join(working_dir, 'input.fsa_prod_aa.fsa') +
                           ' > ' +  os.path.join(working_dir, 'input.fsa_gmk_aa.fsa') + '\n'
                           )
             outfile.write('python ' + 
-                          os.path.join(self.config['cgcms.poem_dir'], 'lib', 'reid.py') +
+                          os.path.join(self.config['core.poem_dir'], 'lib', 'reid.py') +
                           ' ' + os.path.join(working_dir, 'input.fsa_gmk_aa.fsa') +
                           ' > ' +  os.path.join(working_dir, 'input.fsa_aa.fsa') + '\n'
                           )
             outfile.write('python ' + 
-                          os.path.join(self.config['cgcms.poem_dir'], 'lib', 'to_list.py') +
+                          os.path.join(self.config['core.poem_dir'], 'lib', 'to_list.py') +
                           ' ' + os.path.join(working_dir, 'input.fsa_aa.fsa') +
                           ' > ' +  os.path.join(working_dir, 'input.fsa.locus') + '\n'
                           )
             outfile.write('python ' + 
-                          os.path.join(self.config['cgcms.poem_dir'], 'lib', 'predict_operon.py') +
+                          os.path.join(self.config['core.poem_dir'], 'lib', 'predict_operon.py') +
                           ' predict ' + os.path.join(working_dir, 'input.fsa') +
                           ' ' + os.path.join(working_dir, 'input.fsa.locus') + 
-                          ' ' + os.path.join(self.config['cgcms.poem_dir'], 'config', 'Operon_Predictor', 'model.hdf5') +
+                          ' ' + os.path.join(self.config['core.poem_dir'], 'config', 'Operon_Predictor', 'model.hdf5') +
                           ' > ' + os.path.join(working_dir, 'input.fsa.adjacency') + '\n'
                           )
             outfile.write('conda deactivate\n')
