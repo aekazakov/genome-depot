@@ -551,7 +551,7 @@ def import_config(config_file, overwrite=False):
     '''Imports settings from a config file
     (text file with key/value entries separated by "=" symbol)
     '''
-    if os.path.exists(config_file):
+    if config_file is not None and os.path.exists(config_file):
         logger.debug('Importing parameters from' + config_file)
         configs = {}
         with open(config_file, 'r') as infile:

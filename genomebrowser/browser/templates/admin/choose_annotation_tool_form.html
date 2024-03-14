@@ -18,7 +18,7 @@
         <button type="submit">Start tools</button>
     </form>
     {% else %}
-        <span style="color:red">There is an active task in the queue. You cannot start new tasks while the active task is running. Please wait until all current tasks are finished or delete the tasks and restart Django Q cluster.</span>
+        <span style="color:red">There is an active task in the queue. You cannot start new tasks while the active task is running. Please wait until the currently running task is finished or delete the tasks and restart Django Q cluster.</span>
     {% endif %}
     </div>
     <br />

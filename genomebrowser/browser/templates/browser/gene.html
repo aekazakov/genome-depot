@@ -77,18 +77,18 @@
             {% endif %}
             {% if protein.ortholog_groups.all %}
                 <span>Families</span>
-				<h5>
-				<table>
+                <h5>
+                <table>
                 {% for ortholog_group in protein.ortholog_groups.all %}
-				<tr>
-				<td>
-				<a href="{% url 'ogdetails' og_id=ortholog_group.id %}">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></td>
-				<td><a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}&size=10&lines=50">Show genome neighborhood conservation</a>
-				</td>
-				</tr>
+                <tr>
+                <td>
+                <a href="{% url 'ogdetails' og_id=ortholog_group.id %}">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></td>
+                <td><a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}&size=10&lines=50">Show genome neighborhood conservation</a>
+                </td>
+                </tr>
                 {% endfor %}
-				</table>
-				</h5>
+                </table>
+                </h5>
             {% endif %}
             {% endif %}
             </div>

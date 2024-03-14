@@ -45,4 +45,3 @@ plugins.hmmsearch_tigrfam.enabled = 1
 plugins.hmmsearch_tigrfam.conda_env = genomedepot_hmmsearch
 plugins.hmmsearch_tigrfam.display_name = TIGRFAM database
 plugins.hmmsearch_tigrfam.hmmsearch_command = hmmsearch
-strains.metadata_file = 

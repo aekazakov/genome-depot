@@ -26,7 +26,7 @@ def _sanitize_sequence(query):
         query_id = query_lines[0][1:].rstrip('\r\n')
     else:
         sequence = ''.join([x.rstrip('\n\r') for x in query_lines])
-        query_id = 'temp_000'
+        query_id = 'no_sequence_id'
     sequence = ''.join([i if ord(i) < 128 else '' for i in sequence])
     sequence = re.sub(r"[^^a-zA-Z]", '', sequence)
     return query_id, sequence
@@ -106,7 +106,6 @@ def run_protein_search(params):
         logger.debug('Parameters: %s', str(params))
         return result, searchcontext, 0
     query = params['sequence']
-
     search_dir = Config.objects.get(param='core.search_db_dir').value
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
     blast_db = os.path.join(search_dir, 'blast_prot')
@@ -119,6 +118,7 @@ def run_protein_search(params):
         return result, searchcontext, 0
     sequence = str(seq_record.seq)
     sequence_id = str(seq_record.id)
+
     if not sequence:
         searchcontext = 'Wrong sequence format. ' +\
                         'FASTA header and valid sequence required.'
@@ -141,7 +141,7 @@ def run_protein_search(params):
                bufsize=1,
                universal_newlines=True
                ) as p:
-        blastoutput, err = p.communicate(query.strip())
+        blastoutput, err = p.communicate('>' + sequence_id + '\n' + sequence)
     if p.returncode != 0:
         searchcontext = 'BLASTP finished with error:\n' + '\n'.join(err)
         logger.error('BLASTP finished with error. Parameters: %s \n %s',
@@ -211,7 +211,7 @@ def run_nucleotide_search(params):
                bufsize=1,
                universal_newlines=True
                ) as p:
-        blastoutput, err = p.communicate(query.strip())
+        blastoutput, err = p.communicate('>' + sequence_id + '\n' + sequence)
     if p.returncode != 0:
         searchcontext = 'Megablast finished with error:\n' + '\n'.join(err)
         logger.error('Megablast finished with error. Parameters: %s \n %s',

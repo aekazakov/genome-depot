@@ -262,6 +262,9 @@ class Annotator(object):
             N.B.: This function is not associated with add_strain_metadata
             management command.
         """
+        if tsv_file is None or not os.path.exists(tsv_file):
+            logger.error('Input file does not exists')
+            return
         logger.info('Reading metadata from file')
         self.metadata = []
         strains = {item.strain_id:item for item in Strain.objects.all()}
@@ -290,6 +293,9 @@ class Annotator(object):
             This function adds strain metadata from Excel file and
             from isolates.genomics.lbl.gov API (if the enigma module is configured)
         """
+        if xlsx_path is None and xlsx_file is None:
+            logger.error('No input data')
+            return
         metadata_imported = defaultdict(dict)
         if xlsx_path is not None:
             logger.info('Reading metadata from file %s', xlsx_path)
@@ -321,19 +327,6 @@ class Annotator(object):
             isolate_browser_metadata = download_enigma_strain_metadata()
             metadata_imported.update(isolate_browser_metadata)
 
-        # Export metadata
-        metadata_file = self.config['strains.metadata_file']
-        with open(metadata_file, 'w') as outfile:
-            for strain_id in sorted(metadata_imported.keys()):
-                for key in sorted(metadata_imported[strain_id].keys()):
-                    outfile.write(
-                                  '\t'.join([strain_id,
-                                  metadata_imported[strain_id][key][0],
-                                  metadata_imported[strain_id][key][1],
-                                  key,
-                                  metadata_imported[strain_id][key][2]])
-                                  + '\n'
-                                  )
         # Check existing entries
         logger.info('Updating exisiting metadata')
         strains = {item.strain_id:item for item in Strain.objects.all()}

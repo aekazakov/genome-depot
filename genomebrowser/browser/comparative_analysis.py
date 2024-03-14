@@ -6,7 +6,6 @@ from collections import defaultdict
 from subprocess import Popen, PIPE, STDOUT
 # Importing necessary libraries from BioPython
 from Bio import Phylo, AlignIO
-from Bio.Align.Applications import MuscleCommandline
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 import toytree
 import toyplot
@@ -144,7 +143,7 @@ def add_gene(gene, gene_uid, track_uid, offset, reverse_gene,
 
 def make_muscle_alignment(infasta):
     result = None
-    muscle_cline = MuscleCommandline()
+    muscle_cline = 'muscle'
     logger.debug(str(muscle_cline))
     
     logger.info('Running MUSCLE')

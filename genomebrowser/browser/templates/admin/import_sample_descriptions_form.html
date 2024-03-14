@@ -3,12 +3,12 @@
     <div>
     <h2>Add sample descriptions.</h2>
     <p>
-    Metagenomic samples generated in the process of genome import have no descriptions. Sample descriptions and full names can be uploaded from a tab-separated text file with three columns:<br/>
+    Metagenomic samples generated in the process of genome import have no descriptions. Here you can update sample descriptions and full names from a tab-separated text file with three columns:<br/>
     </p>
     <ol>
     <li>Sample name (as in the database).</li>
     <li>Full name.</li>
-    <li>Description (text).</li>
+    <li>Sample description.</li>
     </ol>
     <p>There are {{active_tasks}} task(s) in the queue right now.</p>
     {% if active_tasks == "0" %}
@@ -18,7 +18,7 @@
         <button type="submit">Upload sample descriptions (tab-separated) file</button>
     </form>
     {% else %}
-        <span style="color:red">You cannot start new tasks until there are active tasks in the queue. Please wait until all current tasks are finished or delete the tasks and restart Django Q cluster.</span>
+        <span style="color:red">You cannot start new tasks until there are active tasks in the queue. Please wait until the currently running task is finished or delete the tasks and restart Django Q cluster.</span>
     {% endif %}
     </div>
     <br />

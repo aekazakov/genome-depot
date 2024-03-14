@@ -22,7 +22,7 @@
         <button type="submit">Upload annotations (tab-separated) file</button>
     </form>
     {% else %}
-        <span style="color:red">You cannot start new tasks until there are active tasks in the queue. Please wait until all current tasks are finished or delete the tasks and restart Django Q cluster.</span>
+        <span style="color:red">You cannot start new tasks until there are active tasks in the queue. Please wait until the currently running task is finished or delete the tasks and restart Django Q cluster.</span>
     {% endif %}
     </div>
     <br />

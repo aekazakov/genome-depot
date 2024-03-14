@@ -363,17 +363,6 @@ class Importer(object):
         """
             This function creates strain entries and strain metadata for new genomes.
         """
-        saved_metadata = defaultdict(dict)
-        if 'strains.metadata_file' in self.config \
-        and os.path.exists(self.config['strains.metadata_file']):
-            with open(self.config['strains.metadata_file'], 'r') as infile:
-                # Strain metadata fields: strain, source, url, key, value
-                for line in infile:
-                    if line.startswith('#'):
-                        continue
-                    row = line.rstrip('\n\r').split('\t')
-                    saved_metadata[row[0]][row[3]] = [row[1], row[2], row[4]]
-            
         saved_strains = {strain_data['strain_id']:strain_data['taxon__taxonomy_id']
                          for strain_data
                          in Strain.objects.values('strain_id', 'taxon__taxonomy_id')
@@ -415,24 +404,11 @@ class Importer(object):
                     self.inputgenomes[genome_id]['taxon'] = saved_strains[strain_id]
             else:
                 if strain_id not in self.strain_instances:
-                    order = ''
-                    if 'Phylogenetic order' in saved_metadata[strain_id]:
-                        order = saved_metadata[strain_id]['Phylogenetic order']
                     self.strain_instances[strain_id] = \
                         self.generate_strain_data(self.inputgenomes[genome_id]['gbk'],
                                                   strain_id,
-                                                  order
+                                                  ''
                                                   )
-                    if strain_id in saved_metadata:
-                        # add strain metadata
-                        self.strain_metadata[strain_id] = []
-                        for key in saved_metadata[strain_id]:
-                            self.strain_metadata[strain_id]\
-                            .append({'source':saved_metadata[strain_id][key][0],
-                                    'url':saved_metadata[strain_id][key][1],
-                                    'key':key,
-                                    'value':saved_metadata[strain_id][key][2]
-                                    })
                 self.inputgenomes[genome_id]['taxon'] = \
                     self.strain_instances[strain_id].taxon.taxonomy_id
 

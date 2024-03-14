@@ -1,11 +1,11 @@
 {% extends "base_generic.html" %}
 {% load my_tags %}
 {% load static %}
-{% block page-title %}<title>Sequence search results</title>{% endblock %}
+{% block page-title %}<title>Nucleotide search results</title>{% endblock %}
 {% block script-header %}
 {% endblock %}
 
-{% block title %}<div class="logo"><h2>Sequence search</h2></div>{% endblock %}
+{% block title %}<div class="logo"><h2>Nucleotide search results</h2></div>{% endblock %}
 
 {% block content %}
   {% if sequence %}
@@ -15,7 +15,7 @@
     <section id="two" class="wrapper style3">
       <div class="inner" id="search-result-area">
         <header class="align-center">
-          <div id="query_name"></div>
+          <div id="query_name"></div><br>
           <div class="table-wrapper">
             <div id="hits"></div>
           </div>

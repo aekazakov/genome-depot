@@ -2007,20 +2007,20 @@ class NsearchResultView(View):
             context = {"searchresult":'\n'.join(result),
                        "searchcontext":searchcontext,
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name,
+                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
                        "time":time.time()-start_time
                        }
         elif searchcontext == '':
             context = {"searchresult":'',"searchcontext":'No hits found',
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name,
+                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
                        "time":time.time()-start_time
                        }
         else:
             context = {"searchresult":"",
                        "searchcontext":searchcontext,
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name,
+                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
                        "time":time.time()-start_time
                        }
         #logger.debug(context)
@@ -2122,21 +2122,21 @@ class PsearchResultView(View):
             context = {"searchresult":'\n'.join(result),
                        "searchcontext":searchcontext,
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name,
+                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
                        "time":time.time()-start_time
                        }
         elif searchcontext == '':
             context = {"searchresult":'',
                        "searchcontext":'No hits found',
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name,
+                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
                        "time":time.time()-start_time
                        }
         else:
             context = {"searchresult":"",
                        "searchcontext":searchcontext,
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name,
+                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
                        "time":time.time()-start_time
                        }
         data = json.dumps(context)
