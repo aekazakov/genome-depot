@@ -2,39 +2,39 @@
 
 ## Introduction
 
-CGCMS is based on the Django framework. Django architecture follows the Model-View-Template pattern, where Model handles the data representation, Template handles the presentation logic and View handles the business logic that takes up information from the user and displays model data to the user. CGCMS communicates with the web server over the Web Server Gateway Interface (WSGI), so Django views in CGCMS are synchronous in nature. However, there are several pages in CGCMS that employ asynchronous Javascript: BLAST search, database search in genes and annotations, comparative analyses, data export. In addition, long-running tasks started from the CGCMS administration panel, such as genome import or re-building BLAST databases, are executed asynchronously by the Django Q worker. Data models are defined in genomebrowser/browser/models.py.
+GenomeDepot is based on the Django framework. Django architecture follows the Model-View-Template pattern, where Model handles the data representation, Template handles the presentation logic and View handles the business logic that takes up information from the user and displays model data to the user. GenomeDepot communicates with the web server over the Web Server Gateway Interface (WSGI), so Django views in GenomeDepot are synchronous in nature. However, there are several pages in GenomeDepot that employ asynchronous Javascript: BLAST search, database search in genes and annotations, comparative analyses, data export. In addition, long-running tasks started from the GenomeDepot administration panel, such as genome import or re-building BLAST databases, are executed asynchronously by the Django Q worker. Data models are defined in genomebrowser/browser/models.py.
 
-## Where CGCMS stores sequence data
+## Where GenomeDepot stores sequence data
 
-In CGCMS, only protein sequences are stored in the MySQL database. Nucleotide sequences are always stored in static files. STATIC_ROOT variable in the .env file defines the directory for static files. This directory has the “genomes” subdirectory for genome files. The genomes/gbff directory contains genomes in the Genbank format and the genomes/jbrowse directory contains files served by the embedded genome viewer (indexed FASTA file, indexed GFF3 files etc.) for each genome. The web server must have access to static files. BLAST databases are stored in the appdata subdirectory of the project directory. 
+In GenomeDepot, only protein sequences are stored in the MySQL database. Nucleotide sequences are always stored in static files. STATIC_ROOT variable in the .env file defines the directory for static files. This directory has the “genomes” subdirectory for genome files. The genomes/gbff directory contains genomes in the Genbank format and the genomes/jbrowse directory contains files served by the embedded genome viewer (indexed FASTA file, indexed GFF3 files etc.) for each genome. The web server must have access to static files. BLAST databases are stored in the appdata subdirectory of the project directory. 
 
 ## Genome import pipeline
 
-CGCMS imports genomes in batches. Since each run of the genome import pipeline re-generates BLAST databases and runs eggNOG-mapper, single genome import is impractical. A reasonable size of a batch for import is between 50 and 1000 genomes. 
+GenomeDepot imports genomes in batches. Since each run of the genome import pipeline re-generates BLAST databases and runs eggNOG-mapper, single genome import is impractical. A reasonable size of a batch for import is between 50 and 1000 genomes. 
 
-The genome import pipeline runs several external tools generating ortholog family mappings, predicted operons and gene functional assignments. The first of them is eggNOG-mapper for fast functional annotation and orthology predictions. It processes all proteins from the imported genomes in chunks containing 200,000 sequences. CGCMS relies on eggNOG-mapper orthology predictions in comparative analyses and functional classifications. After the import of eggNOG-mapper output into database, the pipeline runs POEM for operon predictions, for one genome at a time. After importing operon predictions, the pipeline generates static files for the embedded Jbrowse browser and BLAST databases. At this moment, imported genomes become visible to web portal visitors. And finally, the genome import pipeline starts annotation pipeline, which runs an array of annotation tools.
+The genome import pipeline runs several external tools generating ortholog family mappings, predicted operons and gene functional assignments. The first of them is eggNOG-mapper for fast functional annotation and orthology predictions. It processes all proteins from the imported genomes in chunks containing 200,000 sequences. GenomeDepot relies on eggNOG-mapper orthology predictions in comparative analyses and functional classifications. After the import of eggNOG-mapper output into database, the pipeline runs POEM for operon predictions, for one genome at a time. After importing operon predictions, the pipeline generates static files for the embedded Jbrowse browser and BLAST databases. At this moment, imported genomes become visible to web portal visitors. And finally, the genome import pipeline starts annotation pipeline, which runs an array of annotation tools.
 
 ## Gene annotation pipeline
 
-The CGCMS annotation pipeline is an extensible toolkit of specialized annotation tools. Each tool in the pipeline can be configured and turned on or off in the administration panel. The annotation pipeline can be started as a part of the genome import process or independently for genomes that have been imported into CGCMS. The annotation pipeline runs gene annotation tools one by one for selected genomes, one genome at a time. 
+The GenomeDepot annotation pipeline is an extensible toolkit of specialized annotation tools. Each tool in the pipeline can be configured and turned on or off in the administration panel. The annotation pipeline can be started as a part of the genome import process or independently for genomes that have been imported into GenomeDepot. The annotation pipeline runs gene annotation tools one by one for selected genomes, one genome at a time. 
 
 ## Architecture of the annotation pipeline plugin
 
-The annotation pipeline of CGCMS can be expanded with additional annotation tools. The annotation tools accept nucleotide or protein sequences as an input and generate functional annotations for individual genes. CGCMS interacts with annotation tools through plug-in Python modules that organize input files, execute external tools, process tool-specific outputs and generate tab-separated files imported by the CGCMS pipeline into the database.
+The annotation pipeline of GenomeDepot can be expanded with additional annotation tools. The annotation tools accept nucleotide or protein sequences as an input and generate functional annotations for individual genes. GenomeDepot interacts with annotation tools through plug-in Python modules that organize input files, execute external tools, process tool-specific outputs and generate tab-separated files imported by the GenomeDepot pipeline into the database.
 
 A plug-in module must contain the application function that accepts two arguments. The first argument is Annotator objects, and the second is a dictionary of genomes, with genome name as a key and a path to the GenBank file as a value. The application function returns full path of tab-separated text file with gene annotations.
 
-Typically, a plug-in module implements three functions: preprocess, run and postprocess. The preprocess function creates a working directory in the CGCMS temporary directory and writes all input files into the working directory. The preprocess function also generates bash script that activates a Conda environment for the annotation tool, executes the tool and deactivates the Conda environment. The run function executes the bash script created by preprocess. The postprocess function reads output file(s) generated by the annotation tool and creates an output file for import into CGCMS in the temporary directory. Finally, the postprocess function deletes the working directory. 
+Typically, a plug-in module implements three functions: preprocess, run and postprocess. The preprocess function creates a working directory in the GenomeDepot temporary directory and writes all input files into the working directory. The preprocess function also generates bash script that activates a Conda environment for the annotation tool, executes the tool and deactivates the Conda environment. The run function executes the bash script created by preprocess. The postprocess function reads output file(s) generated by the annotation tool and creates an output file for import into GenomeDepot in the temporary directory. Finally, the postprocess function deletes the working directory. 
 
 ## Plug-in configuration
 
-Annotation tool plug-ins can be enabled or disabled in the CGCMS administration portal. To enable a plug-in, find the “plugins.<tool_name>.enable” parameter in the Configuration page (admin/browser/config/) and set it to 1. To disable a plug-in, set it to 0.
+Annotation tool plug-ins can be enabled or disabled in the GenomeDepot administration portal. To enable a plug-in, find the “plugins.<tool_name>.enable” parameter in the Configuration page (admin/browser/config/) and set it to 1. To disable a plug-in, set it to 0.
 
 Other common plug-in configuration parameters are:
 
 display_name: the plug-in name in the administration portal pages
 
-conda_env: the name of Conda environment where the tool is installed (typically, cgcms-<tool_name>)
+conda_env: the name of Conda environment where the tool is installed (usually, genomedepot-<tool_name>)
 
 threads: number of threads for execution of the tool
 

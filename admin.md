@@ -1,12 +1,12 @@
 # Portal administration guide
 
-There are two ways for administering a CGCMS-based web portal: the Django’s command-line utility and the CGCMS administration panel. The command-line utility works in an active virtual environment and supports a limited set of CGCMS commands mostly for import and export of large sets of data (see the command-line utility section). The CGCMS administration panel provides access to individual data entries and CGCMS tools for data import and analysis.
+There are two ways for administering a GenomeDepot-based web portal: the Django’s command-line utility and the GenomeDepot administration panel. The command-line utility works in an active virtual environment and supports a limited set of GenomeDepot commands mostly for import and export of large sets of data (see the command-line utility section). The GenomeDepot administration panel provides access to individual data entries and GenomeDepot tools for data import and analysis.
 
 ## Log into administration panel
 
 ![Administration portal](assets/images/admin-panel-login.png "Administration portal")
 
-The administration panel link is https://your_site_URL /admin/. Log in with the superuser username and password created during the CGCMS installation.
+The administration panel link is https://your_site_URL /admin/. Log in with the superuser username and password created during the GenomeDepot installation.
 
 ## Administration portal menu
 
@@ -14,10 +14,10 @@ The administration panel link is https://your_site_URL /admin/. Log in with the 
 
 The tools menu at the top of administration panel pages has five buttons:
 
-* CGCMS tools: opens a page with links to CGCMS administration tools,
+* GenomeDepot tools: opens a page with links to GenomeDepot administration tools,
 * Tasks: opens a list of queued tasks,
 * Clsuters: opens a list of Django Q clusters,
-* Users: opens a list of CGCMS users,
+* Users: opens a list of GenomeDepot users,
 * Add user: opens a form for adding a new user.
 
 ## Content management pages
@@ -28,13 +28,13 @@ The main page of the administration panel displays a list of content types. You 
 
 ## System status
 
-The Tasks and Clusters buttons in the menu of administration panel pages show the number of running clusters and the number of currently active tasks in red circles. These numbers should be either 0 or 1. The number on the Tasks button is 1 if there is a task currently running and 0 if there is no such task. The number on the Clusters button is 1 if CGCMS cluster is up or 0 if there is no running cluster. If this number is larger than 1, additional Django Q clusters have been started. Running several clusters is potentially dangerous for the data integrity and should be avoided.
+The Tasks and Clusters buttons in the menu of administration panel pages show the number of running clusters and the number of currently active tasks in red circles. These numbers should be either 0 or 1. The number on the Tasks button is 1 if there is a task currently running and 0 if there is no such task. The number on the Clusters button is 1 if GenomeDepot cluster is up or 0 if there is no running cluster. If this number is larger than 1, additional Django Q clusters have been started. Running several clusters is potentially dangerous for the data integrity and should be avoided.
 
 ## Tools page
 
 ![Administration tools page](assets/images/admin-tools.png "Administration tools page")
 
-The tools page has three sections: View and manage data, Import data, CGCMS configuration and user management.
+The tools page has three sections: View and manage data, Import data, GenomeDepot configuration and user management.
 
 The first section contains links to lists of genomes, strains, strain metadata, samples, sample metadata, genome tags, genes, annotations and regulons. These links open tables of existing data.
 
@@ -42,17 +42,17 @@ The second section contains links to import tools for genomes, strain metadata, 
 
 The last section on the tools page have the same links as the menu on the administration panel dashboard (see above), with an additional link to User groups page.
 
-## Use CGCMS administration tools for data import
+## Use GenomeDepot administration tools for data import
 
 ### Add genomes 
 
-CGCMS stores genome sequences in GenBank format files and protein sequences in the database. The genome import pipeline generates the genome files and creates database entries for genomes, strains, genes and proteins. The import pipeline also runs EggNOG-mapper to assign proteins to ortholog families and POEM to predict operons. In addition to ortholog families, EggNOG-mapper associates proteins with KEGG orthologs, KEGG reactions, EC numbers, TC families and other functional classifications. 
+GenomeDepot stores genome sequences in GenBank format files and protein sequences in the database. The genome import pipeline generates the genome files and creates database entries for genomes, strains, genes and proteins. The import pipeline also runs EggNOG-mapper to assign proteins to ortholog families and POEM to predict operons. In addition to ortholog families, EggNOG-mapper associates proteins with KEGG orthologs, KEGG reactions, EC numbers, TC families and other functional classifications. 
 
 ![Genome import](assets/images/admin-import-genomes.png "Genome import")
 
-In the Tools page of the administration panel, click the Import genomes link. Before genome import, prepare input files. There are three ways to import genome files into CGCMS:
+In the Tools page of the administration panel, click the Import genomes link. Before genome import, prepare input files. There are three ways to import genome files into GenomeDepot:
 
-1. Copy genome files in Genbank format (can be gzipped) to the server’s directory with read permissions for the CGCMS user. Make a tab-separated file with six columns:
+1. Copy genome files in Genbank format (can be gzipped) to the server’s directory with read permissions for the GenomeDepot user. Make a tab-separated file with six columns:
 	* full path of a Genbank file
 	* genome ID (can contain letters, digits, dots, hyphens and underscores only)
 	* strain ID (can contain letters, digits, dots, hyphens and underscores only)
@@ -72,7 +72,7 @@ In the Tools page of the administration panel, click the Import genomes link. Be
 
 	Click the “Browse” button for TSV file and select the tab-separated file. Click the “Browse” button for Zip archive select the archive with genome files. Then press “Start import” button.
 
-3. CGCMS can download genome assemblies from NCBI over ftp. It can save time, but if internet connection is not stable, downloaded files can be truncated. Make a tab-separated file with six columns:
+3. GenomeDepot can download genome assemblies from NCBI over ftp. It can save time, but if internet connection is not stable, downloaded files can be truncated. Make a tab-separated file with six columns:
 
 	* NCBI genome assembly identifier (for example, GCF_000006945.2)
 	* genome ID (can contain letters, digits, dots, hyphens and underscores only)
@@ -81,7 +81,7 @@ In the Tools page of the administration panel, click the Import genomes link. Be
 	* URL (link to NCBI genome assembly etc., optional)
 	* External ID (will be displayed on the genome page. For example, "NCBI:GCF_000006945.2" for NCBI assembly. Make it short but meaningful.)
 
-	Click the “Browse” button for TSV file and select the tab-separated file. Enter an email into the text field (this email is not saved by CGCMS, it is only needed by NCBI). Then press “Start import” button.
+	Click the “Browse” button for TSV file and select the tab-separated file. Enter an email into the text field (this email is not saved by GenomeDepot, it is only needed by NCBI). Then press “Start import” button.
 
 ### Add strain metadata
 
@@ -174,7 +174,7 @@ Add configuration parameter path: admin/browser/config/add/
 
 View genomes path: admin/browser/genome/
 
-Click on the Add genome link opens the genomes import tool (see “Use CGCMS administration tools for data import”).
+Click on the Add genome link opens the genomes import tool (see “Use GenomeDepot administration tools for data import”).
 
 Commands available from the Actions menu for genomes
 
@@ -192,9 +192,9 @@ Update static files and re-build search databases: this command re-creates the f
 
 Upon genome import, a tag “imported” with the import date is auto-generated for a batch of the genomes processed. To add another tag, click the Add tag link on the Tags page (admin/browser/tag/). On the add page, enter a name and a description of the new tag, choose a background color and a text color, then click SAVE. A tag can be associated with genomes using Add genome tag action in the Genomes administration page.
 
-## CGCMS command-line utility
+## GenomeDepot command-line utility
 
-In addition to the administration panel, CGCMS uses Django’s command-line utility for administration tasks. This utility does not require a running web server. To use the utility, first activate virtual environment 
+In addition to the administration panel, GenomeDepot uses Django’s command-line utility for administration tasks. This utility does not require a running web server. To use the utility, first activate virtual environment 
 ```
 source /path/to/virtualenv/bin/activate
 ```
@@ -208,7 +208,7 @@ where command should be one of the commands listed in this document; parameters 
 ```
 python manage.py delete_all_data
 ```
-Deletes all data records from the CGCMS database except configuration parameters. Once deleted, the data cannot be restored. This command does not delete static genome files.
+Deletes all data records from the GenomeDepot database except configuration parameters. Once deleted, the data cannot be restored. This command does not delete static genome files.
 ```
 python manage.py delete_all_genomes
 ```
@@ -257,7 +257,7 @@ Parameters:
 ```
 python manage.py import_annotations [-i]
 ```
-Imports annotations for protein-coding genes from a tab-separated file and writes the annotations into the CGCMS database. The genes must be in the database.
+Imports annotations for protein-coding genes from a tab-separated file and writes the annotations into the GenomeDepot database. The genes must be in the database.
 The input file with annotations must have seven fields:
 
 
@@ -319,7 +319,7 @@ Parameters:
 ```
 python manage.py import_regulons [-i]
 ```
-Imports regulons from a tab-separated file. Genomes must be uploaded into the CGCMS database before running this command. 
+Imports regulons from a tab-separated file. Genomes must be uploaded into the GenomeDepot database before running this command. 
 The input file must contain the following fields:
 
 * Regulon name.
