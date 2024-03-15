@@ -15,9 +15,10 @@ from browser.pipeline.plugins.genomedepot_hmmsearch_pfam import application as h
 from browser.pipeline.plugins.genomedepot_hmmsearch_tigrfam import application as hmmsearch_tigrfam_plugin
 from browser.pipeline.plugins.genomedepot_macsyfinder import application as macsyfinder_plugin
 from browser.pipeline.plugins.genomedepot_phispy import application as phispy_plugin
+from browser.pipeline.plugins.genomedepot_genomad import application as genomad_plugin
 
 
-class MyAdminTestCase(TransactionTestCase):
+class PluginsTestCase(TransactionTestCase):
 
     fixtures = ['minigenomes.testdata.json']
 
@@ -57,6 +58,10 @@ class MyAdminTestCase(TransactionTestCase):
         self.annotator.config['plugins.ecis_screen.ecis-screen_cmd'] = '/mnt/data/work/CGCMS/external_tools/eCIS-screen/HMMsearch_genomesII_fast.pl'
         self.annotator.config['plugins.ecis_screen.ecis_hmm'] = '/mnt/data/work/CGCMS/external_tools/eCIS-screen/eCIS.hmm'
         self.annotator.config['plugins.ecis_screen.enabled'] = '1'
+        self.annotator.config['plugins.genomad.enabled'] = '1'
+        self.annotator.config['plugins.genomad.display_name'] = 'geNomad'
+        self.annotator.config['plugins.genomad.conda_env'] = 'genomedepot-genomad'
+        self.annotator.config['plugins.genomad.ref_db'] = '/mnt/data/work/CGCMS/external_refdata/geNomad/genomad_db'
 
         #@skip("skip test")
     def test_amrfinder_plugin(self):
@@ -122,6 +127,17 @@ class MyAdminTestCase(TransactionTestCase):
                                ))
         self.assertTrue(os.path.exists(os.path.join(self.annotator.config['core.temp_dir'],
                                'gapmind-plugin-output.txt'
+                               )))
+
+    #@skip("skip test")
+    def test_genomad_plugin(self):
+        print('test_genomad_plugin')
+        plugin_outfile = genomad_plugin(self.annotator, self.test_genomes)
+        self.assertEqual(plugin_outfile, os.path.join(self.annotator.config['core.temp_dir'],
+                               'genomad-plugin-output.txt'
+                               ))
+        self.assertTrue(os.path.exists(os.path.join(self.annotator.config['core.temp_dir'],
+                               'genomad-plugin-output.txt'
                                )))
         
     #@skip("skip test")

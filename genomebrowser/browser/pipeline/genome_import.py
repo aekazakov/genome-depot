@@ -1870,6 +1870,8 @@ class Importer(object):
                                ))
         os.remove(self.config['core.search_db_nucl'])
         os.remove(self.config['core.search_db_prot'])
+        if os.path.exists(os.path.join(self.config['core.temp_dir'], 'poem-temp')):
+            shutil.rmtree(os.path.join(self.config['core.temp_dir'], 'poem-temp'))
         for filename in os.listdir(self.config['core.eggnog_outdir']):
             os.remove(os.path.join(self.config['core.eggnog_outdir'], filename))
         # delete all genome files in the temporary directory
@@ -1887,8 +1889,6 @@ class Importer(object):
                 empty_dirs.append(dirpath)
         for directory in empty_dirs:
             os.rmdir(directory)
-        if os.path.exists(os.path.join(self.config['core.temp_dir'], 'poem-temp')):
-            shutil.rmtree(os.path.join(self.config['core.temp_dir'], 'poem-temp'))
             
         
     def import_genomes(self, lines):
@@ -1914,6 +1914,8 @@ class Importer(object):
 
             This function does not return anything.
         '''
+        logger.info('Cleaning up the temporary directory')
+        self.cleanup()
         logger.info('Trying to create directories for static files')
         self.make_dirs()
         # read input list. Populate self.inputgenomes
@@ -2003,11 +2005,12 @@ class Importer(object):
 
         # delete temp files
         logger.info('Removing temporary files')
-        #self.cleanup()
+        self.cleanup()
         logger.info('All genomes successfully imported')
 
         # Run annotation tools
         annotator = Annotator()
+        logger.info('Starting annotation pipeline')
         
         # Generate annotations with external tools
         new_genome_files = {item['name']:item['gbk_filepath'] for item
@@ -2016,7 +2019,7 @@ class Importer(object):
                                 ).values('name','gbk_filepath')
                             }
         annotator.run_external_tools(new_genome_files)
-        logger.info('Done')
+        logger.info('Annotation pipeline finished')
         return 'Done!'
 
     def export_proteins(self):
@@ -2158,7 +2161,8 @@ class Importer(object):
                           self.config['core.poem.conda_env'] +
                           '\n'
                           )
-            '''                          
+            '''
+            List of coomands for POEM should be like that:
             fasta=$temp/input.fsa
             $python $SCRIPTPATH/../lib/prod2gmk.py $fasta\_prod_aa.fsa > $fasta\_gmk_aa.fsa
             $python $SCRIPTPATH/../lib/reid.py $fasta\_gmk_aa.fsa > $fasta\_aa.fsa

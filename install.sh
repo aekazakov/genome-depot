@@ -338,30 +338,30 @@ else
     conda deactivate
     cd "$TOPDIR/external_tools"
 fi
-# Install geNomad
-#if conda env list | grep "genomedepot-genomad" >/dev/null 2>&1; then
-#    echo "Found genomedepot-genomad environment"
-#    conda activate genomedepot-genomad
-#    if genomad | grep geNomad >/dev/null 2>&1; then
-#                echo "geNomad found"
-#    else
-#                echo "Conda environment genomedepot-genomad exists but geNomad was not properly installed. Remove the environment and restart GenomeDepot installation script."
-#                echo "To remove the environment, run:"
-#                echo "   conda remove -n genomedepot-genomad --all"
-#                conda deactivate
-#                exit 1
-#    fi
-#    conda deactivate
-#else
-#    echo "Installing geNomad"
-#    conda create -y -n genomedepot-genomad -c conda-forge -c bioconda genomad
-#    conda activate genomedepot-genomad
-#    mkdir "$TOPDIR/external_refdata/geNomad"
-#    cd "$TOPDIR/external_refdata/geNomad"
-#    genomad download-database .
-#    conda deactivate
-#    cd "$TOPDIR/external_tools"
-#fi
+#Install geNomad
+if conda env list | grep "genomedepot-genomad" >/dev/null 2>&1; then
+    echo "Found genomedepot-genomad environment"
+    conda activate genomedepot-genomad
+    if genomad | grep geNomad >/dev/null 2>&1; then
+                echo "geNomad found"
+    else
+                echo "Conda environment genomedepot-genomad exists but geNomad was not properly installed. Remove the environment and restart GenomeDepot installation script."
+                echo "To remove the environment, run:"
+                echo "   conda remove -n genomedepot-genomad --all"
+                conda deactivate
+                exit 1
+    fi
+    conda deactivate
+else
+    echo "Installing geNomad"
+    conda create -y -n genomedepot-genomad -c conda-forge -c bioconda genomad
+    conda activate genomedepot-genomad
+    mkdir "$TOPDIR/external_refdata/geNomad"
+    cd "$TOPDIR/external_refdata/geNomad"
+    genomad download-database .
+    conda deactivate
+    cd "$TOPDIR/external_tools"
+fi
 
 # Install HMMER for Pfam and TIGRFAM plugins
 if conda env list | grep "genomedepot-hmmsearch" >/dev/null 2>&1; then
