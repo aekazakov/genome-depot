@@ -97,13 +97,29 @@ def postprocess(annotator, genomes, working_dir):
         for genome in sorted(genomes.keys()):
             genome_id = str(Genome.objects.filter(name=genome).values_list('id', flat=True)[0])
             print('Genome_id', genome_id )
-            genomad_output = os.path.join(working_dir, 'out',
+            proviruses = {}
+            proviruses_output = os.path.join(working_dir, 'out',
+                genome,
+                genome_id + '_find_proviruses',
+                genome_id + '_provirus.tsv',
+            )
+            with open(proviruses_output, 'r') as infile:
+                infile.readline()
+                for line in infile:
+                    row = line.rstrip('\n\r').split('\t')
+                    proviruses[row[0]] = row[1]
+            if not proviruses:
+                print('No proviruses in', genome)
+                continue
+            else:
+                print(proviruses)
+            genes_output = os.path.join(working_dir, 'out',
                 genome,
                 genome_id + '_summary',
                 genome_id + '_virus_genes.tsv',
             )
-            print(genomad_output)
-            with open(genomad_output, 'r') as infile:
+            print(genes_output)
+            with open(genes_output, 'r') as infile:
                 infile.readline()
                 for line in infile:
                     row = line.rstrip('\n\r').split('\t')
@@ -117,7 +133,7 @@ def postprocess(annotator, genomes, working_dir):
                                 end = 1
                         else:
                             end = int(row[2])
-                        contig_id = '_'.join(row[0].split('_')[:-1])
+                        contig_id = proviruses['_'.join(row[0].split('_')[:-1])]
                         genes = Gene.objects.filter(
                             genome__name=genome, contig__contig_id=contig_id, end=end
                         )
@@ -129,6 +145,8 @@ def postprocess(annotator, genomes, working_dir):
                                           'geNomad virus-specific marker',
                                           row[8],
                                           'function: ' + function]) + '\n')
+                        elif len(genes) == 0:
+                            print('Gene not found', genome, contig_id, end)
     #_cleanup(working_dir)
     return output_file
 

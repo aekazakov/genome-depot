@@ -1,7 +1,7 @@
 import os
 import gzip
 from collections import defaultdict
-from Bio import SeqIO
+from Bio import GenBank
 from browser.models import Genome
 from browser.models import Gene
 from browser.models import Protein
@@ -57,8 +57,8 @@ def export_nucl_bygenome(genomes, out_dir):
                 fh = gzip.open(gbkfile, 'rt')
             else:
                 fh = open(gbkfile, 'r')
-            for seq_record in SeqIO.parse(fh, "genbank"):
-                outfile.write('>' + seq_record.id + '\n')
+            for seq_record in GenBank.parse(fh, "genbank"):
+                outfile.write('>' + seq_record.locus + '\n')
                 outfile.write(str(seq_record.seq) + '\n')
             fh.close()
         ret[genome_name] = outfasta
