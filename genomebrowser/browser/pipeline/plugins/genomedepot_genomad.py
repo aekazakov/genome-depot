@@ -3,7 +3,7 @@ import shutil
 from subprocess import Popen, PIPE, CalledProcessError
 from django.db import connection
 from browser.pipeline.util import export_nucl_bygenome
-from browser.models import Gene
+from browser.models import Gene, Genome
 """
     This plugin runs AMRFinder for a set of genomes.
 """
@@ -95,11 +95,14 @@ def postprocess(annotator, genomes, working_dir):
     with open(output_file, 'w') as outfile:
         outfile.write('#Gene\tGenome\tSource\tURL\tKey\tValue\tNote\n')
         for genome in sorted(genomes.keys()):
+            genome_id = str(Genome.objects.filter(name=genome).values_list('id', flat=True)[0])
+            print('Genome_id', genome_id )
             genomad_output = os.path.join(working_dir, 'out',
-                                            genome,
-                                            genome + '_summary',
-                                            genome + '_virus_genes.tsv',
-                                            )
+                genome,
+                genome_id + '_summary',
+                genome_id + '_virus_genes.tsv',
+            )
+            print(genomad_output)
             with open(genomad_output, 'r') as infile:
                 infile.readline()
                 for line in infile:
@@ -115,7 +118,9 @@ def postprocess(annotator, genomes, working_dir):
                         else:
                             end = int(row[2])
                         contig_id = '_'.join(row[0].split('_')[:-1])
-                        genes = Gene.objects.filter(genome__name=genome, contig__contig_id=contig_id, end=end)
+                        genes = Gene.objects.filter(
+                            genome__name=genome, contig__contig_id=contig_id, end=end
+                        )
                         if len(genes) == 1:
                             outfile.write('\t'.join([locus_tag, genome,
                                           annotator.config['plugins.genomad.display_name'],
