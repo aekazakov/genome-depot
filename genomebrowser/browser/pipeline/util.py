@@ -57,9 +57,9 @@ def export_nucl_bygenome(genomes, out_dir):
                 fh = gzip.open(gbkfile, 'rt')
             else:
                 fh = open(gbkfile, 'r')
-            for seq_record in GenBank.parse(fh, "genbank"):
+            for seq_record in GenBank.parse(fh):
                 outfile.write('>' + seq_record.locus + '\n')
-                outfile.write(str(seq_record.seq) + '\n')
+                outfile.write(str(seq_record.sequence) + '\n')
             fh.close()
         ret[genome_name] = outfasta
     return ret

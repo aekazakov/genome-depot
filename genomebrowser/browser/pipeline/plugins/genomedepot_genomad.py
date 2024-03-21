@@ -96,7 +96,6 @@ def postprocess(annotator, genomes, working_dir):
         outfile.write('#Gene\tGenome\tSource\tURL\tKey\tValue\tNote\n')
         for genome in sorted(genomes.keys()):
             genome_id = str(Genome.objects.filter(name=genome).values_list('id', flat=True)[0])
-            print('Genome_id', genome_id )
             proviruses = {}
             proviruses_output = os.path.join(working_dir, 'out',
                 genome,
@@ -108,17 +107,11 @@ def postprocess(annotator, genomes, working_dir):
                 for line in infile:
                     row = line.rstrip('\n\r').split('\t')
                     proviruses[row[0]] = row[1]
-            if not proviruses:
-                print('No proviruses in', genome)
-                continue
-            else:
-                print(proviruses)
             genes_output = os.path.join(working_dir, 'out',
                 genome,
                 genome_id + '_summary',
                 genome_id + '_virus_genes.tsv',
             )
-            print(genes_output)
             with open(genes_output, 'r') as infile:
                 infile.readline()
                 for line in infile:
@@ -126,27 +119,28 @@ def postprocess(annotator, genomes, working_dir):
                     if row[8].endswith('VV') or row[8].endswith('VP'):
                         function = row[-1]
                         if function == 'NA':
-                            function = 'Unknown'
+                            function = 'Unknown function'
+                        contig_id = proviruses['_'.join(row[0].split('_')[:-1])]
                         if row[4] == '-1':
                             end = int(row[1])
                             if end < 4:
                                 end = 1
+                            genes = Gene.objects.filter(
+                                genome__name=genome, contig__contig_id=contig_id, start=end
+                            )
                         else:
                             end = int(row[2])
-                        contig_id = proviruses['_'.join(row[0].split('_')[:-1])]
-                        genes = Gene.objects.filter(
-                            genome__name=genome, contig__contig_id=contig_id, end=end
-                        )
+                            genes = Gene.objects.filter(
+                                genome__name=genome, contig__contig_id=contig_id, end=end
+                            )
                         if len(genes) == 1:
-                            outfile.write('\t'.join([locus_tag, genome,
+                            outfile.write('\t'.join([genes[0].locus_tag, genome,
                                           annotator.config['plugins.genomad.display_name'],
                                           'https://www.ncbi.nlm.nih.gov/pathogens/' + 
                                           'antimicrobial-resistance/AMRFinder/',
                                           'geNomad virus-specific marker',
                                           row[8],
-                                          'function: ' + function]) + '\n')
-                        elif len(genes) == 0:
-                            print('Gene not found', genome, contig_id, end)
+                                          function]) + '\n')
     #_cleanup(working_dir)
     return output_file
 
