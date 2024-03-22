@@ -116,7 +116,7 @@ def postprocess(annotator, genomes, working_dir):
                 infile.readline()
                 for line in infile:
                     row = line.rstrip('\n\r').split('\t')
-                    if row[8].endswith('VV') or row[8].endswith('VP'):
+                    if row[8].endswith('VV') or row[8].endswith('VP') or row[8].endswith('VC'):
                         function = row[-1]
                         if function == 'NA':
                             function = 'Unknown function'
@@ -136,12 +136,11 @@ def postprocess(annotator, genomes, working_dir):
                         if len(genes) == 1:
                             outfile.write('\t'.join([genes[0].locus_tag, genome,
                                           annotator.config['plugins.genomad.display_name'],
-                                          'https://www.ncbi.nlm.nih.gov/pathogens/' + 
-                                          'antimicrobial-resistance/AMRFinder/',
+                                          'https://portal.nersc.gov/genomad/',
                                           'geNomad virus-specific marker',
                                           row[8],
                                           function]) + '\n')
-    #_cleanup(working_dir)
+    _cleanup(working_dir)
     return output_file
 
 

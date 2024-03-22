@@ -3,6 +3,7 @@ import csv
 import logging
 import gzip
 from io import BytesIO
+from collections import defaultdict
 
 from django.http import HttpResponse
 from django.core.exceptions import SuspiciousOperation
@@ -21,6 +22,7 @@ from browser.models import Tc_family
 from browser.models import Cog_class
 from browser.models import Cazy_family
 from browser.models import Go_term
+from browser.models import Ortholog_group
 from browser.util import export_genome
 
 logger = logging.getLogger("GenomeDepot")
@@ -456,6 +458,40 @@ def _export_genomes_csv(request):
                          str(genome.contigs),
                          str(genome.genes)
                          ])
+    return response
+
+
+def export_family(request):
+    '''
+        Returns list of genomes in tab-separated text format 
+        with list of genes of a protein family
+        
+        Template family.html contains the Ajax JS calling this function 
+        
+    '''
+    # Create the HttpResponse object with the appropriate CSV header.
+    og = request.GET.get('og')
+    response = HttpResponse(content_type='text/tab-separated-values')
+    response['Content-Disposition'] = 'attachment; filename="family.tab"'
+    writer = csv.writer(response, delimiter='\t')
+    og_id = request.GET.get('og')
+    ortholog_group = Ortholog_group.objects.get(id=og_id)
+
+    if og:
+        genome2genes = defaultdict(list)
+        for item in Gene.objects.filter(
+            protein__ortholog_groups = ortholog_group
+        ).values_list('locus_tag', 'genome__name'):
+            genome2genes[item[1]].append(item[0])
+        writer.writerow(['Genome',
+                         'Gene count',
+                         'Gene(s)'
+                        ])
+        for genome in sorted(Genome.objects.values_list('name', flat=True)):
+            writer.writerow([genome,
+                str(len(genome2genes[genome])),
+                ';'.join(genome2genes[genome])]
+            )
     return response
 
 
