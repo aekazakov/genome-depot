@@ -22,7 +22,6 @@ from browser.models import Strain_metadata
 from browser.models import Regulon
 
 from browser.admin import GenomeAdmin
-from browser.tasks import test_task_impl
 from browser.tasks import import_genomes_impl
 from browser.tasks import delete_genomes_impl
 from browser.tasks import update_static_files_impl
@@ -52,17 +51,6 @@ class AdminTestCase(TestCase):
         self.client.login(username=self.username, password=self.password)
         data = {'action': 'delete_genomes',
                 '_selected_action': Genome.objects.filter(name='E_coli_CFT073').values_list('pk', flat=True),
-                }
-        change_url = reverse("admin:browser_genome_changelist")
-        response = self.client.post(change_url, data, follow=True)
-        self.client.logout()
-        self.assertEqual(response.status_code, 200)
-
-    def test_test_task_action(self):
-        # This test only submits data to django_Q, not running actual backend
-        self.client.login(username=self.username, password=self.password)
-        data = {'action': 'test_task',
-                '_selected_action': Genome.objects.filter(name='E_coli_BW2952').values_list('pk', flat=True),
                 }
         change_url = reverse("admin:browser_genome_changelist")
         response = self.client.post(change_url, data, follow=True)
@@ -254,13 +242,6 @@ class AdminTestCase(TestCase):
 
     # Test task implementations
     
-    def test_test_task_impl(self):
-        # Tests implementation of test_task_impl task
-        request = RequestFactory().get('/admin/')
-        genomes = 'genome1, genome2'
-        out = test_task_impl(request, genomes)
-        self.assertTrue(out.startswith('Genomes:'))
-        
     def test_run_annotation_pipeline_impl(self):
         # Tests implementation of run_annotation_pipeline task
         genomes = ['E_coli_BW2952',]

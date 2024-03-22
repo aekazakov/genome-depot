@@ -1862,14 +1862,22 @@ class Importer(object):
                 os.remove(os.path.join(self.config['core.search_db_dir'], filename))
         
     def cleanup(self):
-        os.remove(os.path.join(self.config['core.temp_dir'],
+        if os.path.exists(os.path.join(self.config['core.temp_dir'],
+                          os.path.basename(self.config['core.search_db_nucl'])
+                          )):
+            os.remove(os.path.join(self.config['core.temp_dir'],
                                os.path.basename(self.config['core.search_db_nucl'])
                                ))
-        os.remove(os.path.join(self.config['core.temp_dir'],
-                               os.path.basename(self.config['core.search_db_prot'])
-                               ))
-        os.remove(self.config['core.search_db_nucl'])
-        os.remove(self.config['core.search_db_prot'])
+        if os.path.exists(os.path.join(self.config['core.temp_dir'],
+                           os.path.basename(self.config['core.search_db_prot'])
+                           )):
+            os.remove(os.path.join(self.config['core.temp_dir'],
+                       os.path.basename(self.config['core.search_db_prot'])
+                       ))
+        if os.path.exists(self.config['core.search_db_nucl']):
+            os.remove(self.config['core.search_db_nucl'])
+        if os.path.exists(self.config['core.search_db_prot']):
+            os.remove(self.config['core.search_db_prot'])
         if os.path.exists(os.path.join(self.config['core.temp_dir'], 'poem-temp')):
             shutil.rmtree(os.path.join(self.config['core.temp_dir'], 'poem-temp'))
         for filename in os.listdir(self.config['core.eggnog_outdir']):

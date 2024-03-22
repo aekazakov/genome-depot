@@ -77,7 +77,7 @@ class UtilTestCase(TestCase):
         gbk_handle.close()
         self.assertEqual(gbk_record.accession[0], 'NC_073066')
 
-    @skip("skip for now")
+    #@skip("skip for now")
     def test_delete_all_data(self):
         '''
             Test database wipe out
@@ -85,7 +85,7 @@ class UtilTestCase(TestCase):
         delete_all_data(confirm=False)
         self.assertEqual(Kegg_reaction.objects.all().count(), 0)
 
-    @skip("skip for now")
+    #@skip("skip for now")
     def test_delete_all_genomes(self):
         '''
             Test deleting all_genomes

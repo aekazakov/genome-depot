@@ -47,7 +47,6 @@ from browser.forms import GenomeImportForm
 from browser.forms import TagModelForm
 from browser.forms import AddTagForm
 from browser.forms import ChooseAnnotationToolForm
-from browser.async_tasks import test_async_task
 from browser.async_tasks import async_import_genomes
 from browser.async_tasks import async_delete_genomes
 from browser.async_tasks import async_update_static_files
@@ -65,16 +64,6 @@ logger = logging.getLogger("GenomeDepot")
 admin.site.site_header = "GenomeDepot Administration panel"
 admin.site.site_title = "GenomeDepot administration"
 admin.site.index_title = "Welcome to GenomeDepot Administration panel"
-
-
-@admin.action(description = 'Test sync action')
-def test_task(self, request, queryset):
-    task_id = test_async_task(request, queryset)
-    messages.info(request,
-                  "Test action is starting. " +
-                  "Check the task " + task_id + 
-                  " in the list of queued tasks for progress."
-                  )
 
 
 @admin.action(description = 'Run annotation tools')
@@ -184,8 +173,7 @@ def count_clusters(request):
 class GenomeAdmin(admin.ModelAdmin):
     change_list_template = 'admin/genome_change_list.html'
     #actions = [delete_genome]
-    actions = [test_task,
-               add_genome_tag,
+    actions = [add_genome_tag,
                remove_genome_tag,
                run_annotation_tools,
                delete_genomes,

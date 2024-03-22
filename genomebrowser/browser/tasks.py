@@ -16,25 +16,6 @@ from browser.models import Strain, Sample, Genome, Protein, Config
 
 logger = logging.getLogger("GenomeDepot")
 
-def test_task_impl(request, genome_names):
-    logger.debug(request)
-    logger.debug(genome_names)
-    try:
-        logger.debug(genome_names[0])
-        subject = 'GenomeDepot test task finished'
-        message = f'Test task finished successfuly at {settings.BASE_URL}'
-        mail_admins(subject, message)
-    except Exception:
-        subject = 'GenomeDepot test task finished with error'
-        message = f'GenomeDepot test task at {settings.BASE_URL} finished with error.\n ' +\
-        f'Error:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
-        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
-        f'{sys.exc_info()[2].tb_lineno}'
-        mail_admins(subject, message)
-        raise
-    return 'Genomes:' + genome_names
-
-
 def run_annotation_pipeline_impl(args):
     logger.debug('Asynchronous task run_annotation_tools received. Starting the pipeline.')
     (genomes, plugins) = args
