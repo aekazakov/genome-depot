@@ -104,7 +104,7 @@ def run_protein_search(params):
     except SuspiciousOperation as e:
         searchcontext = str(e)
         logger.debug('Parameters: %s', str(params))
-        return result, searchcontext, 0
+        return result, searchcontext, 0, ''
     query = params['sequence']
     search_dir = Config.objects.get(param='core.search_db_dir').value
     PROTEIN_ALPHABET = 'ACDEFGHIKLMNPQRSTVWYBXZJUO'
@@ -115,14 +115,14 @@ def run_protein_search(params):
     if not _verify_alphabet(seq_record.seq.upper(), PROTEIN_ALPHABET):
         searchcontext = 'Wrong protein sequence format. ' +\
                         'FASTA header and valid sequence required.'
-        return result, searchcontext, 0
+        return result, searchcontext, 0, query_id
     sequence = str(seq_record.seq)
     sequence_id = str(seq_record.id)
 
     if not sequence:
         searchcontext = 'Wrong sequence format. ' +\
                         'FASTA header and valid sequence required.'
-        return result, searchcontext, 0
+        return result, searchcontext, 0, sequence_id
     query_len = len(seq_record)
     args = [
         'blastp',
@@ -147,7 +147,7 @@ def run_protein_search(params):
         logger.error('BLASTP finished with error. Parameters: %s \n %s',
                      str(params), '\n'.join(err)
                      )
-        return result, searchcontext, 0
+        return result, searchcontext, 0, sequence_id
     for line in blastoutput.split('\n'):
         if line.startswith('#'):
             continue
@@ -173,7 +173,7 @@ def run_nucleotide_search(params):
     except SuspiciousOperation as e:
         searchcontext = str(e)
         logger.debug('Parameters: %s', str(params))
-        return result, searchcontext, 0
+        return result, searchcontext, 0, ''
     query = params['sequence']
     
     search_dir = Config.objects.get(param='core.search_db_dir').value
@@ -186,7 +186,7 @@ def run_nucleotide_search(params):
         searchcontext = 'Wrong nucleotide sequence format. ' +\
                         'FASTA header and valid sequence required. ' +\
                         'Multiple entries not supported.'
-        return result, searchcontext, 0
+        return result, searchcontext, 0, query_id
     sequence = str(seq_record.seq)
     sequence_id = str(seq_record.id)
     query_len = len(seq_record)
@@ -194,7 +194,7 @@ def run_nucleotide_search(params):
     if not sequence:
         searchcontext = 'Wrong sequence format. FASTA header and sequence required.' +\
                         'Multiple entries not supported.'
-        return result, searchcontext, 0
+        return result, searchcontext, 0, sequence_id
     args = [
         'megablast',
         '-a', '2',
@@ -217,7 +217,7 @@ def run_nucleotide_search(params):
         logger.error('Megablast finished with error. Parameters: %s \n %s',
                      str(params), '\n'.join(err)
                      )
-        return result, searchcontext, 0
+        return result, searchcontext, 0, sequence_id
     for line in blastoutput.split('\n'):
         if line.startswith('#'):
             continue
