@@ -3,6 +3,7 @@ import shutil
 from subprocess import Popen, PIPE, CalledProcessError
 from django.db import connection
 from browser.pipeline.util import export_proteins_bygenome
+from browser.models import Genome
 """
     This plugin runs DefenseFinder for a set of genomes.
 """
@@ -101,10 +102,11 @@ def postprocess(annotator, genomes, working_dir):
                                )
     with open(output_file, 'w') as outfile:
         for genome in genomes:
+            genome_id = Genome.objects.get(name=genome).id
             defensefinder_outfile = os.path.join(working_dir,
                                                  'out',
                                                  genome,
-                                                 'defense_finder_genes.tsv'
+                                                 str(genome_id) + '_defense_finder_genes.tsv'
                                                  )
             if not os.path.exists(defensefinder_outfile):
                 print('File does not exist:', defensefinder_outfile)
@@ -114,13 +116,13 @@ def postprocess(annotator, genomes, working_dir):
                 for line in infile:
                     row = line.rstrip('\n\r').split('\t')
                     locus_tag = row[1]
-                    df_type, df_subtype = row[2].split('__')
                     outfile.write('\t'.join([locus_tag, genome, 'DefenseFinder',
                                   'https://github.com/mdmparis/defense-finder',
                                   'Anti-phage system',
                                   row[2],
-                                  'Type: ' + df_type + ', subtype: ' + df_subtype
+                                  'Type: ' + row[2] + ', model: ' + row[4]
                                   ]) + '\n')
+                        
     _cleanup(working_dir)
     return output_file
 

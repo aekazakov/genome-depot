@@ -261,6 +261,7 @@ else
     echo "Installing Phispy"
     conda create -y -n genomedepot-phispy python=3.8
     conda activate genomedepot-phispy
+    conda install -y -c bioconda biopython==1.80 
     conda install -y -c bioconda phispy 
     conda deactivate
     cd "$TOPDIR/external_tools"
