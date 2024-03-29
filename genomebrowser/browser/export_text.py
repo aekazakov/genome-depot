@@ -485,7 +485,7 @@ def export_family(request):
             genome2genes[item[1]].append(item[0])
         writer.writerow(['Genome',
                          'Gene count',
-                         'Gene(s)'
+                         str(ortholog_group)
                         ])
         for genome in sorted(Genome.objects.values_list('name', flat=True)):
             writer.writerow([genome,

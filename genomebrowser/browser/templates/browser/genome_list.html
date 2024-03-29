@@ -9,136 +9,128 @@
 {% block title %}<div class="logo"><h2>Genomes</h2></div>{% endblock %}
 
 {% block content %}
-            <section id="two" class="wrapper style3">
-                <div class="inner">
-                    <header class="align-center">
-                        <form action="{% url 'searchgenome' %}" method="get">
-                          <input name="query" type="text" placeholder="Search genomes by name...">
-                        </form>
-                {% if searchcontext %}
-                        <h4>{{ searchcontext }}</h4>
-                {% endif %}
-                    </header>
-                {% if sunburst %}
-                    <div class="align-center">
-                    {{ sunburst | safe}}
-                    </div>
-                {% endif %}
-
-{% if genomelist %}
-            <div class="table-wrapper">
+       <section id="two" class="wrapper style3">
+          <div class="inner">
+            <header class="align-center">
+              <form action="{% url 'searchgenome' %}" method="get">
+                  <input name="query" type="text" placeholder="Search genomes by name...">
+              </form>
+              {% if searchcontext %}
+                <h4>{{ searchcontext }}</h4>
+              {% endif %}
+            </header>
+            {% if sunburst %}
+              <div class="align-center">
+                {{ sunburst | safe}}
+              </div>
+            {% endif %}
+            {% if genomelist %}
+              <div class="table-wrapper">
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Tags</th>
-                            <th>Source</th>
-                            <th>Taxonomy</th>
-                            <th>Size</th>
-                            <th>Contigs</th>
-                            <th>Genes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-    {% for genome in genomelist %}
-                        <tr>
-                            <td><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a></td>
-                            {%if genome.tags %}
-                                <td>{% for tag in genome.tags.all %}
-                                    <span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;
-                                    {% endfor %}
-                                </td>
-                            {% else %}
-                                <td>&nbsp;</td>
-                            {% endif %}
-                            {%if genome.strain %}
-                                <td><a href="{% url 'straindetails' strain_id=genome.strain.id %}">{{ genome.strain.full_name }}</a></td>
-                            {% else %}
-                                <td><a href="{% url 'sampledetails' sample_id=genome.sample.id %}">{{ genome.sample.full_name }}</a></td>
-                            {% endif %}
-                            <td><a href="{% url 'taxondetails' taxonomy_id=genome.taxon.taxonomy_id %}">{{genome.taxon.name}}</a></td>
-                            <td>{{ genome.size }}</td>
-                            <td>{{ genome.contigs }}</td>
-                            <td>{{ genome.genes }}</td>
-                        </tr>
-    {% endfor %}
-                    </tbody>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Tags</th>
+                      <th>Source</th>
+                      <th>Taxonomy</th>
+                      <th>Size</th>
+                      <th>Contigs</th>
+                      <th>Genes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for genome in genomelist %}
+                      <tr>
+                        <td><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a></td>
+                        {%if genome.tags %}
+                          <td>
+                            {% for tag in genome.tags.all %}
+                              <span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;
+                            {% endfor %}
+                          </td>
+                        {% else %}
+                          <td>&nbsp;</td>
+                        {% endif %}
+                        {%if genome.strain %}
+                          <td><a href="{% url 'straindetails' strain_id=genome.strain.id %}">{{ genome.strain.full_name }}</a></td>
+                        {% else %}
+                          <td><a href="{% url 'sampledetails' sample_id=genome.sample.id %}">{{ genome.sample.full_name }}</a></td>
+                        {% endif %}
+                        <td><a href="{% url 'taxondetails' taxonomy_id=genome.taxon.taxonomy_id %}">{{genome.taxon.name}}</a></td>
+                        <td>{{ genome.size }}</td>
+                        <td>{{ genome.contigs }}</td>
+                        <td>{{ genome.genes }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
                 </table>
+              </div>
+            {% else %}
+              <div class="align-center">
+                <header><p>No genomes found.</p></header>
+              </div>
+            {% endif %}
+            {% if is_paginated %}
+              <div>
+                <span>
+                  {% if page_obj.has_previous %}
+                    <a class="button small" href="?{% param_replace page=1 %}">First</a>
+                    {% if page_obj.previous_page_number != 1 %}
+                      <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+                    {% endif %}
+                  {% endif %}
+                  Page {{ page_obj.number }} of {{ paginator.num_pages }}
+                  {% if page_obj.has_next %}
+                    {% if page_obj.next_page_number != paginator.num_pages %}
+                      <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+                    {% endif %}
+                    <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
+                  {% endif %}
+                  <span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
+                </span>
+              </div>
+            {% endif %}
+            <div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
+            <div class="align-center">
+              <button type="button" id="ExportTabLink">Export list as tab-separated text</button>
             </div>
-{% else %}
-    <div class="align-center">
-    <header><p>No genomes found.</p></header>
-    </div>
-{% endif %}
-
-  
-    {% if is_paginated %}
-        <div>
-        <span>
-        {% if page_obj.has_previous %}
-          <a class="button small" href="?{% param_replace page=1 %}">First</a>
-          {% if page_obj.previous_page_number != 1 %}
-            <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
-          {% endif %}
-        {% endif %}
-
-        Page {{ page_obj.number }} of {{ paginator.num_pages }}
-        {% if page_obj.has_next %}
-          {% if page_obj.next_page_number != paginator.num_pages %}
-            <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
-          {% endif %}
-          <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
-        {% endif %}
-
-        <span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
-        </span>
-        </div>
-    {% endif %}
-    
-    <div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
-    <div class="align-center">
-        <button type="button" id="ExportTabLink">Export list as tab-separated text</button>
-    </div>
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script>
-        $('#ExportTabLink').on('click', function () {
-        $.ajax({
-            url: "{% url 'export' %}",
-            method: 'GET',
-            data: {
-            "type": "genome",
-    {% if searchcontext %}
-            "query": "{{ request.GET.query }}"
-    {% endif %}
-            },
-            xhrFields: {
-            responseType: 'text'
-            },
-            beforeSend: function() {
-            $("#waitbox").show();
-            },
-            success: function (data) {
-            $("#waitbox").hide();
-            var a = document.createElement('a');
-            const blob = new Blob([data], {type: "octet/stream"});
-            var url = window.URL.createObjectURL(blob);
-            a.href = url;
-            a.download = 'exported_genes.tab';
-            document.body.append(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown){
-            $("#waitbox").hide();
-            $("#error-box").append(textStatus + ": " + errorThrown);
-            }
-        });
-        });    
-    </script>
-    
-    
-                </div>
-            </section>
-
+            <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+            <script>
+              $('#ExportTabLink').on('click', function () {
+                $.ajax({
+                  url: "{% url 'export' %}",
+                  method: 'GET',
+                  data: {
+                    "type": "genome",
+                    {% if searchcontext %}
+                    "query": "{{ request.GET.query }}"
+                    {% endif %}
+                  },
+                  xhrFields: {
+                    responseType: 'text'
+                  },
+                  beforeSend: function() {
+                    $("#waitbox").show();
+                  },
+                  success: function (data) {
+                    $("#waitbox").hide();
+                    var a = document.createElement('a');
+                    const blob = new Blob([data], {type: "octet/stream"});
+                    var url = window.URL.createObjectURL(blob);
+                    a.href = url;
+                    a.download = 'exported_genes.tab';
+                    document.body.append(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                  },
+                  error: function(XMLHttpRequest, textStatus, errorThrown){
+                    $("#waitbox").hide();
+                    $("#error-box").append(textStatus + ": " + errorThrown);
+                  }
+                });
+              });    
+            </script>
+          </div>
+        </section>
 {% endblock %}

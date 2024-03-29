@@ -10,60 +10,58 @@
 {% block title %}<div class="logo"><h2>Pathway map</h2></div>{% endblock %}
 
 {% block content %}
-    <section id="two" class="wrapper style3">
-        {% if external %}
-        <div class="row">
-            <div class="3u 12u$(small)  inner">
+        <section id="two" class="wrapper style3">
+          {% if external %}
+            <div class="row">
+              <div class="3u 12u$(small)  inner">
                 <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>KO ID</th>
-                                <th>Genes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-        {% for item in items %}
-                            <tr>
-                                <td style="background-color:#{{ item.bg }};color:#{{ item.fg }}">{{ item.ko }}</a></td>
-                                <td>{% for gene in item.genes %}
-                                <a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a>&nbsp;
-                               {% endfor %}</td>
-                            </tr>
-        {% endfor %}
-                        </tbody>
-                    </table>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>KO ID</th>
+                        <th>Genes</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for item in items %}
+                        <tr>
+                          <td style="background-color:#{{ item.bg }};color:#{{ item.fg }}">{{ item.ko }}</a></td>
+                          <td>
+                            {% for gene in item.genes %}
+                            <a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a>&nbsp;
+                            {% endfor %}
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
                 </div>
+              </div>
+              <div class="9u  inner">
+                <header class="align-center">
+                  <p class="align-center"><a href="{% url 'kps' %}?query={{ pathway.kegg_id }}">{{ pathway.description }}</a> pathway in the <a href="{% url 'genomedetails' name=genome %}">{{ genome }}</a>  genome</p>
+                </header>
+                <div style="width: 100%; height: {{ iframeheight }}px; margin: 10 auto;">
+                  <iframe
+                    src="{{ external }}"
+                    style="border: 1px solid black;background: #FFFFFF;"
+                    width="100%"
+                    height="100%"
+                  >
+                  </iframe>
+                </div>
+              </div>
             </div>
-            
-            <div class="9u  inner">
-                    <header class="align-center">
-                        <p class="align-center"><a href="{% url 'kps' %}?query={{ pathway.kegg_id }}">{{ pathway.description }}</a> pathway in the <a href="{% url 'genomedetails' name=genome %}">{{ genome }}</a>  genome</p>
-                    </header>
-                    <div style="width: 100%; height: {{ iframeheight }}px; margin: 10 auto;">
-                        <iframe
-                        src="{{ external }}"
-                        style="border: 1px solid black;background: #FFFFFF;"
-                        width="100%"
-                        height="100%"
-                        >
-                        </iframe>
-                    </div>
+          {% else %}
+            <div class="inner">
+              <header class="align-center">
+                {% if error %}
+                  <div class="error box">{{ error }}</div>
+                {% else %}
+                  <div class="error box">Insufficient data for pathway map generation</div>
+                {% endif %}
+              </header>
             </div>
-        </div>
-        {% else %}
-        <div class="inner">
-            <header class="align-center">
-            {% if error %}
-                <div class="error box">{{ error }}</div>
-            {% else %}
-                <div class="error box">Insufficient data for pathway map generation</div>
-            {% endif %}
-            </header>
-        </div>
-        {% endif %}
-        
-    </section>
-    
+          {% endif %}
+        </section>
 {% endblock %}
-

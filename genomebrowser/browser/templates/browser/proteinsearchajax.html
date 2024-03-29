@@ -8,44 +8,44 @@
 {% block title %}<div class="logo"><h2>Protein search results</h2></div>{% endblock %}
 
 {% block content %}
-    {% if sequence %}
-    <div class="loading-bar-area" id="loading-bar-area">
-    {% include 'browser/loading.html' %}
-    </div>
-    <section id="two" class="wrapper style3">
-    <div class="inner" id="search-result-area">
-        <header class="align-center">
-            <div id="query_name"></div><br>
-            <div class="table-wrapper">
-              <div id="hits"></div>
-            </div>
-            <label id="run-time">Search time: </label>
-            <p><a href="{% url 'proteinsearchform' %}">New search</a>
-            <div id ="searchcontext" class="error box"></div>
-        </header>
-    </div>
-    </section>
-    {% endif %}
-<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-<script>
-    $(document).ready(function(){
-        $.ajax({
-            url: "{% url 'loadingprotsearch' %}",
-            type: "POST",
-            datatype: 'json',
-            data: {'sequence': "{{ sequence|escapejs }}", 'csrfmiddlewaretoken': "{{ csrfmiddlewaretoken }}", 'evalue': "{{ evalue }}", 'hitstoshow': "{{ hitstoshow }}" }
-        }).done(function(data){
-            $('#loading-bar-area').remove();
-            $('#run-time').append(data["time"].toFixed(2) + ' seconds')
-            $('#hits').append(data["searchresult"])
-            $('#query_name').append(data["query_name"])
-            $('#searchcontext').append(data["searchcontext"])
-            $('#search-result-area').show();
-        }).fail(function(data){
-            $('#loading-bar-area').remove();
-            $('#searchcontext').append('Internal server error')
-            $('#search-result-area').show();
-        });
-    });
-</script>
+      {% if sequence %}
+        <div class="loading-bar-area" id="loading-bar-area">
+          {% include 'browser/loading.html' %}
+        </div>
+        <section id="two" class="wrapper style3">
+          <div class="inner" id="search-result-area">
+            <header class="align-center">
+              <div id="query_name"></div><br>
+              <div class="table-wrapper">
+                <div id="hits"></div>
+              </div>
+              <label id="run-time">Search time: </label>
+              <p><a href="{% url 'proteinsearchform' %}">New search</a>
+              <div id ="searchcontext" class="error box"></div>
+            </header>
+          </div>
+        </section>
+      {% endif %}
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+        <script>
+          $(document).ready(function(){
+            $.ajax({
+              url: "{% url 'loadingprotsearch' %}",
+              type: "POST",
+              datatype: 'json',
+              data: {'sequence': "{{ sequence|escapejs }}", 'csrfmiddlewaretoken': "{{ csrfmiddlewaretoken }}", 'evalue': "{{ evalue }}", 'hitstoshow': "{{ hitstoshow }}" }
+            }).done(function(data){
+              $('#loading-bar-area').remove();
+              $('#run-time').append(data["time"].toFixed(2) + ' seconds')
+              $('#hits').append(data["searchresult"])
+              $('#query_name').append(data["query_name"])
+              $('#searchcontext').append(data["searchcontext"])
+              $('#search-result-area').show();
+            }).fail(function(data){
+              $('#loading-bar-area').remove();
+              $('#searchcontext').append('Internal server error')
+              $('#search-result-area').show();
+            });
+          });
+        </script>
 {% endblock %}

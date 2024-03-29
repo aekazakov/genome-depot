@@ -4,24 +4,23 @@
 {% block title %} <div class="logo">GenomeDepot</div>{% endblock %}
 
 {% block content %}
-        <!-- Banner -->
-            <div style="background-image:url('{% static 'images/slide02.jpg' %}');background-size:cover;min-height:100vh;height:100vh;">
-                    <div class="box wrapper align-center" style="background-color:rgba(0,0,0,0.0)">
-                        <header>
-							<p>Welcome to {%if site_title %}{{ site_title }}{% else %}GenomeDepot{% endif %}</p>
-						</header>
-						<br/>
-						<div class="inner align-center">
-							<a class="button 2u 12u$(medium) align-center icon fa-bullseye" href="{% url 'genome_list' %}">Genomes</a>&nbsp;
-							<a class="button 2u 12u$(medium) align-center icon fa-bug" href="{% url 'strain_list' %}">Strains</a>&nbsp;
-							<a class="button 2u 12u$(medium) align-center icon fa-flask" href="{% url 'sample_list' %}">Samples</a>&nbsp;
-							<a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'textsearch' %}">Text search</a>
-							<hr/>
-							<a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'proteinsearchform' %}">Protein BLAST</a>&nbsp;
-							<a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'nucleotidesearchform' %}">Nucleotide BLAST</a>&nbsp;
-							<a class="button 2u 12u$(medium) align-center icon fa-info-circle" href="{% url 'help' %}">Quick help</a>&nbsp;
-							<a class="button 2u 12u$(medium) align-center icon fa-book" href="https://aekazakov.github.io/genome-depot/">Documentation</a>
-						</div>
-                    </div>
-			</div>
+        <div style="background-image:url('{% static 'images/slide02.jpg' %}');background-size:cover;min-height:100vh;height:100vh;">
+          <div class="box wrapper align-center" style="background-color:rgba(0,0,0,0.0)">
+            <header>
+              <p>Welcome to {%if site_title %}{{ site_title }}{% else %}GenomeDepot{% endif %}</p>
+            </header>
+            <br/>
+            <div class="inner align-center">
+              <a class="button 2u 12u$(medium) align-center icon fa-bullseye" href="{% url 'genome_list' %}">Genomes</a>&nbsp;
+              <a class="button 2u 12u$(medium) align-center icon fa-bug" href="{% url 'strain_list' %}">Strains</a>&nbsp;
+              <a class="button 2u 12u$(medium) align-center icon fa-flask" href="{% url 'sample_list' %}">Samples</a>&nbsp;
+              <a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'textsearch' %}">Text search</a>
+              <hr/>
+              <a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'proteinsearchform' %}">Protein BLAST</a>&nbsp;
+              <a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'nucleotidesearchform' %}">Nucleotide BLAST</a>&nbsp;
+              <a class="button 2u 12u$(medium) align-center icon fa-info-circle" href="{% url 'help' %}">Quick help</a>&nbsp;
+              <a class="button 2u 12u$(medium) align-center icon fa-book" href="https://aekazakov.github.io/genome-depot/">Documentation</a>
+            </div>
+          </div>
+        </div>
 {% endblock %}

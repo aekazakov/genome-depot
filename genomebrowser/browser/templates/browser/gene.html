@@ -3,241 +3,240 @@
 
 {% block page-title %}<title>{{ gene.locus_tag }} [{{ gene.genome.name }}]</title>{% endblock %}
 {% block script-header %}
-    <style>#proteinsequence {display:none;}</style>
-    <script>
+  <style>#proteinsequence {display:none;}</style>
+  <script>
     function Toggle() {
       document.getElementById("proteinsequence").style.display = "block";
       document.getElementById("showprotein").style.display = "none";
     }
-    </script>
-    <script>
+  </script>
+  <script>
     function HideProtein() {
       document.getElementById("proteinsequence").style.display = "none";
       document.getElementById("showprotein").style.display = "block";
     }
-    </script>
+  </script>
 {% endblock %}
 
 {% block title %}<div class="logo"><h2>Gene</h2></div>{% endblock %}
 
 {% block content %}
     <section id="one" class="wrapper style3">
-        <div class="inner">
+      <div class="inner">
         <header class="align-center">
-        <h2>{{ gene.locus_tag }} 
+          <h2>{{ gene.locus_tag }} 
             [<a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.taxon.name }}</a>]
-        </h2>
+          </h2>
         </header>
         <div class="row">
-            <div class="4u align-center">
+          <div class="4u align-center">
             <a class="align-center" href="#viewer">Genome viewer</a>
-            </div>
-            <div class="4u align-center">
+          </div>
+          <div class="4u align-center">
             <a class="align-center" href="#annotations">Functional annotations</a>
-            </div>
-            <div class="4u align-center">
+          </div>
+          <div class="4u align-center">
             <a class="align-center" href="#tools">Analysis tools</a>
-            </div>
+          </div>
         </div>
         <hr>
         <div class="grid-style">
-            <div class="content">
+          <div class="content">
             <header class="align-center">
-                <p class="align-center">Gene information</p>
+              <p class="align-center">Gene information</p>
             </header>
             {%if gene.name %}
-                <span>Gene name</span>
-                <h5>{{ gene.name }}</h5>
+              <span>Gene name</span>
+              <h5>{{ gene.name }}</h5>
             {% endif %}
             <span>Genome</span>
             <h5><a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]</a>
-                {% for tag in gene.genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}
+              {% for tag in gene.genome.tags.all %}
+                <span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;
+              {% endfor %}
             </h5>
             <span>Position</span>
             {% if gene.strand == "-1" %}
-            <h5>{{ gene.contig.contig_id }}: complement({{ gene.start }}..{{ gene.end }})</h5>
+              <h5>{{ gene.contig.contig_id }}: complement({{ gene.start }}..{{ gene.end }})</h5>
             {% else %}
-            <h5>{{ gene.contig.contig_id }}: {{ gene.start }}..{{ gene.end }}</h5>
+              <h5>{{ gene.contig.contig_id }}: {{ gene.start }}..{{ gene.end }}</h5>
             {% endif %}
             <span>Product</span>
             <h5>{{ gene.function }}</h5>
             {% if gene.operon %}
-            <span>Operon</span>
-            <h5><a href="{% url 'operondetails' genome=gene.genome.name name=gene.operon.name %}">{{ gene.operon.name }}</a></h5>
+              <span>Operon</span>
+              <h5><a href="{% url 'operondetails' genome=gene.genome.name name=gene.operon.name %}">{{ gene.operon.name }}</a></h5>
             {% endif %}
-            </div>
-            <div class="content">
+          </div>
+          <div class="content">
             {% if protein %}
-            <header class="align-center">
+              <header class="align-center">
                 <p class="align-center">EggNOG families</p>
-            </header>
-            {% if protein.eggnog_description %}
+              </header>
+              {% if protein.eggnog_description %}
                 <span>Description</span>
                 <h5>{{ protein.eggnog_description.description }}</h5>
-            {% endif %}
-            {% if protein.ortholog_groups.all %}
+              {% endif %}
+              {% if protein.ortholog_groups.all %}
                 <span>Families</span>
                 <h5>
-                <table>
-                {% for ortholog_group in protein.ortholog_groups.all %}
-                <tr>
-                <td>
-                <a href="{% url 'ogdetails' og_id=ortholog_group.id %}">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></td>
-                <td><a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}&size=10&lines=50">Show genome neighborhood conservation</a>
-                </td>
-                </tr>
-                {% endfor %}
-                </table>
+                  <table>
+                  {% for ortholog_group in protein.ortholog_groups.all %}
+                    <tr>
+                      <td><a href="{% url 'ogdetails' og_id=ortholog_group.id %}">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></td>
+                      <td><a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}&size=10&lines=50">Show genome neighborhood conservation</a></td>
+                    </tr>
+                  {% endfor %}
+                  </table>
                 </h5>
+              {% endif %}
             {% endif %}
-            {% endif %}
-            </div>
+          </div>
         </div>
         {% if protein %}
-        <div>
+          <div>
             <header class="align-center" id="showprotein">
-            <a onclick="Toggle()">Click to show protein sequence</a>
+              <a onclick="Toggle()">Click to show protein sequence</a>
             </header>
             <div id="proteinsequence">
-            <header class="align-center" id="hideprotein">
+              <header class="align-center" id="hideprotein">
                 <a onclick="HideProtein()">Click to hide protein sequence</a>
-            </header>
-            <textarea id="protein" name="protein" rows="4" cols="50">>{{ gene.locus_tag }}|{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]
+              </header>
+              <textarea id="protein" name="protein" rows="4" cols="50">>{{ gene.locus_tag }}|{{ gene.genome.name }} [{{ gene.genome.taxon.name }}]
 {{ protein.sequence }}</textarea>
             </div>
-        </div>
+          </div>
         {% endif %}
-        </div>
+      </div>
     </section>
     <section id="two" >
-    <div class="wrapper style3" id="viewer">
+      <div class="wrapper style3" id="viewer">
         <div class="inner">
-        <h2 class="align-center">Genome viewer</h2>
+          <h2 class="align-center">Genome viewer</h2>
         </div>
-    </div>
-        <div style="width: 100%; height: 350px; margin: 0 auto;">
-            <iframe
-                src="{% static 'jbrowse/index.html' %}?data={{ gene.genome.json_url }}&tracklist=0&nav=1&overview=1&tracks=DNA%2CCDSs%2COperons%2CPseudogenes%2CRNAs&loc={{ gene.contig.contig_id }}:{{ viewer_start }}..{{ viewer_end }}&highlight={{ gene.contig.contig_id }}:{{ gene.start }}..{{ gene.end }}"
-                style="border: 1px solid black"
-                width="100%"
-                height="100%"
-            >
-            </iframe>
-        </div>
+      </div>
+      <div style="width: 100%; height: 350px; margin: 0 auto;">
+        <iframe
+          src="{% static 'jbrowse/index.html' %}?data={{ gene.genome.json_url }}&tracklist=0&nav=1&overview=1&tracks=DNA%2CCDSs%2COperons%2CPseudogenes%2CRNAs&loc={{ gene.contig.contig_id }}:{{ viewer_start }}..{{ viewer_end }}&highlight={{ gene.contig.contig_id }}:{{ gene.start }}..{{ gene.end }}"
+          style="border: 1px solid black"
+          width="100%"
+          height="100%"
+        >
+        </iframe>
+      </div>
     </section>
     {% if protein %}
-    <section id="annotations" class="wrapper style3">
+      <section id="annotations" class="wrapper style3">
         <div class="inner">
-            <header class="align-center">
-                <h2>Functional annotations</h2>
-            </header>
-            <div class="grid-style">
+          <header class="align-center">
+            <h2>Functional annotations</h2>
+          </header>
+          <div class="grid-style">
             <div class="content">
-                <header class="align-center">
+              <header class="align-center">
                 <p class="align-center">EggNOG annotations</p>
-                </header>
-                {% if protein.kegg_orthologs.all %}
+              </header>
+              {% if protein.kegg_orthologs.all %}
                 <span>KEGG Orthologs</span>
                 {% for kegg_ortholog in protein.kegg_orthologs.all %}
-                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=ko_id&query={{ kegg_ortholog.kegg_id }}" title="Show all genes for {{ kegg_ortholog.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_ortholog.kegg_id }}]</a> {{ kegg_ortholog.description }}</h5>
+                  <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=ko_id&query={{ kegg_ortholog.kegg_id }}" title="Show all genes for {{ kegg_ortholog.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_ortholog.kegg_id }}]</a> {{ kegg_ortholog.description }}</h5>
                 {% endfor %}
-                {% endif %}
+              {% endif %}
                 {% if protein.kegg_pathways.all %}
                 <span>KEGG Pathways</span>
                 {% for kegg_pathway in protein.kegg_pathways.all %}
-                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=kp_id&query={{ kegg_pathway.kegg_id }}" title="Show all genes for {{ kegg_pathway.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_pathway.kegg_id }}]</a> {{ kegg_pathway.description }}</h5>
+                  <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=kp_id&query={{ kegg_pathway.kegg_id }}" title="Show all genes for {{ kegg_pathway.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_pathway.kegg_id }}]</a> {{ kegg_pathway.description }}</h5>
                 {% endfor %}
-                {% endif %}
-                {% if protein.kegg_reactions.all %}
+              {% endif %}
+              {% if protein.kegg_reactions.all %}
                 <span>KEGG Reactions</span>
                 {% for kegg_reaction in protein.kegg_reactions.all %}
-                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=kr_id&query={{ kegg_reaction.kegg_id }}" title="Show all genes for {{ kegg_reaction.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_reaction.kegg_id }}]</a> {{ kegg_reaction.description }}</h5>
+                  <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=kr_id&query={{ kegg_reaction.kegg_id }}" title="Show all genes for {{ kegg_reaction.kegg_id }} in {{ gene.genome.name }}">[{{ kegg_reaction.kegg_id }}]</a> {{ kegg_reaction.description }}</h5>
                 {% endfor %}
-                {% endif %}
-                {% if protein.ec_numbers.all %}
+              {% endif %}
+              {% if protein.ec_numbers.all %}
                 <span>EC number</span>
                 {% for ec_number in protein.ec_numbers.all %}
-                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=ec_id&query={{ ec_number.ec_number }}" title="Show all genes for {{ ec_number.ec_number }} in {{ gene.genome.name }}">EC: {{ ec_number.ec_number }}</a> ({{ ec_number.description }})</h5>
+                  <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=ec_id&query={{ ec_number.ec_number }}" title="Show all genes for {{ ec_number.ec_number }} in {{ gene.genome.name }}">EC: {{ ec_number.ec_number }}</a> ({{ ec_number.description }})</h5>
                 {% endfor %}
-                {% endif %}
-                {% if protein.tc_families.all %}
+              {% endif %}
+              {% if protein.tc_families.all %}
                 <span>TC class</span>
                 {% for tc_family in protein.tc_families.all %}
-                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=tc_id&query={{ tc_family.tc_id }}" title="Show all genes for {{ tc_family.tc_id }} in {{ gene.genome.name }}">TC: {{ tc_family.tc_id }}</a> ({{ tc_family.description }})</h5>
+                  <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=tc_id&query={{ tc_family.tc_id }}" title="Show all genes for {{ tc_family.tc_id }} in {{ gene.genome.name }}">TC: {{ tc_family.tc_id }}</a> ({{ tc_family.description }})</h5>
                 {% endfor %}
-                {% endif %}
-                {% if protein.cazy_families.all %}
+              {% endif %}
+              {% if protein.cazy_families.all %}
                 <span>CAZy family</span>
                 {% for cazy_family in protein.cazy_families.all %}
-                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=cazy_id&query={{ cazy_family.cazy_id }}" title="Show all genes for {{ cazy_family.cazy_id }} in {{ gene.genome.name }}">{{ cazy_family.cazy_id }}</a> ({{ cazy_family.description }})</h5>
+                  <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=cazy_id&query={{ cazy_family.cazy_id }}" title="Show all genes for {{ cazy_family.cazy_id }} in {{ gene.genome.name }}">{{ cazy_family.cazy_id }}</a> ({{ cazy_family.description }})</h5>
                 {% endfor %}
-                {% endif %}
-                {% if protein.cog_classes.all %}
+              {% endif %}
+              {% if protein.cog_classes.all %}
                 <span>COG class</span>
                 {% for cog_class in protein.cog_classes.all %}
-                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=cog_id&query={{ cog_class.cog_id }}" title="Show all genes for {{ cog_class.description }} in {{ gene.genome.name }}">[{{ cog_class.cog_id }}]</a> {{ cog_class.description }}</h5>
+                  <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=cog_id&query={{ cog_class.cog_id }}" title="Show all genes for {{ cog_class.description }} in {{ gene.genome.name }}">[{{ cog_class.cog_id }}]</a> {{ cog_class.description }}</h5>
                 {% endfor %}
-                {% endif %}
-                {% if protein.go_terms.all %}
+              {% endif %}
+              {% if protein.go_terms.all %}
                 <span>GO terms</span>
                 {% for go_term in protein.go_terms.all %}
-                    <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=go_id&query={{ go_term.go_id }}" title="Show all genes for {{ go_term.go_id }} in {{ gene.genome.name }}">[{{ go_term.go_id }}]</a> {{ go_term.description }} ({{go_term.go_namespace}})</h5>
+                  <h5><a href="{% url 'searchgene' %}?genome={{ gene.genome.name }}&type=go_id&query={{ go_term.go_id }}" title="Show all genes for {{ go_term.go_id }} in {{ gene.genome.name }}">[{{ go_term.go_id }}]</a> {{ go_term.description }} ({{go_term.go_namespace}})</h5>
                 {% endfor %}
-                {% endif %}
+              {% endif %}
             </div>
             <div class="content">
-                <header class="align-center">
+              <header class="align-center">
                 <p class="align-center">Other annotations</p>
-                </header>
-                {% if annotations %}
+              </header>
+              {% if annotations %}
                 {% for annotation in annotations %}
-                <span>{{ annotation.key }}</span>
-                <h5> 
+                  <span>{{ annotation.key }}</span>
+                  <h5> 
                     <strong>{{ annotation.value }}</strong> (external link: <a href="{{ annotation.url }}" target="blank_">{{ annotation.source }}</a>)
-                    </br>Description: {{ annotation.note }}
-                </h5>
+                    <br/>Description: {{ annotation.note }}
+                  </h5>
                 {% endfor %}
-                {% endif %}
+              {% endif %}
             </div>
-            </div>
+          </div>
         </div>
         <div class="inner" id="tools">
-        <div class="content">
+          <div class="content">
             <header class="align-center">
-            <h2>Sequence analysis tools</h2>
+              <h2>Sequence analysis tools</h2>
             </header>
             <form method="post" action="https://www.ebi.ac.uk/Tools/hmmer/search/hmmscan" enctype="multipart/form-data" name="PfamForm" id="PfamForm"><input type="hidden" name="seq" value="&gt;{{ gene.locus_tag }}&#10;{{ protein.sequence }}"  /> <input type="hidden" name="hmmdb" value="pfam"  /> <input type="hidden" name="E" value="1"  /> <input type="hidden" name="domE" value="1"  /> <input type="submit" name=".submit" style="display: none;" id="PfamButton" /></form>
             <form method="post" action="http://microbesonline.org/cgi-bin/seqsearch.cgi" enctype="multipart/form-data" name="MoBlastForm" id="MoBlastForm"><input type="hidden" name="query" value="&gt;{{ gene.locus_tag }}&#10;{{ protein.sequence }}"  /> <input type="hidden" name="qtype" value="protein"  /> <input type="submit" name=".submit" style="display: none;" id="MoBlastButton" /></form>
             <h5>
-                <a href="https://fit.genomics.lbl.gov/cgi-bin/mySeqSearch.cgi?query={{ protein.sequence }}" target="blank_">Fitness BLAST search (homologs of this protein in Fitness Browser)</a>
+              <a href="https://fit.genomics.lbl.gov/cgi-bin/mySeqSearch.cgi?query={{ protein.sequence }}" target="blank_">Fitness BLAST search (homologs of this protein in Fitness Browser)</a>
             </h5>
             <h5> 
-                <a href="https://papers.genomics.lbl.gov/cgi-bin/litSearch.cgi?query=%3E{{ gene.locus_tag }}%0A{{ protein.sequence }}" target="blank_">PaperBLAST search (papers about homologs of this protein)</a>
+              <a href="https://papers.genomics.lbl.gov/cgi-bin/litSearch.cgi?query=%3E{{ gene.locus_tag }}%0A{{ protein.sequence }}" target="blank_">PaperBLAST search (papers about homologs of this protein)</a>
             </h5>
             <h5> 
-                <a href="javascript:document.getElementById('MoBlastForm').submit()">Protein BLAST search in MicrobesOnline</a>
+              <a href="javascript:document.getElementById('MoBlastForm').submit()">Protein BLAST search in MicrobesOnline</a>
             </h5>
             <h5> 
-                <a href="https://www.ncbi.nlm.nih.gov/Structure/cdd/wrpsb.cgi?seqinput=%3E{{ gene.locus_tag }}%0A{{ protein.sequence }}" target="blank_">Search CDD (the Conserved Domains Database, which includes COG and superfam)</a>
+              <a href="https://www.ncbi.nlm.nih.gov/Structure/cdd/wrpsb.cgi?seqinput=%3E{{ gene.locus_tag }}%0A{{ protein.sequence }}" target="blank_">Search CDD (the Conserved Domains Database, which includes COG and superfam)</a>
             </h5>
             <h5> 
-                <a href="javascript:document.getElementById('PfamForm').submit()">Search PFam  (including for weak hits, up to E = 1)</a>
+              <a href="javascript:document.getElementById('PfamForm').submit()">Search PFam  (including for weak hits, up to E = 1)</a>
             </h5>
             <h5> 
-                <a title="Find similar proteins with known structures (PDBsum)" href="https://www.ebi.ac.uk/thornton-srv/databases/cgi-bin/pdbsum/FindSequence.pl?pasted={{ protein.sequence }}" target="blank_">
+              <a title="Find similar proteins with known structures (PDBsum)" href="https://www.ebi.ac.uk/thornton-srv/databases/cgi-bin/pdbsum/FindSequence.pl?pasted={{ protein.sequence }}" target="blank_">
             </h5>
             <h5> 
-                <a title="PSORTb v3.0, Gram-negative" href="https://papers.genomics.lbl.gov/cgi-bin/psortb.cgi?name={{ gene.locus_tag }}&amp;type=negative&amp;seq={{ protein.sequence }}" target="blank_">PSORTb (Gram negative bacteria)</a>
+              <a title="PSORTb v3.0, Gram-negative" href="https://papers.genomics.lbl.gov/cgi-bin/psortb.cgi?name={{ gene.locus_tag }}&amp;type=negative&amp;seq={{ protein.sequence }}" target="blank_">PSORTb (Gram negative bacteria)</a>
             </h5>
             <h5>
-                <a href="https://fit.genomics.lbl.gov/cgi-bin/myPhobius.cgi?name={{ gene.locus_tag }}&amp;seq={{ protein.sequence }}" target="blank_">Predict transmembrane helices and signal peptides: Phobius</a>
+              <a href="https://fit.genomics.lbl.gov/cgi-bin/myPhobius.cgi?name={{ gene.locus_tag }}&amp;seq={{ protein.sequence }}" target="blank_">Predict transmembrane helices and signal peptides: Phobius</a>
             </h5>
             <h5> 
-                <a href="http://pubseed.theseed.org/FIG/seedviewer.cgi?page=FigFamViewer&fasta_seq=%3E{{ gene.locus_tag }}%0A{{ protein.sequence }}" target="blank_">Check the current SEED with FIGfam search</a>
+              <a href="http://pubseed.theseed.org/FIG/seedviewer.cgi?page=FigFamViewer&fasta_seq=%3E{{ gene.locus_tag }}%0A{{ protein.sequence }}" target="blank_">Check the current SEED with FIGfam search</a>
             </h5>
+          </div>
         </div>
-        </div>
-    </section>
+      </section>
     {% endif %}
-
 {% endblock %}
