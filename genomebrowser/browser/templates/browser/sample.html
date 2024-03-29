@@ -1,60 +1,56 @@
 {% extends "base_generic.html" %}
 {% load static %}
-
 {% block page-title %}<title>{{ sample.full_name }}</title>{% endblock %}
-
 {% block script-header %}
 {% endblock %}
 
 {% block title %}<div class="logo"><h2>Sample</h2></div>{% endblock %}
+
 {% block content %}
-
-    <section id="two" class="wrapper style3">
-        <div class="inner">
+        <section id="two" class="wrapper style3">
+          <div class="inner">
             <header class="align-center">
-                <h2>{{ sample.sample_id }}</h2>
-            <p>({{ sample.full_name }})</p>
+              <h2>{{ sample.sample_id }}</h2>
+              <p>({{ sample.full_name }})</p>
             </header>
             <div class="align-center">
-            <h5>Description: {{ sample.description }}</h5>
+              <h5>Description: {{ sample.description }}</h5>
             </div>
-{% if genomes %}
-                    <header class="align-center">
-                        <p>Genome assemblies</p>
-                    </header>
-    {% for genome in genomes %}
-                        <h5 class="align-center"><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> ({{ genome.size }} bp, {{ genome.genes }} genes)</h5>
-    {% endfor %}
-{% else %}
-                        <p>No genomes found.</p>
-{% endif %}
-{% if metadata %}
-            <header class="align-center">
-            <p>Sample metadata</p>
-            </header>
-    {% for source in metadata %}
-            <div class="align-center">
-            <h4>Data source: <a href="{{ source.url }}">{{ source.source }}</a></h4>
-            <div class="table-wrapper">
-                <table class="metadata">
-                    <thead>
-                    </thead>
-                    <tbody>
-
-    {% for entry in source.entries %}
-                        <tr>
-                            <td><strong>{{ entry.key }}</strong></td>
-                            <td class="tdbreak">{{ entry.value }}</td>
-                        </tr>
-    {% endfor %}
-                    </tbody>
-                </table>
+              {% if genomes %}
+                <header class="align-center">
+                  <p>Genome assemblies</p>
+                </header>
+                {% for genome in genomes %}
+                  <h5 class="align-center"><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> ({{ genome.size }} bp, {{ genome.genes }} genes)</h5>
+                {% endfor %}
+              {% else %}
+                <p>No genomes found.</p>
+              {% endif %}
+              {% if metadata %}
+                <header class="align-center">
+                  <p>Sample metadata</p>
+                </header>
+                {% for source in metadata %}
+                  <div class="align-center">
+                    <h4>Data source: <a href="{{ source.url }}">{{ source.source }}</a></h4>
+                    <div class="table-wrapper">
+                      <table class="metadata">
+                        <thead>
+                        </thead>
+                        <tbody>
+                          {% for entry in source.entries %}
+                            <tr>
+                              <td><strong>{{ entry.key }}</strong></td>
+                              <td class="tdbreak">{{ entry.value }}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                {% endfor %}
+              {% endif %}
             </div>
-            </div>
-    {% endfor %}
-{% endif %}
-            </div>
-        </div>
-    </section>
-
+          </div>
+        </section>
 {% endblock %}

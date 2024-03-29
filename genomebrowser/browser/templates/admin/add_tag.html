@@ -2,7 +2,6 @@
 
 {% block content %}
     <form action="" method="post">
-
         {% csrf_token %}
         <input type="hidden" name="action" value="add_genome_tag">
         <input type="hidden" name="do_action" value="yes">
@@ -24,6 +23,5 @@
                 </li>
             {% endfor %}
         </ul>
-
     </form>
 {% endblock %}

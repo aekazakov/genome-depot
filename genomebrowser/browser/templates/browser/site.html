@@ -6,140 +6,135 @@
 {% block title %}<div class="logo"><h2>Site</h2></div>{% endblock %}
 
 {% block content %}
-    <section id="one" class="wrapper style3">
-        <div class="inner">
-        <header class="align-center">
-        <h2>{{ site.name }} 
-        {%if site.genome.strain %}
-            [<a href="{% url 'straindetails' strain_id=site.genome.strain.id %}">{{ site.genome.strain.full_name }}</a>]
-        {% else %}
-            [<a href="{% url 'sampledetails' sample_id=site.genome.sample.id %}">{{ site.genome.sample.full_name }}</a>]
-        {% endif %}
-        </h2>
-        </header>
-        <div class="row">
-            <div class="4u align-center">
-            <a class="align-center" href="#genes">Genes</a>
-            </div>
-            <div class="4u align-center">
-            <a class="align-center" href="#operons">Operons</a>
-            </div>
-            <div class="4u align-center">
-            <a class="align-center" href="#viewer">Genome viewer</a>
-            </div>
-        </div>
-        <hr>
-        <div class="grid-style">
-            <div class="content">
+        <section id="one" class="wrapper style3">
+          <div class="inner">
             <header class="align-center">
-                <p class="align-center">Site information</p>
+              <h2>{{ site.name }} 
+                {%if site.genome.strain %}
+                  [<a href="{% url 'straindetails' strain_id=site.genome.strain.id %}">{{ site.genome.strain.full_name }}</a>]
+                {% else %}
+                  [<a href="{% url 'sampledetails' sample_id=site.genome.sample.id %}">{{ site.genome.sample.full_name }}</a>]
+                {% endif %}
+              </h2>
             </header>
-            <span>Genome</span>
-            <h5><a href="{% url 'genomedetails' name=site.genome.name %}">{{ site.genome.name }}</a> 
-            {%if site.genome.strain %}
-                [{{ site.genome.strain.full_name }}]
-            {% else %}
-                [{{ site.genome.sample.full_name }}]
-            {% endif %}
-            {% for tag in site.genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</h5>
-            <span>Position</span>
-            {% if site.strand == -1 %}
-            <h5>{{ site.contig.contig_id }}: complement({{ site.start }}..{{ site.end }})</h5>
-            {% else %}
-            <h5>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</h5>
-            {% endif %}
+            <div class="row">
+              <div class="4u align-center">
+                <a class="align-center" href="#genes">Genes</a>
+              </div>
+              <div class="4u align-center">
+                <a class="align-center" href="#operons">Operons</a>
+              </div>
+              <div class="4u align-center">
+                <a class="align-center" href="#viewer">Genome viewer</a>
+              </div>
             </div>
-            <div class="content">
-            <header class="align-center">
-                <p class="align-center">Site sequence</p>
-            </header>
-            <h5>{{ site.sequence }}</a> 
+            <hr>
+            <div class="grid-style">
+              <div class="content">
+                <header class="align-center">
+                  <p class="align-center">Site information</p>
+                </header>
+                <span>Genome</span>
+                <h5><a href="{% url 'genomedetails' name=site.genome.name %}">{{ site.genome.name }}</a> 
+                  {%if site.genome.strain %}
+                    [{{ site.genome.strain.full_name }}]
+                  {% else %}
+                    [{{ site.genome.sample.full_name }}]
+                  {% endif %}
+                  {% for tag in site.genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}
+                </h5>
+                <span>Position</span>
+                {% if site.strand == -1 %}
+                  <h5>{{ site.contig.contig_id }}: complement({{ site.start }}..{{ site.end }})</h5>
+                {% else %}
+                  <h5>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</h5>
+                {% endif %}
+              </div>
+              <div class="content">
+                <header class="align-center">
+                  <p class="align-center">Site sequence</p>
+                </header>
+                <h5>{{ site.sequence }}</a> 
+              </div>
             </div>
-        </div>
-
-    {% if site.genes.all %}
-        <h2 id="genes" class="align-center">Genes</h2>
-        <div class="table-wrapper">
-            <table>
-                <thead>
+            {% if site.genes.all %}
+              <h2 id="genes" class="align-center">Genes</h2>
+              <div class="table-wrapper">
+                <table>
+                  <thead>
                     <tr>
-                        <th>Gene</th>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Product</th>
+                      <th>Gene</th>
+                      <th>Name</th>
+                      <th>Position</th>
+                      <th>Product</th>
                     </tr>
-                </thead>
-                <tbody>
-            {%for gene in site.genes.all %}
-                    <tr>
+                  </thead>
+                  <tbody>
+                    {%for gene in site.genes.all %}
+                      <tr>
                         <td><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a></td>
                         <td>{{ gene.name }}</td>
                         {% if gene.strand == "-1" %}
-                        <td>{{ gene.contig.contig_id }}: complement({{ gene.start }}..{{ gene.end }})</td>
+                          <td>{{ gene.contig.contig_id }}: complement({{ gene.start }}..{{ gene.end }})</td>
                         {% else %}
-                        <td>{{ gene.contig.contig_id }}: {{ gene.start }}..{{ gene.end }}</td>
+                          <td>{{ gene.contig.contig_id }}: {{ gene.start }}..{{ gene.end }}</td>
                         {% endif %}
                         <td>{{ gene.function }}</td>
-                    </tr>
-            {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endif %}
-
-    {% if site.operons.all %}
-        <h2 id="operons" class="align-center">Operons</h2>
-        <div class="table-wrapper">
-            <table>
-                <thead>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% endif %}
+            {% if site.operons.all %}
+              <h2 id="operons" class="align-center">Operons</h2>
+              <div class="table-wrapper">
+                <table>
+                  <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Genes</th>
+                      <th>Name</th>
+                      <th>Position</th>
+                      <th>Genes</th>
                     </tr>
-                </thead>
-                <tbody>
-            {%for operon in site.operons.all %}
-                    <tr>
+                  </thead>
+                  <tbody>
+                    {%for operon in site.operons.all %}
+                      <tr>
                         <td><a href="{% url 'operondetails' genome=operon.genome.name name=operon.name %}">{{ operon.name }}</a></td>
                         {% if operon.strand == "-1" %}
-                        <td>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</td>
+                          <td>{{ operon.contig.contig_id }}: complement({{ operon.start }}..{{ operon.end }})</td>
                         {% else %}
-                        <td>{{ operon.contig.contig_id }}: {{ operon.start }}..{{ operon.end }}</td>
+                          <td>{{ operon.contig.contig_id }}: {{ operon.start }}..{{ operon.end }}</td>
                         {% endif %}
                         <td>
-                        {%for gene in operon.gene_set.all %}
+                          {%for gene in operon.gene_set.all %}
                             <a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a>: {{ gene.function }}<br>
-                        {% endfor %}
+                          {% endfor %}
                         </td>
-                    </tr>
-            {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-    {% endif %}
-        </div>
-    </section>
-
-    <section id="three" >
-    <div id="viewer" class="wrapper style3">
-        <div class="inner">
-        <h2 class="align-center">Genome viewer</h2>
-        </div>
-    </div>
-        <div class="inner">
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% endif %}
+          </div>
+        </section>
+        <section id="three" >
+          <div id="viewer" class="wrapper style3">
+            <div class="inner">
+              <h2 class="align-center">Genome viewer</h2>
+            </div>
+          </div>
+          <div class="inner">
             <div style="width: 100%; height: 350px; margin: 10 auto;">
-                <iframe
+              <iframe
                 src="{% static 'jbrowse/index.html' %}?data={{ site.genome.json_url }}&tracklist=0&nav=1&overview=1&tracks=DNA%2CCDSs%2COperons%2CPseudogenes%2CtRNAs%2CrRNAs&loc={{ site.contig.contig_id }}:{{ viewer_start }}..{{ viewer_end }}&highlight={{ site.contig.contig_id }}:{{ highlight_start }}..{{ highlight_end }}"
                 style="border: 1px solid black"
                 width="100%"
                 height="100%"
-                >
-                </iframe>
+              >
+              </iframe>
             </div>
-        </div>
-    </section>
-
-
+          </div>
+        </section>
 {% endblock %}

@@ -8,134 +8,123 @@
 {% block title %}<div class="logo"><h2>Text search</h2></div>{% endblock %}
 
 {% block content %}
-            <section id="two" class="wrapper style3">
-                <div class="inner">
-                    <div class="content">
-                        <header class="align-center">
-                        <h4 class="align-center">Find genes by gene, contig, genome identifier or product</h4>
-                        <h6 class="align-center">*if exact match to a locus tag is found, it will not search in gene names and functions</h6>
-                        </header>
-                        <p>
-                        <form action="{% url 'searchgene' %}" method="get">
-                            <input name="query" id="gene-query" type="text" placeholder="Enter gene name, locus tag, genome, contig name or product ...">
-                            <input name="type" type="hidden" id="type" value = "gene">
-                        </form>
-                        </p>
-                        <header class="align-center">
-                        <h4>Free-text search in gene annotations, domains, functions etc. (slow)</h4>
-                        </header>
-                        <p>
-                        <form action="{% url 'searchannotation' %}" method="get">
-                            <input name="annotation_query" id="annotation-query" type="text" placeholder="Text search in gene annotations...">
-                            <input name="type" type="hidden" id="type" value = "annotation">
-                        </form>
-                        </p>
-                        <header class="align-center">
-                        <h4>Search in functional classifications</h4>
-                        </header>
-
-                    </div>
-                    <div class="row 200%">
-                        <div class="search left 6u">
-                        <form action="{% url 'kos' %}" method="get">
-                          <input name="query" id="ko-query" type="text" placeholder="Search KEGG orthologs by name or KO ID...">
-                        </form>
-                        </div>
-                        <div class="search right 6u">
-                        <p>OR <a href="{% url 'kos' %}">Browse KEGG Ortholog groups</a></p>
-                        </div>
-                    </div>
-
-                    <div class="row 200%">
-                        <div class="search left 6u">
-                        <form action="{% url 'kps' %}" method="get">
-                          <input name="query" id="kp-query" type="text" placeholder="Search KEGG pathways by name or KEGG ID...">
-                        </form>
-                        </div>
-                        <div class="search right 6u">
-                        <p>OR <a href="{% url 'kps' %}">Browse KEGG pathways</a></p>
-                        </div>
-                    </div>
-
-                    <div class="row 200%">
-                        <div class="search left 6u">
-                        <form action="{% url 'krs' %}" method="get">
-                          <input name="query" id="kr-query" type="text" placeholder="Search KEGG reactions by name or KEGG ID...">
-                        </form>
-                        </div>
-                        <div class="search right 6u">
-                        <p>OR <a href="{% url 'krs' %}">Browse KEGG reactions</a></p>
-                        </div>
-                    </div>
-
-                    <div class="row 200%">
-                        <div class="search left 6u">
-                        <form action="{% url 'enzymes' %}" method="get">
-                          <input name="query" id="ec-query" type="text" placeholder="Search enzymes by name or EC number...">
-                        </form>
-                        </div>
-                        <div class="search right 6u">
-                        <p>OR <a href="{% url 'enzymes' %}">Browse enzymes</a></p>
-                        </div>
-                    </div>
-
-                    <div class="row 200%">
-                        <div class="search left 6u">
-                        <form action="{% url 'transporters' %}" method="get">
-                          <input name="query" id="tc-query" type="text" placeholder="Search transporters by name or TCDB family...">
-                        </form>
-                        </div>
-                        <div class="search right 6u">
-                        <p>OR <a href="{% url 'transporters' %}">Browse TCDB families</a></p>
-                        </div>
-                    </div>
-
-                    <div class="row 200%">
-                        <div class="search left 6u">
-                        <form action="{% url 'cazy' %}" method="get">
-                          <input name="query" id="cazy-query" type="text" placeholder="Search CAZymes by name or CAZYfam ID...">
-                        </form>
-                        </div>
-                        <div class="search right 6u">
-                        <p>OR <a href="{% url 'cazy' %}">Browse CAZy families</a></p>
-                        </div>
-                    </div>
-
-                    <div class="row 200%">
-                        <div class="search left 6u">
-                        <form action="{% url 'cogs' %}" method="get">
-                          <input name="query" id="cog-query" type="text" placeholder="Search COG classes by name...">
-                        </form>
-                        </div>
-                        <div class="search right 6u">
-                        <p>OR <a href="{% url 'cogs' %}">Browse COG classes</a></p>
-                        </div>
-                    </div>
-
-                    <div class="row 200%">
-                        <div class="search left 6u">
-                        <form action="{% url 'gos' %}" method="get">
-                          <input name="query" id="go-query" type="text" placeholder="Search GO terms by name...">
-                        </form>
-                        </div>
-                        <div class="search right 6u">
-                        <p>OR <a href="{% url 'gos' %}">Browse GO terms</a></p>
-                        </div>
-                    </div>
-                    <br/>
-                    <div class="content">
-                        <header class="align-center">
-                        <h4 class="align-center">Find taxon by name or NCBI taxonomy ID</h4>
-                        </header>
-                        <p>
-                        <form action="{% url 'searchtaxon' %}" method="get">
-                            <input name="query" type="text" placeholder="Enter taxon name or taxonomy ID...">
-                        </form>
-                        </p>
-                    </div>
-
-                </div>
-            </section>
-
+        <section id="two" class="wrapper style3">
+          <div class="inner">
+            <div class="content">
+              <header class="align-center">
+                <h4 class="align-center">Find genes by gene, contig, genome identifier or product</h4>
+                <h6 class="align-center">*if exact match to a locus tag is found, it will not search in gene names and functions</h6>
+              </header>
+              <p>
+                <form action="{% url 'searchgene' %}" method="get">
+                  <input name="query" id="gene-query" type="text" placeholder="Enter gene name, locus tag, genome, contig name or product ...">
+                  <input name="type" type="hidden" id="type" value = "gene">
+                </form>
+              </p>
+              <header class="align-center">
+                <h4>Free-text search in gene annotations, domains, functions etc. (slow)</h4>
+              </header>
+              <p>
+                <form action="{% url 'searchannotation' %}" method="get">
+                  <input name="annotation_query" id="annotation-query" type="text" placeholder="Text search in gene annotations...">
+                  <input name="type" type="hidden" id="type" value = "annotation">
+                </form>
+              </p>
+              <header class="align-center">
+                <h4>Search in functional classifications</h4>
+              </header>
+            </div>
+            <div class="row 200%">
+              <div class="search left 6u">
+                <form action="{% url 'kos' %}" method="get">
+                  <input name="query" id="ko-query" type="text" placeholder="Search KEGG orthologs by name or KO ID...">
+                </form>
+              </div>
+              <div class="search right 6u">
+                <p>OR <a href="{% url 'kos' %}">Browse KEGG Ortholog groups</a></p>
+              </div>
+            </div>
+            <div class="row 200%">
+              <div class="search left 6u">
+                <form action="{% url 'kps' %}" method="get">
+                  <input name="query" id="kp-query" type="text" placeholder="Search KEGG pathways by name or KEGG ID...">
+                </form>
+              </div>
+              <div class="search right 6u">
+                <p>OR <a href="{% url 'kps' %}">Browse KEGG pathways</a></p>
+              </div>
+            </div>
+            <div class="row 200%">
+              <div class="search left 6u">
+                <form action="{% url 'krs' %}" method="get">
+                  <input name="query" id="kr-query" type="text" placeholder="Search KEGG reactions by name or KEGG ID...">
+                </form>
+              </div>
+              <div class="search right 6u">
+                <p>OR <a href="{% url 'krs' %}">Browse KEGG reactions</a></p>
+              </div>
+            </div>
+            <div class="row 200%">
+              <div class="search left 6u">
+                <form action="{% url 'enzymes' %}" method="get">
+                  <input name="query" id="ec-query" type="text" placeholder="Search enzymes by name or EC number...">
+                </form>
+              </div>
+              <div class="search right 6u">
+                <p>OR <a href="{% url 'enzymes' %}">Browse enzymes</a></p>
+              </div>
+            </div>
+            <div class="row 200%">
+              <div class="search left 6u">
+                <form action="{% url 'transporters' %}" method="get">
+                  <input name="query" id="tc-query" type="text" placeholder="Search transporters by name or TCDB family...">
+                </form>
+              </div>
+              <div class="search right 6u">
+                <p>OR <a href="{% url 'transporters' %}">Browse TCDB families</a></p>
+              </div>
+            </div>
+            <div class="row 200%">
+              <div class="search left 6u">
+                <form action="{% url 'cazy' %}" method="get">
+                  <input name="query" id="cazy-query" type="text" placeholder="Search CAZymes by name or CAZYfam ID...">
+                </form>
+              </div>
+              <div class="search right 6u">
+                <p>OR <a href="{% url 'cazy' %}">Browse CAZy families</a></p>
+              </div>
+            </div>
+            <div class="row 200%">
+              <div class="search left 6u">
+                <form action="{% url 'cogs' %}" method="get">
+                  <input name="query" id="cog-query" type="text" placeholder="Search COG classes by name...">
+                </form>
+              </div>
+              <div class="search right 6u">
+                <p>OR <a href="{% url 'cogs' %}">Browse COG classes</a></p>
+              </div>
+            </div>
+            <div class="row 200%">
+              <div class="search left 6u">
+                <form action="{% url 'gos' %}" method="get">
+                  <input name="query" id="go-query" type="text" placeholder="Search GO terms by name...">
+                </form>
+              </div>
+              <div class="search right 6u">
+                <p>OR <a href="{% url 'gos' %}">Browse GO terms</a></p>
+              </div>
+            </div>
+            <br/>
+            <div class="content">
+              <header class="align-center">
+                <h4 class="align-center">Find taxon by name or NCBI taxonomy ID</h4>
+              </header>
+              <p>
+                <form action="{% url 'searchtaxon' %}" method="get">
+                  <input name="query" type="text" placeholder="Enter taxon name or taxonomy ID...">
+                </form>
+              </p>
+            </div>
+          </div>
+        </section>
 {% endblock %}
-

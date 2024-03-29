@@ -7,59 +7,57 @@
 
 {% block title %}<div class="logo"><h2>Taxon</h2></div>{% endblock %}
 {% block content %}
-
-    <section id="two" class="wrapper style3">
-       <div class="inner">
-        <header class="align-center">
-            <h2>{{ taxon.name }} [{{ taxon.rank }}]</h2>
-            <h5>NCBI Taxonomy ID: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{ taxon.taxonomy_id }}">{{ taxon.taxonomy_id }}</a></h5>
-        </header>
-        <hr>
-                {% if sunburst %}
-                    <div class="align-center">
-                    {{ sunburst | safe}}
-                    </div>
-                {% else %}
-                    <header class="align-center">
-                        <h5>Genomes for {{ taxon.name }} not found in the database.</h5>
-                    </header>
-                {% endif %}
-        <hr>
-        <div class="grid-style">
-            <div class="content">
+        <section id="two" class="wrapper style3">
+          <div class="inner">
             <header class="align-center">
-            <p> Lineage </p>
+              <h2>{{ taxon.name }} [{{ taxon.rank }}]</h2>
+              <h5>NCBI Taxonomy ID: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{ taxon.taxonomy_id }}">{{ taxon.taxonomy_id }}</a></h5>
             </header>
-            {% if lineage %}
-            {% for parent in lineage %}
-                <div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
-            {% endfor %}
+            <hr>
+            {% if sunburst %}
+              <div class="align-center">
+                {{ sunburst | safe}}
+              </div>
+            {% else %}
+              <header class="align-center">
+                <h5>Genomes for {{ taxon.name }} not found in the database.</h5>
+              </header>
             {% endif %}
-            <br>
-{% if strains %}
-            <header class="align-center">
-                <p>Strains</p>
-            </header>
-            <h5 class="align-center">
-    {% for strain in strains %}
-            <a href="{% url 'straindetails' strain_id=strain.id %}">{{ strain.full_name }}</a><br>
-    {% endfor %}
-            </h5>
-{% else %}
-            <p>&nbsp;</p>
-{% endif %}
+            <hr>
+            <div class="grid-style">
+              <div class="content">
+                <header class="align-center">
+                  <p> Lineage </p>
+                </header>
+                {% if lineage %}
+                  {% for parent in lineage %}
+                    <div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
+                  {% endfor %}
+                {% endif %}
+                <br>
+                {% if strains %}
+                  <header class="align-center">
+                    <p>Strains</p>
+                  </header>
+                  <h5 class="align-center">
+                    {% for strain in strains %}
+                      <a href="{% url 'straindetails' strain_id=strain.id %}">{{ strain.full_name }}</a><br>
+                    {% endfor %}
+                  </h5>
+                {% else %}
+                  <p>&nbsp;</p>
+                {% endif %}
+              </div>
+              <div class="content">
+                <header class="align-center">
+                  <p>Strains and genomes </p>
+                </header>
+                <h5 class="align-center">
+                  <a href="{% url 'searchgenome'%}?taxon={{ taxon.taxonomy_id }}">Find all genomes for {{ taxon.name }}</a><br/>
+                  <a href="{% url 'searchstrain'%}?taxon={{ taxon.taxonomy_id }}">Find all strains for {{ taxon.name }}</a>
+                </h5>
+              </div>
             </div>
-            <div class="content">
-            <header class="align-center">
-                <p>Strains and genomes </p>
-            </header>
-            <h5 class="align-center">
-                <a href="{% url 'searchgenome'%}?taxon={{ taxon.taxonomy_id }}">Find all genomes for {{ taxon.name }}</a><br/>
-                <a href="{% url 'searchstrain'%}?taxon={{ taxon.taxonomy_id }}">Find all strains for {{ taxon.name }}</a>
-            </h5>
-            </div>
-        </div>
-    </div>
-    </section>
-
+          </div>
+        </section>
 {% endblock %}

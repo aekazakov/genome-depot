@@ -8,73 +8,67 @@
 
 {% block title %}<div class="logo"><h2>Strain</h2></div>{% endblock %}
 {% block content %}
-
-    <section id="two" class="wrapper style3">
-        <div class="inner">
+        <section id="two" class="wrapper style3">
+          <div class="inner">
             <header class="align-center">
-                <h2>{{ strain.strain_id }}</h2>
-                <h5>({{ strain.full_name }})</h5>
-                <h5>NCBI Taxonomy ID: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{ strain.taxon.taxonomy_id }}">{{ strain.taxon.taxonomy_id }}</a></h5>
+              <h2>{{ strain.strain_id }}</h2>
+              <h5>({{ strain.full_name }})</h5>
+              <h5>NCBI Taxonomy ID: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id={{ strain.taxon.taxonomy_id }}">{{ strain.taxon.taxonomy_id }}</a></h5>
             </header>
-            
             <div class="grid-style">
-                <div class="content">
-                    {% if lineage %}
-                    <header class="align-center">
+              <div class="content">
+                {% if lineage %}
+                  <header class="align-center">
                     <p> Lineage </p>
-                    </header>
-                    {% for parent in lineage %}
-                        <div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
-                    {% endfor %}
-                    {% else %}
-                    <div class="align-center">
+                  </header>
+                  {% for parent in lineage %}
+                    <div style="margin-left: {{ forloop.counter }}0px;"><a href="{% url 'taxondetails' taxonomy_id=parent.taxonomy_id %}">{{parent.name}}</a> [{{parent.rank}}]</div>
+                  {% endfor %}
+                {% else %}
+                  <div class="align-center">
                     <h5>Order: {{ strain.order }}</h5>
-                    </div>
-                    {% endif %}
-                    <br>
-                </div>
-                
-                <div class="content">
-                    {% if genomes %}
-                        <header class="align-center">
-                            <p>Genome assemblies</p>
-                        </header>
-                        {% for genome in genomes %}
-                            <h5 class="align-center"><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}({{ genome.size }} bp, {{ genome.genes }} genes)</h5>
-                        {% endfor %}
-                    {% else %}
-                            <p>No genomes found.</p>
-                    {% endif %}
-                </div>
+                  </div>
+                {% endif %}
+                <br>
+              </div>
+              <div class="content">
+                {% if genomes %}
+                  <header class="align-center">
+                    <p>Genome assemblies</p>
+                  </header>
+                  {% for genome in genomes %}
+                    <h5 class="align-center"><a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> {% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}({{ genome.size }} bp, {{ genome.genes }} genes)</h5>
+                  {% endfor %}
+                {% else %}
+                  <p>No genomes found.</p>
+                {% endif %}
+              </div>
             </div>
-
-{% if metadata %}
-            <header class="align-center">
-            <p>Strain metadata</p>
-            </header>
-    {% for source in metadata %}
-            <div class="align-center">
-            <h4>Data source: <a href="{{ source.url }}">{{ source.source }}</a></h4>
-            <div class="table-wrapper">
-                <table class="metadata">
-                    <thead>
-                    </thead>
-                    <tbody>
-
-    {% for entry in source.entries %}
-                        <tr>
+            {% if metadata %}
+              <header class="align-center">
+                <p>Strain metadata</p>
+              </header>
+              {% for source in metadata %}
+                <div class="align-center">
+                  <h4>Data source: <a href="{{ source.url }}">{{ source.source }}</a></h4>
+                  <div class="table-wrapper">
+                    <table class="metadata">
+                      <thead>
+                      </thead>
+                      <tbody>
+                        {% for entry in source.entries %}
+                          <tr>
                             <td><strong>{{ entry.key }}</strong></td>
                             <td class="tdbreak">{{ entry.value }}</td>
-                        </tr>
-    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            </div>
-    {% endfor %}
-{% endif %}
-            </div>
-        </div>
-    </section>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </section>
 
 {% endblock %}

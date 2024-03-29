@@ -8,69 +8,62 @@
 {% block title %}<div class="logo"><h2>Strains</h2></div>{% endblock %}
 
 {% block content %}
-            <section id="two" class="wrapper style3">
-                <div class="inner">
-                    <header class="align-center">
-                        <form action="{% url 'searchstrain' %}" method="get">
-                          <input name="query" type="text" placeholder="Search strains by name or order...">
-                        </form>
-                        {% if searchcontext %}
-                        <h4>{{ searchcontext }}</h4>
-                        {% endif %}
-                    </header>
-
-{% if strainlist %}
-            <div class="table-wrapper">
+        <section id="two" class="wrapper style3">
+          <div class="inner">
+            <header class="align-center">
+              <form action="{% url 'searchstrain' %}" method="get">
+                <input name="query" type="text" placeholder="Search strains by name or order...">
+              </form>
+              {% if searchcontext %}
+                <h4>{{ searchcontext }}</h4>
+              {% endif %}
+            </header>
+            {% if strainlist %}
+              <div class="table-wrapper">
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Strain ID</th>
-                            <th>Order</th>
-                            <th>Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-    {% for strain in strainlist %}
-                        <tr>
-                            <td><a href="{% url 'straindetails' strain_id=strain.id %}">{{ strain.strain_id }}</a></td>
-                            <td>{{ strain.order }}</td>
-                            <td>{{ strain.full_name }}</td>
-                        </tr>
-    {% endfor %}
-                    </tbody>
+                  <thead>
+                    <tr>
+                      <th>Strain ID</th>
+                      <th>Order</th>
+                      <th>Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for strain in strainlist %}
+                      <tr>
+                        <td><a href="{% url 'straindetails' strain_id=strain.id %}">{{ strain.strain_id }}</a></td>
+                        <td>{{ strain.order }}</td>
+                        <td>{{ strain.full_name }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
                 </table>
-            </div>
-{% else %}
-    <div class="align-center">
-    <header><p>No strains found.</p></header>
-    </div>
-{% endif %}
-
-  
-    {% if is_paginated %}
-        <div>
-        <span>
-        {% if page_obj.has_previous %}
-          <a class="button small" href="?{% param_replace page=1 %}">First</a>
-          {% if page_obj.previous_page_number != 1 %}
-            <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
-          {% endif %}
-        {% endif %}
-
-        Page {{ page_obj.number }} of {{ paginator.num_pages }}
-        {% if page_obj.has_next %}
-          {% if page_obj.next_page_number != paginator.num_pages %}
-            <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
-          {% endif %}
-          <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
-        {% endif %}
-
-        <span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
-        </span>
-        </div>
-    {% endif %}
-    </div>
-    </section>
-
+              </div>
+            {% else %}
+              <div class="align-center">
+                <header><p>No strains found.</p></header>
+              </div>
+            {% endif %}
+            {% if is_paginated %}
+              <div>
+                <span>
+                  {% if page_obj.has_previous %}
+                    <a class="button small" href="?{% param_replace page=1 %}">First</a>
+                    {% if page_obj.previous_page_number != 1 %}
+                      <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+                    {% endif %}
+                  {% endif %}
+                  Page {{ page_obj.number }} of {{ paginator.num_pages }}
+                  {% if page_obj.has_next %}
+                    {% if page_obj.next_page_number != paginator.num_pages %}
+                      <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+                    {% endif %}
+                    <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
+                  {% endif %}
+                  <span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
+                </span>
+              </div>
+            {% endif %}
+          </div>
+        </section>
 {% endblock %}
-

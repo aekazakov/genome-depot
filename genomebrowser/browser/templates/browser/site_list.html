@@ -7,75 +7,66 @@
 
 {% block title %}<div class="logo"><h2>Sites</h2></div>{% endblock %}
 {% block content %}
-            <section id="two" class="wrapper style3">
-                <div class="inner">
-                    <header class="align-center">
-                        {% if searchcontext %}
-                        <h4>{{ searchcontext }}</h4>
-                        {% else %}
-                        <h4>Sites in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> [{{ genome.taxon.name }}]</h4>
-                        <form action="{% url 'sitelist' genome=genome.name %}" method="get">
-                          <input name="query" type="text" placeholder="Quick search in sites by name of site or regulon...">
-                        </form>
-                        {% endif %}
-                    </header>
-
+        <section id="two" class="wrapper style3">
+          <div class="inner">
+            <header class="align-center">
+              {% if searchcontext %}
+                <h4>{{ searchcontext }}</h4>
+              {% else %}
+                <h4>Sites in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> [{{ genome.taxon.name }}]</h4>
+                  <form action="{% url 'sitelist' genome=genome.name %}" method="get">
+                    <input name="query" type="text" placeholder="Quick search in sites by name of site or regulon...">
+                  </form>
+              {% endif %}
+            </header>
             <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Site</th>
-                            <th>Regulon</th>
-                            <th>Location</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-    {% for site in sitelist %}
-                        <tr>
-                            <td><a href="{% url 'sitedetails' genome=site.genome.name name=site.name %}">{{ site.name }}</a></td>
-                        {% if site.regulon %}
-                            <td><a href="{% url 'regulondetails' genome=site.genome.name name=site.regulon.name %}">{{ site.regulon.name }}</a></td>
-                        {% else %}
-                            <td>&nbsp;</td>
-                        {% endif %}
-                        {% if site.strand == -1 %}
-                            <td>{{ site.contig.contig_id }}: complement({{ site.start }}..{{ site.end }})</td>
-                        {% else %}
-                            <td>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</td>
-                        {% endif %}
-                        </tr>
-    {% endfor %}
-                    </tbody>
-                </table>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Site</th>
+                    <th>Regulon</th>
+                    <th>Location</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for site in sitelist %}
+                    <tr>
+                      <td><a href="{% url 'sitedetails' genome=site.genome.name name=site.name %}">{{ site.name }}</a></td>
+                      {% if site.regulon %}
+                        <td><a href="{% url 'regulondetails' genome=site.genome.name name=site.regulon.name %}">{{ site.regulon.name }}</a></td>
+                      {% else %}
+                        <td>&nbsp;</td>
+                      {% endif %}
+                      {% if site.strand == -1 %}
+                        <td>{{ site.contig.contig_id }}: complement({{ site.start }}..{{ site.end }})</td>
+                      {% else %}
+                        <td>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</td>
+                      {% endif %}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
-
-    {% if is_paginated %}
-        <div>
-        <span>
-        {% if page_obj.has_previous %}
-          <a class="button small" href="?{% param_replace page=1 %}">First</a>
-          {% if page_obj.previous_page_number != 1 %}
-            <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
-          {% endif %}
-        {% endif %}
-
-        Page {{ page_obj.number }} of {{ paginator.num_pages }}
-        {% if page_obj.has_next %}
-          {% if page_obj.next_page_number != paginator.num_pages %}
-            <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
-          {% endif %}
-          <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
-        {% endif %}
-
-        <span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
-        </span>
-        </div>
-    {% endif %}
-
-
-  
-                </div>
-            </section>
-
+            {% if is_paginated %}
+              <div>
+                <span>
+                  {% if page_obj.has_previous %}
+                    <a class="button small" href="?{% param_replace page=1 %}">First</a>
+                    {% if page_obj.previous_page_number != 1 %}
+                      <a class="button small" href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+                    {% endif %}
+                  {% endif %}
+                  Page {{ page_obj.number }} of {{ paginator.num_pages }}
+                  {% if page_obj.has_next %}
+                    {% if page_obj.next_page_number != paginator.num_pages %}
+                      <a class="button small" href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+                    {% endif %}
+                    <a class="button small" href="?{% param_replace page=paginator.num_pages %}">Last</a> 
+                  {% endif %}
+                  <span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
+                </span>
+              </div>
+            {% endif %}
+          </div>
+        </section>
 {% endblock %}
-
