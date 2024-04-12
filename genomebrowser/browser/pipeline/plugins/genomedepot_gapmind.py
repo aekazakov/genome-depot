@@ -48,7 +48,7 @@ def preprocess(annotator, genomes, working_dir):
     gapmind_script = os.path.join(working_dir, 'run_gapmind.sh')
     
     with open(gapmind_script, 'w') as outfile:
-        outfile.write('#!/bin/bash\n')
+        outfile.write('#!/bin/bash\nexit 1\n')
         outfile.write('source "' + annotator.config['core.conda_path'] + '"\n')
         outfile.write('conda activate ' +
                       annotator.config['plugins.gapmind.conda_env'] +

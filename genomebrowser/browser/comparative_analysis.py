@@ -319,7 +319,7 @@ def get_scribl(start_gene, eggnog_og, request):
         eggnog_og, start_gene, genelist_size
         )
     if og_gene_count == 1:
-        return '', '', '', og_gene_count, 1
+        return '', '', '', og_gene_count, 1, []
     plot_gene_count = len(ordered_orthologs)
     scribl.append('\t\tcanvas.width = parent.offsetWidth - 201;')
     scribl.append('\t\tcanvas.height = ' +

@@ -20,23 +20,28 @@ def run_annotation_pipeline_impl(args):
     logger.debug('Asynchronous task run_annotation_tools received. Starting the pipeline.')
     (genomes, plugins) = args
     annotator = Annotator()
-    errors = []
+    messages = []
+    subject = None
     for plugin_ind, plugin in enumerate(plugins):
         logger.debug('Starting tool ' + str(plugin_ind + 1) + ' of ' + str(len(plugins)) + ':' + plugin)
         try:
-            annotator.run_external_tools(genomes, plugin_name=plugin)
-        except Exception:
-            errors.append('GenomeDepot plugin "' +  plugin + f'" at {settings.BASE_URL} finished ' +\
+            status = annotator.run_external_tools(genomes, plugin_name=plugin)
+            messages.append(str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' ' + status)
+        except Exception as e:
+            messages.append(str(plugin_ind) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' ERROR')
+            messages.append('GenomeDepot plugin "' +  plugin + f'" at {settings.BASE_URL} finished ' +\
                 f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
                 f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
                 f'{sys.exc_info()[2].tb_lineno}')
-    if errors:
-        subject = 'GenomeDepot annotation pipeline finished with error'
-        message = '\n'.join(errors)
-    else:
-        subject = 'GenomeDepot annotation pipeline finished successfuly'
+            subject = 'GenomeDepot annotation pipeline run: ERROR'
+    if subject is None:
+        subject = 'GenomeDepot annotation pipeline finished'
         message = '"Run annotation tools" task finished successfuly at ' + \
-        f'{settings.BASE_URL}'
+        f'{settings.BASE_URL}' + '\n\n' + '\n'.join(messages)
+    else:
+        subject = 'GenomeDepot annotation pipeline run: ERROR'
+        message = '"Run annotation tools" task finished with error ' + \
+        f'{settings.BASE_URL}' + '\n\n' + '\n'.join(messages)
     mail_admins(subject, message)
     return 'Annotation pipeline finished.'
     

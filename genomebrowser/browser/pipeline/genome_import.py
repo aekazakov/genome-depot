@@ -1880,8 +1880,9 @@ class Importer(object):
             os.remove(self.config['core.search_db_prot'])
         if os.path.exists(os.path.join(self.config['core.temp_dir'], 'poem-temp')):
             shutil.rmtree(os.path.join(self.config['core.temp_dir'], 'poem-temp'))
-        for filename in os.listdir(self.config['core.eggnog_outdir']):
-            os.remove(os.path.join(self.config['core.eggnog_outdir'], filename))
+        if os.path.exists(self.config['core.eggnog_outdir']):
+            for filename in os.listdir(self.config['core.eggnog_outdir']):
+                os.remove(os.path.join(self.config['core.eggnog_outdir'], filename))
         # delete all genome files in the temporary directory
         for genome_id in self.inputgenomes:
             genome_file = self.inputgenomes[genome_id]['gbk']
@@ -2183,7 +2184,6 @@ class Importer(object):
                           ' -a n -p pro >>poem.log\n'
                           )
             '''
-
             outfile.write('python ' + 
                           os.path.join(self.config['core.poem_dir'], 'lib', 'prod2gmk.py') +
                           ' ' + os.path.join(working_dir, 'input.fsa_prod_aa.fsa') +
@@ -2208,7 +2208,7 @@ class Importer(object):
                           )
             outfile.write('conda deactivate\n')
             
-        cmd = ['/bin/bash', poem_script]
+        cmd = ['bash', poem_script]
         logger.info(' '.join(cmd))
         # Close MySQL connection before starting external process because 
         # it may run for too long resulting in "MySQL server has gone away" error

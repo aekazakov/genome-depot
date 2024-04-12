@@ -5,7 +5,7 @@ from django.db import connection
 from browser.pipeline.util import export_nucl_bygenome
 from browser.models import Gene, Genome
 """
-    This plugin runs AMRFinder for a set of genomes.
+    This plugin runs geNomad for a set of genomes.
 """
 
 

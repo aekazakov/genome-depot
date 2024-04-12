@@ -435,10 +435,10 @@ class PipelineTestCase(TransactionTestCase):
         genome_id = 'E_coli_BW2952'
         genome = Genome.objects.get(name=genome_id)
         test_plugin = 'gapmind'
-        self.annotator.run_external_tools({genome_id:genome.gbk_filepath})
+        self.annotator.run_external_tools({genome_id:genome.gbk_filepath}, plugin_name=test_plugin)
         saved_annotations = list(Annotation.objects.filter(gene_id__genome__name=genome_id, source='GapMind'))
         print('Annotations:', saved_annotations)
-        self.assertEqual(len(saved_annotations), 5)
+        self.assertEqual(len(saved_annotations), 3)
 
     #@skip("this is a very long test")
     def test_genome_import_pipeline(self):

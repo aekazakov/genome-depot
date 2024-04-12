@@ -418,6 +418,7 @@ class Annotator(object):
                 logger.info('Sample description updated for %s', sample_name)
 
     def run_external_tools(self, genomes, plugin_name=None):
+        ret_val = 'not started'
         plugins_enabled = set()
         for param in self.config:
             if param.startswith('plugins.') and param.endswith('.enabled') and self.config[param] in ('1', 'yes', 'Yes', 'y', 'Y'):
@@ -434,6 +435,10 @@ class Annotator(object):
             logger.info('Run only %s', plugin_name)
             plugins_enabled = set()
             plugins_enabled.add(plugin_name)
+        else:
+            logger.info('%s plugin not found', plugin_name)
+            plugins_enabled = set()
+            ret_val = 'skipped'
 
         genome_names = list(genomes.keys())
         
@@ -447,9 +452,10 @@ class Annotator(object):
                                           gene_id__genome__name__in=genome_names
                                           ).delete()
                 self.add_custom_annotations(plugin_output)
+                ret_val = 'OK'
             else:
                 logger.warning('%s module not found. Skipping this plugin', plugin_name)
                 logger.info('Available modules: %s', str(plugins_available))
                 logger.info('Enabled modules: %s', str(plugins_enabled))
-
-
+                ret_val = 'skipped'
+        return ret_val
