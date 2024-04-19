@@ -418,6 +418,9 @@ class Annotator(object):
                 logger.info('Sample description updated for %s', sample_name)
 
     def run_external_tools(self, genomes, plugin_name=None):
+        """
+            Runs either one or all external annotation tools for a number of genomes
+        """
         ret_val = 'not started'
         plugins_enabled = set()
         for param in self.config:

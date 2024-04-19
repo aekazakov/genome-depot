@@ -107,6 +107,8 @@ def postprocess(annotator, genomes, working_dir):
                 for line in infile:
                     row = line.rstrip('\n\r').split('\t')
                     proviruses[row[0]] = row[1]
+            if not proviruses:
+                continue
             genes_output = os.path.join(working_dir, 'out',
                 genome,
                 genome_id + '_summary',

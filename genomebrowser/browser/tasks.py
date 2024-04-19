@@ -6,6 +6,7 @@ import gzip
 import shutil
 import uuid
 import logging
+import traceback
 from Bio import GenBank
 from django.conf import settings
 from django.core.mail import mail_admins
@@ -26,24 +27,25 @@ def run_annotation_pipeline_impl(args):
         logger.debug('Starting tool ' + str(plugin_ind + 1) + ' of ' + str(len(plugins)) + ':' + plugin)
         try:
             status = annotator.run_external_tools(genomes, plugin_name=plugin)
-            messages.append(str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' ' + status)
-        except Exception as e:
-            messages.append(str(plugin_ind) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' ERROR')
-            messages.append('GenomeDepot plugin "' +  plugin + f'" at {settings.BASE_URL} finished ' +\
-                f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
-                f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
-                f'{sys.exc_info()[2].tb_lineno}')
-            subject = 'GenomeDepot annotation pipeline run: ERROR'
+            messages.append('Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' plugin ' + status)
+        except Exception as err:
+            messages.append('Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + 
+                ' plugin ERROR')
+            messages.append(traceback.format_exc())
+            subject = 'GenomeDepot annotation pipeline error'
+            logger.exception('GenomeDeport annotation pipeline raised an unhandled exception at ' + settings.BASE_URL)
     if subject is None:
         subject = 'GenomeDepot annotation pipeline finished'
         message = '"Run annotation tools" task finished successfuly at ' + \
         f'{settings.BASE_URL}' + '\n\n' + '\n'.join(messages)
+        ret = 'Annotation pipeline finished.'
     else:
-        subject = 'GenomeDepot annotation pipeline run: ERROR'
-        message = '"Run annotation tools" task finished with error ' + \
+        subject = 'GenomeDepot annotation pipeline error'
+        message = '"Run annotation tools" task finished with error at ' + \
         f'{settings.BASE_URL}' + '\n\n' + '\n'.join(messages)
+        ret = 'Annotation pipeline error.'
     mail_admins(subject, message)
-    return 'Annotation pipeline finished.'
+    return ret
     
 
 def import_genomes_impl(args):
@@ -81,15 +83,12 @@ def import_genomes_impl(args):
         subject = 'GenomeDepot task finished successfuly'
         message = '"Import Genomes" task finished successfuly at ' + \
         f'{settings.BASE_URL}'
-    except Exception:
+    except Exception as e:
         result = 'Error!'
-        subject = 'GenomeDepot task finished with error'
+        subject = 'GenomeDeport genome import pipeline raised an unhandled exception'
         message = f'GenomeDepot "Import Genomes" task at {settings.BASE_URL} finished ' +\
-        f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
-        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
-        f'{sys.exc_info()[2].tb_lineno}'
-        logger.error(subject)
-        logger.error(message)
+        f'with error.\n' + traceback.format_exc()
+        logger.exception('GenomeDeport import pipeline raised an unhandled exception at ' + settings.BASE_URL)
     mail_admins(subject, message)
     return result
 
@@ -153,9 +152,8 @@ def update_static_files_impl(genome_names):
     except Exception:
         subject = 'GenomeDepot task finished with error'
         message = f'GenomeDepot "Update static files" task at {settings.BASE_URL} finished' +\
-        f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
-        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}: ' +\
-        f'{sys.exc_info()[2].tb_lineno}'
+        f'with error.\n' + traceback.format_exc()
+        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
     mail_admins(subject, message)
 
 def delete_genomes_impl(genome_names):
@@ -192,9 +190,8 @@ def delete_genomes_impl(genome_names):
     except Exception:
         subject = 'GenomeDepot task finished with error'
         message = f'GenomeDepot "Delete genomes" task at {settings.BASE_URL} finished ' +\
-        f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
-        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
-        f'{sys.exc_info()[2].tb_lineno}'
+        f'with error.\n' + traceback.format_exc()
+        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
     mail_admins(subject, message)
 
     
@@ -209,9 +206,8 @@ def import_sample_metadata_impl(lines):
     except Exception:
         subject = 'GenomeDepot task finished with error'
         message = f'GenomeDepot "Import sample metadata" task at {settings.BASE_URL} ' +\
-        f'finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]},' +\
-        f' {sys.exc_info()[2].tb_frame.f_code.co_filename}: ' +\
-        f'{sys.exc_info()[2].tb_lineno}'
+        f'finished with error.\n' + traceback.format_exc()
+        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
     mail_admins(subject, message)
 
 
@@ -226,9 +222,8 @@ def import_sample_descriptions_impl(lines):
     except Exception:
         subject = 'GenomeDepot task finished with error'
         message = f'GenomeDepot "Import sample descriptions" task at {settings.BASE_URL} ' +\
-        f'finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]},' +\
-        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
-        f'{sys.exc_info()[2].tb_lineno}'
+        f'finished with error.\n' + traceback.format_exc()
+        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
     mail_admins(subject, message)
 
 
@@ -240,12 +235,11 @@ def update_strain_metadata_impl(xlsx_file):
         subject = 'GenomeDepot task finished successfuly'
         message = '"Update strain metadata" task finished successfuly ' +\
         f'at {settings.BASE_URL}'
-    except Exception:
+    except Exception as e:
         subject = 'GenomeDepot task finished with error'
         message = f'GenomeDepot "Update strain metadata" task at {settings.BASE_URL} ' +\
-        f'finished with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]},' +\
-        f' {sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
-        f'{sys.exc_info()[2].tb_lineno}'
+        f'finished with error.\n' + traceback.format_exc()
+        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
     mail_admins(subject, message)
 
     
@@ -257,12 +251,11 @@ def import_annotations_impl(lines):
         subject = 'GenomeDepot task finished successfuly'
         message = '"Import annotations" task finished successfuly ' +\
         f'at {settings.BASE_URL}'
-    except Exception:
+    except Exception as e:
         subject = 'GenomeDepot task finished with error'
         message = f'GenomeDepot "Import annotations" task at {settings.BASE_URL} finished' +\
-        f' with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
-        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
-        f'{sys.exc_info()[2].tb_lineno}'
+        f' with error.\n' + traceback.format_exc()
+        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
     mail_admins(subject, message)
 
 
@@ -273,10 +266,9 @@ def import_regulon_impl(lines):
         annotator.add_regulons(lines)
         subject = 'GenomeDepot task finished successfuly'
         message = f'"Import regulon" task finished successfuly at {settings.BASE_URL}'
-    except Exception:
+    except Exception as e:
         subject = 'GenomeDepot task finished with error'
         message = f'GenomeDepot "Import regulon" task at {settings.BASE_URL} finished ' +\
-        f'with error.\nError:{sys.exc_info()[0]}. {sys.exc_info()[1]}, ' +\
-        f'{sys.exc_info()[2].tb_frame.f_code.co_filename}:' +\
-        f'{sys.exc_info()[2].tb_lineno}'
+        f'with error.\n' + traceback.format_exc()
+        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
     mail_admins(subject, message)

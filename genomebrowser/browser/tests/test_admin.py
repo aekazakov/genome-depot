@@ -242,14 +242,6 @@ class AdminTestCase(TestCase):
 
     # Test task implementations
     
-    def test_run_annotation_pipeline_impl(self):
-        # Tests implementation of run_annotation_pipeline task
-        genomes = ['E_coli_BW2952',]
-        plugins = ['gapmind',]
-        args = (genomes, plugins)
-        out = run_annotation_pipeline_impl(args)
-        self.assertEqual(out, 'Annotation pipeline finished.')
-        
     def test_update_static_files_impl(self):
         # Tests implementation of update_static_files task
         genomes = ['E_coli_BW2952',]
@@ -272,7 +264,7 @@ class AdminTestCase(TestCase):
 
     def test_import_sample_descriptions_impl(self):
         # Tests implementation of import_sample_metadata task
-        lines = ['test_sample\ttest\ttest description',]
+        lines = ['#commentline','test_sample\ttest\ttest description',]
         import_sample_descriptions_impl(lines)
         self.assertEqual(Sample.objects.get(sample_id='test_sample').description, 'test description')
 
@@ -316,4 +308,22 @@ class AdminTransactionTestCase(TransactionTestCase):
         args = (lines, email)
         result = import_genomes_impl(args)
         self.assertEqual(result, 'Done!')
+        
+    def test_run_annotation_pipeline_impl(self):
+        # Tests implementation of run_annotation_pipeline task
+        genome_id = 'E_coli_BW2952'
+        genome = Genome.objects.get(name=genome_id)
+        genomes = {genome_id:genome.gbk_filepath}
+        plugins = ['gapmind',]
+        args = (genomes, plugins)
+        out = run_annotation_pipeline_impl(args)
+        self.assertEqual(out, 'Annotation pipeline finished.')
+        # Test plugin throwing error
+        config = Config.objects.get(param='plugins.gapmind.gapmind_dir')
+        config.value = ''
+        config.save()
+        out = run_annotation_pipeline_impl(args)
+        self.assertEqual(out, 'Annotation pipeline error.')
+        config.value = '/mnt/data/work/CGCMS/external_tools/PaperBLAST'
+        config.save()
         
