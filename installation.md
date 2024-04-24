@@ -190,17 +190,17 @@ There are two background images in the repository, one for the dark mode (genome
 
 * **samtools** [GigaScience, 2021, giab008](https://doi.org/10.1093/gigascience/giab008)
 
-* **AMRFinderPlus** [Sci Rep, 2021, 11: 12728](https://doi.org/10.1038%2Fs41598-021-91456-0)
+* **AMRFinderPlus** [Sci Rep, 2021, 11: 12728](https://doi.org/10.1038/s41598-021-91456-0)
 
 * **antiSMASH** [Nucleic Acids Research, 2021, 49: W29](https://doi.org/10.1093/nar/gkab335)
 
 * **eCIS-screen** [Cell Rep, 2019, 29: 511](https://doi.org/10.1016/j.celrep.2019.08.096)
 
-* **Fama** [https://github.com/aekazakov/fama] (https://github.com/aekazakov/fama)
+* **Fama** [https://github.com/aekazakov/fama](https://github.com/aekazakov/fama)
 
-* **PhiSpy** [Nucleic Acids Research, 2012, 40: e126] (https://doi.org/10.1093%2Fnar%2Fgks406)
+* **PhiSpy** [Nucleic Acids Research, 2012, 40: e126](https://doi.org/10.1093/nar/gks406)
 
-* **GapMind** [mSystems, 2020, 5: e00291-20] (https://doi.org/10.1128%2FmSystems.00291-20)
+* **GapMind** [mSystems, 2020, 5: e00291-20](https://doi.org/10.1128/mSystems.00291-20)
 
 * **DefenseFinder** [Nature Communications, 2022, 13: 2561](https://doi.org/10.1038/s41467-022-30269-9)
 
