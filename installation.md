@@ -45,8 +45,8 @@ cd mygenomes
 git clone https://github.com/aekazakov/genome-depot
 ```
 Run installation script that will install external tools and create virtual environment. Running it may take quite some time for the first GenomeDepot-based portal because it will make all the conda environments and download reference data.
-cd CGSMS
 ```
+cd CGSMS
 bash install.sh
 ```
 The install.sh script creates Python virtual environment and installs the required Python libraries including Django framework, genome annotation tools and other dependencies. If it fails, check the error message, fix the problem and start install.sh again.
@@ -179,5 +179,36 @@ If you have more than one GenomeDepot-based portal, change “gdcluster” to a 
 ## How to change site background image
 
 There are two background images in the repository, one for the dark mode (genomebrowser/static/images/background.jpg) and the other for the light mode (genomebrowser/static/images/background_light.jpg). You can replace them, then run `python manage.py collectstatic` command and restart Apache web server.
+
+## Third-party tools installed with GenomeDepot
+
+* **eggNOG-mapper** [Molecular Biology and Evolution, 2021, msab293](https://doi.org/10.1093/molbev/msab293)
+
+* **POEM_py3K** [bioRxiv, 2019.12.20.885269](https://doi.org/10.1101/2019.12.20.885269)
+
+* **Jbrowse** [Genome Biology ,2016, 17: 66](https://doi.org/10.1186/s13059-016-0924-1)
+
+* **samtools** [GigaScience, 2021, giab008](https://doi.org/10.1093/gigascience/giab008)
+
+* **AMRFinderPlus** [Sci Rep, 2021, 11: 12728](https://doi.org/10.1038%2Fs41598-021-91456-0)
+
+* **antiSMASH** [Nucleic Acids Research, 2021, 49: W29](https://doi.org/10.1093/nar/gkab335)
+
+* **eCIS-screen** [Cell Rep, 2019, 29: 511](https://doi.org/10.1016/j.celrep.2019.08.096)
+
+* **Fama** [https://github.com/aekazakov/fama] (https://github.com/aekazakov/fama)
+
+* **PhiSpy** [Nucleic Acids Research, 2012, 40: e126] (https://doi.org/10.1093%2Fnar%2Fgks406)
+
+* **GapMind** [mSystems, 2020, 5: e00291-20] (https://doi.org/10.1128%2FmSystems.00291-20)
+
+* **DefenseFinder** [Nature Communications, 2022, 13: 2561](https://doi.org/10.1038/s41467-022-30269-9)
+
+* **MacsyFinder** [PLoS One, 2014, 9: e110726](https://doi.org/10.1371/journal.pone.0110726)
+
+* **geNomad** [Nature Biotechnology, 2023](https://doi.org/10.1038/s41587-023-01953-y)
+
+* **HMMER** [PLoS Comput Biol, 2011, 7: e1002195](https://doi.org/10.1371/journal.pcbi.1002195)
+
 
 [Back to start page](README.md)
