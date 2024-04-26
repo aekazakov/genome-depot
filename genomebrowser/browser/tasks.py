@@ -26,11 +26,14 @@ def run_annotation_pipeline_impl(args):
     for plugin_ind, plugin in enumerate(plugins):
         logger.debug('Starting tool ' + str(plugin_ind + 1) + ' of ' + str(len(plugins)) + ':' + plugin)
         try:
-            status = annotator.run_external_tools(genomes, plugin_name=plugin)
-            messages.append('Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' plugin ' + status)
+            plugin_conf_enabled = annotator.config['plugins.' + plugin + '.enabled']
+            if plugin_conf_enabled in ('1', 'yes', 'Yes', 'y', 'Y'):
+                status = annotator.run_external_tools(genomes, plugin_name=plugin)
+                messages.append('Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' plugin ' + status)
+            else:
+                messages.append('Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' plugin disabled')
         except Exception as err:
-            messages.append('Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + 
-                ' plugin ERROR')
+            messages.append('Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' plugin ERROR')
             messages.append(traceback.format_exc())
             subject = 'GenomeDepot annotation pipeline error'
             logger.exception('GenomeDeport annotation pipeline raised an unhandled exception at ' + settings.BASE_URL)

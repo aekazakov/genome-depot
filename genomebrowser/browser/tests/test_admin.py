@@ -46,6 +46,18 @@ class AdminTestCase(TestCase):
             username=self.username, email=email, password=self.password,
         )
 
+    def test_clusters_view(self):
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get('/admin/clusters/', {}, follow=True)
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
+
+    def test_tools_view(self):
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get('/admin/tools/', {}, follow=True)
+        self.client.logout()
+        self.assertEqual(response.status_code, 200)
+
     def test_delete_genome_action(self):
         # This test only submits data to django_Q, not running actual backend
         self.client.login(username=self.username, password=self.password)
@@ -117,6 +129,13 @@ class AdminTestCase(TestCase):
         change_url = reverse("admin:browser_genome_changelist")
         response = self.client.get(change_url, data, follow=True)
         self.assertEqual(response.status_code, 200)
+        # send POST request without "do_action"
+        data = {'action': 'add_genome_tag',
+                '_selected_action': Genome.objects.filter(name='E_coli_BW2952').values_list('pk', flat=True),
+                'tag': Tag.objects.filter(name='test').values_list('pk', flat=True),}
+        change_url = reverse("admin:browser_genome_changelist")
+        response = self.client.post(change_url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
         # send POST request
         data = {'action': 'add_genome_tag',
                 '_selected_action': Genome.objects.filter(name='E_coli_BW2952').values_list('pk', flat=True),
@@ -137,7 +156,14 @@ class AdminTestCase(TestCase):
         change_url = reverse("admin:browser_genome_changelist")
         response = self.client.get(change_url, data, follow=True)
         self.assertEqual(response.status_code, 200)
-        # send POST request
+        # send POST request without "do_action"
+        data = {'action': 'remove_genome_tag',
+                '_selected_action': Genome.objects.filter(name='E_coli_BW2952').values_list('pk', flat=True),
+                'tag': Tag.objects.filter(name='test').values_list('pk', flat=True),}
+        change_url = reverse("admin:browser_genome_changelist")
+        response = self.client.post(change_url, data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        # send POST request 
         data = {'action': 'remove_genome_tag',
                 '_selected_action': Genome.objects.filter(name='E_coli_BW2952').values_list('pk', flat=True),
                 'do_action': 'yes',
@@ -307,7 +333,8 @@ class AdminTransactionTestCase(TransactionTestCase):
         email = 'test@example.com'
         args = (lines, email)
         result = import_genomes_impl(args)
-        self.assertEqual(result, 'Done!')
+        self.assertTrue(result.endswith('Done!'))
+        self.assertFalse('error' in result)
         
     def test_run_annotation_pipeline_impl(self):
         # Tests implementation of run_annotation_pipeline task

@@ -5,6 +5,7 @@ import requests
 import importlib
 import pkgutil
 import logging
+import traceback
 from pathlib import Path
 from io import BytesIO
 from collections import defaultdict
@@ -417,11 +418,38 @@ class Annotator(object):
                 samples[sample_name].save()
                 logger.info('Sample description updated for %s', sample_name)
 
-    def run_external_tools(self, genomes, plugin_name=None):
+    def run_external_tools(self, genomes, plugin_name=''):
         """
             Runs either one or all external annotation tools for a number of genomes
         """
         ret_val = 'not started'
+                
+        plugins_available = self.plugins
+        logger.info('Run only %s', plugin_name)
+        genome_names = list(genomes.keys())
+        plugin_module_name = 'browser.pipeline.plugins.genomedepot_' + plugin_name
+
+        if plugin_module_name in plugins_available:
+            plugin = plugins_available[plugin_module_name]
+            plugin_output = plugin.application(self, genomes)
+            display_name = self.config['plugins.' + plugin_name + '.display_name']
+            Annotation.objects.filter(source=display_name,
+                                      gene_id__genome__name__in=genome_names
+                                      ).delete()
+            self.add_custom_annotations(plugin_output)
+            ret_val = 'OK'
+        else:
+            logger.warning('%s module not found. Skipping plugin', plugin_name)
+            logger.info('Available modules: %s', str(plugins_available))
+            logger.info('Enabled modules: %s', str(plugins_enabled))
+            ret_val = 'skipped'
+        return ret_val
+
+    def run_annotation_pipeline(self, genomes):
+        """
+            Runs either one or all external annotation tools for a number of genomes
+        """
+        ret = []
         plugins_enabled = set()
         for param in self.config:
             if param.startswith('plugins.') and param.endswith('.enabled') and self.config[param] in ('1', 'yes', 'Yes', 'y', 'Y'):
@@ -430,35 +458,15 @@ class Annotator(object):
                 
         plugins_available = self.plugins
         
-        if plugin_name is None:
-            logger.info('Run all available plugins: %s',
-                        ','.join(list(plugins_enabled))
-                        )
-        elif plugin_name in plugins_enabled:
-            logger.info('Run only %s', plugin_name)
-            plugins_enabled = set()
-            plugins_enabled.add(plugin_name)
-        else:
-            logger.info('%s plugin not found', plugin_name)
-            plugins_enabled = set()
-            ret_val = 'skipped'
-
         genome_names = list(genomes.keys())
         
+        plugin_count = 0
         for plugin_name in plugins_enabled:
-            plugin_module_name = 'browser.pipeline.plugins.genomedepot_' + plugin_name
-            if plugin_module_name in plugins_available:
-                plugin = plugins_available[plugin_module_name]
-                plugin_output = plugin.application(self, genomes)
-                display_name = self.config['plugins.' + plugin_name + '.display_name']
-                Annotation.objects.filter(source=display_name,
-                                          gene_id__genome__name__in=genome_names
-                                          ).delete()
-                self.add_custom_annotations(plugin_output)
-                ret_val = 'OK'
-            else:
-                logger.warning('%s module not found. Skipping this plugin', plugin_name)
-                logger.info('Available modules: %s', str(plugins_available))
-                logger.info('Enabled modules: %s', str(plugins_enabled))
-                ret_val = 'skipped'
-        return ret_val
+            plugin_count += 1
+            try:
+                ret.append(plugin_name + ' plugin: ' + run_external_tools(genomes, plugin_name))
+            except Exception as e:
+                ret.append(str(plugin_count) + ' of ' + str(len(plugins_enabled)) + ': ' + plugin_name + ' finished')
+                ret.append(traceback.format_exc())
+
+        return '\n'.join(ret)

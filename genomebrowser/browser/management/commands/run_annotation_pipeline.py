@@ -60,7 +60,7 @@ class Command(BaseCommand):
             raise CommandError('Genomes file ' + options['i'] + ' not found.')
         annotator = Annotator()
         if options['all']:
-            annotator.run_external_tools(genomes, plugin_name=None)
+            annotator.run_annotation_pipeline(genomes)
         else:
             tool = options['t']
             plugins_available = set()

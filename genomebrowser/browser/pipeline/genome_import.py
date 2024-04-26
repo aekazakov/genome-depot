@@ -5,6 +5,7 @@ import json
 import shutil
 import hashlib
 import logging
+import traceback
 from collections import defaultdict, OrderedDict
 from pathlib import Path
 from Bio import GenBank
@@ -1921,40 +1922,92 @@ class Importer(object):
                 even if there is no URL.
             Lines starting with # symbol are ignored
 
-            This function does not return anything.
+            Returns:
+                run status, with a list of errors, if any
         '''
+        ret = []
         logger.info('Cleaning up the temporary directory')
         self.cleanup()
         logger.info('Trying to create directories for static files')
         self.make_dirs()
         # read input list. Populate self.inputgenomes
-        self.read_genome_list(lines)
-        
+        try:
+            self.read_genome_list(lines)
+        except Exception as e:
+            ret.append('Critical error: read_genome_list failed')
+            ret.append(traceback.format_exc())
+            return '\n'.join(ret)
+        else:
+            ret.append('Reading genome list: OK')
+            
         logger.info('Checking genome names')
         # check if any genomes already exist in the database
-        self.check_genomes()
+        try:
+            self.check_genomes()
+        except Exception as e:
+            ret.append('Critical error: check_genomes failed')
+            ret.append(traceback.format_exc())
+            return '\n'.join(ret)
+        else:
+            ret.append('Checking genome names: OK')
         
         # generate a tag for this batch of genomes
         self.create_tag()
         
         logger.info('Preparing strain data')
         # make strain data for upload
-        self.prepare_strain_data()
+        try:
+            self.prepare_strain_data()
+        except Exception as e:
+            ret.append('Critical error: prepare_strain_data failed')
+            ret.append(traceback.format_exc())
+            return '\n'.join(ret)
+        else:
+            ret.append('Preparing strain data: OK')
+        
         
         logger.info('Preparing sample data')
         # make sample data for upload
-        self.prepare_sample_data()
+        try:
+            self.prepare_sample_data()
+        except Exception as e:
+            ret.append('Critical error: prepare_sample_data failed')
+            ret.append(traceback.format_exc())
+            return '\n'.join(ret)
+        else:
+            ret.append('Preparing sample data: OK')
         
         logger.info('Preparing taxonomy data')
         # make taxonomy data file for upload
-        self.prepare_taxonomy_data()
+        try:
+            self.prepare_taxonomy_data()
+        except Exception as e:
+            ret.append('Critical error: prepare_taxonomy_data failed')
+            ret.append(traceback.format_exc())
+            return '\n'.join(ret)
+        else:
+            ret.append('Preparing taxonomy data: OK')
         
         logger.info('Processing GBK files')
         # make genome, contigs, genes data files
-        self.process_gbk()
+        try:
+            self.process_gbk()
+        except Exception as e:
+            ret.append('Critical error: process_gbk failed')
+            ret.append(traceback.format_exc())
+            return '\n'.join(ret)
+        else:
+            ret.append('Processing input files: OK')
         
         logger.info('Writing eggnog-mapper input file')
-        new_proteins = self.make_eggnog_input()
+        try:
+            new_proteins = self.make_eggnog_input()
+        except Exception as e:
+            ret.append('Critical error: make_eggnog_input failed')
+            ret.append(traceback.format_exc())
+            return '\n'.join(ret)
+        else:
+            ret.append('Writing eggnog-mapper input file: OK')
 
         if new_proteins == 0:
             logger.info('No new proteins; skipping eggnog-mapper run')
@@ -1964,72 +2017,176 @@ class Importer(object):
             # may run for days resulting in "MySQL server has gone away" error
             connection.close()
             # run eggnog-mapper for all proteins
-            eggnog_outfile = self.run_eggnog_mapper()
-            # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
-            #eggnog_outfile = os.path.join(self.config['core.temp_dir'], 
-            #'eggnog_mapper_output.emapper.annotations')
+            
+            try:
+                eggnog_outfile = self.run_eggnog_mapper()
+                # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
+                #eggnog_outfile = os.path.join(self.config['core.temp_dir'], 
+                #'eggnog_mapper_output.emapper.annotations')
+            except Exception as e:
+                ret.append('Critical error: run_eggnog_mapper failed')
+                ret.append(traceback.format_exc())
+                return '\n'.join(ret)
+            else:
+                ret.append('Running eggnog-mapper: OK')
             
             logger.info('Reading eggnog-mapper output')
             # separate eggnog-mapper output by genome?
-            self.parse_eggnog_output(eggnog_outfile)
+            try:
+                self.parse_eggnog_output(eggnog_outfile)
+            except Exception as e:
+                ret.append('Critical error: parse_eggnog_output failed')
+                ret.append(traceback.format_exc())
+                return '\n'.join(ret)
+            else:
+                ret.append('Reading eggnog-mapper output: OK')
             
-            logger.info('Prepare eggnog mappings')
+            logger.info('Preparing eggNOG mappings')
             # make mappings and relations data
-            self.make_mappings()
+            try:
+                self.make_mappings()
+            except Exception as e:
+                ret.append('Critical error: make_mappings failed')
+                ret.append(traceback.format_exc())
+                return '\n'.join(ret)
+            else:
+                ret.append('Prepare eggNOG mappings: OK')
 
-            logger.info('Prepare eggnog ortholog mappings')
+            logger.info('Preparing eggnog ortholog mappings')
             # make og data file for upload
-            self.prepare_og_data()
+            try:
+                self.prepare_og_data()
+            except Exception as e:
+                ret.append('Critical error: prepare_og_data failed')
+                ret.append(traceback.format_exc())
+                return '\n'.join(ret)
+            else:
+                ret.append('Preparing eggnog ortholog mappings: OK')
             
             logger.info('Prepare eggnog descriptions')
             # make eggnog description data file for upload
-            self.prepare_eggnog_description_data()
+            try:
+                self.prepare_eggnog_description_data()
+            except Exception as e:
+                ret.append('Critical error: prepare_eggnog_description_data failed')
+                ret.append(traceback.format_exc())
+                return '\n'.join(ret)
+            else:
+                ret.append('Prepare eggnog descriptions: OK')
             
         logger.info('Populating mysql database')
         # At this point, genes and annotations are actually written to the database
-        self.write_data()
+        try:
+            self.write_data()
+        except Exception as e:
+            ret.append('Critical error: write_data failed')
+            ret.append(traceback.format_exc())
+            return '\n'.join(ret)
+        else:
+            ret.append('Populate mysql database: OK')
         
-        logger.info('Predict operons')
+        # From this point, exceptions and errors do not interrupt pipeline run
+        logger.info('All genomes successfully imported into the database')
+
+        logger.info('Predicting operons')
         # Export contigs and proteins and run POEM_py3
-        operons_data = self.predict_operons()
+        try:
+            operons_data = self.predict_operons()
+        except Exception as e:
+            ret.append('Non-critical error: predict_operons failed')
+            ret.append(traceback.format_exc())
+        else:
+            ret.append('Predict operons: OK')
         if not operons_data:
-            logger.warn('Non-critical error: no operons found. Check if POEM was correctly installed and configured.')
+            ret.append('Warning: no operons found. Check if POEM_py3k was correctly installed and configured.')
+
+        logger.info('Importing operons')
         # Write operons to the database
-        self.create_operons(operons_data)
+        try:
+            self.create_operons(operons_data)
+        except Exception as e:
+            ret.append('Non-critical error: create_operons failed')
+            ret.append(traceback.format_exc())
+        else:
+            ret.append('Import operons: OK')
         
-        #export JBrowse data
         logger.info('Creating Jbrowser files')
-        self.export_jbrowse_data()
+        #export JBrowse data
+        try:
+            self.export_jbrowse_data()
+        except Exception as e:
+            ret.append('Non-critical error: export_jbrowse_data failed')
+            ret.append(traceback.format_exc())
+        else:
+            ret.append('Create Jbrowser files: OK')
+
         logger.info('Exporting protein sequences')
-        self.export_proteins()
+        #export proteins for BLAST db
+        try:
+            self.export_proteins()
+        except Exception as e:
+            ret.append('Non-critical error: export_proteins failed')
+            ret.append(traceback.format_exc())
+        else:
+            ret.append('Export protein sequences: OK')
         
-        logger.info('At this moment, we are ready to delete search databases')
-        self.delete_search_databases()
+        logger.info('Deleting existing BLAST databases')
+        try:
+            self.delete_search_databases()
+        except Exception as e:
+            ret.append('Non-critical error: delete_search_databases failed')
+            ret.append(traceback.format_exc())
+        else:
+            ret.append('Delete existing BLAST databases: OK')
         
-        # copy static files
         logger.info('Copying static files')
-        self.copy_static_files()
-        logger.info('Generating search databases')
-        self.create_search_databases()
-
-        # delete temp files
-        logger.info('Removing temporary files')
-        self.cleanup()
-        logger.info('All genomes successfully imported')
-
-        # Run annotation tools
-        annotator = Annotator()
-        logger.info('Starting annotation pipeline')
+        # copy static files
+        try:
+            self.copy_static_files()
+        except Exception as e:
+            ret.append('Non-critical error: copy_static_files failed')
+            ret.append(traceback.format_exc())
+        else:
+            ret.append('Copy static files: OK')
         
-        # Generate annotations with external tools
-        new_genome_files = {item['name']:item['gbk_filepath'] for item
-                            in Genome.objects.filter(
-                                name__in=self.genome_data.keys()
-                                ).values('name','gbk_filepath')
-                            }
-        annotator.run_external_tools(new_genome_files)
-        logger.info('Annotation pipeline finished')
-        return 'Done!'
+        logger.info('Generating search databases')
+        # make BLAST databases
+        try:
+            self.create_search_databases()
+        except Exception as e:
+            ret.append('Non-critical error: create_search_databases failed')
+            ret.append(traceback.format_exc())
+        else:
+            ret.append('Generate search databases: OK')
+
+        logger.info('Removing temporary files')
+        # delete temp files
+        try:
+            self.cleanup()
+        except Exception as e:
+            ret.append('Non-critical error: cleanup failed')
+            ret.append(traceback.format_exc())
+        else:
+            ret.append('Remove temporary files: OK')
+
+        logger.info('Running annotation pipeline')
+        # Run annotation pipeline for new genomes
+        try:
+            annotator = Annotator()
+            new_genome_files = {item['name']:item['gbk_filepath'] for item
+                                in Genome.objects.filter(
+                                    name__in=self.genome_data.keys()
+                                    ).values('name','gbk_filepath')
+                                }
+            pipeline_output = annotator.run_annotation_pipeline(new_genome_files)
+            ret.append(pipeline_output)
+        except Exception as e:
+            ret.append('Non-critical error: annotator.run_annotation_pipeline')
+            ret.append(traceback.format_exc())
+        else:
+            ret.append('Run annotation pipeline: OK')
+        ret.append('Done!')
+        return '\n'.join(ret)
 
     def export_proteins(self):
         """

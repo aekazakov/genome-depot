@@ -81,7 +81,7 @@ def run_annotation_tools(self, request, queryset):
                           " in the list of queued tasks for progress."
                           )
         else:
-            logger.debug('Form not valid')
+            logger.error(form.errors)
             
         return HttpResponseRedirect(request.get_full_path())
     else:
@@ -129,6 +129,8 @@ def add_genome_tag(self, request, queryset):
                 genome.tags.add(tag)
                 updated += 1
             messages.success(request, '{0} genomes were updated'.format(updated))
+        else:
+            logger.error(form.errors)
         redirect("..")
     else:
         form = AddTagForm()
@@ -149,6 +151,8 @@ def remove_genome_tag(self, request, queryset):
                 genome.tags.remove(tag)
                 updated += 1
             messages.success(request, '{0} genomes were updated'.format(updated))
+        else:
+            logger.error(form.errors)
         redirect("..")
     else:
         form = AddTagForm()
