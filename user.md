@@ -1,4 +1,7 @@
+[Back to start page](README.md)
+
 # User guide
+
 ## Concepts, general description
 
 Genome is a complete or partial assembly of genomic sequences of a particular organism. Genome can include one or several contiguous nucleotide sequences, or contigs. 

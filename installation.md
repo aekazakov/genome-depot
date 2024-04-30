@@ -1,3 +1,5 @@
+[Back to start page](README.md)
+
 # Installation
 
 ## Prerequisites

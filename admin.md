@@ -1,3 +1,5 @@
+[Back to start page](README.md)
+
 # Portal administration guide
 
 There are two ways for administering a GenomeDepot-based web portal: the Django’s command-line utility and the GenomeDepot administration panel. The command-line utility works in an active virtual environment and supports a limited set of GenomeDepot commands mostly for import and export of large sets of data (see the command-line utility section). The GenomeDepot administration panel provides access to individual data entries and GenomeDepot tools for data import and analysis.
