@@ -112,6 +112,15 @@ class UtilTestCase(TestCase):
         delete_genomes(test_file)
         self.assertEqual(Genome.objects.filter(name=genome).count(), 0)
 
+        # test with non-existent file
+        with self.assertLogs(logger='GenomeDepot', level='ERROR') as cm:
+            delete_genomes('fake_file_path')
+
+            self.assertIn(
+                "ERROR:GenomeDepot:fake_file_path not found",
+                cm.output
+            )
+
     def test_generate_static_files(self):
         '''
             Test re-creating jbrowse files for a list of genomes from file
@@ -125,6 +134,15 @@ class UtilTestCase(TestCase):
             outfile.write('../testdata/E_coli_BW2952.100000.gbk\tE_coli_BW2952\tBW2952\t\thttps://www.ncbi.nlm.nih.gov/assembly/GCF_000022345.1\tNCBI:GCF_000022345.1')
         generate_static_files(test_file)
         self.assertTrue(os.path.exists(json_dir))
+
+        # test with non-existent file
+        with self.assertLogs(logger='GenomeDepot', level='ERROR') as cm:
+            generate_static_files('fake_file_path')
+
+            self.assertIn(
+                "ERROR:GenomeDepot:Genomes file not found: fake_file_path",
+                cm.output
+            )
 
     def test_import_config(self):
         '''
@@ -159,6 +177,33 @@ class UtilTestCase(TestCase):
         regenerate_jbrowse_files(genome)
         self.assertTrue(os.path.exists(json_dir))
 
+        # test with empty genome name
+        with self.assertLogs(logger='GenomeDepot', level='ERROR') as cm:
+            regenerate_jbrowse_files('')
+
+            self.assertIn(
+                "ERROR:GenomeDepot:Genome name required",
+                cm.output
+            )
+
+        # test with non-existent genome name
+        with self.assertLogs(logger='GenomeDepot', level='ERROR') as cm:
+            regenerate_jbrowse_files('fake_genome_id')
+
+            self.assertIn(
+                "ERROR:GenomeDepot:Genome fake_genome_id not found.",
+                cm.output
+            )
+        # test with redundant genome name
+        with self.assertLogs(logger='GenomeDepot', level='ERROR') as cm:
+            regenerate_jbrowse_files('E_coli')
+
+            self.assertIn(
+                "ERROR:GenomeDepot:Non-unique genome name: E_coli",
+                cm.output
+            )
+
+
     def test_recreate_search_databases(self):
         '''
             Test re-creating search databases
@@ -179,3 +224,12 @@ class UtilTestCase(TestCase):
             outfile.write('../testdata/E_coli_BW2952.100000.gbk\tE_coli_BW2952\tBW2952\t\thttps://www.ncbi.nlm.nih.gov/assembly/GCF_000022345.1\tNCBI:GCF_000022345.1')
         update_tags(test_file, 'test_tag_1,test_tag_2')
         self.assertTrue(Tag.objects.filter(name__icontains='test_tag').count(),2)
+        
+        # test with non-existent file
+        with self.assertLogs(logger='GenomeDepot', level='ERROR') as cm:
+            update_tags('fake_file_path', 'test_tag_1,test_tag_2')
+
+            self.assertIn(
+                "ERROR:GenomeDepot:Genomes file fake_file_path not found.",
+                cm.output
+            )

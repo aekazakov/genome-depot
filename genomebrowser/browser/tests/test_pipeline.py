@@ -25,6 +25,7 @@ from browser.pipeline.genome_import import Importer
 from browser.pipeline.annotate import Annotator
 from browser.pipeline.util import export_proteins_bygenome,export_nucl_bygenome,export_proteins
 from browser.pipeline.taxonomy import update_taxonomy
+from browser.pipeline.taxonomy import update_taxonomy_fields
 
 # Create your tests here.
 
@@ -413,6 +414,18 @@ class ImporterTestCase(TestCase):
         update_taxonomy()
         updated_taxon = Taxon.objects.get(taxonomy_id="1224")
         self.assertEqual(updated_taxon.name, "Pseudomonadota")
+
+    #@skip("skip for now")
+    def test_update_taxonomy_fields(self):
+        '''
+            Test the update_taxonomy function
+        '''
+        print('Testing update_taxonomy function')
+        old_taxon = Taxon.objects.get(taxonomy_id="585397")
+        new_taxon = Taxon.objects.get(taxonomy_id="199310")
+        self.assertEqual(Genome.objects.get(name='E_coli_ED1a').taxon.taxonomy_id, "585397")
+        update_taxonomy_fields(old_taxon, new_taxon)
+        self.assertEqual(Genome.objects.get(name='E_coli_ED1a').taxon.taxonomy_id, "199310")
 
 
 class PipelineTestCase(TransactionTestCase):

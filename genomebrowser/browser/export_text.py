@@ -203,8 +203,7 @@ def _export_genes_csv(request):
                 cog = ''
                 if gene.protein:
                     if gene.protein.eggnog_description:
-                        #description = gene.protein.eggnog_description.description
-                        pass
+                        description = gene.protein.eggnog_description.description
                     if gene.protein.ortholog_groups:
                         eggnogs = ';'.join([item.eggnog_id + '[' + item.taxon.name + ']' for item in gene.protein.ortholog_groups.all()])
                     if gene.protein.kegg_orthologs:

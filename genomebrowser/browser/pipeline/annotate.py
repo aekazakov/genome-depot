@@ -53,6 +53,9 @@ class Annotator(object):
         
         
     def _read_config(self):
+        """
+            Reads all Config entries from database into the self.config dictionary
+        """
         for item in Config.objects.values('param', 'value'):
             self.config[item['param']] = item['value']
     

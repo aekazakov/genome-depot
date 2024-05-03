@@ -4,7 +4,7 @@ import gzip
 from unittest import skip
 from django.test import TestCase
 from django.test import Client
-from django.test import RequestFactory
+from django.urls import reverse
 from django.utils import timezone
 from browser.models import Operon
 from browser.models import Site
@@ -47,11 +47,7 @@ class BrowserViewsTest(TestCase):
             Testing Genomes list page view
             path('genomes/', views.GenomeListView.as_view(), name='genome_list')
         '''
-        #response = self.client.get('/genomes/')
-        request = RequestFactory().get('/genomes/')
-        view = GenomeListView()
-        view.setup(request)
-        response = view.get(request)
+        response = self.client.get(reverse('genome_list'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Genomes</h2>')
         self.assertContains(response, 'E_coli_BW2952')
@@ -62,10 +58,7 @@ class BrowserViewsTest(TestCase):
             Testing Strains list page view
             path('strains/', views.StrainListView.as_view(), name='strain_list')
         '''
-        request = RequestFactory().get('/strains/')
-        view = StrainListView()
-        view.setup(request)
-        response = view.get(request)
+        response = self.client.get(reverse('strain_list'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Strains</h2>')
         self.assertContains(response, 'BW2952')
@@ -75,11 +68,7 @@ class BrowserViewsTest(TestCase):
             Testing Samples list page view
             path('samples/', views.SampleListView.as_view(), name='sample_list')
         '''
-        #response = self.client.get('/samples/')
-        request = RequestFactory().get('/samples/')
-        view = SampleListView()
-        view.setup(request)
-        response = view.get(request)
+        response = self.client.get(reverse('sample_list'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Samples</h2>')
         self.assertContains(response, 'test_sample')
@@ -89,7 +78,7 @@ class BrowserViewsTest(TestCase):
             Testing Taxon list page view
             path('taxa/', views.TaxonListView.as_view(), name='taxa_list')
         '''
-        response = self.client.get('/taxa/')
+        response = self.client.get(reverse('taxa_list'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Taxonomy')
         self.assertContains(response, 'Escherichia coli')
@@ -99,12 +88,12 @@ class BrowserViewsTest(TestCase):
             Testing Taxon page view
             path('taxonomy/<str:taxonomy_id>', views.taxon_detail, name='taxondetails'),
         '''
-        response = self.client.get('/taxonomy/562/')
+        response = self.client.get(reverse('taxondetails', kwargs={'taxonomy_id':'562'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'NCBI Taxonomy ID')
         self.assertContains(response, 'Escherichia coli')
         # Taxon does not exist
-        response = self.client.get('/taxonomy/9999999999/')
+        response = self.client.get(reverse('taxondetails', kwargs={'taxonomy_id':'9999999999'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'does not exist')
         
@@ -113,13 +102,13 @@ class BrowserViewsTest(TestCase):
             Testing Sample page view
             path('sample/<int:sample_id>', views.sample_detail, name='sampledetails')
         '''
-        response = self.client.get('/sample/1/')
+        response = self.client.get(reverse('sampledetails', kwargs={'sample_id':1}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Sample</h2>')
         self.assertContains(response, 'Test sample')
         self.assertContains(response, 'This metadata record is for testing only')
 
-        response = self.client.get('/sample/000000000000/')
+        response = self.client.get(reverse('sampledetails', kwargs={'sample_id':0}))
         self.assertEqual(response.status_code, 200)
 
     def test_strain_page(self):
@@ -127,12 +116,12 @@ class BrowserViewsTest(TestCase):
             Testing Strain page view
             path('strain/<int:strain_id>/', views.strain_detail, name='straindetails')
         '''
-        response = self.client.get('/strain/157/')
+        response = self.client.get(reverse('straindetails', kwargs={'strain_id':157}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Strain</h2>')
         self.assertContains(response, 'E_coli')
 
-        response = self.client.get('/strain/000000000000/')
+        response = self.client.get(reverse('straindetails', kwargs={'strain_id':0}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Sample not found')
 
@@ -141,16 +130,16 @@ class BrowserViewsTest(TestCase):
             Testing Genome page view
             path('genome/<str:name>', views.genome_detail, name='genomedetails')
         '''
-        response = self.client.get('/genome/E_coli_BW2952/')
+        response = self.client.get(reverse('genomedetails', kwargs={'name':'E_coli_BW2952'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genome viewer')
         self.assertContains(response, 'E_coli_BW2952')
         
-        response = self.client.get('/genome/XXXXXXXXXXXX/')
+        response = self.client.get(reverse('genomedetails', kwargs={'name':'XXXXXXXXXXXX'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'does not exist')
             
-        response = self.client.get('/genome/E_coli_CFT073/', {'contig':'NC_004431', 'start':'1048', 'end':'3510'})
+        response = self.client.get(reverse('genomedetails', kwargs={'name':'E_coli_CFT073'}), {'contig':'NC_004431', 'start':'1048', 'end':'3510'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genome viewer')
         self.assertContains(response, 'E_coli_CFT073')
@@ -160,7 +149,7 @@ class BrowserViewsTest(TestCase):
             Testing Tag page view
             path('tag/<str:name>/', views.TagView.as_view(), name='tagdetails')
         '''
-        response = self.client.get('/tag/test/')
+        response = self.client.get(reverse('tagdetails', kwargs={'name':'test'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Tag')
         self.assertContains(response, 'Test genome')
@@ -170,12 +159,12 @@ class BrowserViewsTest(TestCase):
             Testing Gene page view
             path('gene/<str:genome>/<str:locus_tag>/', views.gene_detail, name='genedetails')
         '''
-        response = self.client.get('/gene/E_coli_BW2952/BWG_RS00020/')
+        response = self.client.get(reverse('genedetails', kwargs={'genome':'E_coli_BW2952', 'locus_tag':'BWG_RS00020'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genome viewer')
         self.assertContains(response, 'BWG_RS00020')
 
-        response = self.client.get('/gene/E_coli_BW2952/XXXXXXXXXXX/')
+        response = self.client.get(reverse('genedetails', kwargs={'genome':'E_coli_BW2952', 'locus_tag':'XXXXXXXXXXX'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'does not exist')
 
@@ -184,22 +173,20 @@ class BrowserViewsTest(TestCase):
             Testing Operons list page view
             path('operons/<str:genome>/', views.OperonListView.as_view(), name='operonlist')
         '''
-        #response = self.client.get('/operons/E_coli_BW2952/')
         # with genome only
-        request = RequestFactory().get('/operons/E_coli_BW2952/')
-        view = OperonListView.as_view()
-        #view.setup(request)
-        response = view(request, **{'genome':'E_coli_BW2952'})
+        response = self.client.get(reverse('operonlist', kwargs={'genome':'E_coli_BW2952'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Operons in')
         self.assertContains(response, 'NC_012759: 190..5020')
+
         # with genome and text query
-        response = view(request, **{'genome':'E_coli_BW2952', 'query':'BWG_RS00005'})
+        response = self.client.get(reverse('operonlist', kwargs={'genome':'E_coli_BW2952'}), {'query':'BWG_RS00005'})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Operons in')
+        self.assertContains(response, 'Search results for')
         self.assertContains(response, 'NC_012759: 190..5020')
+
         # if genome does not exist
-        response = view(request, **{'genome':'XXXXXXXXXXXX', 'query':'BWG_RS00005'})
+        response = self.client.get(reverse('operonlist', kwargs={'genome':'XXXXXXXXXXXX'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'does not exist')
 
@@ -208,18 +195,19 @@ class BrowserViewsTest(TestCase):
             Testing Sites list page view
             path('sites/<str:genome>/', views.SiteListView.as_view(), name='sitelist')
         '''
-        #response = self.client.get('/sites/E_coli_BW2952/')
-        request = RequestFactory().get('/sites/E_coli_BW2952/')
-        view = SiteListView.as_view()
-        #view.setup(request)
-        response = view(request, **{'genome':'E_coli_BW2952'})
+        response = self.client.get(reverse('sitelist', kwargs={'genome':'E_coli_BW2952'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Sites in')
         self.assertContains(response, 'NC_012759: complement(70130..70146)')
+
+        # with genome and text query
+        response = self.client.get(reverse('sitelist', kwargs={'genome':'E_coli_BW2952'}), {'query':'AraC'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Search results for')
+        self.assertContains(response, 'NC_012759: complement(70130..70146)')
+
         # if genome does not exist
-        request = RequestFactory().get('/sites/XXXXXXXXXXXX/')
-        view = SiteListView.as_view()
-        response = view(request, **{'genome':'XXXXXXXXXXXX'})
+        response = self.client.get(reverse('sitelist', kwargs={'genome':'XXXXXXXXXXXX'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'does not exist')
 
@@ -228,16 +216,19 @@ class BrowserViewsTest(TestCase):
             Testing Regulons list page view
             path('regulons/<str:genome>/', views.RegulonListView.as_view(), name='regulonlist')
         '''
-        #response = self.client.get('/regulons/E_coli_BW2952/')
-        request = RequestFactory().get('/regulons/E_coli_BW2952/')
-        view = RegulonListView.as_view()
-        #view.setup(request)
-        response = view(request, **{'genome':'E_coli_BW2952'})
+        response = self.client.get(reverse('regulonlist', kwargs={'genome':'E_coli_BW2952'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Regulons in')
         self.assertContains(response, 'AraC')
+
+        # with genome and text query
+        response = self.client.get(reverse('regulonlist', kwargs={'genome':'E_coli_BW2952'}), {'query':'AraC'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Search results for')
+        self.assertContains(response, 'AraC')
+
         # if genome does not exist
-        response = view(request, **{'genome':'XXXXXXXXXXXX'})
+        response = self.client.get(reverse('regulonlist', kwargs={'genome':'XXXXXXXXXXXX'}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'does not exist')
 
@@ -247,7 +238,7 @@ class BrowserViewsTest(TestCase):
             path('searchgene/', views.GeneSearchResultsAjaxView.as_view(), name='searchgene')
         '''
         # Gene list for a genome
-        response = self.client.get('/searchgene/',
+        response = self.client.get(reverse('searchgene'),
                                    {'genome':'E_coli_BW2952', 'type':'gene'}
                                    )
         self.assertEqual(response.status_code, 200)
@@ -257,7 +248,7 @@ class BrowserViewsTest(TestCase):
                             '\'genome\': "E_coli_BW2952", \'page\': "" }'
                             )
         # search in one genome 
-        response = self.client.get('/searchgene/',
+        response = self.client.get(reverse('searchgene'),
                                    {'genome':'E_coli_BW2952', 'type':'gene', 'query':'BWG_RS00010'}
                                    )
         self.assertEqual(response.status_code, 200)
@@ -266,7 +257,7 @@ class BrowserViewsTest(TestCase):
                             'data: {\'query\': "BWG_RS00010", \'type\': "gene", ' +\
                             '\'genome\': "E_coli_BW2952", \'page\': "" }'
                             )
-        response = self.client.get('/searchgene/',
+        response = self.client.get(reverse('searchgene'),
                                    {'genome':'E_coli_BW2952', 'type':'gene', 'query':'thrl'}
                                    )
         self.assertEqual(response.status_code, 200)
@@ -275,7 +266,7 @@ class BrowserViewsTest(TestCase):
                             'data: {\'query\': "thrl", \'type\': "gene", ' +\
                             '\'genome\': "E_coli_BW2952", \'page\': "" }'
                             )
-        response = self.client.get('/searchgene/',
+        response = self.client.get(reverse('searchgene'),
                                    {'genome':'E_coli_BW2952', 'type':'gene', 'query':''}
                                    )
         self.assertEqual(response.status_code, 200)
@@ -287,7 +278,7 @@ class BrowserViewsTest(TestCase):
             path('searchgene/', views.GeneSearchResultsAjaxView.as_view(), name='searchgene')
         '''
         # Gene list for "regulator" text query
-        response = self.client.get('/searchgene/',
+        response = self.client.get(reverse('searchgene'),
                                    {'query':'regulator', 'type':'gene'}
                                    )
         self.assertEqual(response.status_code, 200)
@@ -813,24 +804,27 @@ class BrowserViewsTest(TestCase):
             Testing AnnotationSearchResultsSubView class
         '''
         # with text query only
-        request = RequestFactory().get('/loadingtextsearch/', {'annotation_query':'Pfam'})
-        view = AnnotationSearchResultsSubView()
-        view.setup(request)
-        response = view.get(request)
+        response = self.client.get(reverse('loadingtextsearch'), {'annotation_query':'Pfam'})
+        #request = RequestFactory().get('/loadingtextsearch/', {'annotation_query':'Pfam'})
+        #view = AnnotationSearchResultsSubView()
+        #view.setup(request)
+        #response = view.get(request)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Pfam database')
         # with text query and genome
-        request = RequestFactory().get('/loadingtextsearch/', {'annotation_query':'Pfam', 'genome':'E_coli_BW2952'})
-        view = AnnotationSearchResultsSubView()
-        view.setup(request)
-        response = view.get(request)
+        response = self.client.get(reverse('loadingtextsearch'), {'annotation_query':'Pfam', 'genome':'E_coli_BW2952'})
+        #request = RequestFactory().get('/loadingtextsearch/', {'annotation_query':'Pfam', 'genome':'E_coli_BW2952'})
+        #view = AnnotationSearchResultsSubView()
+        #view.setup(request)
+        #response = view.get(request)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Pfam database')
         # without text query
-        request = RequestFactory().get('/loadingtextsearch/')
-        view = AnnotationSearchResultsSubView()
-        view.setup(request)
-        response = view.get(request)
+        response = self.client.get(reverse('loadingtextsearch'), {'annotation_query':''})
+        #request = RequestFactory().get('/loadingtextsearch/')
+        #view = AnnotationSearchResultsSubView()
+        #view.setup(request)
+        #response = view.get(request)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No annotations found.')
 
@@ -1373,6 +1367,17 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
                                     }
                                    )
         #print('test_comparative_view\n', response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<h2>Comparative analysis</h2>')
+        # Test with a gene on negative strand
+        response = self.client.get('/comparative/',
+                                   {'genome':'E_coli_BW2952',
+                                    'locus_tag':'BWG_RS00040',
+                                    'og':'102492',
+                                    'size':'10',
+                                    'lines':'50'
+                                    }
+                                   )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h2>Comparative analysis</h2>')
 

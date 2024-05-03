@@ -125,15 +125,18 @@ class AnnotationSearchResultsAjaxView(View):
             and sends it back as JSON
             
         '''
+        query = request.GET.get('annotation_query')
         start_time = time.time()
-
         context = {}
         sub_view = AnnotationSearchResultsSubView()
         sub_view.setup(request)
         sub_response = sub_view.dispatch(request)
         sub_response.render()
-        context['searchcontext'] = 'Search results for "' + \
-        request.GET.get('annotation_query') + '"'
+        if query is None:
+            context['searchcontext'] = 'Query string is empty'
+        else:
+            context['searchcontext'] = 'Search results for "' + \
+            request.GET.get('annotation_query') + '"'
         context['searchresult'] = sub_response.content.decode('utf-8')
         context['time'] = time.time()-start_time
         data = json.dumps(context)

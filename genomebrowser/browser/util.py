@@ -288,7 +288,8 @@ def export_genomes(out_dir, genome_ids = []):
         Exports genomes as genbank files
     '''
     if not os.path.exists(out_dir):
-        raise ValueError('Output directory does not exist:', out_dir)
+        logger.error('Output directory does not exist: ' + out_dir)
+        return
     if not genome_ids:
         genome_ids = list(Genome.objects.values_list('name',
                                                      flat=True
@@ -442,15 +443,13 @@ def delete_all_genomes(confirm=True):
 
 def delete_genome(genome_name):
     if genome_name == '':
-        raise CommandError('Genome name required')
+        logger.error('Genome name required')
     logger.info('Looking for genome ' + genome_name)
     genome_set = Genome.objects.filter(name=genome_name)
     if genome_set.count() == 0:
-        logger.debug('Genome ' + genome_name + ' not found')
-        raise CommandError()
+        logger.error('Genome ' + genome_name + ' not found')
     elif genome_set.count() > 1:
-        logger.debug('Genome name is not unique: ' + genome_name)
-        raise CommandError()
+        logger.error('Genome name is not unique: ' + genome_name)
     importer = Importer()
     logger.debug('''Note 1: Genome deletion removes contigs, genes and 
     gene annotations for this genome. It also removes proteins 
@@ -489,7 +488,7 @@ def delete_genome(genome_name):
 def delete_genomes(genomes_file):
     # Deletes one or more genomes with all genes and annotations from the database
     if not os.path.exists(genomes_file):
-        raise CommandError(genomes_file + ' not found')
+        logger.error(genomes_file + ' not found')
     logger.debug('Deleting genomes...')
     importer = Importer()
     with open(genomes_file, 'r') as infile:
@@ -500,10 +499,10 @@ def delete_genomes(genomes_file):
             logger.debug('Looking for genome' + genome_name)
             genome_set = Genome.objects.filter(name=genome_name)
             if genome_set.count() == 0:
-                logger.debug('Genome ' + genome_name + ' not found')
+                logger.warning('Genome ' + genome_name + ' not found. Skipped.')
                 continue
             elif genome_set.count() > 1:
-                logger.debug('Non-unique genome name: ' + genome_name)
+                logger.warning('Non-unique genome name: ' + genome_name + '. Skipped.')
                 continue
             if os.path.exists(os.path.join(importer.config['core.json_dir'],
                                            genome_name
@@ -544,7 +543,7 @@ def generate_static_files(genomes_file):
         logger.debug('Genomes file ' + genomes_file)
         importer.generate_static_files(genomes_file)
     else:
-        raise FileNotFoundError('Genomes file not found.')
+        logger.error('Genomes file not found: ' + genomes_file)
     
 
 def import_config(config_file, overwrite=False):
@@ -570,12 +569,12 @@ def import_config(config_file, overwrite=False):
             if param not in configs_saved:
                 _ = Config.objects.create(param=param, value=configs[param])
     else:
-        raise FileNotFoundError('Input file not found:' + config_file)
+        logger.error('Input file not found:' + config_file)
 
 
 def export_config(out_file):
     if os.path.exists(out_file):
-        logger.error('Output file already exists')
+        logger.error('Output file already exists: ' + out_file)
         return
     with open(out_file, 'w') as outfile:
         for item in Config.objects.values_list('param', 'value'):
@@ -588,15 +587,13 @@ def regenerate_jbrowse_files(genome_id):
     '''
     # Check genome ID
     if genome_id == '':
-        raise CommandError('Genome name required')
+        logger.error('Genome name required')
     logger.debug('Looking for genome' + genome_id)
     genome_set = Genome.objects.filter(name=genome_id)
     if genome_set.count() == 0:
-        logger.debug('Genome ' + genome_id + ' not found')
-        raise CommandError('Genome ' + genome_id + ' not found')
+        logger.error('Genome ' + genome_id + ' not found')
     elif genome_set.count() > 1:
-        logger.debug('Non-unique genome name: ' + genome_id)
-        raise CommandError('Non-unique genome name: ' + genome_id)
+        logger.error('Non-unique genome name: ' + genome_id)
     logger.debug('Genome found:' + genome_id)
     genome = genome_set[0]
     # Configure importer
@@ -616,7 +613,7 @@ def regenerate_jbrowse_files(genome_id):
 
 
 def recreate_search_databases():
-    '''Deletes and re-cretes nucleotide and protein search
+    '''Deletes and re-creates nucleotide and protein search
     databases. Use the function if the files are missing or corrupted,
     or if the genome import pipeline crashed before creating the 
     search database files.
@@ -670,7 +667,8 @@ def update_tags(genome_file, tag_names):
     in a text or tab-separated file.
     '''
     if not os.path.exists(genome_file):
-        raise CommandError('Genomes file ' + genome_file + ' not found.')
+        logger.error('Genomes file ' + genome_file + ' not found.')
+        return
     # create tags if missing
     tags = {}
     for tag_name in tag_names.split(','):
@@ -703,5 +701,5 @@ def update_tags(genome_file, tag_names):
                     genome.tags.add(tag)
                 genome.save()
             except Genome.DoesNotExist:
-                print('Genome not found:', genome_name)
+                logger.warning('Genome not found:' + genome_name)
                 continue
