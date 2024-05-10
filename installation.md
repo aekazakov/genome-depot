@@ -48,7 +48,7 @@ git clone https://github.com/aekazakov/genome-depot
 ```
 Run installation script that will install external tools and create virtual environment. Running it may take quite some time for the first GenomeDepot-based portal because it will make all the conda environments and download reference data.
 ```
-cd CGSMS
+cd genome-depot
 bash install.sh
 ```
 The install.sh script creates Python virtual environment and installs the required Python libraries including Django framework, genome annotation tools and other dependencies. If it fails, check the error message, fix the problem and start install.sh again.
@@ -181,6 +181,19 @@ If you have more than one GenomeDepot-based portal, change “gdcluster” to a 
 ## How to change site background image
 
 There are two background images in the repository, one for the dark mode (genomebrowser/static/images/background.jpg) and the other for the light mode (genomebrowser/static/images/background_light.jpg). You can replace them, then run `python manage.py collectstatic` command and restart Apache web server.
+
+## Tweak MySQL configuration 
+
+As the genome database grows, MySQL performance may decrease because of excessive I/O usage. To increase MySQL performance, change innodb_buffer_pool_size parameter in MySQL configuration file. Run the following query in the mysql window to find optimal innodb_buffer_pool_size:
+
+SELECT CEILING(Total_InnoDB_Bytes*1.6/POWER(1024,3)) RIBPS FROM (SELECT SUM(data_length+index_length) Total_InnoDB_Bytes FROM information_schema.tables WHERE engine='InnoDB') A;
+
+It will show RIBPS value in gigabytes. If your server has enough memory, enter that number into the mysqld section of mysqld.conf (/etc/mysql/mysql.conf.d/mysqld.conf) and add “G”, for example:
+
+[mysqld]
+innodb_buffer_pool_size=8G
+
+After that, restart MySQL.
 
 ## Third-party tools installed with GenomeDepot
 
