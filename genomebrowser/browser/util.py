@@ -444,12 +444,15 @@ def delete_all_genomes(confirm=True):
 def delete_genome(genome_name):
     if genome_name == '':
         logger.error('Genome name required')
+        return
     logger.info('Looking for genome ' + genome_name)
     genome_set = Genome.objects.filter(name=genome_name)
     if genome_set.count() == 0:
         logger.error('Genome ' + genome_name + ' not found')
+        return
     elif genome_set.count() > 1:
         logger.error('Genome name is not unique: ' + genome_name)
+        return
     importer = Importer()
     logger.debug('''Note 1: Genome deletion removes contigs, genes and 
     gene annotations for this genome. It also removes proteins 
@@ -489,6 +492,7 @@ def delete_genomes(genomes_file):
     # Deletes one or more genomes with all genes and annotations from the database
     if not os.path.exists(genomes_file):
         logger.error(genomes_file + ' not found')
+        return
     logger.debug('Deleting genomes...')
     importer = Importer()
     with open(genomes_file, 'r') as infile:
@@ -588,12 +592,15 @@ def regenerate_jbrowse_files(genome_id):
     # Check genome ID
     if genome_id == '':
         logger.error('Genome name required')
+        return
     logger.debug('Looking for genome' + genome_id)
     genome_set = Genome.objects.filter(name=genome_id)
     if genome_set.count() == 0:
         logger.error('Genome ' + genome_id + ' not found')
+        return
     elif genome_set.count() > 1:
         logger.error('Non-unique genome name: ' + genome_id)
+        return
     logger.debug('Genome found:' + genome_id)
     genome = genome_set[0]
     # Configure importer

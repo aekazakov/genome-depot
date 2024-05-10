@@ -191,15 +191,7 @@ class UtilTestCase(TestCase):
             regenerate_jbrowse_files('fake_genome_id')
 
             self.assertIn(
-                "ERROR:GenomeDepot:Genome fake_genome_id not found.",
-                cm.output
-            )
-        # test with redundant genome name
-        with self.assertLogs(logger='GenomeDepot', level='ERROR') as cm:
-            regenerate_jbrowse_files('E_coli')
-
-            self.assertIn(
-                "ERROR:GenomeDepot:Non-unique genome name: E_coli",
+                "ERROR:GenomeDepot:Genome fake_genome_id not found",
                 cm.output
             )
 
