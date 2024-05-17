@@ -848,12 +848,6 @@ class Importer(object):
                        'BiGG_Reaction',
                        'PFAMs'
                        ]
-        #data_fields = ['query_name', 'eggNOG_ortholog', 'evalue', 'score',
-        #    'taxonomic_group', 'name', 'GO_terms', 'EC_number', 'KEGG_ko',
-        #    'KEGG_Pathway', 'KEGG_Module', 'KEGG_Reaction', 'KEGG_rclass',
-        #    'BRITE', 'KEGG_TC', 'CAZy', 'BiGG_Reaction', 'tax_scope',
-        #    'eggNOG_OG', 'bestOG', 'COG_Functional_Category', 'description']
-        #list_data_fields = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
         with open(eggnog_outfile, 'r') as infile:
             infile.readline()
             for line in infile:

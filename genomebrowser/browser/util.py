@@ -442,6 +442,13 @@ def delete_all_genomes(confirm=True):
 
 
 def delete_genome(genome_name):
+    '''
+        Deletes one genome with all contigs, genes and annotations 
+        from the database.
+        
+        Also removes proteins not linked to any gene. But it does not remove a strain 
+        associated with this genome if the strain has other genomes linked to.
+    '''
     if genome_name == '':
         logger.error('Genome name required')
         return
@@ -454,10 +461,6 @@ def delete_genome(genome_name):
         logger.error('Genome name is not unique: ' + genome_name)
         return
     importer = Importer()
-    logger.debug('''Note 1: Genome deletion removes contigs, genes and 
-    gene annotations for this genome. It also removes proteins 
-    not linked to any gene. But it does not remove a strain 
-    associated with this genome if the strain has other genomes.''')
     logger.info('Deleting genome...')
     genome_set.delete()
     logger.info('Deleting proteins not linked to genes...')
@@ -489,7 +492,13 @@ def delete_genome(genome_name):
     logger.debug('Done!')
 
 def delete_genomes(genomes_file):
-    # Deletes one or more genomes with all genes and annotations from the database
+    '''
+        Deletes one or more genomes listed in a text file
+        with all genes and annotations from the database
+
+        Also removes proteins not linked to any gene. But it does not remove strains
+        associated with the genomes if a strain has other genomes linked to.
+    '''
     if not os.path.exists(genomes_file):
         logger.error(genomes_file + ' not found')
         return
@@ -542,6 +551,10 @@ def delete_genomes(genomes_file):
 
 
 def generate_static_files(genomes_file):
+    '''
+        For genomes listed in a text file, this function 
+        generates static files
+    '''
     if os.path.exists(genomes_file):
         importer = Importer()
         logger.debug('Genomes file ' + genomes_file)

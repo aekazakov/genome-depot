@@ -11,6 +11,27 @@ from browser.models import Config, Taxon, Strain, Genome, Protein, Ortholog_grou
 logger = logging.getLogger("GenomeDepot")
 
 def load_taxonomy(taxonomy_file, eggnog_taxonomy_file):
+    """
+        Reads NCBI taxonomy and eggNOG taxonomy from reference TSV files
+        
+        Current NCBI taxonomy ID may be different from eggNOG ID for that taxon
+        
+        Parameters:
+        taxonomy_file (str): path to the ref_taxonomy.txt file
+        eggnog_taxonomy_file (str): path to the eggnog_taxonomy_rules.txt file
+    
+        Returns:
+        taxonomy (dict of dicts):
+            outer key is a NCBI Taxonomy ID
+            inner keys are name, eggnog_taxid, rank, parent
+            values contain NCBI Taxonomy information
+        taxonomy_lookup (dict):
+            key is a taxon name
+            value is a taxonomy ID
+        eggnog_lookup (dict of lists):
+            key is an eggNOG taxonomy ID
+            value is a NCBI taxonomy ID
+    """
     logger.info('Loading taxonomy...')
     taxonomy = {}
     taxonomy_lookup = {}
@@ -271,6 +292,18 @@ def update_taxonomy():
     shutil.rmtree(tmp_dir)
 
 def create_taxonomy_records(taxonomy_id, taxonomy, eggnog_taxa):
+    """
+        Creates new Taxon object. If parent taxonomy nodes do not exist,
+        creates parent nodes too, up to the root node
+        
+        Parameters:
+        taxonomy_id (str) : NCBI Taxonomy ID. 
+        taxonomy ( dictionary of dictionaries ): taxonomy data;
+            populated by the load_taxonomy function in this module
+        eggnog_taxa ( dictionary of lists ) : dictionary of lists with 
+            eggNOG-mapper taxonomy data; populated by the load_taxonomy
+            function in this module
+    """
     if taxonomy_id not in taxonomy:
         return
     if Taxon.objects.filter(taxonomy_id=taxonomy_id).exists():
@@ -308,6 +341,11 @@ def create_taxonomy_records(taxonomy_id, taxonomy, eggnog_taxa):
     
 
 def update_taxonomy_fields(old_taxon, new_taxon):
+    """
+        Replaces links to a Taxon instance (old_taxon) with links to 
+        another Taxon instance (new_taxon) in all
+        Strain, Genome, Protein, Ortholog_group objects
+    """
     for strain in Strain.objects.filter(taxon=old_taxon):
         strain.taxon = new_taxon
         strain.save()

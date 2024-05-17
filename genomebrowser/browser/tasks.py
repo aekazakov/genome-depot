@@ -18,6 +18,9 @@ from browser.models import Strain, Sample, Genome, Protein, Config
 logger = logging.getLogger("GenomeDepot")
 
 def run_annotation_pipeline_impl(args):
+    '''
+        Implements the Run Annotation Pipeline task
+    '''
     logger.debug('Asynchronous task run_annotation_tools received. Starting the pipeline.')
     (genomes, plugins) = args
     annotator = Annotator()
@@ -52,6 +55,9 @@ def run_annotation_pipeline_impl(args):
     
 
 def import_genomes_impl(args):
+    '''
+        Implements the Import Genomes task
+    '''
     lines, email = args
     logger.debug('Asynchronous task import_genomes received. Starting import.')
     temp_dir = Config.objects.get(param='core.temp_dir').value
@@ -199,6 +205,9 @@ def delete_genomes_impl(genome_names):
 
     
 def import_sample_metadata_impl(lines):
+    '''
+        Implements the Import Sample Metadata task
+    '''
     logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
@@ -215,6 +224,9 @@ def import_sample_metadata_impl(lines):
 
 
 def import_sample_descriptions_impl(lines):
+    '''
+        Implements the Import Sample Descriptions task
+    '''
     logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
@@ -231,6 +243,9 @@ def import_sample_descriptions_impl(lines):
 
 
 def update_strain_metadata_impl(xlsx_file):
+    '''
+        Implements the Update Strain Metadata task
+    '''
     logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
@@ -247,6 +262,9 @@ def update_strain_metadata_impl(xlsx_file):
 
     
 def import_annotations_impl(lines):
+    '''
+        Implements the Import Annotations task
+    '''
     logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
@@ -263,6 +281,9 @@ def import_annotations_impl(lines):
 
 
 def import_regulon_impl(lines):
+    '''
+        Implements the Import Regulon task
+    '''
     logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
