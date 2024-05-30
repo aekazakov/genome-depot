@@ -56,10 +56,10 @@
               {% endfor %}
             </h5>
             <span>Position</span>
-            {% if gene.strand == "-1" %}
-              <h5>{{ gene.contig.contig_id }}: complement({{ gene.start }}..{{ gene.end }})</h5>
+            {% if gene.strand == -1 %}
+              <h5>{{ gene.contig.contig_id }}: complement({{ gene.start }}..{{ gene.end }}) [{{ gene_size }} bp{% if protein_size %}, {{ protein_size }} aa{% endif %}]</h5>
             {% else %}
-              <h5>{{ gene.contig.contig_id }}: {{ gene.start }}..{{ gene.end }}</h5>
+              <h5>{{ gene.contig.contig_id }}: {{ gene.start }}..{{ gene.end }} [{{ gene_size }} bp{% if protein_size %}, {{ protein_size }} aa{% endif %}]</h5>
             {% endif %}
             <span>Product</span>
             <h5>{{ gene.function }}</h5>

@@ -1700,6 +1700,8 @@ def gene_detail(request, genome, locus_tag):
             context['annotations'] = annotations
         if gene.protein:
             context['protein'] = gene.protein
+            context['protein_size'] = gene.protein.length
+        context['gene_size'] = gene.end - gene.start + 1
         viewer_start = gene.start - 5000
         if viewer_start < 0:
             viewer_start = 1
