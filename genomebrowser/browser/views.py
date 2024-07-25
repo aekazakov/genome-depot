@@ -1803,6 +1803,10 @@ def regulon_detail(request, genome, name):
     sites = Site.objects.filter(regulon = regulon).select_related(
         'contig').prefetch_related('genes', 'operons')
     context['sites'] = sites
+    genes = Gene.objects.filter(site__in=sites).distinct()
+    context['genes'] = genes
+    operons = Operon.objects.filter(site__in=sites).distinct()
+    context['operons'] = operons
     ortholog_groups = set()
     for regulator in regulon.regulators.all():
         for og in regulator.protein.ortholog_groups.all():
