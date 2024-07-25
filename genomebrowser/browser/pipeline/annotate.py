@@ -241,15 +241,20 @@ class Annotator(object):
                                                      )
                     if not same_sites:
                         logger.info(str(site_data))
+                        try:
+                            target_contig = Contig.objects.get(
+                                        genome__name = genome_name,
+                                        contig_id = site_data[2]
+                                        )
+                        except Contig.DoesNotExist:
+                            logging.error(site_data[2] + ' contig not found in ' + genome_name)
+                            raise
                         site = Site(name = site_name,
                                     type = 'TFBS',
                                     start = int(site_data[3]),
                                     end = int(site_data[4]),
                                     strand = int(site_data[5]),
-                                    contig = Contig.objects.get(
-                                        genome__name = genome_name,
-                                        contig_id = site_data[2]
-                                        ),
+                                    contig = target_contig,
                                     genome = genome,
                                     sequence = site_data[6],
                                     regulon = existing_regulons[regulon_name]
