@@ -6,7 +6,7 @@
 
 * Linux-based OS (GenomeDepot was developed and tested in 64-bit Ubuntu Linux system)
 * Python 3.8+ 
-* conda (anaconda is recommended)
+* conda (miniconda is recommended)
 * MySQL server
 * Apache2 web-server with mod_wsgi and ssl extensions
 * Muscle
@@ -16,11 +16,15 @@
 * zlib1g-dev package
 * curl
 * git
+* pkg-config
 
-In Ubuntu-based distibutions, you can install these dependencies using the APT package manager:
+In Ubuntu-based distibutions, you can install most prerequisites using the APT package manager:
 ```
-sudo apt install apache2 mysql-server muscle hmmer ncbi-blast+-legacy build-essential zlib1g-dev libexpat1-dev python3-dev libmysqlclient-dev curl git
+sudo apt install apache2 mysql-server muscle hmmer ncbi-blast+-legacy build-essential zlib1g-dev libexpat1-dev python3-dev libmysqlclient-dev curl git pkg-config libapache2-mod-wsgi-py3 python3.10-venv
 ```
+
+Install conda as described in https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html
+
 
 ## Install dependencies
 
@@ -59,6 +63,7 @@ Another common problem is an incomplete installation of the operon prediction to
 ## Initial GenomeDepot configuration
 
 Create MySQL user (for example, gduser), if needed, or use an existing mysql account.
+
 Create MySQL database (for example, gdgenomes):
 log into mysql as root: 
 ```
@@ -98,7 +103,8 @@ cd /opt/genomedepot/app/mygenomes/genome-depot/genomebrowser
 python manage.py collectstatic
 python manage.py makemigrations
 python manage.py migrate
-python manage.py createsuperuser (Enter your desired username, email and password).
+python manage.py createsuperuser 
+# Enter your desired username, email and password
 python manage.py import_config -i configs.txt
 python manage.py createcachetable
 ```
@@ -123,6 +129,7 @@ WSGIScriptAlias /mygenomes /opt/genomedepot/app/mygenomes/genome-depot/genomebro
     Require all granted
 
 </Files>
+</Directory>
 <Directory /opt/genomedepot/static/>
 Options -Indexes +FollowSymLinks
 
@@ -134,6 +141,7 @@ Options -Indexes +FollowSymLinks
 
 Require all granted
 Alias /gdstatic /opt/genomedepot/static/
+</Directory>
 ```
 You may have to add "Header always set X-Frame-Options "SAMEORIGIN"" to web server configuration if the embedded genome viewer is not properly displayed.
 Restart apache2:
