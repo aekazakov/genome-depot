@@ -472,7 +472,7 @@ class Annotator(object):
         for plugin_name in plugins_enabled:
             plugin_count += 1
             try:
-                ret.append(plugin_name + ' plugin: ' + run_external_tools(genomes, plugin_name))
+                ret.append(plugin_name + ' plugin: ' + self.run_external_tools(genomes, plugin_name))
             except Exception as e:
                 ret.append(str(plugin_count) + ' of ' + str(len(plugins_enabled)) + ': ' + plugin_name + ' finished')
                 ret.append(traceback.format_exc())

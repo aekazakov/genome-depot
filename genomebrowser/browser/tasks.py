@@ -61,6 +61,7 @@ def import_genomes_impl(args):
     lines, email = args
     logger.debug('Asynchronous task import_genomes received. Starting import.')
     temp_dir = Config.objects.get(param='core.temp_dir').value
+    result = ''
     try:
         upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
         for line in lines:
@@ -81,17 +82,17 @@ def import_genomes_impl(args):
                 genome_batch_count += 1
                 logger.debug('Importing genome batch %d', genome_batch_count)
                 importer = Importer()
-                result = importer.import_genomes(genome_import_batch)
+                result += importer.import_genomes(genome_import_batch) + '\n'
                 genome_import_batch_size = 0
                 genome_import_batch = []
         if genome_import_batch:
             genome_batch_count += 1
             logger.debug('Importing genome batch %d', genome_batch_count)
             importer = Importer()
-            result = importer.import_genomes(genome_import_batch)
+            result += importer.import_genomes(genome_import_batch) + '\n'
         subject = 'GenomeDepot task finished successfuly'
         message = '"Import Genomes" task finished successfuly at ' + \
-        f'{settings.BASE_URL}'
+        f'{settings.BASE_URL}\n\n' + result
     except Exception as e:
         result = 'Error!'
         subject = 'GenomeDeport genome import pipeline raised an unhandled exception'
