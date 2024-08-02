@@ -122,7 +122,10 @@ def postprocess(annotator, genomes, working_dir):
                         function = row[-1]
                         if function == 'NA':
                             function = 'Unknown function'
-                        contig_id = proviruses['_'.join(row[0].split('_')[:-1])]
+                        provirus_id = '_'.join(row[0].split('_')[:-1])
+                        if provirus_id not in proviruses:
+                            continue
+                        contig_id = proviruses[provirus_id]
                         if row[4] == '-1':
                             end = int(row[1])
                             if end < 4:

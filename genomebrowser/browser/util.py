@@ -151,10 +151,13 @@ def export_genome(genome, output_buffer):
                     )
             for annotation in Annotation.objects.filter(gene_id=gene):
                 genedata[contig_id][gene.locus_tag].append(
-                    annotation.source + ':' + annotation.value 
-                    + ' (' + annotation.note + ') [GD/'
+                    annotation.source + ':' +
+                    ''.join([i for i in annotation.value if ord(i)<128])  #annotation.value
+                    + ' (' + ''.join([i for i in annotation.note if ord(i)<128])  #annotation.note
+                    + ') [GD/'
                     + annotation.source + ']'
                 )
+                
             if gene.operon:
                 if gene.operon.id not in operons_seen:
                     operondata[contig_id][gene.locus_tag] = (
