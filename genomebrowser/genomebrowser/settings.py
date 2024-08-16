@@ -139,9 +139,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 # Email settings for sending log messages. This is not an admin's email!
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_HOST = config('EMAIL_HOST', default='')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -177,6 +177,14 @@ Q_CLUSTER = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },    
     'formatters': {
         'verbose': {
             'format': '{levelname} {asctime} {pathname} {message}',
@@ -191,9 +199,11 @@ LOGGING = {
         },
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filters': ['require_debug_true'],
             'filename': os.path.join(BASE_DIR, 'django.log'),
             'formatter': 'verbose',
+            'maxBytes': 10*1024*1024,
         },
         'email': {
             'level': 'ERROR',
@@ -203,13 +213,14 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['console','file'],
             'level': 'INFO',
-	    'propagate': True,
+            'propagate': True,
         },
         'GenomeDepot': {
             'handlers': ['console', 'file', 'email'],
             'level': 'DEBUG',
+            'propagate': True,
         },
     },
 }

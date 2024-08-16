@@ -97,7 +97,7 @@ def postprocess(annotator, genomes, working_dir):
             antismash_ref[key] = value
 
     with open(output_file, 'w') as outfile:
-        outfile.write('#Gene\tGenome\tSoure\tURL\tKey\tValue\tNote\n')
+        outfile.write('#Gene\tGenome\tSource\tURL\tKey\tValue\tNote\n')
         for genome in sorted(genomes.keys()):
             antismash_dir = os.path.join(working_dir, 'out', genome)
             if not os.path.exists(antismash_dir):

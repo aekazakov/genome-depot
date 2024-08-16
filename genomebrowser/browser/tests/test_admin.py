@@ -333,7 +333,7 @@ class AdminTransactionTestCase(TransactionTestCase):
         email = 'test@example.com'
         args = (lines, email)
         result = import_genomes_impl(args)
-        self.assertTrue(result.endswith('Done!'))
+        self.assertTrue(result.endswith('Done!\n'))
         self.assertFalse('error' in result)
         
     def test_run_annotation_pipeline_impl(self):

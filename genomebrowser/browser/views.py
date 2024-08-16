@@ -941,6 +941,8 @@ class GenomeSearchResultsView(generic.ListView):
                                        self.request.GET.get('query') + '"'
         elif self.request.GET.get('taxon'):
             taxon = Taxon.objects.get(taxonomy_id = self.request.GET.get('taxon'))
+            context['exporttype'] = 'genomebytaxon'
+            context['exportquery'] = self.request.GET.get('taxon')
             context['searchcontext'] = 'Search results for ' + \
                                        taxon.name + ' [' + taxon.rank + ']'
         return context
@@ -1461,7 +1463,6 @@ def startpage(request):
         Displays home page
     '''
     template = loader.get_template('browser/index.html')
-    #num_genomes = Genome.objects.all().count()
     context = {'site_title':TITLE}
     return HttpResponse(template.render(context, request))
 

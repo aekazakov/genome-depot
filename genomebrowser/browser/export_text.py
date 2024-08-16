@@ -24,6 +24,7 @@ from browser.models import Cazy_family
 from browser.models import Go_term
 from browser.models import Ortholog_group
 from browser.util import export_genome
+from browser.taxonomy import get_taxon_children
 
 logger = logging.getLogger("GenomeDepot")
 
@@ -35,6 +36,8 @@ def export_csv(request):
     query_type = request.GET.get('type')
     if query_type == 'genome':
         return _export_genomes_csv(request)
+    if query_type == 'genomebytaxon':
+        return _export_genomes_bytaxon_csv(request)
     elif query_type == 'annotation':
         return _export_annotations_csv(request)
     else:
@@ -51,7 +54,7 @@ def _export_annotations_csv(request):
 
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/tab-separated-values')
-    response['Content-Disposition'] = 'attachment; filename="export.tab"'
+    response['Content-Disposition'] = 'attachment; filename="exported_annotations.tab"'
     writer = csv.writer(response, delimiter='\t')
     annotation_query = request.GET.get('annotation_query')
     genome = request.GET.get('genome')
@@ -122,12 +125,12 @@ def _export_genes_csv(request):
     '''
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/tab-separated-values')
-    response['Content-Disposition'] = 'attachment; filename="export_genes.tab"'
     writer = csv.writer(response, delimiter='\t')
     annotation_query = request.GET.get('annotation_query')
     query_type = request.GET.get('type')
     query = request.GET.get('query')
     genome = request.GET.get('genome')
+    response['Content-Disposition'] = 'attachment; filename="export_' + query_type + '.tab"'
 
     if query_type == 'gene':
         if query and query != '':
@@ -405,14 +408,14 @@ def _export_genes_csv(request):
 
 def _export_genomes_csv(request):
     '''
-        Returns list of genes in tab-separated text format
+        Returns list of genomes in tab-separated text format
         
         Template gene_list_subpage.html contains the Ajax JS calling this function 
         
     '''
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/tab-separated-values')
-    response['Content-Disposition'] = 'attachment; filename="genomes.tab"'
+    response['Content-Disposition'] = 'attachment; filename="exported_genomes.tab"'
     writer = csv.writer(response, delimiter='\t')
     annotation_query = request.GET.get('annotation_query')
     query_type = request.GET.get('type')
@@ -435,6 +438,60 @@ def _export_genomes_csv(request):
         ).prefetch_related(
             'tags'
         )
+    writer.writerow([
+                     'Name',
+                     'Tags',
+                     'Source',
+                     'Taxonomy',
+                     'Size, bp',
+                     'Contigs',
+                     'Genes'
+                     ])
+    for genome in object_list:
+        if genome.strain:
+            source = genome.strain.full_name
+        else:
+            source = genome.sample.full_name
+        writer.writerow([genome.name,
+                         ';'.join([item.name for item in genome.tags.all()]),
+                         source,
+                         genome.taxon.name,
+                         str(genome.size),
+                         str(genome.contigs),
+                         str(genome.genes)
+                         ])
+    return response
+
+
+def _export_genomes_bytaxon_csv(request):
+    '''
+        Returns list of genomes in tab-separated text format
+        
+        Template gene_list_subpage.html contains the Ajax JS calling this function 
+        
+    '''
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/tab-separated-values')
+    response['Content-Disposition'] = 'attachment; filename="exported_genomes.tab"'
+    writer = csv.writer(response, delimiter='\t')
+    annotation_query = request.GET.get('annotation_query')
+    query_type = request.GET.get('type')
+    query = request.GET.get('query')
+    if query_type != 'genomebytaxon':
+        object_list = Genome.objects.none()
+    elif query:
+        children = get_taxon_children(query)
+        object_list = Genome.objects.filter(
+            taxon__taxonomy_id__in=children
+        ).distinct().order_by(
+            'name'
+        ).select_related(
+            'strain', 'sample', 'taxon'
+        ).prefetch_related(
+            'tags'
+        )
+    else:
+        object_list = Genome.objects.none()
     writer.writerow([
                      'Name',
                      'Tags',

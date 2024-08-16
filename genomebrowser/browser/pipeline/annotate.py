@@ -153,6 +153,7 @@ class Annotator(object):
         for line in lines:
             regulon_name, genome_name, reg_gene_ids, target_gene_id, contig, \
             start, end, strand, sequence = line.rstrip('\n\r').split('\t')
+            regulon_name = self.sanitize_input(regulon_name)
             # check if genes exist
             skip_line = False
             for regulator_id in reg_gene_ids.split(','):
@@ -478,3 +479,13 @@ class Annotator(object):
                 ret.append(traceback.format_exc())
 
         return '\n'.join(ret)
+
+    def sanitize_input(self, input_text):
+        """
+            Replaces non-ASCII and non-word characters with 
+            underscores in input_text
+        """
+        input_text = ''.join([i if ord(i) < 128 else ' ' for i in input_text])
+        input_text = re.sub(r"[^^a-zA-Z0-9\.\-]", ' ', input_text)
+        input_text = "_".join( input_text.split() )
+        return input_text

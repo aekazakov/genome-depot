@@ -101,9 +101,14 @@
                   url: "{% url 'export' %}",
                   method: 'GET',
                   data: {
+                    {% if exporttype %}
+                    "type": "{{ exporttype }}",
+                    "query": "{{ exportquery }}"
+                    {% else %}
                     "type": "genome",
-                    {% if searchcontext %}
-                    "query": "{{ request.GET.query }}"
+                      {% if searchcontext %}
+                      "query": "{{ request.GET.query }}"
+                      {% endif %}
                     {% endif %}
                   },
                   xhrFields: {
@@ -118,7 +123,7 @@
                     const blob = new Blob([data], {type: "octet/stream"});
                     var url = window.URL.createObjectURL(blob);
                     a.href = url;
-                    a.download = 'exported_genes.tab';
+                    a.download = 'exported_genomes.tab';
                     document.body.append(a);
                     a.click();
                     a.remove();
