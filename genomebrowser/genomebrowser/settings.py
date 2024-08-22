@@ -37,6 +37,7 @@ TITLE = config('TITLE')
 
 INSTALLED_APPS = [
     'browser.apps.BrowserConfig',
+    'logviewer',
     'admin_shortcuts',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -240,6 +241,9 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
+
+LOGVIEWER_LOGS = ['/mnt/data/work/CGCMS/apps/dev/CGCMS/genomebrowser/django.log',]
+LOGVIEWER_INITIAL_NUMBER_OF_CHARS = 8196
 
 ADMIN_SHORTCUTS = [
     {
