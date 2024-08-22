@@ -95,6 +95,7 @@ def _export_annotations_csv(request):
                      'Function',
                      'Annotation_source',
                      'Annotation_type',
+                     'Annotation_value',
                      'Annotation_note'
                      ])
     for obj in object_list:

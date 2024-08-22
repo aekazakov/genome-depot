@@ -24,7 +24,7 @@ fi
 #Installing dependencies in the virtual environment
 echo "Installing python dependencies in genomedepot-venv virtual environment"
 source "$TOPDIR/genomedepot-venv/bin/activate"
-pip install "django==3.2.6" django_admin_shortcuts django_cors_headers django_q django_debug_toolbar openpyxl "parasail==1.2.4" biopython "toytree==2.0.1" urllib3 mysqlclient plotly pandas python-decouple --no-cache-dir
+pip install "django==3.2.6" django_admin_shortcuts django_cors_headers django_q django_debug_toolbar openpyxl "parasail==1.2.4" biopython "toytree==2.0.1" urllib3 mysqlclient plotly pandas python-decouple django-admin-logviewer --no-cache-dir
 deactivate
 
 source $CONDA
@@ -479,5 +479,8 @@ echo "    \"STATIC_ROOT\": \"$TOPDIR/static/$APPNAME\"," >> secrets.json
 echo "    \"STATICFILES_DIR\": \"$WORKDIR/genomebrowser/static\"" >> secrets.json
 echo "}" >> secrets.json
 echo "secrets.json created."
+
+touch django.log
+chmod 664 django.log
 
 echo "Edit secrets.json and genomebrowser/settings.py before running \"python manage.py configure_cgcsms -i configs.txt\""

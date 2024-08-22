@@ -153,6 +153,8 @@ STATIC_ROOT = config('STATIC_ROOT')
 STATICFILES_DIRS = [
     config('STATICFILES_DIR')
 ]
+LOGVIEWER_LOGS = config('LOGVIEWER_LOGS', cast=Csv())
+LOGVIEWER_INITIAL_NUMBER_OF_CHARS = 8196
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 
@@ -241,9 +243,6 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
-
-LOGVIEWER_LOGS = ['/mnt/data/work/CGCMS/apps/dev/CGCMS/genomebrowser/django.log',]
-LOGVIEWER_INITIAL_NUMBER_OF_CHARS = 8196
 
 ADMIN_SHORTCUTS = [
     {
