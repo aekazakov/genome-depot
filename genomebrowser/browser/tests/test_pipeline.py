@@ -176,6 +176,13 @@ class ImporterTestCase(TestCase):
         self.assertEqual(location[0], 19658)
         self.assertEqual(location[1], 19795)
         self.assertEqual(location[2], -1)
+        # This craziest string is a real thing!
+        # This is a gene location from E. coli MC4100 assembly GCA_000499485.1
+        location = self.importer.parse_location('order(complement(50476..50478),complement(50380..51222),50491..51201,complement(50542..50544),50863..51201)', 100000)
+        self.assertEqual(location[0], 50380)
+        self.assertEqual(location[1], 51222)
+        self.assertEqual(location[2], 1)
+        
         
     def test_process_feature(self):
         '''

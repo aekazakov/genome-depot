@@ -473,11 +473,16 @@ class Importer(object):
         if location.startswith('join('):
             # This is a compound location.
             # Compound locations are not supported.
+            # Compound locations are treated as a continuous DNA seqment
+            # from the lowest to the highest position,
+            # unless the location is wrapping the origin.
             location = location[5:-1]
             segments = location.split(',')
             location_coords = []
             for segment in segments:
                 try:
+                    segment = segment.replace('complement(','')
+                    segment = segment.replace(')','')
                     location_coords += [int(coord.strip()) for coord
                                         in segment.split('..')
                                         ]
@@ -488,7 +493,7 @@ class Importer(object):
             start = location_coords[0]
             end = location_coords[-1]
             if start == 1 and end == contig_size:
-                # This is probably a feature that wraps around origin 
+                # This is probably a feature that wraps around the origin 
                 # of a circular sequence. Either the first or the last
                 # segment of the gene will be shown on the web site.
                 if strand == 1:
@@ -668,9 +673,13 @@ class Importer(object):
                                   )
                     contig_size = int(gbk_record.size)
                     contig_sizes.append(contig_size)
+                    if gbk_record.accession:
+                        contig_name = gbk_record.accession[0]
+                    else:
+                        contig_name = contig_id
                     self.contig_data[(genome_id, contig_id)] = \
                         {'contig_id':contig_id,
-                        'name':gbk_record.accession[0],
+                        'name':contig_name,
                         'size':contig_size,
                         'genome':genome_id
                         }

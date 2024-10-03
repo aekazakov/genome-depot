@@ -90,9 +90,14 @@ def import_genomes_impl(args):
             logger.debug('Importing genome batch %d', genome_batch_count)
             importer = Importer()
             result += importer.import_genomes(genome_import_batch) + '\n'
-        subject = 'GenomeDepot task finished successfuly'
-        message = '"Import Genomes" task finished successfuly at ' + \
-        f'{settings.BASE_URL}\n\n' + result
+        if 'error' in result:
+            subject = 'GenomeDepot task finished with error'
+            message = '"Import Genomes" task finished with error at ' + \
+            f'{settings.BASE_URL}\n\n' + result
+        else:
+            subject = 'GenomeDepot task finished successfuly'
+            message = '"Import Genomes" task finished successfuly at ' + \
+            f'{settings.BASE_URL}\n\n' + result
     except Exception as e:
         result = 'Error!'
         subject = 'GenomeDeport genome import pipeline raised an unhandled exception'

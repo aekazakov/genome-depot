@@ -470,17 +470,16 @@ echo "plugins.hmmsearch_tigrfam.hmm_lib = $TOPDIR/external_refdata/tigrfam/TIGRF
 echo "plugins.hmmsearch_tigrfam.ref_data = $TOPDIR/external_refdata/tigrfam/ref_tigrfam.txt" >> configs.txt
 echo "configs.txt created."
 
-if [ -f "secrets.json" ]; then
-        cp secrets.json secrets.json~
-        echo "Existing secrets.json copied to secrets.json~"
+if [ -f ".env" ]; then
+        cp .env .env~
+        echo "Existing .env file copied to .env~"
 fi
-cp secrets.json.template secrets.json
-echo "    \"STATIC_ROOT\": \"$TOPDIR/static/$APPNAME\"," >> secrets.json
-echo "    \"STATICFILES_DIR\": \"$WORKDIR/genomebrowser/static\"" >> secrets.json
-echo "}" >> secrets.json
-echo "secrets.json created."
+cp .env.template .env
+echo "STATIC_ROOT=$TOPDIR/static/$APPNAME" >> .env
+echo "STATICFILES_DIR=$WORKDIR/genomebrowser/static" >> .env
+echo "LOGVIEWER_LOGS=$WORKDIR/genomebrowser/django.log," >> .env
 
 touch django.log
 chmod 664 django.log
 
-echo "Edit secrets.json and genomebrowser/settings.py before running \"python manage.py configure_cgcsms -i configs.txt\""
+echo "Edit .env file before running \"python manage.py configure_cgcsms -i configs.txt\""

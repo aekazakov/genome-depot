@@ -276,6 +276,7 @@ ADMIN_SHORTCUTS = [
             {
                 'title': 'Add user',
                 'url_name': 'admin:auth_user_add',
+                'test_func': 'example.utils.has_perms_to_users',
                 'has_perms': 'example.utils.has_perms_to_users',
                 'icon': 'user-plus',
             },
