@@ -38,7 +38,6 @@ def generate_og_treemap(ortholog_group):
         return '<h5>Genes for ' + ortholog_group.eggnog_id + '[' + ortholog_group.taxon.name + '] not found in the database.</h5>', '', []
     #gene_ids = [item.id for item in genes.all()]
     treemap, result_table = generate_annotations_treemap(gene_ids, ortholog_group=ortholog_group)
-    logger.debug(list(gene_ids))
     return treemap, result_table, list(gene_ids)
 
 

@@ -23,7 +23,7 @@ COLORS = ['#FFAA00',
           '#48B7B4'
           ]
 
-def generate_genome_sunburst(taxon_id=None, children = []):
+def generate_genome_sunburst(taxon_id=None, children=[]):
     '''
     If taxon_id is None, it will choose root node as 
     the highest node that have more than one child.
@@ -476,7 +476,7 @@ def get_genes_taxonomy(gene_ids = []):
         customdata.append([reverse('taxondetails', args=(taxon,)),
                            '<br>' + taxon_lookup[taxon][0] + ' [' + \
                            taxon_lookup[taxon][3] + ']<br>' + \
-                           str(taxon_counts[taxon]) + ' genomes'
+                           str(taxon_counts[taxon]) + ' genes'
                            ])
         if taxon == target_taxon_id or taxon_lookup[taxon][2] == '1':
             # Parent of the root node must be empty string
@@ -653,7 +653,7 @@ def get_operons_taxonomy(operon_ids = [], gene_ids = []):
         customdata.append([reverse('taxondetails', args=(taxon,)),
                            '<br>' + taxon_lookup[taxon][0] + ' [' + \
                            taxon_lookup[taxon][3] + ']<br>' + \
-                           str(taxon_counts[taxon]) + ' genomes'
+                           str(taxon_counts[taxon]) + ' operons'
                            ])
         if taxon == target_taxon_id or taxon_lookup[taxon][2] == '1':
             # Parent of the root node must be empty string
