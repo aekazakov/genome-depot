@@ -4,7 +4,7 @@ import json
 import logging
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.views import View, generic
 from django.db.models import Q
@@ -2527,10 +2527,17 @@ def get_og_data(request):
     ortholog_group = Ortholog_group.objects.get(id=og_id)
     treemap, functional_profile, gene_ids = generate_og_treemap(ortholog_group)
     context = {'treemap':treemap, 'og_gene_count':str(len(gene_ids)), 'tsv_profile':functional_profile}
-    sunburst = generate_genes_sunburst(gene_ids)
-    context['sunburst'] = sunburst
-    data = json.dumps(context)
-    return HttpResponse(data,content_type="application/json")
+    if not gene_ids:
+        context['sunburst'] = '<div class="error box">The family has no genes. Taxonomy profile cannot be displayed.</div>'
+    elif len(gene_ids) == 1:
+        context['sunburst'] = '<div class="error box">The family has only one gene. Taxonomy profile cannot be displayed.</div>'
+    elif len(gene_ids) > 10000:
+        context['sunburst'] = '<div class="error box">The family has more than 10 thousand proteins. Taxonomy profile cannot be displayed.</div>'
+    else:
+        context['sunburst'] = generate_genes_sunburst(gene_ids)
+    #data = json.dumps(context)
+    logger.debug('Sending OG JSON')
+    return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
 
     
 def generate_external_link(query, query_type, genome=None):

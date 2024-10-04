@@ -1,4 +1,5 @@
 """ This file contains functions for search in taxonomy"""
+import logging
 import plotly.graph_objects as go
 from io import StringIO
 from collections import defaultdict, Counter
@@ -7,6 +8,8 @@ from browser.models import Gene
 from browser.models import Genome
 from browser.models import Operon
 from browser.models import Taxon
+
+logger = logging.getLogger("GenomeDepot")
 
 COLORS = ['#FFAA00',
           '#2D5F91',
@@ -69,6 +72,7 @@ def generate_genome_sunburst(taxon_id=None, children = []):
 
 
 def generate_genes_sunburst(gene_ids):
+    logger.debug('Getting genes taxonomy')
     labels, parents, values, customdata = get_genes_taxonomy(gene_ids)
     
     if not labels:
@@ -80,7 +84,7 @@ def generate_genes_sunburst(gene_ids):
     colors = []
     for ind, label in enumerate(labels):
         colors.append(COLORS[ind%10])
-    
+    logger.debug('Generating sunburst figure')
     fig = go.Figure(go.Sunburst(
         ids = labels,
         labels = labels,
@@ -100,6 +104,7 @@ def generate_genes_sunburst(gene_ids):
                       paper_bgcolor='rgba(120,120,120,0.1)',
                       plot_bgcolor='rgba(120,120,120,0.1)'
                       )
+    logger.debug('Writing sunburst HTML')
     html = StringIO()
     fig.write_html(html, include_plotlyjs=False, full_html=False)
     html = html.getvalue()

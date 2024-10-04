@@ -1,24 +1,27 @@
 """ This file contains functions treemap generation"""
-#import plotly
+import logging
 import plotly.express as px
 import pandas as pd
-#import plotly.graph_objects as go
-#import plotly.io as plotlyio
 from io import StringIO
 from collections import defaultdict
+from django.db.models import Count
 from browser.util import autovivify
 from browser.models import Gene
+from browser.models import Protein
 from browser.models import Annotation
 
+logger = logging.getLogger("GenomeDepot")
 
 def generate_og_treemap(ortholog_group):
-    print('Generating treemap for', ortholog_group.eggnog_id)
-    genes = Gene.objects.filter(
+    logger.debug('Generating treemap for ' + ortholog_group.eggnog_id)
+    gene_ids = Gene.objects.filter(
         protein__ortholog_groups = ortholog_group
-    ).select_related(
-        'protein',
-        'operon'
-    ).prefetch_related(
+    #).select_related(
+    #    'protein',
+    #    'operon'
+    ).values_list('id', flat=True)
+    '''
+    prefetch_related(
         'protein__ortholog_groups',
         'protein__ortholog_groups__taxon',
         'protein__kegg_orthologs',
@@ -30,14 +33,17 @@ def generate_og_treemap(ortholog_group):
         'protein__cog_classes',
         'protein__cazy_families'
     )
-    if not genes:
+    '''
+    if not gene_ids:
         return '<h5>Genes for ' + ortholog_group.eggnog_id + '[' + ortholog_group.taxon.name + '] not found in the database.</h5>', '', []
-    gene_ids = [item.id for item in genes.all()]
-    treemap, result_table = generate_annotations_treemap(genes)
-    return treemap, result_table, gene_ids
+    #gene_ids = [item.id for item in genes.all()]
+    treemap, result_table = generate_annotations_treemap(gene_ids, ortholog_group=ortholog_group)
+    logger.debug(list(gene_ids))
+    return treemap, result_table, list(gene_ids)
 
 
 def generate_genes_treemap(gene_ids):
+    '''
     genes = Gene.objects.filter(
         id__in = gene_ids
     ).select_related(
@@ -55,40 +61,83 @@ def generate_genes_treemap(gene_ids):
         'protein__cog_classes',
         'protein__cazy_families'
     )
-    return generate_annotations_treemap(genes)
+    '''
+    return generate_annotations_treemap(gene_ids)
 
     
-def generate_annotations_treemap(genes):
+def generate_annotations_treemap(gene_ids, ortholog_group=None):
+    logger.debug('Filling genedata')
     genedata = autovivify(2, int)
     root_node = 'Annotations'
     root_value = 0
+    #gene_ids = [item.id for item in genes.all()]
+    annotations = Annotation.objects.filter(gene_id__in=gene_ids).values_list('source', 'key', 'value', 'note')
+    for item in annotations:
+        label = item[3]
+        if 'E-value' in label:
+            label = label.split('E-value')[0]
+        genedata[item[0]][(item[2], item[1] + ':' + label)] += 1
 
-    for gene in genes:
-        genedata['Product'][(gene.function, gene.function)] += 1
-        for annotation in Annotation.objects.filter(gene_id=gene):
-            label = annotation.note
-            if 'E-value' in label:
-                label = label.split('E-value')[0]
-            genedata[annotation.source][(annotation.value, annotation.key + ':' + label)] += 1
-        if not gene.protein:
-            continue
-        for item in gene.protein.kegg_orthologs.all():
-            genedata['KEGG Orthologs'][(item.kegg_id, item.description)] += 1
-        for item in gene.protein.kegg_pathways.all():
-            genedata['KEGG Pathways'][(item.kegg_id, item.description)] += 1
-        for item in gene.protein.kegg_reactions.all():
-            genedata['KEGG Reactions'][(item.kegg_id, item.description)] += 1
-        for item in gene.protein.ec_numbers.all():
-            genedata['EC'][(item.ec_number, item.description)] += 1
-        for item in gene.protein.tc_families.all():
-            genedata['TC'][(item.tc_id, item.description)] += 1
-        for item in gene.protein.cog_classes.all():
-            genedata['COG classes'][(item.cog_id, item.description)] += 1
-        for item in gene.protein.cazy_families.all():
-            genedata['CAZY'][(item.cazy_id, item.description)] += 1
+    for item in Gene.objects.filter(id__in=gene_ids).values_list('function', flat=True):
+        genedata['Product'][(item, item)] += 1
+        #for annotation in Annotation.objects.filter(gene_id=gene):
+        #    label = annotation.note
+        #    if 'E-value' in label:
+        #        label = label.split('E-value')[0]
+        #    genedata[annotation.source][(annotation.value, annotation.key + ':' + label)] += 1
+    
+    if ortholog_group is not None:
+        for protein in Protein.objects.filter(ortholog_groups=ortholog_group, gene__in=gene_ids).annotate(num_genes=Count('gene')).prefetch_related(
+            'kegg_orthologs',
+            'kegg_pathways',
+            'kegg_reactions',
+            'ec_numbers',
+            'tc_families',
+            'cog_classes',
+            'cazy_families'
+        ):
+            for item in protein.kegg_orthologs.all():
+                genedata['KEGG Orthologs'][(item.kegg_id, item.description)] += protein.num_genes
+            for item in protein.kegg_pathways.all():
+                genedata['KEGG Pathways'][(item.kegg_id, item.description)] += protein.num_genes
+            for item in protein.kegg_reactions.all():
+                genedata['KEGG Reactions'][(item.kegg_id, item.description)] += protein.num_genes
+            for item in protein.ec_numbers.all():
+                genedata['EC'][(item.ec_number, item.description)] += protein.num_genes
+            for item in protein.tc_families.all():
+                genedata['TC'][(item.tc_id, item.description)] += protein.num_genes
+            for item in protein.cog_classes.all():
+                genedata['COG classes'][(item.cog_id, item.description)] += protein.num_genes
+            for item in protein.cazy_families.all():
+                genedata['CAZY'][(item.cazy_id, item.description)] += protein.num_genes
+    else:
+        for gene in Gene.objects.filter(id__in=gene_ids, protein__isnull=False).prefetch_related(
+            'protein__kegg_orthologs',
+            'protein__kegg_pathways',
+            'protein__kegg_reactions',
+            'protein__ec_numbers',
+            'protein__tc_families',
+            'protein__cog_classes',
+            'protein__cazy_families'
+        ):
+            for item in gene.protein.kegg_orthologs.all():
+                genedata['KEGG Orthologs'][(item.kegg_id, item.description)] += 1
+            for item in gene.protein.kegg_pathways.all():
+                genedata['KEGG Pathways'][(item.kegg_id, item.description)] += 1
+            for item in gene.protein.kegg_reactions.all():
+                genedata['KEGG Reactions'][(item.kegg_id, item.description)] += 1
+            for item in gene.protein.ec_numbers.all():
+                genedata['EC'][(item.ec_number, item.description)] += 1
+            for item in gene.protein.tc_families.all():
+                genedata['TC'][(item.tc_id, item.description)] += 1
+            for item in gene.protein.cog_classes.all():
+                genedata['COG classes'][(item.cog_id, item.description)] += 1
+            for item in gene.protein.cazy_families.all():
+                genedata['CAZY'][(item.cazy_id, item.description)] += 1
     data = {'names':[root_node,], 'labels':[root_node,], 'parents':['',], 'values':[0,]}
     root_node = 'Annotations'
     result_table = []
+    logger.debug('Building data structure')
     for category, category_data in genedata.items():
         data['names'].append(category)
         data['labels'].append(category)
@@ -101,6 +150,7 @@ def generate_annotations_treemap(genes):
             data['parents'].append(category)
             data['values'].append(item_value)
             result_table.append((category, item[0], item[1], item_value))
+    logger.debug('Building treemap from dataframe')
     fig = px.treemap(
         data_frame = pd.DataFrame.from_dict(data),
         names = 'names',
@@ -113,6 +163,7 @@ def generate_annotations_treemap(genes):
         uniformtext=dict(minsize=12,),
         autosize=True
     )
+    logger.debug('Writing treemap HTML')
     html = StringIO()
     fig.write_html(html, include_plotlyjs=False, full_html=False)
     html = html.getvalue()
