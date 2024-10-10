@@ -32,8 +32,10 @@
             <div class="grid-style">
               <div class="content">
                 <header class="align-center">
-                  <p class="align-center">Regulon information</p>
+                  <p class="align-center">Regulon information<button popovertarget="reguloninfo-popover" class="info icon fa-info-circle"></button></p>
                 </header>
+				<div popover id="reguloninfo-popover">General information about the regulon.
+				</div>
                 <span>Genome</span>
                 <h5><a href="{% url 'genomedetails' name=regulon.genome.name %}">{{ regulon.genome.name }}</a>
                   {%if regulon.genome.strain %}
@@ -49,14 +51,18 @@
             {% if regulon.regulators %}
               <div class="content">
                 <header class="align-center">
-                  <p class="align-center">Regulators</p>
+                  <p class="align-center">Regulators<button popovertarget="regulators-popover" class="info icon fa-info-circle"></button></p>
                 </header>
+				<div popover id="regulators-popover">The regulator section shows a list of regulatory genes (usually, one gene) linked to the regulon.<br />
+				</div>
                 {% for gene in regulon.regulators.all %}
                   <h5><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}</a>: {{ gene.function }}</h5>
                 {% endfor %}
                 <header class="align-center">
-                  <p class="align-center">Build conserved regulons</p>
+                  <p class="align-center">Build conserved regulons<button popovertarget="consregulon-popover" class="info icon fa-info-circle"></button></p>
                 </header>
+				<div popover id="consregulon-popover">Links in this section start regulon comparative analysis. Regulons controlled by regulatory proteins from one eggNOG family constitute a conserved regulon. To build a conserved regulon, the app identifies all regulons linked to regulators from the selected eggNOG family. Next, a database search selects an eggNOG family for each target gene in all regulons at the lowest taxonomic level, so only closest homologs are shown as a gene family.
+				</div>
                 <h5 class="align-center">
                     {% for og in ortholog_groups.all %}
                       <a href="{% url 'cregulon' %}?og={{ og.id }}">{{ og.eggnog_id }}[{{ og.taxon.name }}]</a><br> 
@@ -66,7 +72,9 @@
             {% endif %}
             </div>
             {% if sites %}
-              <h2 id="sites" class="align-center">Sites</h2>
+              <h2 id="sites" class="align-center">Sites<button popovertarget="sites-popover" class="info icon fa-info-circle"></button></h2>
+			  <div popover id="sites-popover">List of sites contains name, position and sequence of all sites linked to the regulon.
+		      </div>
               <div class="table-wrapper">
                 <table>
                   <thead>
@@ -104,7 +112,9 @@
               </div>
             {% endif %}
             {% if genes %}
-              <h2 id="genes" class="align-center">Genes</h2>
+              <h2 id="genes" class="align-center">Genes<button popovertarget="genes-popover" class="info icon fa-info-circle"></button></h2>
+			  <div popover id="genes-popover">List of genes contains name, position and product of all genes in the regulon.
+		      </div>
               <div class="table-wrapper">
                 <table>
                   <thead>
@@ -133,7 +143,9 @@
               </div>
             {% endif %}
             {% if operons %}
-              <h2 id="operons" class="align-center">Operons</h2>
+              <h2 id="operons" class="align-center">Operons<button popovertarget="operons-popover" class="info icon fa-info-circle"></button></h2>
+			  <div popover id="operons-popover">The list of operons displays a link to operon's page, operon position and list of genes for each operon in the regulon.
+			  </div>
               <div class="table-wrapper">
                 <table>
                   <thead>

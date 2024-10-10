@@ -2063,7 +2063,7 @@
 			.button.special:active {
 				background-color: #793d70;
 			}
-
+			
 /* Form */
 
 	form {
@@ -3200,6 +3200,12 @@
 				color: #000 !important;
 			}
 
+			.wrapper.style3 .info {
+				margin-right: 0 !important;
+				background-color: transparent;
+				color: #fff !important;
+			}
+
 			.wrapper.style3.light input[type="submit"],
 			.wrapper.style3.light input[type="reset"],
 			.wrapper.style3.light input[type="button"],
@@ -3207,6 +3213,12 @@
 			.wrapper.style3.light .button {
 				background-color: #242424;
 				color: #fff !important;
+			}
+			
+			.wrapper.style3.light .info {
+				margin-right: 0 !important;
+				background-color: transparent;
+				color: #000 !important;
 			}
 
 				.wrapper.style3 input[type="submit"]:hover,
@@ -3217,6 +3229,13 @@
 					background-color: white;
 				}
 
+			.wrapper.style3 .info:hover {
+				background-color: transparent;
+			}
+			.wrapper.style3.light .info:hover {
+				background-color: transparent;
+			}
+				
 				.wrapper.style3.light input[type="submit"]:hover,
 				.wrapper.style3.light input[type="reset"]:hover,
 				.wrapper.style3.light input[type="button"]:hover,
@@ -4605,7 +4624,7 @@
 		padding: 0 0 1rem 0;
 	}
 
-/* Content */
+/* GenomeDepot content */
 
 	#scribl-container {
 		position: relative;
@@ -4748,4 +4767,16 @@
 		white-space: nowrap;
 		margin: 3px 3px 3px 3px;
 		text-align: center;
+	}
+
+	:popover-open {
+		width: 250px;
+		height: fit-content;
+		border-width: 1px;
+		border: solid;
+		border-color: #a4a4a4;
+		top: 15px;
+		left: 5px;
+		margin: 0;
+		padding: 2px;
 	}

@@ -50,8 +50,10 @@
         </div>
         <hr>
         <header class="align-center">
-          <p class="align-center">Regulator EggNOG odthologs</p>
+          <p class="align-center">Regulator EggNOG orthologs<button popovertarget="regulators-popover" class="info icon fa-info-circle"></button></p>
         </header>
+	    <div popover id="regulators-popover">The regulator section shows a list of regulatory gene products in the selected eggNOG family and a link to the list of all eggNOG family members.<br />
+		</div>
         <div class="grid-style">
         {% if regulator_og %}
           <div class="content">
@@ -69,8 +71,10 @@
         </div>
         {% if gene_table_rows %}
         <header class="align-center">
-          <h2 id="comparative-header" class="align-center">Comparative table</h2>
+          <h2 id="comparative-header" class="align-center">Comparative table<button popovertarget="comparative-popover" class="info icon fa-info-circle"></button></h2>
         </header>
+	    <div popover id="comparative-popover">The comparative table section displays eggNOG families in rows and regulons in columns. The cells marked orange show number of target genes from an eggNOG family in a regulon.<br />
+		</div>
         <div class="table-wrapper conserved-regulon-wrapper style3">
           <table class="conserved-regulon-table style3">
             <thead>
@@ -94,8 +98,10 @@
         </div>
         {% endif %}
         {% if gene_table %}
-        <h2 id="operons" class="align-center">Comparative table</h2>
-        <div class="table-wrapper">
+        <h2 id="operons" class="align-center">Comparative table<button popovertarget="comparative-genes-popover" class="info icon fa-info-circle"></button></h2>
+	    <div popover id="comparative-genes-popover">The comparative table section displays eggNOG families in rows and regulons in columns. The cells marked orange show number of target genes from an eggNOG family in a regulon.<br />
+		</div>
+		<div class="table-wrapper">
           {{ gene_table |safe }}
         </div>
         {% endif %}
@@ -104,7 +110,9 @@
           <a onclick="ToggleRegulons()">Show links to regulons</a>
         </header>
         <div class="table-wrapper" id="regulons">
-          <h2 id="regulonheader" class="align-center">Regulons <a onclick="HideRegulons()">(hide)</a></h2>
+          <h2 id="regulonheader" class="align-center">Regulons <a onclick="HideRegulons()">(hide)</a><button popovertarget="regulons-popover" class="info icon fa-info-circle"></button></h2>
+	      <div popover id="regulons-popover">The regulons section contains links to regulons and regulatory genes included into the conserved regulon.<br />
+		  </div>
           <table>
             <thead>
               <tr>
@@ -140,7 +148,9 @@
           <a onclick="ToggleSites()">Show list of sites</a>
         </header>
         <div class="table-wrapper" id="sites">
-          <h2 id="siteheader" class="align-center">Sites <a onclick="HideSites()">(hide)</a></h2>
+          <h2 id="siteheader" class="align-center">Sites <a onclick="HideSites()">(hide)</a><button popovertarget="sites-popover" class="info icon fa-info-circle"></button></h2>
+	      <div popover id="sites-popover">The sites section contains list of all sites from all regulons included into the conserved regulon.<br />
+		  </div>
           <table>
             <thead>
               <tr>

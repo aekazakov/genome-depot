@@ -20,6 +20,14 @@
               {% endif %}
             </header>
             {% if sunburst %}
+			  <header class="align-center" id="sunburstheader">
+			    <p class="align-center">Taxonomy profile of genome collection<button popovertarget="taxprofile-popover" class="info icon fa-info-circle"></button></p>
+			  </header>
+			  <div popover id="taxprofile-popover">The sunburst chart visualizes taxonomy data spanning outwards radially from the root node.<br />
+			  The chart shows four levels of taxonomy. A click on a sector outside of the taxon label puts this taxon to the center of the chart and opens additional children taxa, if any.<br />
+			  A click on the central circle makes one step up in taxonomical hierarchy.<br />
+			  A click on a taxon’s label opens a page of the taxon.<br />
+			  Outermost sectors display genomes, and a click on the label of a genome sector opens a page of the genome in a new browser tab.</div>
               <div class="align-center">
                 {{ sunburst | safe}}
               </div>

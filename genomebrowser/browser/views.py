@@ -139,8 +139,8 @@ class AnnotationSearchResultsAjaxView(View):
             request.GET.get('annotation_query') + '"'
         context['searchresult'] = sub_response.content.decode('utf-8')
         context['time'] = time.time()-start_time
-        data = json.dumps(context)
-        return HttpResponse(data,content_type="application/json")
+        #data = json.dumps(context)
+        return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
 
 
 class TaxonListView(generic.ListView):
@@ -921,8 +921,8 @@ class GeneSearchResultsAjaxView(View):
 
         context['searchresult'] = sub_response.content.decode('utf-8')
         context['time'] = time.time()-start_time
-        data = json.dumps(context)
-        return HttpResponse(data,content_type="application/json")
+        #data = json.dumps(context)
+        return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
 
 
 class GenomeSearchResultsView(generic.ListView):
@@ -2034,8 +2034,8 @@ class NsearchResultView(View):
                        "time":time.time()-start_time
                        }
         #logger.debug(context)
-        data = json.dumps(context)
-        return HttpResponse(data,content_type="application/json")
+        #data = json.dumps(context)
+        return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
 
 
 def nucleotidesearchform(request):
@@ -2149,8 +2149,8 @@ class PsearchResultView(View):
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
                        "time":time.time()-start_time
                        }
-        data = json.dumps(context)
-        return HttpResponse(data,content_type="application/json")
+        #data = json.dumps(context)
+        return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
 
 
 def proteinsearchform(request):
@@ -2201,8 +2201,8 @@ def conserved_operon_data(request, operon_id):
         'genes', 'genome__tags'
     )
     context['operonlist'] = loader.render_to_string('browser/operon_list_subview.html', {'operonlist':object_list})
-    data = json.dumps(context)
-    return HttpResponse(data,content_type="application/json")
+    #data = json.dumps(context)
+    return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
 
     
 def pathway_view(request):
@@ -2421,8 +2421,8 @@ class ComparativeView(View):
                        'treemap':treemap,
                        'tsv_profile': functional_profile
                        }
-        data = json.dumps(context)
-        return HttpResponse(data,content_type="application/json")
+        #data = json.dumps(context)
+        return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
 
     
 def handler404(request, exception):

@@ -76,8 +76,10 @@
           {% endif %}
           <div class="inner" id="comparativeplot">
             <header class="align-center">
-              <p class="align-center">Genomic neighborhood of <span id="plot_gene_count"></span> genes most similar to {{ gene.locus_tag }}</p>
+              <p class="align-center">Genomic neighborhood of <span id="plot_gene_count"></span> genes most similar to {{ gene.locus_tag }}<button popovertarget="plot-popover" class="info icon fa-info-circle"></button></p>
             </header>
+			<div popover id="plot-popover">This plot displays a region around a selected gene and several orthologs from a selected eggNOG family. Members of the selected family are always marked red. Other genes are colored by COGs, and genes that have no eggNOG mappings are marked grey.
+			</div>
             <form action="{% url 'comparative' %}" method="get">
               <div class="row uniform">
                 <div class="2u 12u$(xsmall)">
@@ -136,7 +138,7 @@
                   <hr>
                   <div id="treemap" style="margin:auto">
                     <header class="align-center">
-                      <p class="align-center">Gene function annotations in the genomic neighborhood</p>
+                      <p class="align-center">Gene function annotations in the genomic neighborhood<button popovertarget="funcprofile-popover" class="info icon fa-info-circle"></button></p>
                     </header>
                   </div>
                   <hr>
@@ -145,6 +147,8 @@
                   </div>
                 </div>
               </div>
+			  <div popover id="funcprofile-popover">The functional profile is a treemap chart displaying functional annotations of all genes in the comparative genome plot.
+			  </div>
               <label id="run-time">Run time: </label>
             </div>
             <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>

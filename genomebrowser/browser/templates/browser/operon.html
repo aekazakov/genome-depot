@@ -28,8 +28,10 @@
             <div class="grid-style">
               <div class="content">
                 <header class="align-center">
-                  <p class="align-center">Operon information</p>
+                  <p class="align-center">Operon information<button popovertarget="operoninfo-popover" class="info icon fa-info-circle"></button></p>
                 </header>
+				<div popover id="operoninfo-popover">This section contains link to the genome page and operon position in the genome.
+				</div>
                 <span>Genome</span>
                 <h5><a href="{% url 'genomedetails' name=operon.genome.name %}">{{ operon.genome.name }} [{{ operon.genome.taxon.name }}]</a>{% for tag in operon.genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</h5>
                 <span>Position</span>
@@ -41,14 +43,21 @@
               </div>
               <div class="content">
                 <header class="align-center">
-                  <p class="align-center">Conserved operon</p>
+                  <p class="align-center">Conserved operon<button popovertarget="consoperon-popover" class="info icon fa-info-circle"></button></p>
                 </header>
+				<div popover id="consoperon-popover">A link in this section starts operon comparative analysis.<br />
+				To build a conserved operon, at first, the app selects an eggNOG family for each gene in the operon at the lowest taxonomic level, so only closest homologs are selected for the analysis.<br />
+				Next, a database search identifies all operons that include members of the selected eggNOG families.<br />
+				Genes from these operons are collected for function profile generation.
+				</div>
                 <span>Comparative analysis</span>
                 <h5><a href="{% url 'coperon' operon_id=operon.id %}">Build conserved operon for {{ operon.name }}</a></h5>
               </div>
             </div>
             {% if genes %}
-            <h2 id="genes" class="align-center">Genes</h2>
+            <h2 id="genes" class="align-center">Genes<button popovertarget="genes-popover" class="info icon fa-info-circle"></button></h2>
+			<div popover id="genes-popover">List of genes contains name, position and product of all genes in this operon.
+		    </div>
             <div class="table-wrapper">
               <table>
                 <thead>
@@ -77,7 +86,9 @@
             </div>
             {% endif %}
             {% if sites %}
-              <h2 id="sites" class="align-center">Sites</h2>
+              <h2 id="sites" class="align-center">Sites<button popovertarget="sites-popover" class="info icon fa-info-circle"></button></h2>
+			  <div popover id="sites-popover">List of sites contains name, position and sequence of all sites linked to the operon.
+		      </div>
               <div class="table-wrapper">
                 <table>
                   <thead>
@@ -106,8 +117,14 @@
         <section id="three" >
           <div id="viewer" class="wrapper style3">
             <div class="inner">
-              <h2 class="align-center">Genome viewer</h2>
+              <h2 class="align-center">Genome viewer<button popovertarget="viewer-popover" class="info icon fa-info-circle"></button></h2>
             </div>
+			<div popover id="viewer-popover">The genome viewer section shows embedded Jbrowse genome browser with reference sequence track and four feature tracks (CDSs, operons, pseudogenes and RNA genes).<br />
+			A click on a feature opens feature details widget that has a link to the feature page in the Name field.<br />
+			In the genome viewer, you can scroll a contig side to side using your mouse wheel or via click and drag.<br />
+			The zoom buttons and the slider bar in the header of the linear genome view can be used to zoom in and out on the view.<br />
+			You can switch between contigs using dropdown menu. Current operon is highlighted.<br />
+			</div>
           </div>
           <div class="inner">
             <div style="width: 100%; height: 350px; margin: 10 auto;">
