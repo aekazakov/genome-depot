@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from decouple import config, Csv
+from django.utils.translation import gettext_lazy as _
 
 # Normally you should not import ANYTHING from Django directly
 # into your settings, but ImproperlyConfigured is an exception.
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_q',
     'debug_toolbar',
+    'cookiebanner'
 ]
 
 if DEBUG:
@@ -287,4 +289,35 @@ ADMIN_SHORTCUTS_SETTINGS = {
     'show_on_all_pages': True,
     'hide_app_list': False,
     'open_new_window': False,
+}
+
+COOKIEBANNER = {
+    "title": _("Cookie settings"),
+    "header_text": _("This website stores essential cookies on your computer to function properly. By using the site you are agreeing to this."),
+    #"footer_text": _("Please accept our cookies"),
+    #"footer_links": [
+    #    {"title": _("Imprint"), "href": "/imprint"},
+    #    {"title": _("Privacy"), "href": "/privacy"},
+    #],
+    "groups": [
+        {
+            "id": "essential",
+            "name": _("Essential"),
+            "description": _("Essential cookies allow this page to work."),
+            "cookies": [
+                {
+                    "pattern": "cookiebanner",
+                    "description": _("Meta cookie for the cookies that are set."),
+                },
+                {
+                    "pattern": "csrftoken",
+                    "description": _("This cookie prevents Cross-Site-Request-Forgery attacks."),
+                },
+                {
+                    "pattern": "sessionid",
+                    "description": _("This cookie is necessary to allow logging in, for example."),
+                },
+            ],
+        },
+    ],
 }

@@ -31,11 +31,11 @@
                 <header class="align-center">
                     <p class="align-center" id="taxonomy">Taxonomy profile<button popovertarget="taxprofile-popover" class="info icon fa-info-circle"></button></p>
                 </header>
-				<div popover id="taxprofile-popover">The taxonomy profile is a sunburst chart visualizing taxonomy data spanning outwards radially from the root node.<br />
-				Outermost sectors contain gene names, and a click on the label opens a page of the gene in a new browser tab.<br />
-				A click on a sector with taxon name (outside of the label) puts this taxon to the center of the chart.<br />
-				A click on the central circle makes one step up in taxonomical hierarchy.<br />
-				A click on a taxon label opens a page of the taxon.</div>
+                <div popover id="taxprofile-popover">The taxonomy profile is a sunburst chart visualizing taxonomy data spanning outwards radially from the root node.<br />
+                Outermost sectors contain gene names, and a click on the label opens a page of the gene in a new browser tab.<br />
+                A click on a sector with taxon name (outside of the label) puts this taxon to the center of the chart.<br />
+                A click on the central circle makes one step up in taxonomical hierarchy.<br />
+                A click on a taxon label opens a page of the taxon.</div>
                 <div id ="error-box" class="error box"></div>
                 <div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
                 <div class="align-center" id="sunburst"></div>
@@ -44,8 +44,8 @@
                     <p class="align-center" id="functions">Gene function annotations in ortholog group {{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]<button popovertarget="funcprofile-popover" class="info icon fa-info-circle"></button></p>
                     <p class="align-center" id="familysize"></p>
                 </header>
-				<div popover id="funcprofile-popover">The functional profile is a treemap chart displaying functional annotations of all genes in the family.
-				</div>
+                <div popover id="funcprofile-popover">The functional profile is a treemap chart displaying functional annotations of all genes in the family.
+                </div>
                 <div id ="error-box" class="error box"></div>
                 <div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
                 <div class="align-center" id="treemap"></div>

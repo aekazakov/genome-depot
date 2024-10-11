@@ -24,7 +24,7 @@ fi
 #Installing dependencies in the virtual environment
 echo "Installing python dependencies in genomedepot-venv virtual environment"
 source "$TOPDIR/genomedepot-venv/bin/activate"
-pip install "django==3.2.6" django_admin_shortcuts django_cors_headers django_q django_debug_toolbar openpyxl "parasail==1.2.4" biopython "toytree==2.0.1" urllib3 mysqlclient plotly pandas python-decouple django-admin-logviewer --no-cache-dir
+pip install "django==3.2.6" django_admin_shortcuts django_cors_headers django_q django_debug_toolbar openpyxl "parasail==1.2.4" biopython "toytree==2.0.1" urllib3 mysqlclient plotly pandas python-decouple django-admin-logviewer django-cookiebanner --no-cache-dir
 deactivate
 
 source $CONDA
