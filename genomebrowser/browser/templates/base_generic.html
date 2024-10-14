@@ -83,15 +83,8 @@
       <script src="{% static 'assets/js/util.js' %}"></script>
       <script src="{% static 'assets/js/main.js' %}"></script>
       {% endblock %}
-      {% cookiebanner_modal 'cookie_banner' %}
-      
-<button onclick="document.querySelector('#cookiebannerModal').classList.remove('hidden')">change cookie preferences</button>
-
-{% cookie_accepted 'analytics' as cookie_analytics %}
-{% if cookie_analytics %}
-<script>... javascript for matomo ...</script>
-{% endif %}      
       {% block bottom %}
+      {% cookiebanner_modal 'cookie_banner' %}
     </body>
 </html>
 {% endblock %}
