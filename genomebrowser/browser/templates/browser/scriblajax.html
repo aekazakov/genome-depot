@@ -64,7 +64,7 @@
                   </header>
                   <span>Ortholog group</span>
                   <h5><a href="{% url 'ogdetails' og_id=ortholog_group.id %}">{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</a></h5>
-                  <h5><a href="{% url 'searchgene' %}?type=og&query={{ ortholog_group.id }}">Show all <span id="og_gene_count"></span> genes in the group {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></h5>
+                  <h5><a href="{% url 'searchgene' %}?type=og_id&query={{ ortholog_group.id }}">Show all <span id="og_gene_count"></span> genes in the group {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></h5>
                 </div>
               {% endif %}
             </div>

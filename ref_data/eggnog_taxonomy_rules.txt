@@ -984,7 +984,7 @@
 153948	153948	Nitrosomonas sp. AL212
 1541959	1541959	Candidatus Izimaplasma sp. HR1
 1545702	1545702	Lactobacillus sp. wkB8
-1547445	1547445	Francisella sp. FSC1006
+1547445	653937	Francisella sp. FSC1006
 1549858	1549858	Sphingomonas taxi
 155864	155864	Escherichia coli O157:H7 str. EDL933
 156889	156889	Magnetococcus marinus MC-1

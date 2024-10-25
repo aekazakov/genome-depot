@@ -37,7 +37,7 @@ def build_conserved_regulon(og_id):
         og = Ortholog_group.objects.get(id=og_id)
     except Ortholog_group.DoesNotExist:
         logger.error('Ortholog group not found: %s', og_id)
-        raise Http404('Ortholog group not found: ' + og_id)
+        raise Http404('Ortholog group not found: ' + str(og_id))
     
     regulators = Gene.objects.filter(protein__ortholog_groups__id=og.id
                                      ).select_related(
@@ -188,7 +188,7 @@ def build_conserved_regulon(og_id):
 
         if eggnog_id in eggnog_labels:
             table_row = ['<td class="sticky-col style3"><a href="' +
-                         reverse('searchgene') + "?type=og&query=" +
+                         reverse('searchgene') + "?type=og_id&query=" +
                          str(eggnog_id) + '" title="' + eggnog_labels[eggnog_id] +
                          '">' + max_function + '</a>' + '</td>'
                          ]

@@ -65,7 +65,7 @@
           {% endif %}
           </div>
           <div class="content">
-            <h5><a href="{% url 'searchgene' %}?type=og&query={{ regulator_og.id }}">Show all genes in the {{ regulator_og.eggnog_id }}[{{ regulator_og.taxon.name }}] family</a></h5>
+            <h5><a href="{% url 'searchgene' %}?type=og_id&query={{ regulator_og.id }}">Show all genes in the {{ regulator_og.eggnog_id }}[{{ regulator_og.taxon.name }}] family</a></h5>
           </div>
         {% endif %}
         </div>

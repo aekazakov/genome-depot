@@ -26,7 +26,7 @@
                 <header class="align-center">
                     <p class="align-center">Genes</p>
                 </header>
-                <h5 class="align-center"><a href="{% url 'searchgene' %}?type=og&query={{ ortholog_group.id }}">Show all <span id="genecount"></span> genes in the {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}] family</a></h5>
+                <h5 class="align-center"><a href="{% url 'searchgene' %}?type=og_id&query={{ ortholog_group.id }}">Show all <span id="genecount"></span> genes in the {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}] family</a></h5>
         <hr>
                 <header class="align-center">
                     <p class="align-center" id="taxonomy">Taxonomy profile<button popovertarget="taxprofile-popover" class="info icon fa-info-circle"></button></p>

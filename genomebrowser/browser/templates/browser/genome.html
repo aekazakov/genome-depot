@@ -64,8 +64,8 @@
             <br>
             Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a><br>
             <a href="{% static 'genomes/gbff/' %}{{ genome.name }}.genome.gbff.gz">Download genome source file in GBFF format</a><button popovertarget="source-popover" class="info icon fa-info-circle"></button>
-			<div popover id="source-popover">Here you can download a copy of the original genome assembly file. If you want to export genome file with all GenomeDepot annotations, use download link at the bottom of the page.
-			</div>
+            <div popover id="source-popover">Here you can download a copy of the original genome assembly file. If you want to export genome file with all GenomeDepot annotations, use download link at the bottom of the page.
+            </div>
           </div>
         </div>
         <div class="content">
@@ -82,12 +82,12 @@
       <div  id="viewer" class="wrapper style3">
         <div class="inner">
           <h2 class="align-center">Genome viewer<button popovertarget="viewer-popover" class="info icon fa-info-circle"></button></h2>
-		  <div popover id="viewer-popover">The genome viewer section shows embedded Jbrowse genome browser with reference sequence track and four feature tracks (CDSs, operons, pseudogenes and RNA genes).<br />
-		  A click on a feature opens feature details widget that has a link to the feature page in the Name field.<br />
-		  In the genome viewer, you can scroll a contig side to side using your mouse wheel or via click and drag.<br />
-		  The zoom buttons and the slider bar in the header of the linear genome view can be used to zoom in and out on the view.<br />
-		  You can switch between contigs using dropdown menu.<br />
-		  </div>
+          <div popover id="viewer-popover">The genome viewer section shows embedded Jbrowse genome browser with reference sequence track and four feature tracks (CDSs, operons, pseudogenes and RNA genes).<br />
+          A click on a feature opens feature details widget that has a link to the feature page in the Name field.<br />
+          In the genome viewer, you can scroll a contig side to side using your mouse wheel or via click and drag.<br />
+          The zoom buttons and the slider bar in the header of the linear genome view can be used to zoom in and out on the view.<br />
+          You can switch between contigs using dropdown menu.<br />
+          </div>
         </div>
       </div>
       {% if contig %}
@@ -121,9 +121,9 @@
         <header class="align-center">
           <h2 class="align-center">Search genes in this genome<button popovertarget="search-popover" class="info icon fa-info-circle"></button></h2>
         </header>
-		<div popover id="search-popover">In the search section, you can search genes in this genome by name, locus tag, functional annotation or one on functional classifications.<br />
-		Links to the right from search fields open functional classifications for this genomes. These classifications help filtering the list of genes.
-		</div>
+        <div popover id="search-popover">In the search section, you can search genes in this genome by name, locus tag, functional annotation or one on functional classifications.<br />
+        Links to the right from search fields open functional classifications for this genomes. These classifications help filtering the list of genes.
+        </div>
         <form action="{% url 'searchgene' %}" method="get">
           <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
           <label>By gene name, contig or product<input name="query" type="text" placeholder="Enter gene name, locus tag, product or contig name ..."></label>
@@ -230,6 +230,18 @@
             <p>OR <a href="{% url 'gos' %}?genome={{ genome.name }}">Browse all GO terms in this genome</a></p>
           </div>
         </div>
+        <div class="row 200%">
+          <div class="search left 6u">
+            <form action="{% url 'ogs' %}" method="get">
+              <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
+              <label>Search by eggNOG name<input name="query" type="text" placeholder="Enter eggNOG ID or taxon name..."></label>
+            </form>
+          </div>
+          <div class="search right 6u">
+            <p>OR <a href="{% url 'ogs' %}?genome={{ genome.name }}">Browse all eggNOG families in this genome</a></p>
+          </div>
+        </div>
+        <br/>
       </div>
     </section>
     <section id="download" class="wrapper style3">
@@ -237,8 +249,8 @@
         <header class="align-center">
           <h2 class="align-center">Data download<button popovertarget="download-popover" class="info icon fa-info-circle"></button></h2>
         </header>
-		<div popover id="download-popover">Three buttons in the download section generate a GenBank-formatted file with all GenomeDepot annotations, export a table of genes as tab-separated file, or export all protein sequences in FASTA format.
-		</div>
+        <div popover id="download-popover">Three buttons in the download section generate a GenBank-formatted file with all GenomeDepot annotations, export a table of genes as tab-separated file, or export all protein sequences in FASTA format.
+        </div>
         <div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
         <div id ="error-box" class="error box"></div>
         <div class="align-center">

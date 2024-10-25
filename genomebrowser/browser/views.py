@@ -474,7 +474,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     ).prefetch_related(
                         'genome__tags'
                     ).distinct()
-        elif query_type == 'og':
+        elif query_type == 'og_id':
             if genome:
                 object_list = Gene.objects.filter(
                     genome__name=genome, protein__in=Protein.objects.filter(
@@ -1450,6 +1450,56 @@ class CogSearchResultsView(generic.ListView):
         return object_list
 
 
+class OgSearchResultsView(generic.ListView):
+    '''
+        Returns results of search in COG classes.
+    '''
+    model = Ortholog_group
+    context_object_name = 'annotationlist'
+    paginate_by = 50
+
+    def get_context_data(self,**kwargs):
+        context = super(OgSearchResultsView,self).get_context_data(**kwargs)
+        if self.request.GET.get('genome'):
+            context['genome'] = self.request.GET.get('genome')
+            context['searchcontext'] = 'Search results for ' \
+                                       + self.request.GET.get('genome') + ' genome'
+        if self.request.GET.get('query'):
+            if self.request.GET.get('genome'):
+                context['searchcontext'] = 'Search results for "' \
+                                           + self.request.GET.get('query') + '" in ' \
+                                           + self.request.GET.get('genome') + ' genome'
+            else:
+                context['searchcontext'] = 'Search results for "' + \
+                                           self.request.GET.get('query') + '"'
+        return context
+
+    def get_queryset(self): # new
+        query = self.request.GET.get('query')
+        genome = self.request.GET.get('genome')
+        if genome:
+            proteins = Gene.objects.filter(
+                genome__name = genome
+            ).values_list("protein__id", flat=True).distinct()
+            if query:
+                object_list = Ortholog_group.objects.filter(
+                    (Q(eggnog_id__icontains=query) |
+                    Q(taxon__name__icontains=query)) &
+                    Q(protein__in = proteins)
+                ).order_by('eggnog_id').distinct()
+            else:
+                object_list = Ortholog_group.objects.filter(
+                    protein__in = proteins
+                ).order_by('eggnog_id').distinct()
+        elif query:
+            object_list = Ortholog_group.objects.filter(
+                Q(eggnog_id__icontains=query) |
+                Q(taxon__name__icontains=query)
+            ).order_by('eggnog_id').distinct()
+        else:
+            object_list = Ortholog_group.objects.none()
+        return object_list
+        
 def textsearch(request):
     '''
         Displays web-page with text search forms
@@ -2165,6 +2215,11 @@ def cregulon_view(request):
     '''
     og_id = request.GET.get('og')
     #locus_tag = request.GET.get('locus_tag')
+    if og_id is None or og_id == '':
+        return render(request,
+                      '404.html',
+                      {'searchcontext': 'Ortholog group ' + str(og_id) + ' does not exist'}
+                      )
     context = build_conserved_regulon(og_id)
     return render(request, 'browser/cregulon.html', context)
 
@@ -2445,7 +2500,7 @@ def generate_gene_search_context(query, query_type, genome=None):
                 searchcontext = 'Query string is empty'
             else:
                 searchcontext = 'Search results for "' + query + '"'
-        elif query_type=='og':
+        elif query_type=='og_id':
             eggnog_og = Ortholog_group.objects.get(id=query)
             searchcontext = 'Genes from Ortholog Group ' + eggnog_og.eggnog_id + \
                             '[' + eggnog_og.taxon.name + ']'
@@ -2515,6 +2570,11 @@ def generate_gene_search_context(query, query_type, genome=None):
                             ' in genome ' +  genome
         elif query_type=='go_id':
             searchcontext = 'Genes assigned to GO term ' + query + \
+                            ' in genome ' +  genome
+        elif query_type=='og_id':
+            eggnog_og = Ortholog_group.objects.get(id=query)
+            searchcontext = 'Genes from Ortholog Group ' + eggnog_og.eggnog_id + \
+                            '[' + eggnog_og.taxon.name + ']'+ \
                             ' in genome ' +  genome
         else:
             searchcontext = 'This query type is not supported'

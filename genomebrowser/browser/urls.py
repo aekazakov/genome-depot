@@ -65,6 +65,7 @@ urlpatterns = [
     path('searchtaxon/', views.TaxonSearchResultsView.as_view(), name='searchtaxon'),
     path('searchsample/', views.SampleSearchResultsView.as_view(), name='searchsample'),
     path('seqsearch/', views.protein_search_external, name='proteinsearchexternal'),
+    path('ogs/', views.OgSearchResultsView.as_view(), name='ogs'),
     path('gos/', views.GoSearchResultsView.as_view(), name='gos'),
     path('kos/', views.KoSearchResultsView.as_view(), name='kos'),
     path('pathways/', views.KpSearchResultsView.as_view(), name='kps'),

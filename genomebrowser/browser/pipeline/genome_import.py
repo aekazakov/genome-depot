@@ -271,7 +271,7 @@ class Importer(object):
                                     # Fix for fake taxonomy ID of SEED genomes
                                     taxonomy_id = '0'
                                 if taxonomy_id not in self.taxonomy:
-                                    logger.error(taxonomy_id + ' taxonomy ID not found in the taxonomy reference file. Run "Update taxonomy" command, then start genome import again.')
+                                    logger.error(taxonomy_id + ' taxonomy ID not found in the taxonomy reference file. Run "update_taxonomy" command from the command line interface, then start genome import again.')
                                     raise KeyError(gbk_file + ' parsing error. ' +
                                                    taxonomy_id + ' not found in ' + 
                                                    'taxonomy reference file. Update the reference ' +

@@ -82,7 +82,7 @@
                   </header>
                   <span>Ortholog group</span>
                   <h5><a href="{% url 'ogdetails' og_id=ortholog_group.id %}">{{ ortholog_group.eggnog_id }} [{{ ortholog_group.taxon.name }}]</a></h5>
-                  <h5><a href="{% url 'searchgene' %}?type=og&query={{ ortholog_group.id }}">Show all {{ og_gene_count }} genes in the group {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></h5>
+                  <h5><a href="{% url 'searchgene' %}?type=og_id&query={{ ortholog_group.id }}">Show all {{ og_gene_count }} genes in the group {{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></h5>
                 </div>
               {% endif %}
             </div>
@@ -92,8 +92,8 @@
               <header class="align-center">
                 <p class="align-center">Genomic neighborhood of {{ plot_gene_count|add:-1 }} genes most similar to {{ gene.locus_tag }}<button popovertarget="plot-popover" class="info icon fa-info-circle"></button></p>
               </header>
-			  <div popover id="plot-popover">This plot displays a region around a selected gene and several orthologs from a selected eggNOG family. Members of the selected family are always marked red. Other genes are colored by COGs, and genes that have no eggNOG mappings are marked grey.
-			  </div>
+              <div popover id="plot-popover">This plot displays a region around a selected gene and several orthologs from a selected eggNOG family. Members of the selected family are always marked red. Other genes are colored by COGs, and genes that have no eggNOG mappings are marked grey.
+              </div>
               <div id="comparative" class="align-center">
                 {{ tree_canvas|safe }}
                 <div id="scribl-container" class="content">

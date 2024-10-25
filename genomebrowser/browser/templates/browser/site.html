@@ -49,6 +49,9 @@
                 {% else %}
                   <h5>{{ site.contig.contig_id }}: {{ site.start }}..{{ site.end }}</h5>
                 {% endif %}
+                {% if site.regulon %}
+                  Regulon: <a href="{% url 'regulondetails' genome=site.regulon.genome.name name=site.regulon.name %}">{{ site.regulon.name }}</a>
+                {% endif %}
               </div>
               <div class="content">
                 <header class="align-center">
@@ -59,8 +62,8 @@
             </div>
             {% if site.genes.all %}
               <h2 id="genes" class="align-center">Genes<button popovertarget="genes-popover" class="info icon fa-info-circle"></button></h2>
-			  <div popover id="genes-popover">List of genes contains name, position and product of all genes linked to the site.
-		      </div>
+              <div popover id="genes-popover">List of genes contains name, position and product of all genes linked to the site.
+              </div>
               <div class="table-wrapper">
                 <table>
                   <thead>
@@ -90,8 +93,8 @@
             {% endif %}
             {% if site.operons.all %}
               <h2 id="operons" class="align-center">Operons<button popovertarget="operons-popover" class="info icon fa-info-circle"></button></h2>
-			  <div popover id="operons-popover">The list of operons displays a link to operon's page, operon position and list of genes for each operon linked to the site.
-			  </div>
+              <div popover id="operons-popover">The list of operons displays a link to operon's page, operon position and list of genes for each operon linked to the site.
+              </div>
               <div class="table-wrapper">
                 <table>
                   <thead>
@@ -128,12 +131,12 @@
             <div class="inner">
               <h2 class="align-center">Genome viewer<button popovertarget="viewer-popover" class="info icon fa-info-circle"></button></h2>
             </div>
-			<div popover id="viewer-popover">The genome viewer section shows embedded Jbrowse genome browser with reference sequence track and four feature tracks (CDSs, operons, pseudogenes and RNA genes).<br />
-			A click on a feature opens feature details widget that has a link to the feature page in the Name field.<br />
-			In the genome viewer, you can scroll a contig side to side using your mouse wheel or via click and drag.<br />
-			The zoom buttons and the slider bar in the header of the linear genome view can be used to zoom in and out on the view.<br />
-			You can switch between contigs using dropdown menu. The position of the site is highlighted, even if there is no track for sites.<br />
-			</div>
+            <div popover id="viewer-popover">The genome viewer section shows embedded Jbrowse genome browser with reference sequence track and four feature tracks (CDSs, operons, pseudogenes and RNA genes).<br />
+            A click on a feature opens feature details widget that has a link to the feature page in the Name field.<br />
+            In the genome viewer, you can scroll a contig side to side using your mouse wheel or via click and drag.<br />
+            The zoom buttons and the slider bar in the header of the linear genome view can be used to zoom in and out on the view.<br />
+            You can switch between contigs using dropdown menu. The position of the site is highlighted, even if there is no track for sites.<br />
+            </div>
           </div>
           <div class="inner">
             <div style="width: 100%; height: 350px; margin: 10 auto;">

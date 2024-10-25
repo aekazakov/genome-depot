@@ -45,8 +45,8 @@
             <header class="align-center">
               <p class="align-center">Gene information<button popovertarget="geneinfo-popover" class="info icon fa-info-circle"></button></p>
             </header>
-		    <div popover id="geneinfo-popover">This section contains general information about the gene, mostly imported from the source genome file.
-			</div>
+            <div popover id="geneinfo-popover">This section contains general information about the gene, mostly imported from the source genome file.
+            </div>
             {%if gene.name %}
               <span>Gene name</span>
               <h5>{{ gene.name }}</h5>
@@ -75,10 +75,10 @@
               <header class="align-center">
                 <p class="align-center">EggNOG families<button popovertarget="eggnog-popover" class="info icon fa-info-circle"></button></p>
               </header>
-			  <div popover id="eggnog-popover">This section displays results of mapping of the gene to eggNOG families at different taxonomic levels.<br />
-			  Links on the left open pages of eggNOG families.<br />
-			  Links on the right start conserved genome neighborhood analyzes.
-			  </div>
+              <div popover id="eggnog-popover">This section displays results of mapping of the gene to eggNOG families at different taxonomic levels.<br />
+              Links on the left open pages of eggNOG families.<br />
+              Links on the right start conserved genome neighborhood analyzes.
+              </div>
               {% if protein.eggnog_description %}
                 <span>Description</span>
                 <h5>{{ protein.eggnog_description.description }}</h5>
