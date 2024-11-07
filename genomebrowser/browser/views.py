@@ -1520,8 +1520,28 @@ def show_help(request):
     '''
         Displays help page
     '''
-    template = loader.get_template('browser/help.html')
+    template = loader.get_template('browser/about.html')
     context = {'site_title':TITLE}
+    context['genome_count'] = Genome.objects.count()
+    context['strain_count'] = Strain.objects.count()
+    context['sample_count'] = Sample.objects.count()
+    context['gene_count'] = Gene.objects.count()
+    context['operon_count'] = Operon.objects.count()
+    context['site_count'] = Site.objects.count()
+    context['regulon_count'] = Regulon.objects.count()
+    context['protein_count'] = Protein.objects.count()
+    context['contig_count'] = Contig.objects.count()
+    context['anno_count'] = Annotation.objects.count()
+    context['taxon_count'] = Taxon.objects.count()
+    context['og_count'] = Ortholog_group.objects.count()
+    context['cog_count'] = Cog_class.objects.count()
+    context['ko_count'] = Kegg_ortholog.objects.count()
+    context['kr_count'] = Kegg_reaction.objects.count()
+    context['kp_count'] = Kegg_pathway.objects.count()
+    context['go_count'] = Go_term.objects.count()
+    context['ec_count'] = Ec_number.objects.count()
+    context['tc_count'] = Tc_family.objects.count()
+    context['cazy_count'] = Cazy_family.objects.count()
     return HttpResponse(template.render(context, request))
 
 
