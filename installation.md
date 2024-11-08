@@ -1,4 +1,4 @@
-[Back to start page](README.md)
+[<< Previous: About GenomeDepot](introduction) | [Back to start page](README.md) | [Next: User guide >>](user)
 
 # Installation
 
@@ -242,4 +242,4 @@ After that, restart MySQL.
 * **HMMER** [PLoS Comput Biol, 2011, 7: e1002195](https://doi.org/10.1371/journal.pcbi.1002195)
 
 
-[Back to start page](README.md)
+[<< Previous: About GenomeDepot](introduction) | [Back to start page](README.md) | [Next: User guide >>](user)

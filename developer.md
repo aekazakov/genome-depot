@@ -1,4 +1,4 @@
-[Back to start page](README.md)
+[<< Previous: Administrator guide](admin) | [Back to start page >>](README.md)
 
 # Developer guide
 
@@ -151,4 +151,4 @@ The application function of a plug-in module must return an absolute path for a 
 
 GenomeDepot annotation pipeline imports gene annotations into the database and links them to genes with locus tag and genome name from the first and second columns. Lines starting with # are ignored.
 
-[Back to start page](README.md)
+[<< Previous: Administrator guide](admin) | [Back to start page >>](README.md)

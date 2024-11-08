@@ -1,4 +1,4 @@
-[Back to start page](README.md)
+[<< Previous: Installation >>](installation)| [Back to start page](README.md) | [Next: Administrator guide >>](admin)
 
 # User guide
 
@@ -22,7 +22,7 @@ The start page has eight links:
 * Text search 
 * Nucleotide sequence search
 * Protein sequence search
-* Help page
+* About page and site statistics
 * Documentation site
 
 ![Start page](assets/images/startpage.png "Start page")
@@ -111,7 +111,7 @@ An operon page has three or four sections: operon information section, list of g
 
 ## Conserved operon
 
-A conserved operon app displays the result of operon comparative analysis. To build a conserved operon, at first, the app selects an eggNOG family for each gene in the operon at the lowest taxonomic level, so only closest homologs are selected for the analysis. Next, a database search identifies all operons that include members of the selected eggNOG families. Genes from these operons are collected for functional profiling. The resulting conserved operon page has three parts: taxonomic profile, functional profile and a list of operons. The taxonomic profile is a sunburst chart similar to the chart on the <genomes list pages> with operons or genes in outermost sectors. The functional profile is a treemap chart displaying functional annotations of all genes in the conserved operon. The operon list contains links to all operons and all genomes in the conserved operon with the location and the number of genes for each operon.
+A conserved operon app displays the result of operon comparative analysis. To build a conserved operon, at first, the app selects an eggNOG family for each gene in the operon at the lowest taxonomic level, so only closest homologs are selected for the analysis. Next, a database search identifies all operons that include members of the selected eggNOG families. Genes from these operons are collected for functional profiling. The resulting conserved operon page has three parts: taxonomic profile, functional profile and a list of operons. The taxonomic profile is a sunburst chart similar to the chart on the genomes list page with operons or genes in outermost sectors. The functional profile is a treemap chart displaying functional annotations of all genes in the conserved operon. The operon list contains links to all operons and all genomes in the conserved operon with the location and the number of genes for each operon.
 
 ![Operon functional profile](assets/images/funcprofile.png "Operon functional profile")
 
@@ -131,4 +131,4 @@ A conserved regulon app displays the result of comparative regulon analysis. Reg
 
 A site page has three sections. The site information section contains site coordinates, site sequence and a link to the genome page. The target operons section displays a link to the operon page, operon position and a list of genes for each target operon. The genome viewer section displays the genome with the site highlighted.
 
-[Back to start page](README.md)
+[<< Previous: Installation >>](installation)| [Back to start page](README.md) | [Next: Administrator guide >>](admin)
