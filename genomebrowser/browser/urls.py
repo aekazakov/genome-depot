@@ -88,5 +88,6 @@ urlpatterns = [
     path('protsearch/',views.PsearchResultView.as_view(),name="proteinsearch"),
     path('loadingnuclsearch/',views.NsearchResultView.ajax_view,name="loadingnuclsearch"),
     path('loadingprotsearch/',views.PsearchResultView.ajax_view,name="loadingprotsearch"),
+    path('getstats/',views.getstats,name="getstats"),
 ]
 handler404 = views.handler404

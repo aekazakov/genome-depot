@@ -20,26 +20,10 @@
               </div>
               <div class="6u$ 12u$(medium)">
                 <h3>Database statistics</h3>
-                <h5>Genomes: {%if genome_count %}{{ genome_count }}{% else %}N/A{% endif %}<br/>
-                Strains: {%if strain_count %}{{ strain_count }}{% else %}N/A{% endif %}<br/>
-                Samples: {%if sample_count %}{{ sample_count }}{% else %}N/A{% endif %}<br/>
-                Genes: {%if gene_count %}{{ gene_count }}{% else %}N/A{% endif %}<br/>
-                Operons: {%if operon_count %}{{ operon_count }}{% else %}N/A{% endif %}<br/>
-                Sites: {%if site_count %}{{ site_count }}{% else %}N/A{% endif %}<br/>
-                Regulons: {%if regulon_count %}{{ regulon_count }}{% else %}N/A{% endif %}<br/>
-                Proteins: {%if protein_count %}{{ protein_count }}{% else %}N/A{% endif %}<br/>
-                Annotations: {%if anno_count %}{{ anno_count }}{% else %}N/A{% endif %}<br/>
-                Taxon entries: {%if taxon_count %}{{ taxon_count }}{% else %}N/A{% endif %}<br/>
-                Contigs: {%if contig_count %}{{ contig_count }}{% else %}N/A{% endif %}<br/>
-                Ortholog families: {%if og_count %}{{ og_count }}{% else %}N/A{% endif %}<br/>
-                COG classes: {%if cog_count %}{{ cog_count }}{% else %}N/A{% endif %}<br/>
-                KEGG orthologs: {%if ko_count %}{{ ko_count }}{% else %}N/A{% endif %}<br/>
-                KEGG reactions: {%if kr_count %}{{ kr_count }}{% else %}N/A{% endif %}<br/>
-                KEGG pathways: {%if kp_count %}{{ kp_count }}{% else %}N/A{% endif %}<br/>
-                GO terms: {%if go_count %}{{ go_count }}{% else %}N/A{% endif %}<br/>
-                EC numbers: {%if ec_count %}{{ ec_count }}{% else %}N/A{% endif %}<br/>
-                Transporter families: {%if tc_count %}{{ tc_count }}{% else %}N/A{% endif %}<br/>
-                CAZy families: {%if cazy_count %}{{ cazy_count }}{% else %}N/A{% endif %}</h5>
+                <div class="align-center" id="waitbox">Retrieving statistics...<br><img src="{% static 'images/spinner.gif' %}"></div>
+                <div id="stats">
+                </div>
+                <div id ="error-box" class="error box"></div>
               </div>
             </div>
             <hr/>
@@ -78,4 +62,31 @@
             </div>
           </div>
         </section>
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            url: "{% url 'getstats' %}",
+            method: 'GET',
+            datatype: 'json',
+            data: {},
+            xhrFields: {
+            responseType: 'text'
+            },
+            beforeSend: function() {
+            $("#waitbox").show();
+            $("#export-profile").hide();
+            },
+            success: function (data) {
+            $("#waitbox").hide();
+            $("#stats").append(data["stats"])
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown){
+            $("#waitbox").hide();
+            $("#error-box").append(textStatus + ": " + errorThrown);
+            }
+        });
+    });
+</script>
+        
 {% endblock %}

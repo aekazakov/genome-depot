@@ -1516,32 +1516,47 @@ def startpage(request):
     context = {'site_title':TITLE}
     return HttpResponse(template.render(context, request))
 
+
+def getstats(request):
+    '''
+        Takes AJAX request, formats database statistics as HTML
+        and sends it back wrapped in JSON
+    '''
+    query = request.GET.get('annotation_query')
+    start_time = time.time()
+    context = {}
+    db_stats = []
+    db_stats.append('Genomes: ' + str(Genome.objects.count()))
+    db_stats.append('Strains: ' + str(Strain.objects.count()))
+    db_stats.append('Samples: ' + str(Sample.objects.count()))
+    db_stats.append('Genes: ' + str(Gene.objects.count()))
+    db_stats.append('Operons: ' + str(Operon.objects.count()))
+    db_stats.append('Sites: ' + str(Site.objects.count()))
+    db_stats.append('Regulons: ' + str(Regulon.objects.count()))
+    db_stats.append('Proteins: ' + str(Protein.objects.count()))
+    db_stats.append('Contigs: ' + str(Contig.objects.count()))
+    db_stats.append('Annotations: ' + str(Annotation.objects.count()))
+    db_stats.append('Taxons: ' + str(Taxon.objects.count()))
+    db_stats.append('Cog classes: ' + str(Cog_class.objects.count()))
+    db_stats.append('KEGG orthologs: ' + str(Kegg_ortholog.objects.count()))
+    db_stats.append('KEGG reactions: ' + str(Kegg_reaction.objects.count()))
+    db_stats.append('KEGG pathways: ' + str(Kegg_pathway.objects.count()))
+    db_stats.append('GO terms: ' + str(Go_term.objects.count()))
+    db_stats.append('EC numbers: ' + str(Ec_number.objects.count()))
+    db_stats.append('Transporter families: ' + str(Tc_family.objects.count()))
+    db_stats.append('CAZy families: ' + str(Cazy_family.objects.count()))
+    ret = '<h5>' + '<br/>'.join(db_stats) + '</h5>'
+    context['stats'] = ret
+    context['time'] = time.time()-start_time
+    return JsonResponse(context)
+    
+
 def show_help(request):
     '''
         Displays help page
     '''
     template = loader.get_template('browser/about.html')
     context = {'site_title':TITLE}
-    context['genome_count'] = Genome.objects.count()
-    context['strain_count'] = Strain.objects.count()
-    context['sample_count'] = Sample.objects.count()
-    context['gene_count'] = Gene.objects.count()
-    context['operon_count'] = Operon.objects.count()
-    context['site_count'] = Site.objects.count()
-    context['regulon_count'] = Regulon.objects.count()
-    context['protein_count'] = Protein.objects.count()
-    context['contig_count'] = Contig.objects.count()
-    context['anno_count'] = Annotation.objects.count()
-    context['taxon_count'] = Taxon.objects.count()
-    context['og_count'] = Ortholog_group.objects.count()
-    context['cog_count'] = Cog_class.objects.count()
-    context['ko_count'] = Kegg_ortholog.objects.count()
-    context['kr_count'] = Kegg_reaction.objects.count()
-    context['kp_count'] = Kegg_pathway.objects.count()
-    context['go_count'] = Go_term.objects.count()
-    context['ec_count'] = Ec_number.objects.count()
-    context['tc_count'] = Tc_family.objects.count()
-    context['cazy_count'] = Cazy_family.objects.count()
     return HttpResponse(template.render(context, request))
 
 
