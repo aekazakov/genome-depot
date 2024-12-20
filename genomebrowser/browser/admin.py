@@ -44,6 +44,8 @@ from browser.models import Tag
 from browser.forms import TsvImportForm
 from browser.forms import ExcelImportForm
 from browser.forms import GenomeImportForm
+from browser.forms import GenomeUploadForm
+from browser.forms import GenomeDownloadForm
 from browser.forms import TagModelForm
 from browser.forms import AddTagForm
 from browser.forms import ChooseAnnotationToolForm
@@ -220,46 +222,88 @@ class GenomeAdmin(admin.ModelAdmin):
         return my_urls + urls
 
     def import_genomes(self, request):
+        import_form = None
+        upload_form = None
+        download_form = None
         if request.method == 'POST':
             logger.debug(request.FILES)
-            tsv_file = request.FILES["tsv_file"]
-            zip_file = None
-            zip_content = {}
-            temp_dir = Config.objects.get(param='core.temp_dir').value
-            upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
-            if 'zip_file' in request.FILES:
-                logger.debug(upload_dir)
-                Path(upload_dir).mkdir(parents=True, exist_ok=True)
-                os.chmod(upload_dir, 0o777)
-                zip_file = request.FILES["zip_file"]
-                zip_content = handle_zip_upload(zip_file, upload_dir)
             lines = []
-            for line in tsv_file:
-                line = line.decode()
-                line = line.rstrip('\n\r')
-                lines.append(line)
-                row = line.split('\t')
-                if row[0].startswith('#'):
-                    pass
-                elif row[0] in zip_content:
-                    row[0] = zip_content[row[0]]
-                elif row[0] == '' and row[-1].startswith('NCBI:'):
-                    pass
-                    # Assembly will be downloaded from NCBI later
-                elif not os.path.exists(row[0]):
-                    logger.warning('%s not found', row[0])
-                lines.append('\t'.join(row))
+            if request.POST['choice_field'] == 'import':
+                import_form = GenomeImportForm(prefix='import', data=request.POST)
+                if import_form.is_valid():                
+                    tsv_file = request.FILES["tsv_file"]
+                    zip_file = None
+                    zip_content = {}
+                    for line in tsv_file:
+                        line = line.decode()
+                        line = line.rstrip('\n\r')
+                        lines.append(line)
+                        row = line.split('\t')
+                        if row[0].startswith('#'):
+                            pass
+                        elif not os.path.exists(row[0]):
+                            logger.warning('%s not found in the filesystem', row[0])
+                        lines.append('\t'.join(row))
+            elif request.POST['choice_field'] == 'upload':
+                upload_form = GenomeUploadForm(prefix='upload', data=request.POST)
+                if upload_form.is_valid() and 'zip_file' in request.FILES:
+                    tsv_file = request.FILES["tsv_file"]
+                    zip_file = request.FILES["zip_file"]
+                    temp_dir = Config.objects.get(param='core.temp_dir').value
+                    upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
+                    logger.debug(upload_dir)
+                    Path(upload_dir).mkdir(parents=True, exist_ok=True)
+                    os.chmod(upload_dir, 0o777)
+                    zip_content = handle_zip_upload(zip_file, upload_dir)
+                    for line in tsv_file:
+                        line = line.decode()
+                        line = line.rstrip('\n\r')
+                        row = line.split('\t')
+                        if row[0].startswith('#'):
+                            pass
+                        elif row[0] in zip_content:
+                            row[0] = zip_content[row[0]]
+                        elif row[0] == '':
+                            logger.warning('File name is empty in the line: ' + line)
+                        else:
+                            logger.warning('%s not found in the zip archive', row[0])
+                        lines.append('\t'.join(row))
+            elif request.POST['choice_field'] == 'download':
+                download_form = GenomeDownloadForm(prefix='download', data=request.POST)
+                if download_form.is_valid():
+                    tsv_file = request.FILES["tsv_file"]
+                    for line in tsv_file:
+                        line = line.decode()
+                        line = line.rstrip('\n\r')
+                        lines.append(line)
+                        row = line.split('\t')
+                        if row[0].startswith('#'):
+                            pass
+                        elif row[0] == '' and row[-1].startswith('NCBI:'):
+                            pass
+                            # Assembly will be downloaded from NCBI later
+                        elif not os.path.exists(row[0]):
+                            logger.warning('%s not found', row[0])
+            else:
+                logger.error('Unknown genome import choice:' + str(request.POST['choice_field']))
+                
             task_name = async_import_genomes(lines,
                                              request.POST['download_email']
                                              )
-            # Do some staff
+            # Notify the user
             self.message_user(request,
                               "Your file was submitted for the processing with ID " +
                               task_name
                               )
             return redirect("..")
-        form = GenomeImportForm()
-        payload = {'form': form}
+        import_form = GenomeImportForm()
+        upload_form = GenomeUploadForm()
+        download_form = GenomeDownloadForm()
+        payload = {
+            'import_form': import_form,
+            'upload_form': upload_form,
+            'download_form': download_form
+        }
         active_tasks = OrmQ.objects.all().count()
         payload['active_tasks'] = str(active_tasks)
         return render(

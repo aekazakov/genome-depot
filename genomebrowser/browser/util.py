@@ -314,7 +314,7 @@ def download_ncbi_assembly(assembly_id, email, upload_dir):
     """Download genbank assemblies for a given search term.
     Args:
         assembly_id: search term, usually assembly RefSeq of GenBank accession
-        email: email address, requierd for NCBI requests
+        email: email address, required for NCBI requests
         upload_dir: folder to save to
     """
     if not os.path.exists(upload_dir):

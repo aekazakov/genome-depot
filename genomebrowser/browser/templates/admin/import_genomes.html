@@ -1,32 +1,65 @@
 {% extends 'admin/base.html' %}
 {% block content %}
     <div>
-    <h2>Import genomes into GenomeDepot from GenBank files</h2>
-    <p>
-    All genome files must be accessible by Django Q cluster. Currently, there is no support for file download from external sources.<br />
-    </p>
-    <p>
-    To start genome import, provide a list of genomes and click "Start import" button.<br />
-    </p>
-    <p>
-    The list must be in tab-separated text format with six columns:<br />
-    </p>
-    <ol>
-    <li>Path to GenBank file (can be gzipped). This file must be accessible from Django Q cluster.</li>
-    <li>Genome ID for GenomeDepot. Must be unique </li>
-    <li>Strain ID for GenomeDepot. Can be blank if sample ID is not blank.</li>
-    <li>Sample ID for GenomeDepot. Can be blank if strain ID is not blank.</li>
-    <li>URL for external reference of the genome sequence (can be blank).</li>
-    <li>External identifier to be used as a text label for external reference. A format "datasource:accession" is strongly encouraged (for example NCBI:GCF_000019425.1). Can be blank, if no URL is provided.</li>
-    </ol>
-    <p>There are {{active_tasks}} task(s) in the queue right now.</p>
+    <h1>Import genomes into GenomeDepot</h1>
     {% if active_tasks == "0" %}
+    <p>There are no active tasks in the queue right now. You can start a new job.</p>
+    <h2>Choose one of the three options for genome import:</h2>
     <form action="" method="POST" enctype="multipart/form-data">
-        {{ form.as_p }}
+        <input type="radio" name="choice_field" value="upload" />
+        <strong>OPTION 1.</strong> Upload zip archive with files in GenBank format.
+        <ul>
+        <p>
+        Make a tab-separated text file with six columns:<br />
+        </p>
+        <ol>
+        <li>Name of a genome file in zip archive.</li>
+        <li>Genome ID for GenomeDepot. Must be unique. </li>
+        <li>Strain ID for GenomeDepot. Can be blank if sample ID is provided.</li>
+        <li>Sample ID for GenomeDepot. Can be blank if strain ID is provided.</li>
+        <li>URL for external reference of the genome sequence (can be blank).</li>
+        <li>External identifier to be used as a text label for external reference. A format "datasource:accession" is strongly encouraged (for example NCBI:GCF_000019425.1). Can be blank, if no URL is provided.</li>
+        </ol>
+        {{ upload_form.as_ul }}
+        </ul>
+        <input type="radio" name="choice_field" value="import" />
+        <strong>OPTION 2.</strong> Genome files are in the filesystem already. Import genomes listed in a text file into the GenomeDepot database.
+        <ul>
+        <p>
+        Make a tab-separated text file with six columns:<br />
+        </p>
+        <ol>
+        <li>Path to a file in GenBank format (may be gzipped). This file must be accessible by the GenomeDepot worker.</li>
+        <li>Genome ID for GenomeDepot. Must be unique. </li>
+        <li>Strain ID for GenomeDepot. Can be blank if sample ID is provided.</li>
+        <li>Sample ID for GenomeDepot. Can be blank if strain ID is provided.</li>
+        <li>URL for external reference of the genome sequence (can be blank).</li>
+        <li>External identifier to be used as a text label for external reference. A format "datasource:accession" is strongly encouraged (for example NCBI:GCF_000019425.1). Can be blank, if no URL is provided.</li>
+        </ol>
+        {{ import_form.as_ul }}
+        </ul>
+        <input type="radio" name="choice_field" value="download" />
+        <strong>OPTION 3.</strong> Provide NCBI assembly identifiers and email for download. GenomeDepot will download genome assemblies from NCBI FTP server. 
+        <ul>
+        <p>
+        Make a tab-separated text file with six columns:<br />
+        </p>
+        <ol>
+        <li>First column must be empty.</li>
+        <li>Genome ID for GenomeDepot. Must be unique. </li>
+        <li>Strain ID for GenomeDepot. Can be blank if sample ID is provided.</li>
+        <li>Sample ID for GenomeDepot. Can be blank if strain ID is provided.</li>
+        <li>URL for external reference of the genome sequence (can be blank).</li>
+        <li>External identifier in the form "NCBI:accession" (for example NCBI:GCF_000019425.1). Must contain a valid NCBI assembly identifier.</li>
+        </ol>
+        {{ download_form.as_ul }}
+        </ul>
         {% csrf_token %}
+        <p>To start genome import, click "Start import" button.<br /></p>
         <button type="submit">Start import</button>
     </form>
     {% else %}
+        <p><strong>There are {{active_tasks}} active task(s) in the queue right now.</strong></p>
         <span style="color:red">You cannot start new tasks until there are active tasks in the queue. Please wait until all current tasks are finished or delete the tasks and restart Django Q cluster.</span>
     {% endif %}
     </div>

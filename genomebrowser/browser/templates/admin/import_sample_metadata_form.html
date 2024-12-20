@@ -1,7 +1,7 @@
 {% extends 'admin/base.html' %}
 {% block content %}
     <div>
-    <h2>Add sample metadata.</h2>
+    <h2>Add sample metadata from a text file.</h2>
     <p>
     Upload sample metadata from a tab-separated text file. The file must have five columns:<br/>
     </p>
@@ -12,14 +12,15 @@
     <li>Metadata key.</li>
     <li>Metadata value.</li>
     </ol>
-    <p>There are {{active_tasks}} task(s) in the queue right now.</p>
     {% if active_tasks == "0" %}
+    <p>There are no active tasks in the queue right now. You can start a new job.</p>
     <form action="" method="POST" enctype="multipart/form-data">
         {{ form.as_p }}
         {% csrf_token %}
         <button type="submit">Upload sample metadata (tab-separated) file</button>
     </form>
     {% else %}
+        <p><strong>There are {{active_tasks}} active task(s) in the queue right now.</strong></p>
         <span style="color:red">You cannot start new tasks until there are active tasks in the queue. Please wait until the currently running task is finished or delete the tasks and restart Django Q cluster.</span>
     {% endif %}
     </div>

@@ -64,13 +64,18 @@ def import_genomes_impl(args):
     result = ''
     try:
         upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
-        for line in lines:
+        for i, line in enumerate(lines):
             row = line.split('\t')
             if row[0] == '' and row[-1].startswith('NCBI:'):
-                row[0] = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'),
+                assembly_path = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'),
                                                 email,
                                                 upload_dir
                                                 )
+                if assembly_path == '':
+                    logger.warning('Genome not found for NCBI identifier ' + row[-1][5:])
+                else:
+                    logger.debug('File uploaded to ' + assembly_path)
+                    lines[i] = assembly_path + line
         genome_import_batch_size = 0
         genome_import_batch_limit = 1000
         genome_import_batch = []
