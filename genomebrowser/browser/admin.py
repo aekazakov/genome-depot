@@ -285,7 +285,10 @@ class GenomeAdmin(admin.ModelAdmin):
                         elif not os.path.exists(row[0]):
                             logger.warning('%s not found', row[0])
             else:
-                logger.error('Unknown genome import choice:' + str(request.POST['choice_field']))
+                self.message_user(request,
+                                  "You have to choose one of genome import options"
+                                  )
+                return redirect("..")
                 
             task_name = async_import_genomes(lines,
                                              request.POST['download_email']

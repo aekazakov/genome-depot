@@ -6,7 +6,7 @@
     <p>There are no active tasks in the queue right now. You can start a new job.</p>
     <h2>Choose one of the three options for genome import:</h2>
     <form action="" method="POST" enctype="multipart/form-data">
-        <input type="radio" name="choice_field" value="upload" />
+        <input type="radio" name="choice_field" value="upload" checked />
         <strong>OPTION 1.</strong> Upload zip archive with files in GenBank format.
         <ul>
         <p>
@@ -23,7 +23,7 @@
         {{ upload_form.as_ul }}
         </ul>
         <input type="radio" name="choice_field" value="import" />
-        <strong>OPTION 2.</strong> Genome files are in the filesystem already. Import genomes listed in a text file into the GenomeDepot database.
+        <strong>OPTION 2.</strong> Genome files are in the filesystem already. Import genomes listed in a text file.
         <ul>
         <p>
         Make a tab-separated text file with six columns:<br />
