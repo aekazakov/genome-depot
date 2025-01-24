@@ -14,18 +14,18 @@ class ExcelImportForm(forms.Form):
 
 
 class GenomeImportForm(forms.Form):
-    tsv_file = forms.FileField(label='Choose the tab-separated text file', required=False)
+    import_tsv_file = forms.FileField(label='Choose the tab-separated text file', required=False)
 
 
 class GenomeUploadForm(forms.Form):
-    tsv_file = forms.FileField(label='Choose the tab-separated text file', required=False,)
+    upload_tsv_file = forms.FileField(label='Choose the tab-separated text file', required=False,)
     zip_file = forms.FileField(required=False,
                                label='Choose the zip archive with genomes in GBFF format'
                                )
 
 
 class GenomeDownloadForm(forms.Form):
-    tsv_file = forms.FileField(label='Choose the tab-separated text file', required=False,)
+    download_tsv_file = forms.FileField(label='Choose the tab-separated text file', required=False,)
     download_email = forms.EmailField(max_length=200,
                                       required=False,
                                       label='Provide email for NCBI genome downloader'

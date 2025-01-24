@@ -226,29 +226,58 @@ class GenomeAdmin(admin.ModelAdmin):
         upload_form = None
         download_form = None
         if request.method == 'POST':
-            logger.debug(request.FILES)
+            logger.debug('Files: ' + str(request.FILES))
             lines = []
             if request.POST['choice_field'] == 'import':
                 import_form = GenomeImportForm(prefix='import', data=request.POST)
-                if import_form.is_valid():                
-                    tsv_file = request.FILES["tsv_file"]
-                    zip_file = None
-                    zip_content = {}
+                if import_form.is_valid():
+                    tsv_file = request.FILES.get("import_tsv_file", False)
+                    if not tsv_file:
+                        self.message_user(request,
+                                          "Genome list file was not submitted",
+                                          level=messages.ERROR
+                                          )
+                        return redirect("..")
                     for line in tsv_file:
                         line = line.decode()
                         line = line.rstrip('\n\r')
-                        lines.append(line)
+                        if line == '':
+                            continue
                         row = line.split('\t')
                         if row[0].startswith('#'):
                             pass
                         elif not os.path.exists(row[0]):
                             logger.warning('%s not found in the filesystem', row[0])
                         lines.append('\t'.join(row))
+                    if not lines:
+                        self.message_user(request,
+                                          "No valid entries in the list of genomes",
+                                          level=messages.ERROR
+                                          )
+                        return redirect("..")
+                else:
+                    self.message_user(request,
+                                      "Form is not valid",
+                                      level=messages.ERROR
+                                      )
+                    return redirect("..")
             elif request.POST['choice_field'] == 'upload':
                 upload_form = GenomeUploadForm(prefix='upload', data=request.POST)
-                if upload_form.is_valid() and 'zip_file' in request.FILES:
-                    tsv_file = request.FILES["tsv_file"]
-                    zip_file = request.FILES["zip_file"]
+                if upload_form.is_valid():
+                    tsv_file = request.FILES.get("upload_tsv_file", False)
+                    if not tsv_file:
+                        self.message_user(request,
+                                          "Genome list file was not submitted",
+                                          level=messages.ERROR
+                                          )
+                        return redirect("..")
+                    zip_file = request.FILES.get("zip_file",False)
+                    if not zip_file:
+                        self.message_user(request,
+                                          "Zip file with genomes was not submitted",
+                                          level=messages.ERROR
+                                          )
+                        return redirect("..")
                     temp_dir = Config.objects.get(param='core.temp_dir').value
                     upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
                     logger.debug(upload_dir)
@@ -268,28 +297,67 @@ class GenomeAdmin(admin.ModelAdmin):
                         else:
                             logger.warning('%s not found in the zip archive', row[0])
                         lines.append('\t'.join(row))
+                    if not lines:
+                        self.message_user(request,
+                                          "No valid entries in the list of genomes",
+                                          level=messages.ERROR
+                                          )
+                        return redirect("..")
+                else:
+                    self.message_user(request,
+                                      "Form is not valid",
+                                      level=messages.ERROR
+                                      )
+                    return redirect("..")
             elif request.POST['choice_field'] == 'download':
                 download_form = GenomeDownloadForm(prefix='download', data=request.POST)
                 if download_form.is_valid():
-                    tsv_file = request.FILES["tsv_file"]
+                    tsv_file = request.FILES.get("download_tsv_file", False)
+                    if not tsv_file:
+                        self.message_user(request,
+                                          "Genome list file was not submitted",
+                                          level=messages.ERROR
+                                          )
+                        return redirect("..")
+                    download_email = request.POST.get("download_email", False)
+                    if not download_email:
+                        self.message_user(request,
+                                          "Email address required",
+                                          level=messages.ERROR
+                                          )
+                        return redirect("..")
                     for line in tsv_file:
                         line = line.decode()
                         line = line.rstrip('\n\r')
-                        lines.append(line)
+                        if line == '':
+                            continue
                         row = line.split('\t')
                         if row[0].startswith('#'):
                             pass
                         elif row[0] == '' and row[-1].startswith('NCBI:'):
-                            pass
+                            lines.append('\t'.join(row))
                             # Assembly will be downloaded from NCBI later
                         elif not os.path.exists(row[0]):
                             logger.warning('%s not found', row[0])
+                            #lines.append('\t'.join(row))
+                    if not lines:
+                        self.message_user(request,
+                                          "No valid entries in the list of genomes",
+                                          level=messages.ERROR
+                                          )
+                        return redirect("..")
+                else:
+                    self.message_user(request,
+                                      "Form is not valid",
+                                      level=messages.ERROR
+                                      )
+                    return redirect("..")
             else:
                 self.message_user(request,
-                                  "You have to choose one of genome import options"
+                                  "You must choose one of genome import options",
+                                  level=messages.ERROR
                                   )
                 return redirect("..")
-                
             task_name = async_import_genomes(lines,
                                              request.POST['download_email']
                                              )
