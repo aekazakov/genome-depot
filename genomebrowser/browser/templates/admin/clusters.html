@@ -1,19 +1,19 @@
 {% extends 'admin/base.html' %}
 {% block content %}
     <div>
-    <h2>Django Q clusters</h2>
+    <h2>Django Q worker</h2>
     <p>
-    GenomeDepot uses Django Q cluster to handle long-running tasks like genome import. If there is no cluster running, start it using Django’s manage.py command:
+    GenomeDepot uses Django Q cluster to handle long-running tasks like genome import. If there is no worker running, start it using Django’s manage.py command:
     </p>
      <pre>python manage.py qcluster</pre>
     <br />
     <table>
         <thead>
             <tr>
-                <th>Cluster ID</th>
+                <th>Worker ID</th>
                 <th>Time of birth</th>
                 <th>Uptime</th>
-                <th>Worker process IDs</th>
+                <th>Worker process ID</th>
             </tr>
         </thead>
         <tbody>

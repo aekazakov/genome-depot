@@ -226,7 +226,7 @@ class GenomeAdmin(admin.ModelAdmin):
         upload_form = None
         download_form = None
         if request.method == 'POST':
-            logger.debug('Files: ' + str(request.FILES))
+            logger.debug(request.FILES)
             lines = []
             if request.POST['choice_field'] == 'import':
                 import_form = GenomeImportForm(prefix='import', data=request.POST)

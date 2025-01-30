@@ -203,12 +203,19 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filters': ['require_debug_true'],
+            'filters': ['require_debug_false'],
             'filename': os.path.join(BASE_DIR, 'django.log'),
             'formatter': 'verbose',
             'maxBytes': 10*1024*1024,
+        },
+        'file_all': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filters': ['require_debug_true'],
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'formatter': 'verbose',
         },
         'email': {
             'level': 'ERROR',
@@ -223,7 +230,7 @@ LOGGING = {
             'propagate': True,
         },
         'GenomeDepot': {
-            'handlers': ['console', 'file', 'email'],
+            'handlers': ['console', 'file', 'file_all', 'email'],
             'level': 'DEBUG',
             'propagate': True,
         },
@@ -264,10 +271,10 @@ ADMIN_SHORTCUTS = [
                 'count': 'Check active tasks',
             },
             {
-                'title': 'Clusters',
+                'title': 'Worker',
                 'url': BASE_URL + '/admin/clusters/',
                 'count_new': 'browser.admin.count_clusters',
-                'count':'Django Q clusters',
+                'count':'Django Q workers',
             },
             {
                 'title': 'Users',

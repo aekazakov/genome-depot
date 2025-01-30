@@ -14,7 +14,7 @@
     </form>
     {% else %}
         <p><strong>There are {{active_tasks}} active task(s) in the queue right now.</strong></p>
-        <span style="color:red">You cannot start new tasks while there are active tasks in the queue. Please wait until the currently running task is finished or delete the tasks and restart Django Q cluster.</span>
+        <span style="color:red">You cannot start new tasks while there are active tasks in the queue. Please wait until the currently running task is finished or delete the tasks and restart Django Q worker.</span>
     {% endif %}
     </div>
     <br />
