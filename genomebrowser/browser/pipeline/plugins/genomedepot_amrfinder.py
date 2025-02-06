@@ -1,4 +1,5 @@
 import os
+import logging
 import shutil
 from subprocess import Popen, PIPE, CalledProcessError
 from django.db import connection
@@ -6,6 +7,7 @@ from browser.pipeline.util import export_proteins_bygenome
 """
     This plugin runs AMRFinder for a set of genomes.
 """
+logger = logging.getLogger("GenomeDepot")
 
 
 def application(annotator, genomes):
@@ -78,13 +80,13 @@ def run(script_path):
     Runs amrfinder script for GBK files of genomes.
     """
     cmd = ['/bin/bash', script_path]
-    print('Running ' + ' '.join(cmd))
+    logger.info('Running ' + ' '.join(cmd))
     # Close MySQL connection before starting external process because
     # it may run for too long resulting in "MySQL server has gone away" error
     connection.close()
     with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as proc:
         for line in proc.stdout:
-            print(line, end='')
+            logger.info(line, end='')
     if proc.returncode != 0:
         # Suppress false positive no-member error
         # (see https://github.com/PyCQA/pylint/issues/1860)

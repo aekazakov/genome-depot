@@ -162,7 +162,7 @@ def make_muscle_alignment(infasta):
     muscle_cline = 'muscle'
     logger.debug(str(muscle_cline))
     
-    logger.info('Running MUSCLE')
+    logger.debug('Running MUSCLE')
     with Popen(str(muscle_cline),
                stdin=PIPE,
                stdout=PIPE,
@@ -170,7 +170,7 @@ def make_muscle_alignment(infasta):
                bufsize=1,
                universal_newlines=True) as p:
         outfasta, err = p.communicate(infasta)
-    logger.info('MUSCLE finished')
+    logger.debug('MUSCLE finished')
     if p.returncode != 0:
         logger.error('[' + 
               datetime.now().strftime("%d/%m/%Y %H:%M:%S") +

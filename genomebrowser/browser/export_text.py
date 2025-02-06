@@ -257,7 +257,7 @@ def _export_genes_csv(request):
         else:
             object_list = Gene.objects.none()
     else:
-        if query_type == 'og':
+        if query_type == 'og_id':
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         ortholog_groups__id=query).values('protein_hash')
                         ]
@@ -629,7 +629,7 @@ def export_fasta(request):
         else:
             object_list = Gene.objects.none()
     else:
-        if query_type == 'og':
+        if query_type == 'og_id':
             proteins = [item['protein_hash'] for item in Protein.objects.filter(
                         ortholog_groups__id=query).values('protein_hash')
                         ]
