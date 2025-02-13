@@ -2096,6 +2096,7 @@ class Importer(object):
         try:
             operons_data = self.predict_operons()
         except Exception as e:
+            operons_data = {}
             ret.append('Non-critical error: predict_operons failed')
             ret.append(traceback.format_exc())
         else:
