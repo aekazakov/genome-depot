@@ -25,8 +25,8 @@
           <header class="align-center">
             <p class="align-center">Genome information<button popovertarget="genomeinfo-popover" class="info icon fa-info-circle"></button></p>
           </header>
-		<div popover id="genomeinfo-popover">The information section has links to the strain page, list of genes, list of operons, hierarchical list of taxa with links to each taxon page and a link to the source sequence file.
-		</div>
+        <div popover id="genomeinfo-popover">The information section has links to the strain page, list of genes, list of operons, hierarchical list of taxa with links to each taxon page and a link to the source sequence file.
+        </div>
         <div class="grid-style">
         {%if genome.strain %}
           <div class="content">
@@ -130,7 +130,7 @@
               <input name="genome" type="hidden" id="genome" value={{ genome.name }}>
               <input name="type" type="hidden" id="type" value = "annotation">
               <label for="annotation-query">Search in gene function annotations<input name="annotation_query" id="annotation-query" type="text" placeholder="Search in gene function annotations......"></label>
-              <input name="fast" id="fast" type="checkbox" checked=checked><label for="fast">Fast search (skip search in text notes)</label>
+              <input name="fast" id="fast" type="checkbox"><label for="fast">Fast search (skip search in text notes, do not sort search results)</label>
             </div>
           </form>
         </div>

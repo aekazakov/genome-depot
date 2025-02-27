@@ -13,7 +13,6 @@
             <div class="content">
               <header class="align-center">
                 <h4 class="align-center">Find genes by gene, contig, genome identifier or product<button popovertarget="gene-popover" class="info icon fa-info-circle"></button></h4>
-                <h6 class="align-center">(fast exact search by locus tag)</h6>
               </header>
               <div popover id="gene-popover">The search in genes by name first finds a unique exact match to a locus tag, and if there is no such match, it proceeds with a search in gene names, genome names and contig names.
               </div>
@@ -33,8 +32,8 @@
               <div class="row 200%">
                 <div class="search left 12u">
                 <form action="{% url 'searchannotation' %}" method="get">
-                  <div class="search left 6u"><input name="annotation_query" id="annotation-query" type="text" placeholder="Search by function, domain name or tool name..."></div>
-                  <div class="search right 4u"><input name="fast" id="fast" type="checkbox" checked=checked><label for="fast">Fast search (skip search in text notes)</label></div>
+                  <input name="annotation_query" id="annotation-query" type="text" placeholder="Search by function, domain name or tool name...">
+                  <input name="fast" id="fast" type="checkbox"><label for="fast">Fast search (skip search in text notes, do not sort search results)</label>
                   <input name="type" type="hidden" id="type" value = "annotation">
                 </form>
                 </div>

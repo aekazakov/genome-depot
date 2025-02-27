@@ -105,8 +105,6 @@ class AnnotationSearchResultsSubView(generic.ListView):
                 object_list = Annotation.objects.filter(
                     Q(source__icontains=annotation_query) |
                     Q(value__icontains=annotation_query)
-                ).order_by(
-                    'gene_id__locus_tag'
                 ).select_related(
                     'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
                 ).prefetch_related('gene_id__genome__tags').distinct()

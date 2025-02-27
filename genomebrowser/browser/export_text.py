@@ -68,8 +68,6 @@ def _export_annotations_csv(request):
                     Q(value__icontains=annotation_query)
                 ) &
                 Q(gene_id__genome__name=genome)
-            ).order_by(
-                'gene_id__locus_tag'
             ).select_related(
                 'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
             )
@@ -91,8 +89,6 @@ def _export_annotations_csv(request):
             object_list = Annotation.objects.filter(
                 Q(source__icontains=annotation_query) |
                 Q(value__icontains=annotation_query)
-            ).order_by(
-                'gene_id__locus_tag'
             ).select_related(
                 'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
             )
@@ -600,8 +596,6 @@ def export_fasta(request):
                         Q(value__icontains=annotation_query)
                     ) &
                     Q(gene_id__genome__name=genome)
-                ).order_by(
-                    'gene_id__locus_tag'
                 ).select_related(
                     'gene_id',
                     'gene_id__genome',
@@ -629,8 +623,6 @@ def export_fasta(request):
                 object_list = Annotation.objects.filter(
                     Q(source__icontains=annotation_query) |
                     Q(value__icontains=annotation_query)
-                ).order_by(
-                    'gene_id__locus_tag'
                 ).select_related(
                     'gene_id',
                     'gene_id__genome',
