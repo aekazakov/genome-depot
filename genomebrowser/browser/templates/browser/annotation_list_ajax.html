@@ -32,7 +32,7 @@
         url: "{% url 'loadingtextsearch' %}",
         type: "GET",
         datatype: 'json',
-        data: {'annotation_query': "{{ annotation_query }}", 'genome': "{{ genome }}", 'page': "{{ page }}", 'type': "annotation" }
+        data: {'annotation_query': "{{ annotation_query }}", 'genome': "{{ genome }}", 'page': "{{ page }}", 'type': "annotation", 'fast':  "{{ fast }}"}
         }).done(function(data){
             $('#loading-bar-area').remove();
             $('#run-time').append(data["time"].toFixed(2) + ' seconds')

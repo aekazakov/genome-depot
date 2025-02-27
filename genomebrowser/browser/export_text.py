@@ -58,30 +58,54 @@ def _export_annotations_csv(request):
     writer = csv.writer(response, delimiter='\t')
     annotation_query = request.GET.get('annotation_query')
     genome = request.GET.get('genome')
+    fast = request.GET.get('fast')
     # get objects
     if genome:
-        object_list = Annotation.objects.filter(
-            (
+        if fast and fast == 'on':
+            object_list = Annotation.objects.filter(
+                (
+                    Q(source__icontains=annotation_query) |
+                    Q(value__icontains=annotation_query)
+                ) &
+                Q(gene_id__genome__name=genome)
+            ).order_by(
+                'gene_id__locus_tag'
+            ).select_related(
+                'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
+            )
+        else:
+            object_list = Annotation.objects.filter(
+                (
+                    Q(source__icontains=annotation_query) |
+                    Q(value__icontains=annotation_query) |
+                    Q(note__icontains=annotation_query)
+                ) &
+                Q(gene_id__genome__name=genome)
+            ).order_by(
+                'gene_id__locus_tag'
+            ).select_related(
+                'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
+            )
+    else:
+        if fast and fast == 'on':
+            object_list = Annotation.objects.filter(
+                Q(source__icontains=annotation_query) |
+                Q(value__icontains=annotation_query)
+            ).order_by(
+                'gene_id__locus_tag'
+            ).select_related(
+                'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
+            )
+        else:
+            object_list = Annotation.objects.filter(
                 Q(source__icontains=annotation_query) |
                 Q(value__icontains=annotation_query) |
                 Q(note__icontains=annotation_query)
-            ) &
-            Q(gene_id__genome__name=genome)
-        ).order_by(
-            'gene_id__locus_tag'
-        ).select_related(
-            'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
-        )
-    else:
-        object_list = Annotation.objects.filter(
-            Q(source__icontains=annotation_query) |
-            Q(value__icontains=annotation_query) |
-            Q(note__icontains=annotation_query)
-        ).order_by(
-            'gene_id__locus_tag'
-        ).select_related(
-            'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
-        )
+            ).order_by(
+                'gene_id__locus_tag'
+            ).select_related(
+                'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
+            )
     # write output
     writer.writerow(['Locus tag',
                      'Name',
@@ -560,6 +584,7 @@ def export_fasta(request):
     query_type = request.GET.get('type')
     query = request.GET.get('query')
     genome = request.GET.get('genome')
+    fast = request.GET.get('fast')
     if genome:
         response['Content-Disposition'] = 'attachment; filename="' + str(genome) + '_proteins.faa"'
     else:
@@ -568,34 +593,63 @@ def export_fasta(request):
 
     if annotation_query:
         if genome:
-            object_list = Annotation.objects.filter(
-                (
+            if fast and fast == 'on':
+                object_list = Annotation.objects.filter(
+                    (
+                        Q(source__icontains=annotation_query) |
+                        Q(value__icontains=annotation_query)
+                    ) &
+                    Q(gene_id__genome__name=genome)
+                ).order_by(
+                    'gene_id__locus_tag'
+                ).select_related(
+                    'gene_id',
+                    'gene_id__genome',
+                    'gene_id__genome__taxon',
+                    'gene_id__protein'
+                )
+            else:
+                object_list = Annotation.objects.filter(
+                    (
+                        Q(source__icontains=annotation_query) |
+                        Q(value__icontains=annotation_query) |
+                        Q(note__icontains=annotation_query)
+                    ) &
+                    Q(gene_id__genome__name=genome)
+                ).order_by(
+                    'gene_id__locus_tag'
+                ).select_related(
+                    'gene_id',
+                    'gene_id__genome',
+                    'gene_id__genome__taxon',
+                    'gene_id__protein'
+                )
+        else:
+            if fast and fast == 'on':
+                object_list = Annotation.objects.filter(
+                    Q(source__icontains=annotation_query) |
+                    Q(value__icontains=annotation_query)
+                ).order_by(
+                    'gene_id__locus_tag'
+                ).select_related(
+                    'gene_id',
+                    'gene_id__genome',
+                    'gene_id__genome__taxon',
+                    'gene_id__protein'
+                )
+            else:
+                object_list = Annotation.objects.filter(
                     Q(source__icontains=annotation_query) |
                     Q(value__icontains=annotation_query) |
                     Q(note__icontains=annotation_query)
-                ) &
-                Q(gene_id__genome__name=genome)
-            ).order_by(
-                'gene_id__locus_tag'
-            ).select_related(
-                'gene_id',
-                'gene_id__genome',
-                'gene_id__genome__taxon',
-                'gene_id__protein'
-            )
-        else:
-            object_list = Annotation.objects.filter(
-                Q(source__icontains=annotation_query) |
-                Q(value__icontains=annotation_query) |
-                Q(note__icontains=annotation_query)
-            ).order_by(
-                'gene_id__locus_tag'
-            ).select_related(
-                'gene_id',
-                'gene_id__genome',
-                'gene_id__genome__taxon',
-                'gene_id__protein'
-            )
+                ).order_by(
+                    'gene_id__locus_tag'
+                ).select_related(
+                    'gene_id',
+                    'gene_id__genome',
+                    'gene_id__genome__taxon',
+                    'gene_id__protein'
+                )
     elif query_type == 'gene':
         if query and query != '':
             if genome:

@@ -74,29 +74,52 @@ class AnnotationSearchResultsSubView(generic.ListView):
         '''
         annotation_query = self.request.GET.get('annotation_query')
         genome = self.request.GET.get('genome')
+        fast = self.request.GET.get('fast')
         if not annotation_query:
             object_list = Annotation.objects.none()
         elif genome:
-            object_list = Annotation.objects.filter(
-                (Q(source__icontains=annotation_query) | 
-                 Q(value__icontains=annotation_query) | 
-                 Q(note__icontains=annotation_query)) & 
-                 Q(gene_id__genome__name=genome)
-            ).order_by(
-                'gene_id__locus_tag'
-            ).select_related(
-                'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
-            ).prefetch_related('gene_id__genome__tags').distinct()
+            if fast and fast == 'on':
+                object_list = Annotation.objects.filter(
+                    (Q(source__icontains=annotation_query) | 
+                     Q(value__icontains=annotation_query)) & 
+                     Q(gene_id__genome__name=genome)
+                ).order_by(
+                    'gene_id__locus_tag'
+                ).select_related(
+                    'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
+                ).prefetch_related('gene_id__genome__tags').distinct()
+            else:
+                object_list = Annotation.objects.filter(
+                    (Q(source__icontains=annotation_query) | 
+                     Q(value__icontains=annotation_query) | 
+                     Q(note__icontains=annotation_query)) & 
+                     Q(gene_id__genome__name=genome)
+                ).order_by(
+                    'gene_id__locus_tag'
+                ).select_related(
+                    'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
+                ).prefetch_related('gene_id__genome__tags').distinct()
+
         else:
-            object_list = Annotation.objects.filter(
-                Q(source__icontains=annotation_query) |
-                Q(value__icontains=annotation_query) |
-                Q(note__icontains=annotation_query)
-            ).order_by(
-                'gene_id__locus_tag'
-            ).select_related(
-                'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
-            ).prefetch_related('gene_id__genome__tags').distinct()
+            if fast and fast == 'on':
+                object_list = Annotation.objects.filter(
+                    Q(source__icontains=annotation_query) |
+                    Q(value__icontains=annotation_query)
+                ).order_by(
+                    'gene_id__locus_tag'
+                ).select_related(
+                    'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
+                ).prefetch_related('gene_id__genome__tags').distinct()
+            else:
+                object_list = Annotation.objects.filter(
+                    Q(source__icontains=annotation_query) |
+                    Q(value__icontains=annotation_query) |
+                    Q(note__icontains=annotation_query)
+                ).order_by(
+                    'gene_id__locus_tag'
+                ).select_related(
+                    'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
+                ).prefetch_related('gene_id__genome__tags').distinct()
         return object_list
 
 
@@ -109,12 +132,13 @@ class AnnotationSearchResultsAjaxView(View):
             Takes a GET request and returns a webpage that will send AJAX request
         '''
         context = {}
+        context['fast'] = request.GET.get('fast')
         if self.request.GET.get('annotation_query'):
             context['searchcontext'] = 'Search results for "' + \
             self.request.GET.get('annotation_query') + '"'
         else:
             context['searchcontext'] = 'Query string is empty'
-        for key, val in request.GET.items():
+        for key, val in self.request.GET.items():
             context[key] = val
         return render(request,'browser/annotation_list_ajax.html', context)
 
@@ -139,6 +163,7 @@ class AnnotationSearchResultsAjaxView(View):
             request.GET.get('annotation_query') + '"'
         context['searchresult'] = sub_response.content.decode('utf-8')
         context['time'] = time.time()-start_time
+        context['fast'] = request.GET.get('fast')
         #data = json.dumps(context)
         return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
 
