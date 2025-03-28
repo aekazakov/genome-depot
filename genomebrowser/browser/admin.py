@@ -63,11 +63,6 @@ from django_q.monitor import Stat
 
 logger = logging.getLogger("GenomeDepot")
 
-admin.site.site_header = "GenomeDepot Administration panel"
-admin.site.site_title = "GenomeDepot administration"
-admin.site.index_title = "Welcome to GenomeDepot Administration panel"
-
-
 @admin.action(description = 'Run annotation tools')
 def run_annotation_tools(self, request, queryset):
     if 'do_action' in request.POST:
@@ -173,6 +168,21 @@ def count_clusters(request):
     for stat in Stat.get_all():
         result += 1
     return str(result)
+
+
+def pipeline_status(request):
+    result = 'Off'
+    workers = 0
+    tasks = 0
+    for stat in Stat.get_all():
+        workers += 1
+    if workers > 0:
+        tasks = OrmQ.objects.all().count()
+        if tasks > 0:
+            result = 'Busy'
+        else:
+            result = 'Idle'
+    return result
 
 
 # Register your models here.
@@ -764,7 +774,7 @@ admin.site.register(Config, ConfigAdmin)
 class ContigAdmin(admin.ModelAdmin):
     list_display = ['contig_id', 'name', 'genome', 'size']
     ordering = ['genome', 'contig_id']
-    search_fields = ['contig_id', 'name', 'genome']
+    search_fields = ['contig_id', 'name', 'genome__name']
     autocomplete_fields = ('genome', )
     
 admin.site.register(Contig, ContigAdmin)
@@ -797,7 +807,10 @@ def clusters_view(request):
                          'uptime': str(datetime.timedelta(seconds=stat.uptime())),
                          'workers': ','.join([str(x) for x in stat.workers])
                          })
-    context = {'cluster_count':str(cluster_count), 'clusters':clusters}
+    if cluster_count > 0:
+        context = {'cluster_count':str(cluster_count), 'clusters':clusters}
+    else:
+        context = {'cluster_count':'Off', 'clusters':clusters}
     return render(
         request, "admin/clusters.html", context
     )
@@ -806,7 +819,7 @@ def clusters_view(request):
 def tools_view(request):
     context = {}
     context['tasks'] = count_tasks(request)
-    context['clusters'] = count_clusters(request)
+    context['clusters'] = pipeline_status(request)
     return render(
         request, "admin/tools.html", context
     )

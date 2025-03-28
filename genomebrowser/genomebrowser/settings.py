@@ -259,22 +259,29 @@ ADMIN_SHORTCUTS = [
         'shortcuts': [
             {
                 'title': 'GenomeDepot Tools',
-                'icon': 'cog',
+                'icon': 'wrench',
                 'url': BASE_URL + '/admin/tools/',
                 'count': 'All tools in one place',
             },
             {
-                'title': 'Tasks',
-                'icon': 'truck',
+                'title': 'Task queue',
+                'icon': 'tasks',
                 'url_name': 'admin:django_q_ormq_changelist',
                 'count_new': 'browser.admin.count_tasks',
                 'count': 'Check active tasks',
             },
             {
-                'title': 'Worker',
+                'title': 'Pipeline',
+                'icon': 'server',
                 'url': BASE_URL + '/admin/clusters/',
-                'count_new': 'browser.admin.count_clusters',
-                'count':'Django Q workers',
+                'count_new': 'browser.admin.pipeline_status',#'browser.admin.count_clusters',
+                'count':'View pipeline status',
+            },
+            {
+                'title': 'Pipeline log',
+                'url': BASE_URL + '/admin/logviewer/logs/',
+                'icon': 'scroll',
+                'count': 'View users',
             },
             {
                 'title': 'Users',
@@ -285,8 +292,8 @@ ADMIN_SHORTCUTS = [
             {
                 'title': 'Add user',
                 'url_name': 'admin:auth_user_add',
-                'test_func': 'example.utils.has_perms_to_users',
-                'has_perms': 'example.utils.has_perms_to_users',
+                'test_func': 'browser.admin_utils.has_perms_to_users',
+                'has_perms': ['browser.admin_utils.has_perms_to_users',],
                 'icon': 'user-plus',
             },
         ]
