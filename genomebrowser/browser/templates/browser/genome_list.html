@@ -97,6 +97,11 @@
                   <span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
                 </span>
               </div>
+            {% else %}
+              {% if genomelist %}
+                  <strong>{{ genomelist | length}} genomes found</strong>
+                </br>
+              {% endif %}
             {% endif %}
             <div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
             <div class="align-center">
