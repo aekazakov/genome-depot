@@ -1475,7 +1475,7 @@ class CogSearchResultsView(generic.ListView):
 
 class OgSearchResultsView(generic.ListView):
     '''
-        Returns results of search in COG classes.
+        Returns results of search in Ortholog groups.
     '''
     model = Ortholog_group
     context_object_name = 'annotationlist'
@@ -2081,7 +2081,7 @@ class NsearchResultView(View):
         hits, searchcontext, query_len, query_name = run_nucleotide_search(params)
         if hits:
             result.append('<table><thead><tr><th>Target contig (click to see hit)' +
-                          '</th><th>Genome</th><th>%identity</th><th>Alignment length'+
+                          '</th><th>Genome</th><th>Taxon</th><th>%identity</th><th>Alignment length'+
                           '</th><th>%Query coverage</th><th>E-value</th><th>Bit-score' +
                           '</th></tr></thead><tbody>'
                           )
@@ -2096,6 +2096,18 @@ class NsearchResultView(View):
                 ).get(
                     contig_id = contig_name, genome__name = genome_name
                 )
+                lineage = []
+                parent_id = target.genome.taxon.parent_id
+                while True:
+                    try:
+                        parent_taxon = Taxon.objects.get(taxonomy_id = parent_id)
+                    except Taxon.DoesNotExist:
+                        logger.error('Taxonomy ID ' + parent_id + ' does not exist. Update taxonomy records.')
+                        break
+                    if parent_taxon.taxonomy_id == parent_taxon.parent_id or parent_id == '1':
+                        break
+                    lineage.append(parent_taxon.name)
+                    parent_id = parent_taxon.parent_id
                 strand = '+'
                 start = row[8]
                 end = row[9]
@@ -2111,13 +2123,14 @@ class NsearchResultView(View):
                     '" style="color:' + genome_tag.textcolor + \
                     '" title="' + genome_tag.description + '">' + \
                     genome_tag.name + '</a></span>&nbsp;'
-                hit = '<tr><td align=\"left\"><a href=\"' + \
+                hit = '<tr><td align="left"><a href=\"' + \
                       reverse('genomedetails', args=(target.genome.name,)) + \
                       '?contig=' + target.contig_id + '&start=' + start + '&end=' + \
                       end + '\">' + contig_name + ': (' + strand + 'strand) ' + \
                       start + '..' + end + '</a></td><td align="left">' + \
-                      target.genome.name + ' [' + target.genome.taxon.name + ']' + \
-                      genome_tags + '</td><td>' + '{:.2f}'.format(float(row[2])) + \
+                      target.genome.name + ' ' + genome_tags + '</td><td align="left">' + target.genome.taxon.name + \
+                      ' <span title="' + '\n'.join(reversed(lineage)) + '">&#9432;</span> ' + \
+                      '</td><td>' + '{:.2f}'.format(float(row[2])) + \
                       '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) \
                       + '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
                 result.append(hit)
@@ -2201,7 +2214,7 @@ class PsearchResultView(View):
 
         if hits:
             result.append('<table><thead><tr><th>Target gene</th><th>Genome</th>' +\
-                          '<th>Function</th><th>%identity</th><th>Alignment length</th><th>' +\
+                          '<th>Taxon</th><th>Function</th><th>%identity</th><th>Alignment length</th><th>' +\
                           '%Query coverage</th><th>E-value</th><th>Bit-score</th>' +\
                           '</tr></thead><tbody>'
                           )
@@ -2217,6 +2230,20 @@ class PsearchResultView(View):
                     protein__protein_hash = row[1]
                 )
                 for target in genes:
+                    lineage = []
+                    parent_id = target.genome.taxon.parent_id
+                    while True:
+                        try:
+                            parent_taxon = Taxon.objects.get(taxonomy_id = parent_id)
+                        except Taxon.DoesNotExist:
+                            logger.error('Taxonomy ID ' + parent_id + ' does not exist. Update taxonomy records.')
+                            break
+                        if parent_taxon.taxonomy_id == parent_taxon.parent_id or parent_id == '1':
+                            break
+                        lineage.append(parent_taxon.name)
+                        parent_id = parent_taxon.parent_id
+                    if not lineage:
+                        lineage = [target.genome.taxon.name,]
                     genome_tags = ''
                     for genome_tag in target.genome.tags.all():
                         genome_tags += '<span class="genometag" ' +\
@@ -2231,8 +2258,11 @@ class PsearchResultView(View):
                             args=(target.genome.name, target.locus_tag)) + \
                     '\">' + target.locus_tag + '</a></td><td align="left">' + \
                      '<a href="' + reverse('genomedetails', args=(target.genome.name,)) + \
-                     '" title="' + target.genome.taxon.name + '">' + target.genome.name +  '</a> ' +\
-                     genome_tags + '</td><td>' + target.function + '</td><td>' + '{:.1f}'.format(float(row[2])) + \
+                     '">' + target.genome.name +  \
+                     '</a> ' +\
+                     genome_tags + '</td><td>' + target.genome.taxon.name + ' <span title="' + \
+                     '\n'.join(reversed(lineage)) + '">&#9432;</span></td><td>' + \
+                     target.function + '</td><td>' + '{:.1f}'.format(float(row[2])) + \
                     '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) + \
                     '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
                     result.append(hit)

@@ -137,15 +137,15 @@ def run_protein_search(params):
     with Popen(args,
                stdin=PIPE,
                stdout=PIPE,
-               stderr=STDOUT,
+               stderr=PIPE,
                bufsize=1,
                universal_newlines=True
                ) as p:
         blastoutput, err = p.communicate('>' + sequence_id + '\n' + sequence)
     if p.returncode != 0:
-        searchcontext = 'BLASTP finished with error:\n' + '\n'.join(err)
+        searchcontext = 'BLASTP finished with error:\n' + ''.join(err)
         logger.error('BLASTP finished with error. Parameters: %s \n %s',
-                     str(params), '\n'.join(err)
+                     str(params), ''.join(err)
                      )
         return result, searchcontext, 0, sequence_id
     for line in blastoutput.split('\n'):
@@ -196,26 +196,28 @@ def run_nucleotide_search(params):
                         'Multiple entries not supported.'
         return result, searchcontext, 0, sequence_id
     args = [
-        'megablast',
-        '-a', '2',
-        '-b', params['hitstoshow'],
-        '-D', '3',
-        '-e', params['evalue'],
-        '-f', 'T',
-        '-d', blast_db
+        'blastn',
+        '-task',  'megablast',
+        '-num_threads', '2',
+        '-max_target_seqs', params['hitstoshow'],
+        '-evalue', params['evalue'],
+        '-db', blast_db,
+        '-outfmt', '6'
         ]
+    print(' '.join(args))
+
     with Popen(args,
                stdin=PIPE,
                stdout=PIPE,
-               stderr=STDOUT,
+               stderr=PIPE,
                bufsize=1,
                universal_newlines=True
                ) as p:
         blastoutput, err = p.communicate('>' + sequence_id + '\n' + sequence)
     if p.returncode != 0:
-        searchcontext = 'Megablast finished with error:\n' + '\n'.join(err)
+        searchcontext = 'Megablast finished with error:\n' + ''.join(err)
         logger.error('Megablast finished with error. Parameters: %s \n %s',
-                     str(params), '\n'.join(err)
+                     str(params), ''.join(err)
                      )
         return result, searchcontext, 0, sequence_id
     for line in blastoutput.split('\n'):
