@@ -36,7 +36,7 @@
               data: {'sequence': "{{ sequence|escapejs }}", 'csrfmiddlewaretoken': "{{ csrfmiddlewaretoken }}", 'evalue': "{{ evalue }}", 'hitstoshow': "{{ hitstoshow }}" }
             }).done(function(data){
               $('#loading-bar-area').remove();
-              $('#run-time').append(data["time"].toFixed(2) + ' seconds')
+              $('#run-time').append(data["time"].toFixed(2) + ' seconds.' + data["hit_count"])
               $('#hits').append(data["searchresult"])
               $('#query_name').append(data["query_name"])
               $('#searchcontext').append(data["searchcontext"])

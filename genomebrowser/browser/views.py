@@ -2139,20 +2139,23 @@ class NsearchResultView(View):
                        "searchcontext":searchcontext,
                        "query_len":query_len,
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
-                       "time":time.time()-start_time
+                       "time":time.time()-start_time,
+                       "hit_count":' Hits: ' + str(len(hits)) + '.'
                        }
         elif searchcontext == '':
             context = {"searchresult":'',"searchcontext":'No hits found',
                        "query_len":query_len,
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
-                       "time":time.time()-start_time
+                       "time":time.time()-start_time,
+                       "hit_count":''
                        }
         else:
             context = {"searchresult":"",
                        "searchcontext":searchcontext,
                        "query_len":query_len,
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
-                       "time":time.time()-start_time
+                       "time":time.time()-start_time,
+                       "hit_count":''
                        }
         #logger.debug(context)
         #data = json.dumps(context)
@@ -2213,6 +2216,7 @@ class PsearchResultView(View):
         hits, searchcontext, query_len, query_name = run_protein_search(params)
 
         if hits:
+            gene_hits = 0
             result.append('<table><thead><tr><th>Target gene</th><th>Genome</th>' +\
                           '<th>Taxon</th><th>Function</th><th>%identity</th><th>Alignment length</th><th>' +\
                           '%Query coverage</th><th>E-value</th><th>Bit-score</th>' +\
@@ -2230,6 +2234,7 @@ class PsearchResultView(View):
                     protein__protein_hash = row[1]
                 )
                 for target in genes:
+                    gene_hits += 1
                     lineage = []
                     parent_id = target.genome.taxon.parent_id
                     while True:
@@ -2271,21 +2276,27 @@ class PsearchResultView(View):
                        "searchcontext":searchcontext,
                        "query_len":query_len,
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
-                       "time":time.time()-start_time
+                       "time":time.time()-start_time,
+                       "hit_count":' Unique protein hits: ' + str(len(hits)) + '.',
+                       "gene_count":' Genes found: ' + str(gene_hits) + '.'
                        }
         elif searchcontext == '':
             context = {"searchresult":'',
                        "searchcontext":'No hits found',
                        "query_len":query_len,
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
-                       "time":time.time()-start_time
+                       "time":time.time()-start_time,
+                       "hit_count":'',
+                       "gene_count":''
                        }
         else:
             context = {"searchresult":"",
                        "searchcontext":searchcontext,
                        "query_len":query_len,
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
-                       "time":time.time()-start_time
+                       "time":time.time()-start_time,
+                       "hit_count":'',
+                       "gene_count":''
                        }
         #data = json.dumps(context)
         return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
