@@ -251,6 +251,7 @@ class GenomeListView(generic.ListView):
             sunburst = generate_genome_sunburst()
             if sunburst:
                 context['sunburst'] = sunburst
+            context["genome_count"] = Genome.objects.all().count()
         return context
         
         
@@ -268,7 +269,7 @@ class OperonListView(generic.ListView):
         genome_name = self.kwargs['genome']
         try:
             genome = Genome.objects.prefetch_related('tags').get(
-                name = genome_name
+                name=genome_name
                 )
         except Genome.DoesNotExist:
             return {'searchcontext': 'Genome ' + genome_name + ' does not exist'}

@@ -23,6 +23,7 @@ from browser.models import Cog_class
 from browser.models import Cazy_family
 from browser.models import Go_term
 from browser.models import Ortholog_group
+from browser.models import Operon
 from browser.util import export_genome
 from browser.taxonomy import get_taxon_children
 
@@ -40,6 +41,8 @@ def export_csv(request):
         return _export_genomes_bytaxon_csv(request)
     elif query_type == 'annotation':
         return _export_annotations_csv(request)
+    elif query_type == 'operon':
+        return _export_operons_csv(request)
     else:
         return _export_genes_csv(request)
     
@@ -463,6 +466,8 @@ def _export_genomes_csv(request):
                      'Name',
                      'Tags',
                      'Source',
+                     'External_id',
+                     'External_link',
                      'Taxonomy',
                      'Size, bp',
                      'Contigs',
@@ -470,12 +475,14 @@ def _export_genomes_csv(request):
                      ])
     for genome in object_list:
         if genome.strain:
-            source = genome.strain.full_name
+            source = 'Strain:' + genome.strain.full_name
         else:
-            source = genome.sample.full_name
+            source = 'Sample:' + genome.sample.full_name
         writer.writerow([genome.name,
                          ';'.join([item.name for item in genome.tags.all()]),
                          source,
+                         genome.external_id,
+                         genome.external_url,
                          genome.taxon.name,
                          str(genome.size),
                          str(genome.contigs),
@@ -524,9 +531,9 @@ def _export_genomes_bytaxon_csv(request):
                      ])
     for genome in object_list:
         if genome.strain:
-            source = genome.strain.full_name
+            source = 'Strain:' + genome.strain.full_name
         else:
-            source = genome.sample.full_name
+            source = 'Sample:' + genome.sample.full_name
         writer.writerow([genome.name,
                          ';'.join([item.name for item in genome.tags.all()]),
                          source,
@@ -534,6 +541,67 @@ def _export_genomes_bytaxon_csv(request):
                          str(genome.size),
                          str(genome.contigs),
                          str(genome.genes)
+                         ])
+    return response
+
+
+def _export_operons_csv(request):
+    '''
+        Returns list of operons for a genome in tab-separated text format
+        
+        Template gene_list_subpage.html contains the Ajax JS calling this function 
+        
+    '''
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/tab-separated-values')
+    response['Content-Disposition'] = 'attachment; filename="exported_operons.tab"'
+    writer = csv.writer(response, delimiter='\t')
+    query_type = request.GET.get('type')
+    query = request.GET.get('query')
+    if query_type != 'operon':
+        object_list = Operon.objects.none()
+    elif query:
+        try:
+            genome = Genome.objects.get(name=query)
+        except Genome.DoesNotExist:
+            writer.writerow(['Genome ' + query + ' does not exist',])
+            return response
+        object_list = Operon.objects.filter(genome=genome
+            ).order_by(
+                'name'
+            ).select_related(
+                'genome', 'contig'
+            ).prefetch_related(
+                'genes'
+            ).distinct()
+
+    else:
+        object_list = Genome.objects.none()
+    writer.writerow([
+                     'Name',
+                     'Genome',
+                     'Source',
+                     'Taxon',
+                     'Location',
+                     'Gene_count',
+                     'Genes'
+                     ])
+    for operon in object_list:
+        if operon.genome.strain:
+            source = 'Strain:' + operon.genome.strain.full_name
+        else:
+            source = 'Sample:' + operon.genome.sample.full_name
+        if operon.strand == '1':
+            location = operon.contig.contig_id + ':' + str(operon.start) + '..' + str(operon.end)
+        else:
+            location = operon.contig.contig_id + ':complement(' + str(operon.start) + '..' + str(operon.end) + ')'
+        writer.writerow([operon.name,
+                         operon.genome.name,
+                         source,
+                         genome.taxon.name,
+                         location,
+                         str(operon.genes.count()),
+                         ';'.join([item.locus_tag for item in operon.genes.all()])
                          ])
     return response
 

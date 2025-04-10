@@ -212,10 +212,8 @@ class Importer(object):
                                            )
                 gbk_handle.close()
         if problem_genomes:
-            logger.error('ERROR: check input files')
-            for genome in problem_genomes:
-                logger.error(genome)
-            raise ValueError('Check and fix errors:\n' + '\n'.join(problem_genomes))
+            logger.error('ERROR. Genome import pipeline found that some genome names already exist in the database:\n' + '\n'.join(problem_genomes))
+            raise ValueError('Unable to import genomes because one or more genome names already exist in the database:\n' + '\n'.join(problem_genomes))
         self.genomefiles = result
     
     def create_tag(self):
