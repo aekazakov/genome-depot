@@ -2069,6 +2069,7 @@ class NsearchResultView(View):
         '''
         start_time = time.time()
         result = []
+        textresult = []
         #logger.debug('REQUEST2')
         #for key, val in request.POST.items():
         #    logger.debug('%s:%s',key, val)
@@ -2080,8 +2081,9 @@ class NsearchResultView(View):
         #logger.debug('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         #time.sleep(sleep_timer)
         hits, searchcontext, query_len, query_name = run_nucleotide_search(params)
+        textresult.append('Sequence_ID\tGenome\tIdentity%\tLength\tMismatch\tGap open\tQuery.start\tQuery.end\tSubject.start\tSubject.end\tQuery coverage%\tE-value\tBit-score\tTaxon\tLineage')
         if hits:
-            result.append('<table><thead><tr><th>Target contig (click to see hit)' +
+            result.append('<table><thead><tr><th>Sequence_ID (click to see hit)' +
                           '</th><th>Genome</th><th>Taxon</th><th>%identity</th><th>Alignment length'+
                           '</th><th>%Query coverage</th><th>E-value</th><th>Bit-score' +
                           '</th></tr></thead><tbody>'
@@ -2112,8 +2114,7 @@ class NsearchResultView(View):
                 strand = '+'
                 start = row[8]
                 end = row[9]
-                unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
-                query_cov = (query_len - unaligned_part) * 100.0 / query_len
+                query_cov = (1 + int(row[7]) - int(row[6])) * 100.0 / query_len
                 if int(row[7]) < int(row[6]):
                     strand = '-'
                 genome_tags = ''
@@ -2135,20 +2136,38 @@ class NsearchResultView(View):
                       '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) \
                       + '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
                 result.append(hit)
+                textresult.append('\t'.join([contig_name,
+                    target.genome.name,
+                    row[2],
+                    row[3],
+                    row[4],
+                    row[5],
+                    row[6],
+                    row[7],
+                    row[8],
+                    row[9],
+                    '{:.1f}'.format(query_cov),
+                    row[10],
+                    row[11],
+                    target.genome.taxon.name,
+                    ';'.join(reversed(lineage)),
+                    ]))
             result.append('</tbody></table>')
             context = {"searchresult":'\n'.join(result),
                        "searchcontext":searchcontext,
                        "query_len":query_len,
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
                        "time":time.time()-start_time,
-                       "hit_count":' Hits: ' + str(len(hits)) + '.'
+                       "hit_count":' Hits: ' + str(len(hits)) + '.',
+                       "textresult": '\n'.join(textresult)
                        }
         elif searchcontext == '':
             context = {"searchresult":'',"searchcontext":'No hits found',
                        "query_len":query_len,
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
                        "time":time.time()-start_time,
-                       "hit_count":''
+                       "hit_count":'',
+                       "textresult":'No hits found'
                        }
         else:
             context = {"searchresult":"",
@@ -2156,7 +2175,8 @@ class NsearchResultView(View):
                        "query_len":query_len,
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
                        "time":time.time()-start_time,
-                       "hit_count":''
+                       "hit_count":'',
+                       "textresult":searchcontext
                        }
         #logger.debug(context)
         #data = json.dumps(context)
@@ -2204,6 +2224,7 @@ class PsearchResultView(View):
         '''
         start_time = time.time()
         result = []
+        textresult = []
         #logger.debug('REQUEST2')
         #for key, val in request.POST.items():
         #    logger.debug('%s,%s', key, val)
@@ -2223,10 +2244,10 @@ class PsearchResultView(View):
                           '%Query coverage</th><th>E-value</th><th>Bit-score</th>' +\
                           '</tr></thead><tbody>'
                           )
+            textresult.append('Hit_ID\tGenome\tIdentity%\tLength\tMismatch\tGap open\tQuery.start\tQuery.end\tSubject.start\tSubject.end\tQuery coverage%\tE-value\tBit-score\tTaxon\tLineage\tFunction')
             for row in hits:
                 row=row.split('\t')
-                unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
-                query_cov = (query_len - unaligned_part) * 100.0 / query_len
+                query_cov = float(1 + int(row[7]) - int(row[6])) * 100.0 / float(query_len)
                 genes = Gene.objects.select_related(
                     'protein', 'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -2272,6 +2293,24 @@ class PsearchResultView(View):
                     '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) + \
                     '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
                     result.append(hit)
+                    textresult.append('\t'.join([target.locus_tag,
+                        target.genome.name,
+                        row[2],
+                        row[3],
+                        row[4],
+                        row[5],
+                        row[6],
+                        row[7],
+                        row[8],
+                        row[9],
+                        '{:.1f}'.format(query_cov),
+                        row[10],
+                        row[11],
+                        target.genome.taxon.name,
+                        ';'.join(reversed(lineage)),
+                        target.function,
+                        ]))
+
             result.append('</tbody></table>')
             context = {"searchresult":'\n'.join(result),
                        "searchcontext":searchcontext,
@@ -2279,7 +2318,8 @@ class PsearchResultView(View):
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
                        "time":time.time()-start_time,
                        "hit_count":' Unique protein hits: ' + str(len(hits)) + '.',
-                       "gene_count":' Genes found: ' + str(gene_hits) + '.'
+                       "gene_count":' Genes found: ' + str(gene_hits) + '.',
+                       "textresult": '\n'.join(textresult)
                        }
         elif searchcontext == '':
             context = {"searchresult":'',
@@ -2288,7 +2328,8 @@ class PsearchResultView(View):
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
                        "time":time.time()-start_time,
                        "hit_count":'',
-                       "gene_count":''
+                       "gene_count":'',
+                       "textresult":'No hits found',
                        }
         else:
             context = {"searchresult":"",
@@ -2297,7 +2338,8 @@ class PsearchResultView(View):
                        "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
                        "time":time.time()-start_time,
                        "hit_count":'',
-                       "gene_count":''
+                       "gene_count":'',
+                       "textresult":searchcontext,
                        }
         #data = json.dumps(context)
         return JsonResponse(context)  #HttpResponse(data,content_type="application/json")

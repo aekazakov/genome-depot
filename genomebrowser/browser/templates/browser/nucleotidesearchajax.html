@@ -19,6 +19,7 @@
               <div class="table-wrapper">
                 <div id="hits"></div>
               </div>
+              <p><a href="#" id="resultdownload">Download full search results in tab-separated format</a></p>
               <label id="run-time">Search time: </label>
               <p><a href="{% url 'nucleotidesearchform' %}">New search</a>
               <div id ="searchcontext" class="error box"></div>
@@ -28,6 +29,7 @@
   {% endif %}
         <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
         <script>
+          var fileContent = "Similarity search has not finished yet...";
           $(document).ready(function(){
             $.ajax({
               url: "{% url 'loadingnuclsearch' %}",
@@ -41,6 +43,12 @@
               $('#query_name').append(data["query_name"])
               $('#searchcontext').append(data["searchcontext"])
               $('#search-result-area').show();
+              fileContent = data["textresult"]
+              var tsvFile = new Blob([fileContent], {type: 'text/tab-separated-values'});
+              window.URL = window.URL || window.webkitURL;
+              var dlBtn = document.getElementById("resultdownload");
+              dlBtn.setAttribute("href", window.URL.createObjectURL(tsvFile));
+              dlBtn.setAttribute("download", "search_results.tab");
             }).fail(function(data){
               $('#loading-bar-area').remove();
               $('#run-time').append(data["time"].toFixed(2) + ' seconds')
