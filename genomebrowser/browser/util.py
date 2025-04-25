@@ -318,7 +318,11 @@ def download_ncbi_assembly(assembly_id, email, upload_dir):
         upload_dir: folder to save to
     """
     if not os.path.exists(upload_dir):
-        os.mkdir(upload_dir)
+        try:
+            os.mkdir(upload_dir)
+        except OSError as e:
+            logger.error("Critical error: genome import pipeline can't create genome download directory (%s)!" % (upload_dir))
+            raise
     Entrez.email = email
     handle = Entrez.esearch(db="assembly", term=assembly_id, retmax='200')
     record = Entrez.read(handle)
