@@ -1,4 +1,7 @@
-[<< Back to start page](README.md) | [Next: Installation >>](installation)
+**About** | [Installation](installation) | [User guide](user) | [Administration guide](admin) | [Developer guide](developer)
+
+[Return to start page](README.md)
+
 
 ## Introduction
 
@@ -19,6 +22,7 @@ Earth spinning rotating animation. [Amirabbaszakavi](https://commons.wikimedia.o
 
 ## Software credits
 
+GenomeDepot employs a wide variety of genome data transformation and analysis tools:
 
 **eggNOG-mapper** [https://github.com/eggnogdb/eggnog-mapper](https://github.com/eggnogdb/eggnog-mapper)
 
@@ -165,4 +169,6 @@ License: MIT License
 
 Reference: Miller CA, Anthony J, Meyer MM, Marth G. Scribl: an HTML5 Canvas-based graphics library for visualizing genomic data over the web. Bioinformatics. 2013 Feb 1;29(3):381-3. doi: 10.1093/bioinformatics/bts677. Epub 2012 Nov 19. PMID: 23172864; PMCID: PMC3562066.
 
-[<< Back to start page](README.md) | [Next: Installation >>](installation)
+[Continue to installation and configuration...](installation)
+
+**About** | [Installation](installation) | [User guide](user) | [Administration guide](admin) | [Developer guide](developer)

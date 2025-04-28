@@ -1,4 +1,5 @@
-[<< Previous: User guide](user) | [Back to start page](README.md) | [Next: Developer guide >>](developer)
+
+[About](introduction) | [Installation](installation) | [User guide](user) | **Administration guide** | [Developer guide](developer)
 
 # Portal administration guide
 
@@ -428,4 +429,6 @@ python manage.py update_taxonomy
 Updates taxonomy with new data downloaded from NCBI. 
 
 
-[<< Previous: User guide](user) | [Back to start page](README.md) | [Next: Developer guide >>](developer)
+[Continue to developer guide...](developer)
+
+[About](introduction) | [Installation](installation) | [User guide](user) | **Administration guide** | [Developer guide](developer)

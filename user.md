@@ -1,4 +1,5 @@
-[<< Previous: Installation >>](installation)| [Back to start page](README.md) | [Next: Administrator guide >>](admin)
+[About](introduction) | [Installation](installation) | **User guide** | [Administration guide](admin) | [Developer guide](developer)
+
 
 # User guide
 
@@ -131,4 +132,6 @@ A conserved regulon app displays the result of comparative regulon analysis. Reg
 
 A site page has three sections. The site information section contains site coordinates, site sequence and a link to the genome page. The target operons section displays a link to the operon page, operon position and a list of genes for each target operon. The genome viewer section displays the genome with the site highlighted.
 
-[<< Previous: Installation >>](installation)| [Back to start page](README.md) | [Next: Administrator guide >>](admin)
+[Continue to administration guide...](admin)
+
+[About](introduction) | [Installation](installation) | **User guide** | [Administration guide](admin) | [Developer guide](developer)
