@@ -14,6 +14,8 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.forms import CheckboxSelectMultiple
+from django_q.models import OrmQ
+from django_q.monitor import Stat
 # Import your models here
 from browser.models import Strain
 from browser.models import Sample
@@ -58,10 +60,12 @@ from browser.async_tasks import async_update_strain_metadata
 from browser.async_tasks import async_import_annotations
 from browser.async_tasks import async_import_regulon
 from browser.async_tasks import async_run_annotation_tools
-from django_q.models import OrmQ
-from django_q.monitor import Stat
+from genomebrowser.settings import TITLE
 
 logger = logging.getLogger("GenomeDepot")
+admin.site.site_title = ""
+admin.site.site_header = "GenomeDepot administration"
+admin.site.index_title = TITLE + " administration"
 
 @admin.action(description = 'Run annotation tools')
 def run_annotation_tools(self, request, queryset):
