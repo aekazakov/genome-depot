@@ -23,12 +23,12 @@ In Ubuntu-based distibutions, you can install most prerequisites using the APT p
 sudo apt install apache2 mysql-server muscle hmmer ncbi-blast+-legacy build-essential zlib1g-dev libexpat1-dev python3-dev libmysqlclient-dev curl git pkg-config libapache2-mod-wsgi-py3 python3.10-venv
 ```
 
-Install conda as described in https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html
+If you don't have conda, install Miniconda [as described in the Conda user guide]( https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html).
 
 
 ## Install dependencies
 
-Create a directory where GenomeDepot and external tools will be installed. This document uses the /opt/genomedepot directory as an example, but installation in this directory requires sudo rights. Installing GenomeDepot in the user’s home directory is not recommended because of possible issues with file access and web app execution by the web server.
+Create a directory where GenomeDepot and external tools will be installed. This document uses the /opt/genomedepot directory as an example, but installation in this directory requires sudo rights. Installing GenomeDepot in the user’s home directory is not recommended because of possible issues with file access and web app execution by the Apache web server.
 
 ```
 cd /opt
@@ -50,12 +50,12 @@ mkdir mygenomes
 cd mygenomes
 git clone https://github.com/aekazakov/genome-depot
 ```
-Run installation script that will install external tools and create virtual environment. Running it may take quite some time for the first GenomeDepot-based portal because it will make all the conda environments and download reference data.
+Run the install.sh script that will install external tools and create a Python virtual environment for GenomeDepot. Running the script may take quite some time for the deployment of the first GenomeDepot-based portal because it will create all the conda environments and download reference data for the tools.
 ```
 cd genome-depot
 bash install.sh
 ```
-The install.sh script creates Python virtual environment and installs the required Python libraries including Django framework, genome annotation tools and other dependencies. If it fails, check the error message, fix the problem and start install.sh again.
+The install.sh script creates the the genome-depot virtual environment and installs all required Python libraries including Django framework, genome annotation tools and other dependencies. If it fails, check the error message, fix the problem and start install.sh again.
 The most common problem is a name conflict with existing conda environments. In this case, the installation script does not overwrite the existing environment but stops the installation. User can rename or delete the existing environment before restarting the installation.
 
 Another common problem is an incomplete installation of the operon prediction tool POEM. If POEM fails to predict operons, and running poem.sh script throws an error "AttributeError: module 'tensorflow' has no attribute 'get_default_graph'", it means the versions of keras and tensorflow are not compatible. Activate conda genomedepot-poem environment and run `pip install tensorflow==1.13.1`.
@@ -118,9 +118,9 @@ and open in the browser <http://127.0.0.1:8000/admin>. You should be able to log
  
 If test server cannot find static files, check if www-data user can read from the /opt/genomedepot/static/mygenomes directory (giving rw permissions for www-data group would work).
 
-##How to configure Apache web server for GenomeDepot
+## How to configure the Apache web server for GenomeDepot
 
-You need sudo privileges for making changes in Apache configuration files. Open apache2 site configuration file (it may be /etc/apache2/sites_availalbel/default_ssl.conf) in a text editor and add the following (with correct paths):
+You need sudo privileges for making changes in Apache configuration files. Open apache2 site configuration file (it may be /etc/apache2/sites_available/default_ssl.conf) in a text editor and add the following (change file paths, if needed):
 ```
 WSGIDaemonProcess genomedepotpy python-home=/opt/genomedepot/genomedepot-venv python-path=/opt/genomedepot/app/mygenomes/genome-depot/genomebrowser
 WSGIScriptAlias /mygenomes /opt/genomedepot/app/mygenomes/genome-depot/genomebrowser/genomebrowser/wsgi.py process-group=genomedepotpy application-group=%{GLOBAL}
@@ -158,9 +158,9 @@ sudo systemctl restart apache2
 ```
 Now you would be able to open https://your.domain.name/mygenomes in a web browser.
 
-##Start Django Q cluster manually
+## Start Django Q cluster from the command line
 
-A Django Q cluster must be started for running GenomeDepot pipeline jobs from the task queue. To start the cluster, start a new screen session with “screen” command and enter:
+A Django Q cluster must be started for the execution of GenomeDepot pipeline jobs from the task queue. To start the cluster, start a new screen session with “screen” command and enter:
 ```
 conda deactivate
 source /<GenomeDepot venv path>/bin/activate
@@ -179,6 +179,7 @@ To stop the Django Q cluster, attach the screen session with “screen -r” com
 ## Start Django Q cluster from crontab
 
 The Django Q cluster can be started on server restart as a cron job. First, create a bash script that starts the cluster:
+
 ```
 #!/usr/bin/bash
 conda deactivate
@@ -194,53 +195,27 @@ Save the file and exit the editor.
 To stop a cluster, run “screen -r gdcluster” command and press Ctrl-C. Warning: if the cluster is running a task, it may not stop immediately, and some data may be lost or corrupted.
 If you have more than one GenomeDepot-based portal, change “gdcluster” to a unique name for each screen session. 
 
-## How to change site background image
+## How to change the background image of your web-site
 
 There are two background images in the repository, one for the dark mode (genomebrowser/static/images/background.jpg) and the other for the light mode (genomebrowser/static/images/background_light.jpg). You can replace them, then run `python manage.py collectstatic` command and restart Apache web server.
 
 ## Tweak MySQL configuration 
 
 As the genome database grows, MySQL performance may decrease because of excessive I/O usage. To increase MySQL performance, change innodb_buffer_pool_size parameter in MySQL configuration file. Run the following query in the mysql window to find optimal innodb_buffer_pool_size:
-
+```
 SELECT CEILING(Total_InnoDB_Bytes*1.6/POWER(1024,3)) RIBPS FROM (SELECT SUM(data_length+index_length) Total_InnoDB_Bytes FROM information_schema.tables WHERE engine='InnoDB') A;
-
+```
 It will show RIBPS value in gigabytes. If your server has enough memory, enter that number into the mysqld section of mysqld.conf (/etc/mysql/mysql.conf.d/mysqld.conf) and add “G”, for example:
 
+```
 [mysqld]
 innodb_buffer_pool_size=8G
+```
 
-After that, restart MySQL.
-
-## Third-party tools installed with GenomeDepot
-
-* **eggNOG-mapper** [Molecular Biology and Evolution, 2021, msab293](https://doi.org/10.1093/molbev/msab293)
-
-* **POEM_py3K** [bioRxiv, 2019.12.20.885269](https://doi.org/10.1101/2019.12.20.885269)
-
-* **Jbrowse** [Genome Biology ,2016, 17: 66](https://doi.org/10.1186/s13059-016-0924-1)
-
-* **samtools** [GigaScience, 2021, giab008](https://doi.org/10.1093/gigascience/giab008)
-
-* **AMRFinderPlus** [Sci Rep, 2021, 11: 12728](https://doi.org/10.1038/s41598-021-91456-0)
-
-* **antiSMASH** [Nucleic Acids Research, 2021, 49: W29](https://doi.org/10.1093/nar/gkab335)
-
-* **eCIS-screen** [Cell Rep, 2019, 29: 511](https://doi.org/10.1016/j.celrep.2019.08.096)
-
-* **Fama** [https://github.com/aekazakov/fama](https://github.com/aekazakov/fama)
-
-* **PhiSpy** [Nucleic Acids Research, 2012, 40: e126](https://doi.org/10.1093/nar/gks406)
-
-* **GapMind** [mSystems, 2020, 5: e00291-20](https://doi.org/10.1128/mSystems.00291-20)
-
-* **DefenseFinder** [Nature Communications, 2022, 13: 2561](https://doi.org/10.1038/s41467-022-30269-9)
-
-* **MacsyFinder** [PLoS One, 2014, 9: e110726](https://doi.org/10.1371/journal.pone.0110726)
-
-* **geNomad** [Nature Biotechnology, 2023](https://doi.org/10.1038/s41587-023-01953-y)
-
-* **HMMER** [PLoS Comput Biol, 2011, 7: e1002195](https://doi.org/10.1371/journal.pcbi.1002195)
-
+After making the changes, restart MySQL:
+```
+sudo systemctl restart mysql
+```
 
 [Continue to user guide...](user)
 

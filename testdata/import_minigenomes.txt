@@ -1,4 +1,0 @@
-#gbk_file	genome	strain	sample	URL	link_text
-../testdata/E_coli_CFT073.100000.gbk	E_coli_CFT073	CFT073		https://www.ncbi.nlm.nih.gov/assembly/GCF_000007445.1	NCBI:GCF_000007445.1
-../testdata/E_coli_ED1a.100000.gbk	E_coli_ED1a	ED1a		https://www.ncbi.nlm.nih.gov/assembly/GCF_000026305.1	NCBI:GCF_000026305.1
-../testdata/E_coli_BW2952.100000.gbk	E_coli_BW2952	BW2952		https://www.ncbi.nlm.nih.gov/assembly/GCF_000022345.1	NCBI:GCF_000022345.1
