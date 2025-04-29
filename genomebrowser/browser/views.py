@@ -1837,7 +1837,8 @@ def operon_detail(request, name, genome=None):
         ).prefetch_related(
             'genome__tags'
         ).get(
-            name=name
+            name=name,
+            genome__name=genome
         )
         genes = Gene.objects.filter(
             operon = operon.id
