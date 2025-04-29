@@ -706,7 +706,7 @@ admin.site.register(Annotation, AnnotationAdmin)
 class OperonAdmin(admin.ModelAdmin):
     list_display = ['name', 'genome', 'contig', 'start', 'end']
     ordering = ['genome', 'name']
-    search_fields = ['name', 'genome', 'contig']
+    search_fields = ['name', 'genome__name', 'contig__contig_id']
     autocomplete_fields = ('genome', 'contig', )
 
 admin.site.register(Operon, OperonAdmin)
@@ -715,7 +715,7 @@ admin.site.register(Operon, OperonAdmin)
 class SiteAdmin(admin.ModelAdmin):
     list_display = ['name', 'genome', 'contig', 'start', 'end', 'type']
     ordering = ['genome', 'name']
-    search_fields = ['name', 'genome', 'contig', 'type']
+    search_fields = ['name', 'genome__name', 'contig__contig_id', 'type']
     autocomplete_fields = ('genome', 'contig', 'regulon',)
     raw_id_fields = ('operons', 'genes',)
 

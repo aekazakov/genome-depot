@@ -1827,7 +1827,7 @@ def gene_detail(request, genome, locus_tag):
                       )
     return render(request, 'browser/gene.html', context)
 
-def operon_detail(request, name, genome=None):
+def operon_detail(request, name, genome):
     '''
         Displays operon page.
     '''
