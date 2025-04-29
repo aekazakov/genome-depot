@@ -2,6 +2,13 @@
 
 # Installation
 
+This document uses the /opt/genomedepot directory as an example, but GenomeDepot can be installed in another directory as well. **Installation in the /opt/genomedepot directory requires sudo rights.** 
+
+Installing GenomeDepot in the user’s home directory **is not recommended** because of possible issues with file access permissions and web app execution by the Apache web server.
+
+In this document, https://example.com/mygenomes is used as a base URL for the GenomeDepot-based web portal. For your installation, use your own domain name instead of example.com.
+
+
 ## Prerequisites
 
 * Linux-based OS (GenomeDepot was developed and tested in 64-bit Ubuntu Linux system)
@@ -28,7 +35,7 @@ If you don't have conda, install Miniconda [as described in the Conda user guide
 
 ## Install dependencies
 
-Create a directory where GenomeDepot and external tools will be installed. This document uses the /opt/genomedepot directory as an example, but installation in this directory requires sudo rights. Installing GenomeDepot in the user’s home directory is not recommended because of possible issues with file access and web app execution by the Apache web server.
+Create a directory where GenomeDepot and external tools will be installed. 
 
 ```
 cd /opt
@@ -50,12 +57,12 @@ mkdir mygenomes
 cd mygenomes
 git clone https://github.com/aekazakov/genome-depot
 ```
-Run the install.sh script that will install external tools and create a Python virtual environment for GenomeDepot. Running the script may take quite some time for the deployment of the first GenomeDepot-based portal because it will create all the conda environments and download reference data for the tools.
+Run the install.sh script, which installs external tools and creates a Python virtual environment for GenomeDepot. Running the script may take quite some time for the deployment of the first GenomeDepot-based portal because it will create all the conda environments and download reference data for the tools.
 ```
 cd genome-depot
 bash install.sh
 ```
-The install.sh script creates the the genome-depot virtual environment and installs all required Python libraries including Django framework, genome annotation tools and other dependencies. If it fails, check the error message, fix the problem and start install.sh again.
+The install.sh script installs all required Python libraries including Django framework, genome annotation tools and other dependencies. If it fails, check the error message, fix the problem and start install.sh again.
 The most common problem is a name conflict with existing conda environments. In this case, the installation script does not overwrite the existing environment but stops the installation. User can rename or delete the existing environment before restarting the installation.
 
 Another common problem is an incomplete installation of the operon prediction tool POEM. If POEM fails to predict operons, and running poem.sh script throws an error "AttributeError: module 'tensorflow' has no attribute 'get_default_graph'", it means the versions of keras and tensorflow are not compatible. Activate conda genomedepot-poem environment and run `pip install tensorflow==1.13.1`.
@@ -78,8 +85,8 @@ quit
 ```
 Copy the genomedepot/apps/mygenomes/genome-depot/genomebrowser/.env.template file to genomedepot/apps/mygenomes/genome-depot/genomebrowser/.env. Open genomedepot/apps/mygenomes/genome-depot/genomebrowser/.env in a text editor and enter the settings:
 
-* SECRET_KEY: Django secret key
-* ALLOWED_HOSTS: comma-separated list of host names and IP addresses for the web server (like example.com,127.0.0.1,testserver)
+* SECRET_KEY: Django [secret key](https://docs.djangoproject.com/en/5.1/ref/settings/#secret-key)
+* ALLOWED_HOSTS: comma-separated list of host names and IP addresses for the web server (for example,  example.com,127.0.0.1,testserver)
 * INTERNAL_IPS: comma-separated list of IP addresses for this site (usually, 127.0.0.1,)
 * DB_USER: mysql user name (created at step 1)
 * DB_PASSWORD: mysql password (created at step 1)
@@ -146,7 +153,7 @@ Alias /gdstatic /opt/genomedepot/static/
 ```
 You may have to add "Header always set X-Frame-Options "SAMEORIGIN"" to web server configuration if the embedded genome viewer is not properly displayed.
 
-Change group ownership to www-data for the genomebrowser/django.log file. For example:
+Change group ownership to www-data for the genome-depot/genomebrowser/django.log file. For example:
 
 ```
 sudo chown :www-data /opt/genomedepot/apps/mygenomes/genome-depot/genomebrowser/django.log
