@@ -130,13 +130,13 @@ A conserved operon app displays the result of operon comparative analysis. To bu
 
 A regulon page has four sections: regulon information, a list of sites, a list of operons and a list of genes. The regulon information section contains a regulon description and links to the genome page, regulatory protein page and conserved regulon analysis app. The list of sites displays for every site a link to site page, site position, sequence and a link to target gene or operon page. The list of genes displays a link to the gene page, gene name, position and product for each target gene, which is not a member of an operon. The list of target operons displays a link to the operon page, operon position and list of genes in the operon.
 
-![Regulon page](assets/images/regulon.png "Regulon page")
+[![Regulon page](assets/images/regulon.jpg "Regulon page")](assets/images/regulon.jpg)
 
 ## Conserved regulon
 
 A conserved regulon app displays the result of comparative regulon analysis. Regulons controlled by regulatory proteins from the same eggNOG family constitute a conserved regulon. Since a regulatory protein can belong to more than one eggNOG family at different taxonomic levels, several conserved regulons can be constructed for one regulatory protein. The conserved regulon page has four sections. The regulator section shows a list of gene products in a selected eggNOG family and a link to the list of all eggNOG family members. The comparative table section displays eggNOG families in rows and regulons in columns. The cells marked orange show number of target genes from an eggNOG family in a regulon. The regulons section contains links to regulons and regulatory genes included into the conserved regulon. The sites section contains list of all sites from all regulons included into the conserved regulon.
 
-![Conserved regulon page](assets/images/cons_regulon.png "Conserved regulon page")
+[![Conserved regulon page](assets/images/cons_regulon.jpg "Conserved regulon page")](assets/images/cons_regulon.jpg)
 
 ## Site
 

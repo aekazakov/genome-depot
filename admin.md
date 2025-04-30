@@ -7,43 +7,43 @@ There are two ways for administering a GenomeDepot-based web portal: Django’s 
 
 ## Log into administration panel
 
-![Administration portal](assets/images/admin-panel-login.png "Administration portal")
+[![Administration portal](assets/images/admin-panel-login.jpg "Administration portal")](assets/images/admin-panel-login.jpg)
 
-The administration panel link is https://your_site_URL /admin/. Sign in with the superuser username and password created during the GenomeDepot installation.
+The administration panel link is https://your_site_URL/admin/. Sign in with the superuser username and password created during the GenomeDepot installation.
 
 ## Administration portal menu
 
-![Administration portal menu](assets/images/admin-panel-menu.png "Administration portal menu")
+[![Administration portal menu](assets/images/admin-panel-menu.jpg "Administration portal menu")](assets/images/admin-panel-menu.jpg)
 
 The tools menu at the top of administration panel pages has five buttons:
 
 * GenomeDepot tools: opens a page with links to GenomeDepot administration tools,
-* Tasks: opens a list of queued tasks,
-* Clusters: opens a list of Django Q clusters,
+* Tasks: opens a list of tasks in the queue,
+* Pipeline: opens a list of Django Q clusters,
+* Pipeline log: opens a page with GenomeDepot pipeline log file,
 * Users: opens a list of GenomeDepot users,
-* Add user: opens a form for adding a new user.
 
 ## Content management pages
 
 The main page of the administration panel displays a list of content types. You can click on a content type to go to a page that lists all associated records. On those pages, you can view, modify, add or delete records (see the “Managing data in administration panel pages” section). You can also directly click the Add link next to each content type to start creating a record of that type.
 
-![Content management pages](assets/images/admin-datapages.png "Content management pages")
+[![Content management pages](assets/images/admin-datapages.jpg "Content management pages")](assets/images/admin-datapages.jpg)
 
-## System status
+## Pipeline status
 
-The Tasks and Clusters buttons in the menu of administration panel pages show the number of running clusters and the number of currently active tasks in red circles. These numbers should be either 0 or 1. The number on the Tasks button is 1 if there is a task currently running and 0 if there is no such task. The number on the Clusters button is 1 if the GenomeDepot cluster is up or 0 if there is no running cluster. If this number is larger than 1, additional Django Q clusters have been started. Running several clusters is potentially dangerous for the data integrity and should be avoided.
+The Tasks queue and Pipeline buttons in the top menu of administration pages show the number of currently active tasks in red circle and the status of the GenomeDepot pipeline. Normally, the numbers of tasks is either 0 or 1, because the administration interface prevents submissions of new tasks if there are tasks in the queue. The number on the Tasks button is 1 if there is a task currently running and 0 if there is no such task. The status on the Pipeline button can be "Off" is the Django Q worker was not started, "Idle" if there are no active tasks, or "Busy" if the pipeline is running a job. Running more than one Django Q worker for one genome collection is potentially dangerous for the data integrity and should be avoided at all times.
 
 ## Tools page
 
-![Administration tools page](assets/images/admin-tools.png "Administration tools page")
+[![Administration tools page](assets/images/admin-tools.jpg "Administration tools page")](assets/images/admin-tools.jpg)
 
 The tools page has three sections: View and manage data, Import data, GenomeDepot configuration and user management.
 
-The first section contains links to lists of genomes, strains, strain metadata, samples, sample metadata, genome tags, genes, annotations and regulons. These links open tables of existing data.
+The View and manage data section contains links to lists of genomes, strains, strain metadata, samples, sample metadata, genome tags, genes, annotations and regulons. These links open tables of existing data.
 
-The second section contains links to import tools for genomes, strain metadata, sample descriptions, sample metadata, gene annotations and regulons. 
+The Import data section contains links to import tools for genomes, strain metadata, sample descriptions, sample metadata, gene annotations and regulons. 
 
-The last section on the tools page has the same links as the menu on the administration panel dashboard (see above), with an additional link to the User groups page.
+The last section on the tools page has the same links as the menu on the administration panel dashboard (see above), with an additional links to the User groups and Add user pages.
 
 ## Use GenomeDepot administration tools for data import
 
@@ -51,7 +51,7 @@ The last section on the tools page has the same links as the menu on the adminis
 
 GenomeDepot stores genome sequences in GenBank format files and protein sequences in the database. The genome import pipeline generates the genome files and creates database entries for genomes, strains, genes and proteins. The import pipeline also runs EggNOG-mapper to assign proteins to ortholog families and POEM to predict operons. In addition to ortholog families, EggNOG-mapper associates proteins with KEGG orthologs, KEGG reactions, EC numbers, TC families and other functional classifications. 
 
-![Genome import](assets/images/admin-import-genomes.png "Genome import")
+[![Genome import](assets/images/admin-import-genomes.jpg "Genome import")](assets/images/admin-import-genomes.jpg)
 
 In the Tools page of the administration panel, click the Import genomes link. Before genome import, prepare input files. There are three ways to import genome files into GenomeDepot:
 
@@ -90,7 +90,7 @@ In the Tools page of the administration panel, click the Import genomes link. Be
 
 Upload any organism metadata from an Excel file since the metadata is not collected by the genome import pipeline. The Excel file has to have one spreadsheet with strain identifiers in the leftmost column, metadata categories in the top row and metadata values in other cells. Empty cells and cells containing “None” are ignored. All imported metadata entries have “User-defined data” as a source and display a “No external link” message instead of link to external resource. An alternative method for organism metadata upload is using the command-line command “update_strain_metadata”.
 
-![Strain metadata import](assets/images/admin-import-strainmetadata.png "Strain metadata import")
+[![Strain metadata import](assets/images/admin-import-strainmetadata.jpg "Strain metadata import")](assets/images/admin-import-strainmetadata.jpg)
 
 
 ### Add sample descriptions
@@ -101,7 +101,7 @@ There are no descriptions in sample entries generated by genome import pipeline 
 * Sample full name.
 * Description (text).
 
-![Sample descriptions import](assets/images/admin-import-sampledescriptions.png "Sample descriptions import")
+[![Sample descriptions import](assets/images/admin-import-sampledescriptions.jpg "Sample descriptions import")](assets/images/admin-import-sampledescriptions.jpg)
 
 ### Add sample metadata
 
@@ -113,7 +113,7 @@ Sample metadata is not collected from genome files by the genome import pipeline
 * Metadata key (category name).
 * Metadata value.
 
-![Sample metadata import](assets/images/admin-import-samplemetadata.png "Sample metadata import")
+[![Sample metadata import](assets/images/admin-import-samplemetadata.jpg "Sample metadata import")](assets/images/admin-import-samplemetadata.jpg)
 
 ### Add gene annotations
 
@@ -127,7 +127,7 @@ Users can upload additional annotations for any gene in the database. A tab-sepa
 * Annotation value (For example, identifier of a protein family or domain. Up to 50 symbols long).
 * Annotation note (free-text description).
 
-![Gene annotations import](assets/images/admin-import-annotations.png "Gene annotations import")
+[![Gene annotations import](assets/images/admin-import-annotations.jpg "Gene annotations import")](assets/images/admin-import-annotations.jpg)
 
 ### Add regulons
 
@@ -145,11 +145,13 @@ Regulons and sites can be uploaded from a tab-separated file. Each line in the f
 
 If the target gene is the first gene in an operon, the site will be linked to this operon when imported.
 
-![Regulon import](assets/images/admin-import-regulons.png "Regulon import")
+[![Regulon import](assets/images/admin-import-regulons.jpg "Regulon import")](assets/images/admin-import-regulons.jpg)
 
 ## Managing users
 
-Click the Add user button in the administration panel menu to add a new user with administration permissions. Users can have permissions to view, add or edit the data, manage other user accounts, view, add or delete tasks in the jobs queue etc. You can find more about Django administration panel in this tutorial: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Admin_site
+Click the Add user button in the administration panel menu to add a new user with administration permissions. Users can have permissions to view, add or edit the data, manage other user accounts, view, add or delete tasks in the jobs queue etc. You can find more about Django administration panel in this tutorial:
+
+[https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Admin_site](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Admin_site)
 
 ## Managing data in administration panel pages
 
@@ -171,7 +173,7 @@ To modify a configuration parameter, click on its name, change its properties an
 
 Add configuration parameter path: admin/browser/config/add/
 
-![Add new config](assets/images/admin-addconfig.png "Add new config")
+[![Add new config](assets/images/admin-addconfig.jpg "Add new config")](assets/images/admin-addconfig.jpg)
 
 ## Genomes
 
