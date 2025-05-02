@@ -204,7 +204,27 @@ If you have more than one GenomeDepot-based portal, change “gdcluster” to a 
 
 ## How to change the background image of your web-site
 
-There are two background images in the repository, one for the dark mode (genomebrowser/static/images/background.jpg) and the other for the light mode (genomebrowser/static/images/background_light.jpg). You can replace them, then run `python manage.py collectstatic` command and restart Apache web server.
+There are two page background images in the repository, one for the dark mode (genomebrowser/static/images/background.jpg) and the other for the light mode (genomebrowser/static/images/background_light.jpg). 
+The background image on the start page is genomebrowser/static/images/slide02.jpg.
+You can replace any of these files with your own images, then run `python manage.py collectstatic` command and restart the Apache web server.
+
+To keep git from overwriting image files during future updates, run:
+```
+git update-index --skip-worktree genomebrowser/static/images/slide02.jpg
+git update-index --skip-worktree genomebrowser/static/images/background.jpg
+git update-index --skip-worktree genomebrowser/static/images/background_light.jpg
+```
+
+## How to change links at the bottom of web pages
+
+Edit the genomebrowser/browser/templates/footer_links.html file.
+To replace icons at the links, you can choose from [Font Awesome 4.0.3 Icons set](https://btsai.github.io/font_awesome4_cheatsheet/index.html).
+
+To keep git from  overwriting the file during future updates, run:
+```
+git update-index --skip-worktree genomebrowser/browser/templates/footer_links.html
+```
+
 
 ## Tweak MySQL configuration 
 
@@ -223,6 +243,7 @@ After making the changes, restart MySQL:
 ```
 sudo systemctl restart mysql
 ```
+
 
 [Continue to user guide...](user)
 

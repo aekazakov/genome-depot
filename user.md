@@ -11,7 +11,7 @@ Strain in GenomeDepot is an organism cultivated under controlled laboratory cond
 
 Sample is a metagenomic data set representing multiple members of a microbial community. Metagenome-assembled genomes (MAGs) are linked to samples.
 
-Gene in GenomeDepot is a continuous DNA segment, typically with assigned function. Most genes encode proteins. Non-coding genes are usually either rRNA and tRNA genes or pseudogenes. 
+Gene in GenomeDepot is a continuous DNA segment, typically with assigned function. Genes can be coding or non-coding. Coding genes are linked to proteins. Non-coding genes are usually either rRNA and tRNA genes or pseudogenes.
 
 Regulon is a group of genes (or operons) that are directly regulated by a DNA-binding transcription factor, which recognizes binding sites upstream of those genes. 
 
@@ -25,8 +25,8 @@ The start page is a main entry point for a GenomeDepot-based web site. The start
 * Text search 
 * Nucleotide sequence search
 * Protein sequence search
-* About page and site statistics
-* Documentation site
+* About page with site statistics
+* Link to GenomeDepot documentation site
 
 [![Start page](assets/images/startpage.jpg "Start page")](assets/images/startpage.jpg)
 
