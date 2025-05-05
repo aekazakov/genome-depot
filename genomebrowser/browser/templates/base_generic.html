@@ -34,7 +34,6 @@
     <style>.wrapper.style3.light {background-image: url("{% static 'images/background_light.jpg' %}");}</style>
     {% block script-header %}
     {% endblock %}
-    {% load cookiebanner %}
   </head>
   {% endblock %}
   {% block body-tag %}<body>{% endblock %}
@@ -81,7 +80,6 @@
       <script src="{% static 'assets/js/main.js' %}"></script>
       {% endblock %}
       {% block bottom %}
-      {% cookiebanner_modal 'cookie_banner' %}
     </body>
 </html>
 {% endblock %}

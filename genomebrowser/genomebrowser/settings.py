@@ -47,8 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_q',
-    'debug_toolbar',
-    'cookiebanner'
+    'debug_toolbar'
 ]
 
 if DEBUG:
@@ -305,33 +304,3 @@ ADMIN_SHORTCUTS_SETTINGS = {
     'open_new_window': False,
 }
 
-COOKIEBANNER = {
-    "title": _("Cookie settings"),
-    "header_text": _("This website stores essential cookies on your computer to function properly. By using the site you are agreeing to this."),
-    #"footer_text": _("Please accept our cookies"),
-    #"footer_links": [
-    #    {"title": _("Imprint"), "href": "/imprint"},
-    #    {"title": _("Privacy"), "href": "/privacy"},
-    #],
-    "groups": [
-        {
-            "id": "essential",
-            "name": _("Essential"),
-            "description": _("Essential cookies allow this page to work."),
-            "cookies": [
-                {
-                    "pattern": "cookiebanner",
-                    "description": _("Meta cookie for the cookies that are set."),
-                },
-                {
-                    "pattern": "csrftoken",
-                    "description": _("This cookie prevents Cross-Site-Request-Forgery attacks."),
-                },
-                {
-                    "pattern": "sessionid",
-                    "description": _("This cookie is necessary to allow logging in, for example."),
-                },
-            ],
-        },
-    ],
-}
