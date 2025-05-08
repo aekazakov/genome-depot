@@ -24,7 +24,7 @@ fi
 #Installing dependencies in the virtual environment
 echo "Installing python dependencies in genomedepot-venv virtual environment"
 source "$TOPDIR/genomedepot-venv/bin/activate"
-pip install "django==3.2.6" django_admin_shortcuts django_cors_headers django_q django_debug_toolbar openpyxl "parasail==1.2.4" biopython "toytree==2.0.1" urllib3 PyMySQL plotly pandas python-decouple django-admin-logviewer django-cookiebanner --no-cache-dir
+pip install cryptography urllib3 PyMySQL "pandas==2.2.1" "python-decouple==3.8" "django==3.2.6" "django_admin_shortcuts=2.1.1" "django-cors-headers==4.3.1" "django-q==1.3.9" "django-debug-toolbar==4.3.0" "openpyxl==3.1.2" "parasail==1.2.4" "biopython==1.83" "toytree==2.0.1" "plotly==5.19.0" "django-admin-logviewer==0.1.5" --no-cache-dir
 deactivate
 
 source $CONDA
@@ -309,7 +309,7 @@ else
     mkdir "$TOPDIR/external_refdata/defensefinder/data"
     conda install -y -c bioconda hmmer
     conda install -y pip
-    pip install mdmparis-defense-finder
+    pip install "mdmparis-defense-finder==2.0.0"
     defense-finder update --models-dir "$TOPDIR/external_refdata/defensefinder/data"
     conda deactivate
     cd "$TOPDIR/external_tools"

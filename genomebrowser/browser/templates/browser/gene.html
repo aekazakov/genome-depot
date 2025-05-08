@@ -209,8 +209,8 @@
                 {% for annotation in annotations %}
                   <span>{{ annotation.key }}</span>
                   <h5> 
-                    <strong>{{ annotation.value }}</strong> (external link: <a href="{{ annotation.url }}" target="blank_">{{ annotation.source }}</a>)
-                    <br/>Description: {{ annotation.note }}
+                    <strong>{{ annotation.value }}</strong> (Source: <a href="{{ annotation.url }}" target="blank_">{{ annotation.source }}</a>)
+                    <br/><strong>Description:</strong> {{ annotation.note }}
                   </h5>
                 {% endfor %}
               {% endif %}

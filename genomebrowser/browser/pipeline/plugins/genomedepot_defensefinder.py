@@ -118,9 +118,9 @@ def postprocess(annotator, genomes, working_dir):
                     locus_tag = row[1]
                     outfile.write('\t'.join([locus_tag, genome, 'DefenseFinder',
                                   'https://github.com/mdmparis/defense-finder',
-                                  'Anti-phage system',
+                                  row[-1] + ' system',
                                   row[2],
-                                  'Type: ' + row[2] + ', model: ' + row[4]
+                                  'Type: ' + row[-3] + ', subtype: ' + row[-2] + ', gene name: ' + row[2]
                                   ]) + '\n')
                         
     _cleanup(working_dir)
