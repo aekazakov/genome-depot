@@ -94,7 +94,7 @@
                     const blob = new Blob([data], {type: "octet/stream"});
                     var url = window.URL.createObjectURL(blob);
                     a.href = url;
-                    a.download = 'exported_operons.tab';
+                    a.download = '{{ genome.name }}_exported_operons.tab';
                     document.body.append(a);
                     a.click();
                     a.remove();

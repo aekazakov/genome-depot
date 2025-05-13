@@ -24,6 +24,8 @@ from browser.models import Cazy_family
 from browser.models import Go_term
 from browser.models import Ortholog_group
 from browser.models import Operon
+from browser.models import Site
+from browser.models import Regulon
 from browser.util import export_genome
 from browser.taxonomy import get_taxon_children
 
@@ -43,6 +45,10 @@ def export_csv(request):
         return _export_annotations_csv(request)
     elif query_type == 'operon':
         return _export_operons_csv(request)
+    elif query_type == 'site':
+        return _export_sites_csv(request)
+    elif query_type == 'regulon':
+        return _export_regulons_csv(request)
     else:
         return _export_genes_csv(request)
     
@@ -64,6 +70,7 @@ def _export_annotations_csv(request):
     fast = request.GET.get('fast')
     # get objects
     if genome:
+        response['Content-Disposition'] = 'attachment; filename="' + str(genome) + '_exported_annotations.tab"'
         if fast and fast == 'on':
             object_list = Annotation.objects.filter(
                 (
@@ -174,6 +181,7 @@ def _export_genes_csv(request):
                 ).order_by('locus_tag')
         elif genome:
             # Generate gene list with all mappings and annotations
+            response['Content-Disposition'] = 'attachment; filename="' + str(genome) + 'export_genes.tab"'
             object_list = Gene.objects.filter(
                 genome__name=genome
             ).order_by(
@@ -549,7 +557,7 @@ def _export_operons_csv(request):
     '''
         Returns list of operons for a genome in tab-separated text format
         
-        Template gene_list_subpage.html contains the Ajax JS calling this function 
+        Template operon_list.html contains the Ajax JS calling this function 
         
     '''
     # Create the HttpResponse object with the appropriate CSV header.
@@ -566,6 +574,7 @@ def _export_operons_csv(request):
         except Genome.DoesNotExist:
             writer.writerow(['Genome ' + query + ' does not exist',])
             return response
+        response['Content-Disposition'] = 'attachment; filename="' + genome.name + '_exported_operons.tab"'
         object_list = Operon.objects.filter(genome=genome
             ).order_by(
                 'name'
@@ -576,7 +585,7 @@ def _export_operons_csv(request):
             ).distinct()
 
     else:
-        object_list = Genome.objects.none()
+        object_list = Operon.objects.none()
     writer.writerow([
                      'Name',
                      'Genome',
@@ -600,10 +609,136 @@ def _export_operons_csv(request):
         writer.writerow([operon.name,
                          operon.genome.name,
                          source,
-                         genome.taxon.name,
+                         operon.genome.taxon.name,
                          location,
                          str(operon.genes.count()),
                          ';'.join([item.locus_tag for item in operon.genes.all()])
+                         ])
+    return response
+
+
+def _export_sites_csv(request):
+    '''
+        Returns list of sites for a genome in tab-separated text format
+        
+        Template gene_list_subpage.html contains the Ajax JS calling this function 
+        
+    '''
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/tab-separated-values')
+    response['Content-Disposition'] = 'attachment; filename="exported_sites.tab"'
+    writer = csv.writer(response, delimiter='\t')
+    query_type = request.GET.get('type')
+    query = request.GET.get('query')
+    if query_type != 'site':
+        object_list = Site.objects.none()
+    elif query:
+        try:
+            genome = Genome.objects.get(name=query)
+        except Genome.DoesNotExist:
+            writer.writerow(['Genome ' + query + ' does not exist',])
+            return response
+        response['Content-Disposition'] = 'attachment; filename="' + genome.name + '_exported_sites.tab"'
+        object_list = Site.objects.filter(genome=genome
+            ).order_by(
+                'name'
+            ).select_related(
+                'genome', 'contig', 'regulon'
+            ).prefetch_related(
+                'genes', 'operons'
+            ).distinct()
+
+    else:
+        object_list = Site.objects.none()
+    writer.writerow([
+                     'Name',
+                     'Type',
+                     'Genome',
+                     'Source',
+                     'Taxon',
+                     'Location',
+                     'Regulon',
+                     'Regulator(s)',
+                     'Target genes',
+                     'Target operons'
+                     ])
+    for site in object_list:
+        if site.genome.strain:
+            source = 'Strain:' + site.genome.strain.full_name
+        else:
+            source = 'Sample:' + site.genome.sample.full_name
+        if site.strand == 1:
+            location = site.contig.contig_id + ':' + str(site.start) + '..' + str(site.end)
+        elif site.strand == -1:
+            location = site.contig.contig_id + ':complement(' + str(site.start) + '..' + str(site.end) + ')'
+        else:
+            location = site.contig.contig_id + ':' + str(site.start) + '..' + str(site.end) + '(unknown strand)'
+        writer.writerow([site.name,
+                         site.type,
+                         site.genome.name,
+                         source,
+                         site.genome.taxon.name,
+                         location,
+                         site.regulon.name,
+                         ';'.join([item.locus_tag for item in site.regulon.regulators.all()]),
+                         ';'.join([item.locus_tag for item in site.genes.all()]),
+                         ';'.join([item.name for item in site.operons.all()])
+                         ])
+    return response
+
+
+def _export_regulons_csv(request):
+    '''
+        Returns list of regulons for a genome in tab-separated text format
+        
+        Template regulon_list.html contains the Ajax JS calling this function 
+        
+    '''
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/tab-separated-values')
+    response['Content-Disposition'] = 'attachment; filename="exported_regulons.tab"'
+    writer = csv.writer(response, delimiter='\t')
+    query_type = request.GET.get('type')
+    query = request.GET.get('query')
+    if query_type != 'regulon':
+        object_list = Regulon.objects.none()
+    elif query:
+        try:
+            genome = Genome.objects.get(name=query)
+        except Genome.DoesNotExist:
+            writer.writerow(['Genome ' + query + ' does not exist',])
+            return response
+        response['Content-Disposition'] = 'attachment; filename="' + genome.name + 'exported_regulons.tab"'
+        object_list = Regulon.objects.filter(genome=genome
+            ).order_by(
+                'name'
+            ).select_related(
+                'genome'
+            ).prefetch_related(
+                'regulators'
+            ).distinct()
+
+    else:
+        object_list = Regulon.objects.none()
+    writer.writerow([
+                     'Name',
+                     'Genome',
+                     'Source',
+                     'Taxon',
+                     'Regulator(s)',
+                     'Description'
+                     ])
+    for regulon in object_list:
+        if regulon.genome.strain:
+            source = 'Strain:' + regulon.genome.strain.full_name
+        else:
+            source = 'Sample:' + regulon.genome.sample.full_name
+        writer.writerow([regulon.name,
+                         regulon.genome.name,
+                         source,
+                         regulon.genome.taxon.name,
+                         ';'.join([item.locus_tag for item in regulon.regulators.all()]),
+                         regulon.description
                          ])
     return response
 

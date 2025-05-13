@@ -67,6 +67,47 @@
                 </span>
               </div>
             {% endif %}
+            <div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
+            <div class="align-center">
+			  <div id ="error-box" class="error box"></div>
+              <button type="button" id="ExportTabLink">Export list as tab-separated text</button>
+            </div>
+            <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+            <script>
+              $('#ExportTabLink').on('click', function () {
+                $.ajax({
+                  url: "{% url 'export' %}",
+                  method: 'GET',
+                  data: {
+                    "type": "site",
+                    "query": "{{ genome.name }}"
+                  },
+                  xhrFields: {
+                    responseType: 'text'
+                  },
+                  beforeSend: function() {
+                    $("#waitbox").show();
+                  },
+                  success: function (data) {
+                    $("#waitbox").hide();
+                    var a = document.createElement('a');
+                    const blob = new Blob([data], {type: "octet/stream"});
+                    var url = window.URL.createObjectURL(blob);
+                    a.href = url;
+                    a.download = '{{ genome.name }}_exported_sites.tab';
+                    document.body.append(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                  },
+                  error: function(XMLHttpRequest, textStatus, errorThrown){
+                    $("#waitbox").hide();
+                    $("#error-box").text(textStatus + ": " + errorThrown);
+					$("#error-box").show;
+                  }
+                });
+              });    
+            </script>
           </div>
         </section>
 {% endblock %}
