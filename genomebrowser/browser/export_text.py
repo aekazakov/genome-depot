@@ -591,10 +591,12 @@ def _export_operons_csv(request):
             source = 'Strain:' + operon.genome.strain.full_name
         else:
             source = 'Sample:' + operon.genome.sample.full_name
-        if operon.strand == '1':
+        if operon.strand == 1:
             location = operon.contig.contig_id + ':' + str(operon.start) + '..' + str(operon.end)
-        else:
+        elif operon.strand == -1:
             location = operon.contig.contig_id + ':complement(' + str(operon.start) + '..' + str(operon.end) + ')'
+        else:
+            location = operon.contig.contig_id + ':' + str(operon.start) + '..' + str(operon.end) + '(unknown strand)'
         writer.writerow([operon.name,
                          operon.genome.name,
                          source,
