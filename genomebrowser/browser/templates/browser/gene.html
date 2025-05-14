@@ -4,6 +4,7 @@
 {% block page-title %}<title>{{ gene.locus_tag }} [{{ gene.genome.name }}]</title>{% endblock %}
 {% block script-header %}
   <style>#proteinsequence {display:none;}</style>
+  <style>#instruction {display:none;}</style>
   <script>
     function Toggle() {
       document.getElementById("proteinsequence").style.display = "block";
@@ -14,6 +15,18 @@
     function HideProtein() {
       document.getElementById("proteinsequence").style.display = "none";
       document.getElementById("showprotein").style.display = "block";
+    }
+  </script>
+  <script>
+    function ShowInstruction() {
+      document.getElementById("instruction").style.display = "block";
+      document.getElementById("showinstruction").style.display = "none";
+    }
+  </script>
+  <script>
+    function HideInstruction() {
+      document.getElementById("instruction").style.display = "none";
+      document.getElementById("showinstruction").style.display = "block";
     }
   </script>
 {% endblock %}
@@ -119,7 +132,20 @@
       <div class="wrapper style3" id="viewer">
         <div class="inner">
           <h2 class="align-center">Genome viewer<button popovertarget="viewer-popover" class="info icon fa-info-circle"></button></h2>
-        </div>
+          <div>
+            <header class="align-center" id="showinstruction">
+              <a onclick="ShowInstruction()">How to view or save nucleotide sequence of the gene</a>
+            </header>
+            <div id="instruction" class="align-center">
+              <header class="align-center" id="hideinstruction">
+                <a onclick="HideInstruction()">Click to hide the instruction</a>
+              </header>
+              <div class="align-center">
+		        <h5>In the genome viewer, click on the triangle next to the name of the Reference sequence track. Next, choose "Save track data" from the menu.</br>Then, choose the "Highlighted region" option and press either View or Save button.</h5>
+		      </div>
+		    </div>
+		  </div>
+		</div> 
           <div popover id="viewer-popover">The genome viewer section shows embedded Jbrowse genome browser with reference sequence track and four feature tracks (CDSs, operons, pseudogenes and RNA genes).<br />
           A click on a feature opens feature details widget that has a link to the feature page in the Name field.<br />
           In the genome viewer, you can scroll a contig side to side using your mouse wheel or via click and drag.<br />

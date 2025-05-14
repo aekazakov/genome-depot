@@ -70,6 +70,7 @@
             {% endif %}
             <div class="align-center" id="waitbox">Please wait...<br><img src="{% static 'images/spinner.gif' %}"></div>
             <div class="align-center">
+			  <div id ="error-box" class="error box"></div>
               <button type="button" id="ExportTabLink">Export list as tab-separated text</button>
             </div>
             <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -102,7 +103,8 @@
                   },
                   error: function(XMLHttpRequest, textStatus, errorThrown){
                     $("#waitbox").hide();
-                    $("#error-box").append(textStatus + ": " + errorThrown);
+                    $("#error-box").text(textStatus + ": " + errorThrown);
+					$("#error-box").show;
                   }
                 });
               });    

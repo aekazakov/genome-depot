@@ -1914,7 +1914,8 @@
 		input[type="button"].icon,
 		button.icon,
 		.button.icon {
-			padding-left: 1.35rem;
+			padding-left: 0.5rem;
+			padding-right: 0.1rem;
 		}
 
 			input[type="submit"].icon:before,

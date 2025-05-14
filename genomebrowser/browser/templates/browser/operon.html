@@ -2,6 +2,21 @@
 {% load static %}
 
 {% block page-title %}<title>{{ operon.name }} operon from {{ operon.genome.name }} genome</title>{% endblock %}
+{% block script-header %}
+  <style>#instruction {display:none;}</style>
+  <script>
+    function ShowInstruction() {
+      document.getElementById("instruction").style.display = "block";
+      document.getElementById("showinstruction").style.display = "none";
+    }
+  </script>
+  <script>
+    function HideInstruction() {
+      document.getElementById("instruction").style.display = "none";
+      document.getElementById("showinstruction").style.display = "block";
+    }
+  </script>
+{% endblock %}
 
 {% block title %}<div class="logo"><h2>Operon</h2></div>{% endblock %}
 
@@ -118,6 +133,19 @@
           <div id="viewer" class="wrapper style3">
             <div class="inner">
               <h2 class="align-center">Genome viewer<button popovertarget="viewer-popover" class="info icon fa-info-circle"></button></h2>
+			  <div>
+				<header class="align-center" id="showinstruction">
+				  <a onclick="ShowInstruction()">How to view or save nucleotide sequence of the operon</a>
+				</header>
+				<div id="instruction" class="align-center">
+				  <header class="align-center" id="hideinstruction">
+					<a onclick="HideInstruction()">Click to hide the instruction</a>
+				  </header>
+				  <div class="align-center">
+					<h5>In the genome viewer, click on the triangle next to the name of the Reference sequence track. Next, choose "Save track data" from the menu.</br>Then, choose the "Highlighted region" option and press either View or Save button.</h5>
+				  </div>
+				</div>
+			  </div>
             </div>
 			<div popover id="viewer-popover">The genome viewer section shows embedded Jbrowse genome browser with reference sequence track and four feature tracks (CDSs, operons, pseudogenes and RNA genes).<br />
 			A click on a feature opens feature details widget that has a link to the feature page in the Name field.<br />
