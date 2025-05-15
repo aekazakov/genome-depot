@@ -132,7 +132,7 @@ class Annotator(object):
                                                    batch_size=batch_size
                                                    )
                 except Exception:
-                    logger.info('An error occurred while saving annotations in the database')
+                    logger.info('An error occurred while saving annotations to the database')
                     self.annotations = []
                     raise
                 annotations_written += len(self.annotations)
@@ -142,7 +142,7 @@ class Annotator(object):
             try:
                 Annotation.objects.bulk_create(self.annotations, batch_size=10000)
             except Exception:
-                logger.info('An error occurred while saving annotations in the database')
+                logger.info('An error occurred while saving annotations to the database')
                 self.annotations = []
                 raise
         annotations_written += len(self.annotations)
