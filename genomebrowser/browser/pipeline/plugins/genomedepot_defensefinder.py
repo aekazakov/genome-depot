@@ -123,7 +123,7 @@ def postprocess(annotator, genomes, working_dir):
                                   'Type: ' + row[-3] + ', subtype: ' + row[-2] + ', gene name: ' + row[2]
                                   ]) + '\n')
                         
-    #_cleanup(working_dir)
+    _cleanup(working_dir)
     return output_file
 
 def _cleanup(working_dir):

@@ -127,14 +127,24 @@ class Annotator(object):
                 except Gene.DoesNotExist:
                     logger.warning('Gene %s not found in %s', locus_tag, genome_name)
             if len(self.annotations) >= batch_size:
-                Annotation.objects.bulk_create(self.annotations,
-                                               batch_size=batch_size
-                                               )
+                try:
+                    Annotation.objects.bulk_create(self.annotations,
+                                                   batch_size=batch_size
+                                                   )
+                except Exception:
+                    logger.info('An error occurred while saving annotations in the database')
+                    self.annotations = []
+                    raise
                 annotations_written += len(self.annotations)
                 self.annotations = []
         # write Annotations
         if self.annotations:
-            Annotation.objects.bulk_create(self.annotations, batch_size=10000)
+            try:
+                Annotation.objects.bulk_create(self.annotations, batch_size=10000)
+            except Exception:
+                logger.info('An error occurred while saving annotations in the database')
+                self.annotations = []
+                raise
         annotations_written += len(self.annotations)
         logger.info('%d annotations written', annotations_written)
         self.annotations = []
@@ -295,8 +305,14 @@ class Annotator(object):
                                 )
         # write metadata
         logger.info('Writing strain metadata')
-        Strain_metadata.objects.bulk_create(self.metadata, batch_size=10000)
-        logger.info('%s metadata entries written', len(self.metadata))
+        try:
+            Strain_metadata.objects.bulk_create(self.metadata, batch_size=10000)
+            logger.info('%s metadata entries written', len(self.metadata))
+            self.metadata = []
+        except Exception:
+            logger.error('An error occurred while saving metadata to the database')
+            self.metadata = []
+            raise
 
     def update_strain_metadata(self, xlsx_path=None, xlsx_file=None):
         """ 
@@ -391,8 +407,15 @@ class Annotator(object):
                 logger.info('Metadata added %s %s %s %s', sample, source, key, value)
         # write metadata
         logger.info('Writing sample metadata')
-        Sample_metadata.objects.bulk_create(self.metadata, batch_size=10000)
-        logger.info('%d metadata entries written', len(self.metadata))
+        try:
+            Sample_metadata.objects.bulk_create(self.metadata, batch_size=10000)
+            logger.info('%d metadata entries written', len(self.metadata))
+            self.metadata = []
+        except Exception:
+            logger.error('An error occurred while saving metadata to the database')
+            self.metadata = []
+            raise
+            
 
     def update_genome_descriptions(self, tsv_file):
         """ 
