@@ -434,18 +434,20 @@ class Annotator(object):
         ret_val = 'not started'
                 
         plugins_available = self.plugins
-        logger.info('Run only %s', plugin_name)
+        logger.info('Starting %s', plugin_name)
         genome_names = list(genomes.keys())
         plugin_module_name = 'browser.pipeline.plugins.genomedepot_' + plugin_name
 
         if plugin_module_name in plugins_available:
             plugin = plugins_available[plugin_module_name]
             plugin_output = plugin.application(self, genomes)
+            logger.info('%s finished', plugin_name)
             display_name = self.config['plugins.' + plugin_name + '.display_name']
             Annotation.objects.filter(source=display_name,
                                       gene_id__genome__name__in=genome_names
                                       ).delete()
             self.add_custom_annotations(plugin_output)
+            logger.info('%s output imported', plugin_name)
             ret_val = 'OK'
         else:
             logger.warning('%s module not found. Skipping plugin', plugin_name)
@@ -465,18 +467,15 @@ class Annotator(object):
                 tool = param.split('.')[1]
                 plugins_enabled.add(tool)
                 
-        plugins_available = self.plugins
-        
-        genome_names = list(genomes.keys())
-        
         plugin_count = 0
         for plugin_name in plugins_enabled:
             plugin_count += 1
             try:
-                ret.append(plugin_name + ' plugin: ' + self.run_external_tools(genomes, plugin_name))
+                ret.append(str(plugin_count) + ' of ' + str(len(plugins_enabled)) + ': ' + plugin_name + ' ' + self.run_external_tools(genomes, plugin_name))
             except Exception as e:
-                ret.append(str(plugin_count) + ' of ' + str(len(plugins_enabled)) + ': ' + plugin_name + ' finished')
+                ret.append(str(plugin_count) + ' of ' + str(len(plugins_enabled)) + ': ' + plugin_name + ' finished with error')
                 ret.append(traceback.format_exc())
+                continue
 
         return '\n'.join(ret)
 
