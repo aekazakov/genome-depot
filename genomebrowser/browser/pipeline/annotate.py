@@ -452,7 +452,6 @@ class Annotator(object):
         else:
             logger.warning('%s module not found. Skipping plugin', plugin_name)
             logger.info('Available modules: %s', str(plugins_available))
-            logger.info('Enabled modules: %s', str(plugins_enabled))
             ret_val = 'skipped'
         return ret_val
 
