@@ -104,9 +104,45 @@ A taxon page contains a sunburst chart for taxonomic profile of all genomes asso
 
 ## Text search
 
-The text search page has text fields for search of genes by name or function, search in functional classifications and search in taxonomy. The search in genes by name first tries to find a unique exact match to a locus tag, and if there is no such match, it proceeds with a search in gene names, [genome names and contig names - TODO]. Next to each search field for functional classifications, there is a link that displays a full classification.
+The text search page has text fields for search of genes by name or function, search in functional classifications and search in taxonomy. The search in genes by name first tries to find a unique exact match to a locus tag, and if there is no such match, it proceeds with a search in gene names, genome names and contig names. Next to each search field for functional classifications, there is a link that displays a full list of the functional classes.
 
 [![Search page](assets/images/textsearch.jpg "Search page")](assets/images/textsearchfull.jpg)
+
+## Functional classifications
+
+The genome import pipeline of GenomeDepot maps protein-coding genes to eight functional classifications using eggnog-mapper:
+
+* KEGG Ortholog groups
+
+* KEGG pathways
+
+* KEGG reactions
+
+* Enzyme families (EC)
+
+* Transporter families (TCDB)
+
+* CAZy families
+
+* COG classes
+
+* GO terms
+
+A search in functional classifications returns matches in names and descriptions of the functional classes. In the search results page, a link from the name of a functional class opens a page with a list of genes mapped to that class.
+
+A search from a genome page only returns genes mapped to functional classes in that genome. Links to lists of functional classes on a genome page return only the functional classes mapped to the genes of that genome.
+
+## KEGG pathway maps
+
+A search for KEGG pathways from a genome page returns a list of pathways identified in that genome. To show genes of a KEGG pathway on the pathway's map, click on KEGG ID of a pathway of interest. Next page will contain a list of gnes mapped to the pathway, with a link for KEGG map at the top of the page
+
+[![Gene list for KEGG pathway, with link to pathway map](assets/images/pathwaysearch.jpg "Gene list for KEGG pathway")](assets/images/pathwaysearch.jpg)
+
+A click on the map link opens a page with a list of KEGG ortholog groups and genes on the left side. On the right side, a map of the pathway is loaded from the KEGG web-site. On the pathway map, colors of EC numbers correspond to colors of KEGG ortholog groups in the list. If an EC number on the map corresponds to more than one KEGG ortholog group, only one color is shown. Hover mouse pointer over the EC number on the map to display full list of KEGG ortholog groups mapped to this enzyme activity.
+
+[![KEGG pathway map page](assets/images/keggpathway.jpg "KEGG pathway map page")](assets/images/keggpathway.jpg)
+
+Since KEGG maps are loaded from the external web-site, this page requires web-access to the KEGG web-site to work properly. The loading speed of KEGG map web-page may vary.
 
 ## Sequence search
 

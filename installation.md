@@ -72,9 +72,15 @@ Another common problem is an incomplete installation of the operon prediction to
 Create MySQL user (for example, gduser), if needed, or use an existing mysql account.
 
 Create MySQL database (for example, gdgenomes):
-log into mysql as root: 
+log into mysql as root:
 ```
 mysql -u root -p
+```
+
+If MySQL returns error "Access denied for user 'root'@'localhost'", use sudo before the command:
+```
+mysql -u root -p
+
 ```
 
 Enter commands that create the database and grant the user access to the database:
