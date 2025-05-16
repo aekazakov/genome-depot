@@ -212,8 +212,14 @@ class Importer(object):
                                            )
                 gbk_handle.close()
         if problem_genomes:
-            logger.error('ERROR. Genome import pipeline found that some genome names already exist in the database:\n' + '\n'.join(problem_genomes))
-            raise ValueError('Unable to import genomes because one or more genome names already exist in the database:\n' + '\n'.join(problem_genomes))
+            logger.error(
+                'ERROR. Genome import pipeline found that some genome names ' +
+                'already exist in the database:\n' + '\n'.join(problem_genomes)
+            )
+            raise ValueError(
+                'Unable to import genomes because one or more genome names ' +
+                'already exist in the database:\n' + '\n'.join(problem_genomes)
+            )
         self.genomefiles = result
     
     def create_tag(self):
@@ -269,12 +275,19 @@ class Importer(object):
                                     # Fix for fake taxonomy ID of SEED genomes
                                     taxonomy_id = '0'
                                 if taxonomy_id not in self.taxonomy:
-                                    logger.error(taxonomy_id + ' taxonomy ID not found in the taxonomy reference file. Run "update_taxonomy" command from the command line interface, then start genome import again.')
-                                    raise KeyError(gbk_file + ' parsing error. ' +
-                                                   taxonomy_id + ' not found in ' + 
-                                                   'taxonomy reference file. Update the reference ' +
-                                                   'file by running update_taxonomy ' +
-                                                   'command, then start genome import again.')
+                                    logger.error(
+                                        f'{taxonomy_id} taxonomy ID not found in the ' +
+                                        'taxonomy reference file. Run ' +
+                                        "update_taxonomy"' command from the command ' +
+                                        'line interface, then run genome import again.'
+                                    )
+                                    raise KeyError(
+                                        gbk_file + ' parsing error. ' +
+                                        taxonomy_id + ' not found in ' + 
+                                        'taxonomy reference file. Update the ' +
+                                        'reference file by running update_taxonomy ' +
+                                        'command, then start genome import again.'
+                                    )
                                 organism_data['tax_id'] = taxonomy_id
                     # Only the first occurrence of the 'source' feature is considered
                     break
@@ -303,12 +316,13 @@ class Importer(object):
             if Taxon.objects.filter(taxonomy_id = parent_id).exists():
                 break
             else:
-                taxon = Taxon.objects.create(taxonomy_id=parent_id,
+                _ = Taxon.objects.create(
+                    taxonomy_id=parent_id,
                     eggnog_taxid=self.taxonomy[parent_id]['eggnog_taxid'],
                     name=self.taxonomy[parent_id]['name'],
                     rank=self.taxonomy[parent_id]['rank'],
                     parent_id=self.taxonomy[parent_id]['parent']
-                    )
+                )
             parent_id = self.taxonomy[parent_id]['parent']
         
     def generate_strain_data(self, gbk_file, strain_id, order):
@@ -434,9 +448,9 @@ class Importer(object):
         for strain_id, strain in self.strain_instances.items():
             taxon_id = strain.taxon.taxonomy_id
             try:
-                taxon = Taxon.objects.get(taxonomy_id = taxon_id)
+                _ = Taxon.objects.get(taxonomy_id = taxon_id)
             except Taxon.DoesNotExist:
-                taxon = Taxon.objects.create(taxonomy_id=taxon_id,
+                _ = Taxon.objects.create(taxonomy_id=taxon_id,
                     eggnog_taxid=self.taxonomy[taxon_id]['eggnog_taxid'],
                     name=self.taxonomy[taxon_id]['name'],
                     rank=self.taxonomy[taxon_id]['rank'],
@@ -732,7 +746,10 @@ class Importer(object):
         with open(self.eggnog_input_file, 'w') as outfile:
             for protein_hash in self.protein_data:
                 if protein_hash not in protein_hash2id:
-                    outfile.write('>' + protein_hash + '\n' + self.protein_data[protein_hash]['sequence'] + '\n')
+                    outfile.write(
+                        '>' + protein_hash + '\n' +
+                        self.protein_data[protein_hash]['sequence'] + '\n'
+                    )
                     ret_val += 1
         return ret_val
 
@@ -1250,7 +1267,9 @@ class Importer(object):
                     gene_instance.protein_id = protein_ids[gene_entry['protein_hash']]
                 if 'function' in gene_entry:
                     if len(gene_entry['function']) > 249:
-                        logger.warning('Function name too long: %s', gene_entry['function'])
+                        logger.warning(
+                            'Function name too long: ' + gene_entry['function']
+                        )
                         gene_entry['function'] = gene_entry['function'][:246] + '...'
                     gene_instance.function = gene_entry['function']
                 gene_instances.append(gene_instance)
@@ -1405,7 +1424,9 @@ class Importer(object):
                     Ortholog_group(eggnog_id=reference_name[0],
                     taxon=taxon_instances[reference_name[1]]
                     ))
-            Ortholog_group.objects.bulk_create(reference_data_instances, batch_size=1000)
+            Ortholog_group.objects.bulk_create(
+                reference_data_instances, batch_size=1000
+            )
         
         if 'og' in self.relations:
             og_ids = {(og.eggnog_id, og.taxon.taxonomy_id):og.id for og
@@ -1415,10 +1436,10 @@ class Importer(object):
             for (protein_hash, eggnog_id, taxonomy_id) in self.relations['og']:
                 relations.append(Protein.ortholog_groups
                                  .through(
-                                          protein_id=protein_ids[protein_hash],
-                                          ortholog_group_id=og_ids[(eggnog_id, taxonomy_id)]
-                                          )
-                                 )
+                                     protein_id=protein_ids[protein_hash],
+                                     ortholog_group_id=og_ids[(eggnog_id, taxonomy_id)]
+                                  )
+                                )
             Protein.ortholog_groups.through.objects.bulk_create(relations,
                                                                 batch_size = 1000,
                                                                 ignore_conflicts=True
@@ -1934,7 +1955,7 @@ class Importer(object):
         # read input list. Populate self.inputgenomes
         try:
             self.read_genome_list(lines)
-        except Exception as e:
+        except Exception:
             ret.append('Critical error: read_genome_list failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
@@ -1945,7 +1966,7 @@ class Importer(object):
         # check if any genomes already exist in the database
         try:
             self.check_genomes()
-        except Exception as e:
+        except Exception:
             ret.append('Critical error: check_genomes failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
@@ -1959,7 +1980,7 @@ class Importer(object):
         # make strain data for upload
         try:
             self.prepare_strain_data()
-        except Exception as e:
+        except Exception:
             ret.append('Critical error: prepare_strain_data failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
@@ -1971,7 +1992,7 @@ class Importer(object):
         # make sample data for upload
         try:
             self.prepare_sample_data()
-        except Exception as e:
+        except Exception:
             ret.append('Critical error: prepare_sample_data failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
@@ -1982,7 +2003,7 @@ class Importer(object):
         # make taxonomy data file for upload
         try:
             self.prepare_taxonomy_data()
-        except Exception as e:
+        except Exception:
             ret.append('Critical error: prepare_taxonomy_data failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
@@ -1993,7 +2014,7 @@ class Importer(object):
         # make genome, contigs, genes data files
         try:
             self.process_gbk()
-        except Exception as e:
+        except Exception:
             ret.append('Critical error: process_gbk failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
@@ -2003,7 +2024,7 @@ class Importer(object):
         logger.info('Writing eggnog-mapper input file')
         try:
             new_proteins = self.make_eggnog_input()
-        except Exception as e:
+        except Exception:
             ret.append('Critical error: make_eggnog_input failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
@@ -2021,10 +2042,11 @@ class Importer(object):
             
             try:
                 eggnog_outfile = self.run_eggnog_mapper()
-                # TODO: remove mockup and uncomment run_eggnog_mapper call if commented out
-                #eggnog_outfile = os.path.join(self.config['core.temp_dir'], 
+                # TODO: remove mockup and uncomment run_eggnog_mapper call
+                # if commented out:
+                # eggnog_outfile = os.path.join(self.config['core.temp_dir'], 
                 #'eggnog_mapper_output.emapper.annotations')
-            except Exception as e:
+            except Exception:
                 ret.append('Critical error: run_eggnog_mapper failed')
                 ret.append(traceback.format_exc())
                 return '\n'.join(ret)
@@ -2035,7 +2057,7 @@ class Importer(object):
             # separate eggnog-mapper output by genome?
             try:
                 self.parse_eggnog_output(eggnog_outfile)
-            except Exception as e:
+            except Exception:
                 ret.append('Critical error: parse_eggnog_output failed')
                 ret.append(traceback.format_exc())
                 return '\n'.join(ret)
@@ -2046,7 +2068,7 @@ class Importer(object):
             # make mappings and relations data
             try:
                 self.make_mappings()
-            except Exception as e:
+            except Exception:
                 ret.append('Critical error: make_mappings failed')
                 ret.append(traceback.format_exc())
                 return '\n'.join(ret)
@@ -2057,7 +2079,7 @@ class Importer(object):
             # make og data file for upload
             try:
                 self.prepare_og_data()
-            except Exception as e:
+            except Exception:
                 ret.append('Critical error: prepare_og_data failed')
                 ret.append(traceback.format_exc())
                 return '\n'.join(ret)
@@ -2068,7 +2090,7 @@ class Importer(object):
             # make eggnog description data file for upload
             try:
                 self.prepare_eggnog_description_data()
-            except Exception as e:
+            except Exception:
                 ret.append('Critical error: prepare_eggnog_description_data failed')
                 ret.append(traceback.format_exc())
                 return '\n'.join(ret)
@@ -2079,7 +2101,7 @@ class Importer(object):
         # At this point, genes and annotations are actually written to the database
         try:
             self.write_data()
-        except Exception as e:
+        except Exception:
             ret.append('Critical error: write_data failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
@@ -2093,20 +2115,22 @@ class Importer(object):
         # Export contigs and proteins and run POEM_py3
         try:
             operons_data = self.predict_operons()
-        except Exception as e:
+        except Exception:
             operons_data = {}
             ret.append('Non-critical error: predict_operons failed')
             ret.append(traceback.format_exc())
         else:
             ret.append('Predict operons: OK')
         if not operons_data:
-            ret.append('Warning: no operons found. Check if POEM_py3k was correctly installed and configured.')
-
+            ret.append(
+                'Warning: no operons found. Check if POEM_py3k ' +
+                'was correctly installed and configured.'
+            )
         logger.info('Importing operons')
         # Write operons to the database
         try:
             self.create_operons(operons_data)
-        except Exception as e:
+        except Exception:
             ret.append('Non-critical error: create_operons failed')
             ret.append(traceback.format_exc())
         else:
@@ -2116,7 +2140,7 @@ class Importer(object):
         #export JBrowse data
         try:
             self.export_jbrowse_data()
-        except Exception as e:
+        except Exception:
             ret.append('Non-critical error: export_jbrowse_data failed')
             ret.append(traceback.format_exc())
         else:
@@ -2126,7 +2150,7 @@ class Importer(object):
         #export proteins for BLAST db
         try:
             self.export_proteins()
-        except Exception as e:
+        except Exception:
             ret.append('Non-critical error: export_proteins failed')
             ret.append(traceback.format_exc())
         else:
@@ -2135,7 +2159,7 @@ class Importer(object):
         logger.info('Deleting existing BLAST databases')
         try:
             self.delete_search_databases()
-        except Exception as e:
+        except Exception:
             ret.append('Non-critical error: delete_search_databases failed')
             ret.append(traceback.format_exc())
         else:
@@ -2145,7 +2169,7 @@ class Importer(object):
         # copy static files
         try:
             self.copy_static_files()
-        except Exception as e:
+        except Exception:
             ret.append('Non-critical error: copy_static_files failed')
             ret.append(traceback.format_exc())
         else:
@@ -2155,7 +2179,7 @@ class Importer(object):
         # make BLAST databases
         try:
             self.create_search_databases()
-        except Exception as e:
+        except Exception:
             ret.append('Non-critical error: create_search_databases failed')
             ret.append(traceback.format_exc())
         else:
@@ -2165,7 +2189,7 @@ class Importer(object):
         # delete temp files
         try:
             self.cleanup()
-        except Exception as e:
+        except Exception:
             ret.append('Non-critical error: cleanup failed')
             ret.append(traceback.format_exc())
         else:
@@ -2182,7 +2206,7 @@ class Importer(object):
                                 }
             pipeline_output = annotator.run_annotation_pipeline(new_genome_files)
             ret.append(pipeline_output)
-        except Exception as e:
+        except Exception:
             ret.append('Non-critical error: annotator.run_annotation_pipeline')
             ret.append(traceback.format_exc())
         else:
@@ -2332,10 +2356,12 @@ class Importer(object):
             '''
             List of coomands for POEM should be like that:
             fasta=$temp/input.fsa
-            $python $SCRIPTPATH/../lib/prod2gmk.py $fasta\_prod_aa.fsa > $fasta\_gmk_aa.fsa
+            $python $SCRIPTPATH/../lib/prod2gmk.py $fasta\_prod_aa.fsa > \
+            $fasta\_gmk_aa.fsa
             $python $SCRIPTPATH/../lib/reid.py $fasta\_gmk_aa.fsa > $fasta\_aa.fsa
             $python $SCRIPTPATH/../lib/to_list.py $fasta\_aa.fsa > $fasta\.locus
-            $python $SCRIPTPATH/../lib/predict_operon.py predict $fasta $fasta\.locus $SCRIPTPATH/../config/Operon_Predictor/model.hdf5 > $fasta\.adjacency
+            $python $SCRIPTPATH/../lib/predict_operon.py predict $fasta $fasta\.locus \
+            $SCRIPTPATH/../config/Operon_Predictor/model.hdf5 > $fasta\.adjacency
 
             outfile.write('bash ' + 
                           self.config['core.poem_command'] +
@@ -2344,27 +2370,35 @@ class Importer(object):
                           )
             '''
             outfile.write('python ' + 
-                          os.path.join(self.config['core.poem_dir'], 'lib', 'prod2gmk.py') +
-                          ' ' + os.path.join(working_dir, 'input.fsa_prod_aa.fsa') +
-                          ' > ' +  os.path.join(working_dir, 'input.fsa_gmk_aa.fsa') + '\n'
-                          )
-            outfile.write('python ' + 
-                          os.path.join(self.config['core.poem_dir'], 'lib', 'reid.py') +
-                          ' ' + os.path.join(working_dir, 'input.fsa_gmk_aa.fsa') +
-                          ' > ' +  os.path.join(working_dir, 'input.fsa_aa.fsa') + '\n'
-                          )
-            outfile.write('python ' + 
-                          os.path.join(self.config['core.poem_dir'], 'lib', 'to_list.py') +
-                          ' ' + os.path.join(working_dir, 'input.fsa_aa.fsa') +
-                          ' > ' +  os.path.join(working_dir, 'input.fsa.locus') + '\n'
-                          )
-            outfile.write('python ' + 
-                          os.path.join(self.config['core.poem_dir'], 'lib', 'predict_operon.py') +
-                          ' predict ' + os.path.join(working_dir, 'input.fsa') +
-                          ' ' + os.path.join(working_dir, 'input.fsa.locus') + 
-                          ' ' + os.path.join(self.config['core.poem_dir'], 'config', 'Operon_Predictor', 'model.hdf5') +
-                          ' > ' + os.path.join(working_dir, 'input.fsa.adjacency') + '\n'
-                          )
+                os.path.join(self.config['core.poem_dir'], 'lib', 'prod2gmk.py') +
+                ' ' + os.path.join(working_dir, 'input.fsa_prod_aa.fsa') +
+                ' > ' +  os.path.join(working_dir, 'input.fsa_gmk_aa.fsa') + '\n'
+            )
+            outfile.write(
+                'python ' + 
+                os.path.join(self.config['core.poem_dir'],'lib','reid.py') +
+                ' ' + os.path.join(working_dir, 'input.fsa_gmk_aa.fsa') +
+                ' > ' +  os.path.join(working_dir, 'input.fsa_aa.fsa') + '\n'
+            )
+            outfile.write(
+                'python ' + 
+                os.path.join(self.config['core.poem_dir'],'lib','to_list.py') +
+                ' ' + os.path.join(working_dir, 'input.fsa_aa.fsa') +
+                ' > ' +  os.path.join(working_dir, 'input.fsa.locus') + '\n'
+            )
+            outfile.write(
+                'python ' + 
+                os.path.join(self.config['core.poem_dir'],'lib','predict_operon.py') +
+                ' predict ' + os.path.join(working_dir, 'input.fsa') +
+                ' ' + os.path.join(working_dir, 'input.fsa.locus') + 
+                ' ' + os.path.join(
+                      self.config['core.poem_dir'],
+                      'config',
+                      'Operon_Predictor',
+                      'model.hdf5'
+                    ) +
+                ' > ' + os.path.join(working_dir, 'input.fsa.adjacency') + '\n'
+            )
             outfile.write('conda deactivate\n')
             
         cmd = ['bash', poem_script]
@@ -2414,9 +2448,13 @@ class Importer(object):
                             operon_members.append(genes[gene_data[5:].split('|')[0]])
                         #operon_id = genome_id + '_operon_' + str(operon_index)
                         if operon_strand == 1:
-                            operon_id = operon_members[0] + '-' + operon_members[-1] + '_operon'
+                            operon_id = (
+                                f'{operon_members[0]}-{operon_members[-1]}_operon'
+                            )
                         elif operon_strand == -1:
-                            operon_id = operon_members[-1] + '-' + operon_members[0] + '_operon'
+                            operon_id = (
+                                f'{operon_members[-1]}-{operon_members[0]}_operon'
+                            )
                         operons_data[operon[0][4]].append([operon_id,
                                                            operon_start,
                                                            operon_end,

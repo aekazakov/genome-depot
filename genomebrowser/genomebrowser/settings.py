@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from decouple import config, Csv
-from django.utils.translation import gettext_lazy as _
 
 # Normally you should not import ANYTHING from Django directly
 # into your settings, but ImproperlyConfigured is an exception.
@@ -273,7 +272,7 @@ ADMIN_SHORTCUTS = [
                 'title': 'Pipeline',
                 'icon': 'server',
                 'url': BASE_URL + '/admin/clusters/',
-                'count_new': 'browser.admin.pipeline_status',#'browser.admin.count_clusters',
+                'count_new': 'browser.admin.pipeline_status',
                 'count':'View pipeline status',
             },
             {

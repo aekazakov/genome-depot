@@ -1,6 +1,4 @@
-import csv
 import time
-import json
 import logging
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
@@ -40,7 +38,8 @@ from browser.seqsearch import run_protein_search, run_nucleotide_search
 from browser.comparative_analysis import get_scribl
 from browser.conserved_regulon import build_conserved_regulon
 from browser.conserved_operon import build_conserved_operon 
-from browser.taxonomy import generate_genome_sunburst, get_taxon_children, generate_genes_sunburst
+from browser.taxonomy import generate_genome_sunburst
+from browser.taxonomy import get_taxon_children, generate_genes_sunburst
 # Create your views here.
 logger = logging.getLogger("GenomeDepot")
 
@@ -162,8 +161,7 @@ class AnnotationSearchResultsAjaxView(View):
         context['searchresult'] = sub_response.content.decode('utf-8')
         context['time'] = time.time()-start_time
         context['fast'] = request.GET.get('fast')
-        #data = json.dumps(context)
-        return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
+        return JsonResponse(context)
 
 
 class TaxonListView(generic.ListView):
@@ -945,8 +943,7 @@ class GeneSearchResultsAjaxView(View):
 
         context['searchresult'] = sub_response.content.decode('utf-8')
         context['time'] = time.time()-start_time
-        #data = json.dumps(context)
-        return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
+        return JsonResponse(context)
 
 
 class GenomeSearchResultsView(generic.ListView):
@@ -1546,7 +1543,6 @@ def getstats(request):
         Takes AJAX request, formats database statistics as HTML
         and sends it back wrapped in JSON
     '''
-    query = request.GET.get('annotation_query')
     start_time = time.time()
     context = {}
     db_stats = []
@@ -1666,7 +1662,9 @@ def genome_detail(request, name):
         try:
             parent_taxon = Taxon.objects.get(taxonomy_id = parent_id)
         except Taxon.DoesNotExist:
-            logger.error('Taxonomy ID ' + parent_id + ' does not exist. Update taxonomy records.')
+            logger.error(
+                'Taxonomy ID ' + parent_id + ' does not exist. Update taxonomy records.'
+            )
             break
         iteration_count += 1
         if parent_taxon.taxonomy_id == parent_taxon.parent_id or parent_id == '1':
@@ -2071,9 +2069,6 @@ class NsearchResultView(View):
         start_time = time.time()
         result = []
         textresult = []
-        #logger.debug('REQUEST2')
-        #for key, val in request.POST.items():
-        #    logger.debug('%s:%s',key, val)
         params = {'sequence': request.POST.get("sequence"),
                   'evalue': request.POST.get("evalue"),
                   'hitstoshow': request.POST.get("hitstoshow")
@@ -2082,13 +2077,18 @@ class NsearchResultView(View):
         #logger.debug('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         #time.sleep(sleep_timer)
         hits, searchcontext, query_len, query_name = run_nucleotide_search(params)
-        textresult.append('Sequence_ID\tGenome\tIdentity%\tLength\tMismatch\tGap open\tQuery.start\tQuery.end\tSubject.start\tSubject.end\tQuery coverage%\tE-value\tBit-score\tTaxon\tLineage')
+        textresult.append(
+            'Sequence_ID\tGenome\tIdentity%\tLength\tMismatch\tGap open\tQuery.start' +
+            '\tQuery.end\tSubject.start\tSubject.end\tQuery coverage%' + 
+            '\tE-value\tBit-score\tTaxon\tLineage'
+        )
         if hits:
-            result.append('<table><thead><tr><th>Sequence_ID (click to see hit)' +
-                          '</th><th>Genome</th><th>Taxon</th><th>%identity</th><th>Alignment length'+
-                          '</th><th>%Query coverage</th><th>E-value</th><th>Bit-score' +
-                          '</th></tr></thead><tbody>'
-                          )
+            result.append(
+                '<table><thead><tr><th>Sequence_ID (click to see hit)' +
+                '</th><th>Genome</th><th>Taxon</th><th>%identity</th>' +
+                '<th>Alignment length</th><th>%Query coverage</th>' +
+                '<th>E-value</th><th>Bit-score</th></tr></thead><tbody>'
+            )
             for row in hits:
                 row=row.split('\t')
                 contig_name, genome_name = row[1].split('|')
@@ -2106,9 +2106,13 @@ class NsearchResultView(View):
                     try:
                         parent_taxon = Taxon.objects.get(taxonomy_id = parent_id)
                     except Taxon.DoesNotExist:
-                        logger.error('Taxonomy ID ' + parent_id + ' does not exist. Update taxonomy records.')
+                        logger.error(
+                            'Taxonomy ID ' + parent_id +
+                            ' does not exist. Update taxonomy records.'
+                        )
                         break
-                    if parent_taxon.taxonomy_id == parent_taxon.parent_id or parent_id == '1':
+                    if parent_taxon.taxonomy_id == parent_taxon.parent_id or \
+                    parent_id == '1':
                         break
                     lineage.append(parent_taxon.name)
                     parent_id = parent_taxon.parent_id
@@ -2120,22 +2124,28 @@ class NsearchResultView(View):
                     strand = '-'
                 genome_tags = ''
                 for genome_tag in target.genome.tags.all():
-                    genome_tags += '<span class="genometag" style="background-color:'\
-                    + genome_tag.color + '"><a href="' + \
-                    reverse('tagdetails', args=(genome_tag.name,)) + \
-                    '" style="color:' + genome_tag.textcolor + \
-                    '" title="' + genome_tag.description + '">' + \
-                    genome_tag.name + '</a></span>&nbsp;'
-                hit = '<tr><td align="left"><a href=\"' + \
-                      reverse('genomedetails', args=(target.genome.name,)) + \
-                      '?contig=' + target.contig_id + '&start=' + start + '&end=' + \
-                      end + '\">' + contig_name + ': (' + strand + 'strand) ' + \
-                      start + '..' + end + '</a></td><td align="left">' + \
-                      target.genome.name + ' ' + genome_tags + '</td><td align="left">' + target.genome.taxon.name + \
-                      ' <span title="' + '\n'.join(reversed(lineage)) + '">&#9432;</span> ' + \
-                      '</td><td>' + '{:.2f}'.format(float(row[2])) + \
-                      '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) \
-                      + '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
+                    genome_tags += (
+                        '<span class="genometag" style="background-color:' +
+                        genome_tag.color + '"><a href="' +
+                        reverse('tagdetails', args=(genome_tag.name,)) +
+                        '" style="color:' + genome_tag.textcolor +
+                        '" title="' + genome_tag.description + '">' +
+                        genome_tag.name + '</a></span>&nbsp;'
+                    )
+                hit = (
+                    '<tr><td align="left"><a href=\"' +
+                    reverse(
+                        'genomedetails', args=(target.genome.name,)
+                    ) + '?contig=' + target.contig_id + '&start=' + start + '&end=' +
+                    end + '\">' + contig_name + ': (' + strand + 'strand) ' +
+                    start + '..' + end + '</a></td><td align="left">' +
+                    target.genome.name + ' ' + genome_tags + '</td><td align="left">' +
+                    target.genome.taxon.name + ' <span title="' +
+                    '\n'.join(reversed(lineage)) + '">&#9432;</span> ' +
+                    '</td><td>' + '{:.2f}'.format(float(row[2])) +
+                    '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) +
+                    '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
+                )
                 result.append(hit)
                 textresult.append('\t'.join([contig_name,
                     target.genome.name,
@@ -2157,7 +2167,7 @@ class NsearchResultView(View):
             context = {"searchresult":'\n'.join(result),
                        "searchcontext":searchcontext,
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
+                       "query_name":f'Query: {query_name}, {str(query_len)} bp',
                        "time":time.time()-start_time,
                        "hit_count":' Hits: ' + str(len(hits)) + '.',
                        "textresult": '\n'.join(textresult)
@@ -2165,7 +2175,7 @@ class NsearchResultView(View):
         elif searchcontext == '':
             context = {"searchresult":'',"searchcontext":'No hits found',
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
+                       "query_name":f'Query: {query_name}, {str(query_len)} bp',
                        "time":time.time()-start_time,
                        "hit_count":'',
                        "textresult":'No hits found'
@@ -2174,14 +2184,12 @@ class NsearchResultView(View):
             context = {"searchresult":"",
                        "searchcontext":searchcontext,
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' bp',
+                       "query_name":f'Query: {query_name}, {str(query_len)} bp',
                        "time":time.time()-start_time,
                        "hit_count":'',
                        "textresult":searchcontext
                        }
-        #logger.debug(context)
-        #data = json.dumps(context)
-        return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
+        return JsonResponse(context)
 
 
 def nucleotidesearchform(request):
@@ -2199,13 +2207,11 @@ class PsearchResultView(View):
         '''
             Takes a POST request and returns a webpage that will send AJAX request
         '''
-        sequence = request.POST.get("sequence")
-        #logger.debug('Sequence sent: %s', sequence)
         context = {'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')}
-        #logger.debug('REQUEST1')
+        logger.debug('REQUEST1')
         for key, val in request.POST.items():
             context[key] = val
-            #logger.debug('%s:%s', key, val)
+            logger.debug('%s:%s', key, val)
         return render(request,'browser/proteinsearchajax.html', context)
 
     def get(self,request):
@@ -2240,15 +2246,22 @@ class PsearchResultView(View):
 
         if hits:
             gene_hits = 0
-            result.append('<table><thead><tr><th>Target gene</th><th>Genome</th>' +\
-                          '<th>Taxon</th><th>Function</th><th>%identity</th><th>Alignment length</th><th>' +\
-                          '%Query coverage</th><th>E-value</th><th>Bit-score</th>' +\
-                          '</tr></thead><tbody>'
-                          )
-            textresult.append('Hit_ID\tGenome\tIdentity%\tLength\tMismatch\tGap open\tQuery.start\tQuery.end\tSubject.start\tSubject.end\tQuery coverage%\tE-value\tBit-score\tTaxon\tLineage\tFunction')
+            result.append(
+                '<table><thead><tr><th>Target gene</th><th>Genome</th>' +
+                '<th>Taxon</th><th>Function</th><th>%identity</th>' +
+                '<th>Alignment length</th><th>%Query coverage</th>' +
+                '<th>E-value</th><th>Bit-score</th></tr></thead><tbody>'
+            )
+            textresult.append(
+                'Hit_ID\tGenome\tIdentity%\tLength\tMismatch\tGap open' +
+                '\tQuery.start\tQuery.end\tSubject.start\tSubject.end' +
+                '\tQuery coverage%\tE-value\tBit-score\tTaxon\tLineage\tFunction'
+            )
             for row in hits:
                 row=row.split('\t')
-                query_cov = float(1 + int(row[7]) - int(row[6])) * 100.0 / float(query_len)
+                query_cov = float(
+                    1 + int(row[7]) - int(row[6])
+                ) * 100.0 / float(query_len)
                 genes = Gene.objects.select_related(
                     'protein', 'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -2264,9 +2277,13 @@ class PsearchResultView(View):
                         try:
                             parent_taxon = Taxon.objects.get(taxonomy_id = parent_id)
                         except Taxon.DoesNotExist:
-                            logger.error('Taxonomy ID ' + parent_id + ' does not exist. Update taxonomy records.')
+                            logger.error(
+                                'Taxonomy ID ' + parent_id +
+                                ' does not exist. Update taxonomy records.'
+                            )
                             break
-                        if parent_taxon.taxonomy_id == parent_taxon.parent_id or parent_id == '1':
+                        if parent_taxon.taxonomy_id == parent_taxon.parent_id or \
+                        parent_id == '1':
                             break
                         lineage.append(parent_taxon.name)
                         parent_id = parent_taxon.parent_id
@@ -2274,25 +2291,32 @@ class PsearchResultView(View):
                         lineage = [target.genome.taxon.name,]
                     genome_tags = ''
                     for genome_tag in target.genome.tags.all():
-                        genome_tags += '<span class="genometag" ' +\
-                        'style="background-color:' + genome_tag.color + \
-                        '"><a href="' + \
-                        reverse('tagdetails', args=(genome_tag.name,)) + \
-                        '" style="color:' + genome_tag.textcolor + \
-                        '" title="' + genome_tag.description + '">' + \
-                        genome_tag.name + '</a></span>&nbsp;'
-                    hit = '<tr><td align=\"left\"><a href=\"' + \
-                    reverse('genedetails',
-                            args=(target.genome.name, target.locus_tag)) + \
-                    '\">' + target.locus_tag + '</a></td><td align="left">' + \
-                     '<a href="' + reverse('genomedetails', args=(target.genome.name,)) + \
-                     '">' + target.genome.name +  \
-                     '</a> ' +\
-                     genome_tags + '</td><td>' + target.genome.taxon.name + ' <span title="' + \
-                     '\n'.join(reversed(lineage)) + '">&#9432;</span></td><td>' + \
-                     target.function + '</td><td>' + '{:.1f}'.format(float(row[2])) + \
-                    '</td><td>' + row[3] + '</td><td>' + '{:.1f}'.format(query_cov) + \
-                    '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
+                        genome_tags += (
+                            '<span class="genometag" ' +
+                            'style="background-color:' + genome_tag.color +
+                            '"><a href="' +
+                            reverse('tagdetails', args=(genome_tag.name,)) +
+                            '" style="color:' + genome_tag.textcolor +
+                            '" title="' + genome_tag.description + '">' +
+                            genome_tag.name + '</a></span>&nbsp;'
+                        )
+                    hit = (
+                        '<tr><td align=\"left\"><a href=\"' + 
+                        reverse('genedetails',
+                            args=(target.genome.name, target.locus_tag)
+                        ) + 
+                        '\">' + target.locus_tag + '</a></td><td align="left">' + 
+                        '<a href="' + reverse(
+                            'genomedetails', args=(target.genome.name,)
+                        ) + 
+                        '">' + target.genome.name + '</a> ' +
+                        genome_tags + '</td><td>' + target.genome.taxon.name + 
+                        ' <span title="' + '\n'.join(reversed(lineage)) +
+                        '">&#9432;</span></td><td>' + target.function +
+                        '</td><td>' + '{:.1f}'.format(float(row[2])) + '</td><td>' +
+                         row[3] + '</td><td>' + '{:.1f}'.format(query_cov) +
+                        '</td><td>' + row[10] + '</td><td>' + row[11] + '</td></tr>'
+                    )
                     result.append(hit)
                     textresult.append('\t'.join([target.locus_tag,
                         target.genome.name,
@@ -2316,7 +2340,7 @@ class PsearchResultView(View):
             context = {"searchresult":'\n'.join(result),
                        "searchcontext":searchcontext,
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
+                       "query_name":f'Query: {query_name}, {str(query_len)} aa',
                        "time":time.time()-start_time,
                        "hit_count":' Unique protein hits: ' + str(len(hits)) + '.',
                        "gene_count":' Genes found: ' + str(gene_hits) + '.',
@@ -2326,7 +2350,7 @@ class PsearchResultView(View):
             context = {"searchresult":'',
                        "searchcontext":'No hits found',
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
+                       "query_name":f'Query: {query_name}, {str(query_len)} aa',
                        "time":time.time()-start_time,
                        "hit_count":'',
                        "gene_count":'',
@@ -2336,14 +2360,13 @@ class PsearchResultView(View):
             context = {"searchresult":"",
                        "searchcontext":searchcontext,
                        "query_len":query_len,
-                       "query_name":'Query: ' + query_name + ', ' +  str(query_len) + ' aa',
+                       "query_name":f'Query: {query_name}, {str(query_len)} aa',
                        "time":time.time()-start_time,
                        "hit_count":'',
                        "gene_count":'',
                        "textresult":searchcontext,
                        }
-        #data = json.dumps(context)
-        return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
+        return JsonResponse(context)
 
 
 def proteinsearchform(request):
@@ -2359,10 +2382,11 @@ def cregulon_view(request):
     og_id = request.GET.get('og')
     #locus_tag = request.GET.get('locus_tag')
     if og_id is None or og_id == '':
-        return render(request,
-                      '404.html',
-                      {'searchcontext': 'Ortholog group ' + str(og_id) + ' does not exist'}
-                      )
+        return render(
+            request,
+            '404.html',
+            {'searchcontext': 'Ortholog group ' + str(og_id) + ' does not exist'}
+        )
     context = build_conserved_regulon(og_id)
     return render(request, 'browser/cregulon.html', context)
 
@@ -2375,10 +2399,11 @@ def conserved_operon_view(request, operon_id):
     try:
         context['start_operon'] = Operon.objects.get(id=operon_id)
     except Operon.DoesNotExist:
-        return render(request,
-                      '404.html',
-                      {'searchcontext': 'Operon ' + str(operon_id) + ' does not exist'}
-                      )
+        return render(
+            request,
+            '404.html',
+            {'searchcontext': 'Operon ' + str(operon_id) + ' does not exist'}
+        )
     return render(request, 'browser/coperon.html', context)
 
 
@@ -2387,7 +2412,8 @@ def conserved_operon_data(request, operon_id):
         Returns conserved operon data for Ajax request
     '''
     context = {}
-    treemap, sunburst, operon_ids, functional_profile_tsv = build_conserved_operon(operon_id)
+    treemap, sunburst, operon_ids, functional_profile_tsv = \
+        build_conserved_operon(operon_id)
     context['treemap'] = treemap
     context['sunburst'] = sunburst
     context['tsv_profile'] = functional_profile_tsv
@@ -2398,9 +2424,10 @@ def conserved_operon_data(request, operon_id):
     ).prefetch_related(
         'genes', 'genome__tags'
     )
-    context['operonlist'] = loader.render_to_string('browser/operon_list_subview.html', {'operonlist':object_list})
-    #data = json.dumps(context)
-    return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
+    context['operonlist'] = loader.render_to_string(
+        'browser/operon_list_subview.html', {'operonlist':object_list}
+    )
+    return JsonResponse(context)
 
     
 def pathway_view(request):
@@ -2411,8 +2438,6 @@ def pathway_view(request):
         genome = request.GET.get('genome')
         query = request.GET.get('pathway')
         kp = Kegg_pathway.objects.get(kegg_id=query)
-        #kp_id = kp.kegg_id
-        ext_kegg_map_url = ''
         context['pathway'] = kp
         context['genome'] = genome
         gene_list = Gene.objects.filter(
@@ -2422,10 +2447,9 @@ def pathway_view(request):
                     ).prefetch_related(
                         'protein__kegg_orthologs'
                     )
-        #logger.debug(kp.kegg_id)
         kegg_map_url = 'https://www.kegg.jp/kegg-bin/show_pathway?' + \
                        kp.kegg_id + '/'
-        #logger.debug(kegg_map_url)
+        logger.debug('KEGG URL is ' + kegg_map_url)
         ko_ids = {}
         for gene in gene_list:
             for ko in gene.protein.kegg_orthologs.all():
@@ -2450,7 +2474,11 @@ def pathway_view(request):
         kegg_map_url += 'default%3dpink'
         
         if len(kegg_map_url) > 2559:
-            context['error'] = 'The pathway URL cannot be displayed by KEGG mapper tool because it is too long (' + str(len(kegg_map_url)) + ' symbols). Try another pathway with smaller number of genes.'
+            context['error'] = (
+                'The pathway URL cannot be displayed by KEGG mapper tool because ' + 
+                'it is too long (' + str(len(kegg_map_url)) + ' symbols). ' +
+                'Try another pathway with smaller number of genes.'
+            )
             return render(request, 'browser/pathway.html', context)
         context['external'] = kegg_map_url
         context['items'] = items
@@ -2515,10 +2543,11 @@ class ComparativeView(View):
         except SuspiciousOperation as e:
             return render(request, '404.html', {'searchcontext': str(e)})
         
-        #logger.debug('REQUEST1')
-        #logger.debug('Request parameters: %s %s %s %s %s', og_id, genome,
-        #             locus_tag, request.GET.get('size'), request.GET.get('lines')
-        #             )
+        logger.debug('REQUEST1')
+        logger.debug(
+            'Request parameters: %s %s %s %s %s', og_id, genome,
+            locus_tag, request.GET.get('size'), request.GET.get('lines')
+        )
         context = {}
         for key, val in request.GET.items():
             context[key] = val
@@ -2549,9 +2578,6 @@ class ComparativeView(View):
     def ajax_view(request):
         start_time = time.time()
 
-        #logger.debug('REQUEST2')
-        #for key, val in request.GET.items():
-        #    logger.debug('%s:%s', key, val)
         try:
             ComparativeView.verify_parameters(request.GET.get('size'),
                                               request.GET.get('lines')
@@ -2586,12 +2612,11 @@ class ComparativeView(View):
                           '404.html',
                           {'searchcontext': 'Ortholog group not found'}
                           )
-        scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count, treemap_gene_ids = \
-            get_scribl(gene, og, request)
+        scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count, \
+        treemap_gene_ids = get_scribl(gene, og, request)
             
         treemap = ''
         if treemap_gene_ids:
-            #print(len(treemap_gene_ids), 'genes for treemap generation')
             treemap, functional_profile = generate_genes_treemap(treemap_gene_ids)
 
         if og_gene_count == 1:
@@ -2619,8 +2644,7 @@ class ComparativeView(View):
                        'treemap':treemap,
                        'tsv_profile': functional_profile
                        }
-        #data = json.dumps(context)
-        return JsonResponse(context)  #HttpResponse(data,content_type="application/json")
+        return JsonResponse(context)
 
     
 def handler404(request, exception):
@@ -2726,16 +2750,28 @@ def generate_gene_search_context(query, query_type, genome=None):
     
 def get_og_data(request):
     og_id = request.GET.get('og')
-    #print('AJAX request for', og_id)
     ortholog_group = Ortholog_group.objects.get(id=og_id)
     treemap, functional_profile, gene_ids = generate_og_treemap(ortholog_group)
-    context = {'treemap':treemap, 'og_gene_count':str(len(gene_ids)), 'tsv_profile':functional_profile}
+    context = {
+        'treemap':treemap,
+        'og_gene_count':str(len(gene_ids)),
+        'tsv_profile':functional_profile
+    }
     if not gene_ids:
-        context['sunburst'] = '<div class="error box">The family has no genes. Taxonomy profile cannot be displayed.</div>'
+        context['sunburst'] = (
+            '<div class="error box">The family has no genes.' +
+            ' Taxonomy profile cannot be displayed.</div>'
+        )
     elif len(gene_ids) == 1:
-        context['sunburst'] = '<div class="error box">The family has only one gene. Taxonomy profile cannot be displayed.</div>'
+        context['sunburst'] = (
+            '<div class="error box">The family has only one gene.' + 
+            ' Taxonomy profile cannot be displayed.</div>'
+        )
     elif len(gene_ids) > 10000:
-        context['sunburst'] = '<div class="error box">The family has more than 10 thousand proteins. Taxonomy profile cannot be displayed.</div>'
+        context['sunburst'] = (
+            '<div class="error box">The family has more than 10 thousand' +
+            ' proteins. Taxonomy profile cannot be displayed.</div>'
+        )
     else:
         context['sunburst'] = generate_genes_sunburst(gene_ids)
     #data = json.dumps(context)
@@ -2755,7 +2791,10 @@ def generate_external_link(query, query_type, genome=None):
         if query_type=='kp' or query_type=='kp_id':
             if genome is None:
                 if query_type=='kp_id':
-                    external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query  + '" target="blank_">Search for "' + query + '" in KEGG</a>'
+                    external = (
+                        '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query  +
+                        '" target="blank_">Search for "' + query + '" in KEGG</a>'
+                    )
             else:
                 kp_ids = Kegg_pathway.objects.filter(
                     Q(kegg_id__icontains=query) |
@@ -2781,25 +2820,51 @@ def generate_external_link(query, query_type, genome=None):
                     if ko_ids:
                         ext_kegg_map_url = kegg_map_url + \
                                            '+'.join(sorted(list(ko_ids)))
-                    link_text = 'View KEGG map ' + kp_ids[0]['kegg_id'] + ' for these functions'
+                    link_text = (
+                      'View KEGG map ' + kp_ids[0]['kegg_id'] + ' for these functions'
+                    )
                 if ext_kegg_map_url != '':
                     external = ext_kegg_map_url
                 if external != '':
-                    external = '<a href="'+ reverse('pathway') + '?genome=' + genome + '&pathway=' + kp_ids[0]['kegg_id'] + '">' + link_text + '</a>'  #'<a href="' + external + '" target="blank_">' + link_text + '</a>'
+                    external = (
+                        '<a href="'+ reverse('pathway') + '?genome=' + genome +
+                        '&pathway=' + kp_ids[0]['kegg_id'] + '">' + link_text + '</a>'
+                    )
         elif query_type=='ko_id':
-            external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query + '" target="blank_">Search for "' + query + '" in KEGG</a>'
+            external = (
+                '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query +
+                '" target="blank_">Search for "' + query + '" in KEGG</a>'
+            )
         elif query_type=='kp_id':
-            external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query + '" target="blank_">Search for "' + query + '" in KEGG</a>'
+            external = (
+                '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query +
+                '" target="blank_">Search for "' + query + '" in KEGG</a>'
+            )
         elif query_type=='kr_id':
-            external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query + '" target="blank_">Search for "' + query + '" in KEGG</a>'
+            external = (
+                '<a href="https://www.kegg.jp/dbget-bin/www_bget?' + query +
+                '" target="blank_">Search for "' + query + '" in KEGG</a>'
+            )
         elif query_type=='ec_id':
-            external = '<a href="https://www.kegg.jp/dbget-bin/www_bget?ec:' + query + '" target="blank_">Search for "' + query + '" in KEGG</a>'
+            external = (
+                '<a href="https://www.kegg.jp/dbget-bin/www_bget?ec:' + query +
+                '" target="blank_">Search for "' + query + '" in KEGG</a>'
+            )
         elif query_type=='tc_id':
-            external = '<a href="http://www.tcdb.org/search/result.php?tc=' + query + '#' + query + '" target="blank_">Search for "' + query + '" in TCDB</a>'
+            external = (
+                '<a href="http://www.tcdb.org/search/result.php?tc=' + query + '#' +
+                query + '" target="blank_">Search for "' + query + '" in TCDB</a>'
+            )
         elif query_type=='cazy_id':
-            external = '<a href="http://www.cazy.org/' + query + '.html" target="blank_">View "' + query + '" page in CAZy</a>'
+            external = (
+                '<a href="http://www.cazy.org/' + query + 
+                '.html" target="blank_">View "' + query + '" page in CAZy</a>'
+            )
         elif query_type=='go_id':
-            external = '<a href="https://www.ebi.ac.uk/QuickGO/search/' + query + '" target="blank_">Search for "' + query + '" in Gene Onthology</a>'
+            external = (
+                '<a href="https://www.ebi.ac.uk/QuickGO/search/' + query + 
+                '" target="blank_">Search for "' + query + '" in Gene Onthology</a>'
+            )
         else:
             external = ''
     return external

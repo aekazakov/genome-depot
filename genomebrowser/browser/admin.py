@@ -13,7 +13,6 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.db.models import Q
-from django.forms import CheckboxSelectMultiple
 from django_q.models import OrmQ
 from django_q.monitor import Stat
 # Import your models here
@@ -71,10 +70,15 @@ admin.site.index_title = TITLE + " administration"
 def run_annotation_tools(self, request, queryset):
     if 'do_action' in request.POST:
         form = ChooseAnnotationToolForm(request.POST)
-        # this hack is necessary because the tools field is empty on form initialization to prevent calling db server on startup
-        form.fields.get('tools').choices = [(item,item) for item in request.POST.getlist('tools')]
+        # this hack is necessary because the tools field is empty on 
+        # the form initialization to avoid calling db server on startup
+        form.fields.get('tools').choices = [(item,item) for item 
+            in request.POST.getlist('tools')
+            ]
         if form.is_valid():
-            tools = ['.'.join(item.split('.')[1:-1]) for item in form.cleaned_data['tools']]
+            tools = ['.'.join(item.split('.')[1:-1]) for item
+                in form.cleaned_data['tools']
+                ]
             task_id = async_run_annotation_tools(request, queryset, tools)
             messages.info(request,
                           "The annotation pipeline is running for selected genomes. " +
@@ -86,9 +90,13 @@ def run_annotation_tools(self, request, queryset):
             
         return HttpResponseRedirect(request.get_full_path())
     else:
-        plugins_enabled = [item.replace('.enabled', '.display_name') for item in Config.objects.filter(Q(param__startswith='plugins.')&Q(param__endswith='.enabled')&Q(value__in=('1','yes','Yes','y','Y'))).values_list('param', flat=True)]
+        plugins_enabled = [item.replace('.enabled', '.display_name') for item in 
+            Config.objects.filter(Q(param__startswith='plugins.')&Q(param__endswith='.enabled')
+            &Q(value__in=('1','yes','Yes','y','Y'))).values_list('param', flat=True)]
         form = ChooseAnnotationToolForm()
-        form.fields.get('tools').choices = Config.objects.filter(param__in=plugins_enabled).values_list('param','value')
+        form.fields.get('tools').choices = Config.objects.filter(
+            param__in=plugins_enabled).values_list('param','value'
+            )
         context = {'title': u'Choose tools', 'form': form}
         active_tasks = OrmQ.objects.all().count()
         context['genomes'] = queryset

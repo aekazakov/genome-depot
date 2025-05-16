@@ -80,14 +80,15 @@ def preprocess(annotator, genomes, working_dir):
                       '\n'
                       )
         outfile.write(' '.join([annotator.config[\
-                                'plugins.hmmsearch_pfam.hmmsearch_command'],
-                                '--domtblout', '"' + hmmsearch_outfile + '"',
-                                '-o', '/dev/null', '--cut_tc',
-                                '--cpu', annotator.config['core.threads'],
-                                '--noali', '--notextw',
-                                '"' + annotator.config['plugins.hmmsearch_pfam.hmm_lib'] + '"',
-                                '"' + input_file + '"'
-                                ]) + '\n')
+                            'plugins.hmmsearch_pfam.hmmsearch_command'],
+                            '--domtblout', '"' + hmmsearch_outfile + '"',
+                            '-o', '/dev/null', '--cut_tc',
+                            '--cpu', annotator.config['core.threads'],
+                            '--noali', '--notextw',
+                            '"' + annotator.config['plugins.hmmsearch_pfam.hmm_lib'] +
+                            '"',
+                            '"' + input_file + '"'
+                            ]) + '\n')
         outfile.write('conda deactivate\n')
     return hmmsearch_script
 

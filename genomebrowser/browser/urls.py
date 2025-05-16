@@ -78,7 +78,11 @@ urlpatterns = [
     path('loadingscribl/',views.ComparativeView.ajax_view,name='loadingscribl'),
     path('cregulon/', views.cregulon_view, name='cregulon'),
     path('coperon/<int:operon_id>/', views.conserved_operon_view, name='coperon'),
-    path('conservoperondata/<int:operon_id>/', views.conserved_operon_data, name='conservoperondata'),
+    path(
+        'conservoperondata/<int:operon_id>/',
+        views.conserved_operon_data,
+        name='conservoperondata'
+    ),
     path('pathway/', views.pathway_view, name='pathway'),
     path('about/', views.show_help, name='about'),
     path('nuclsearchform/',views.nucleotidesearchform,name="nucleotidesearchform"),

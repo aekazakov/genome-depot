@@ -77,8 +77,7 @@ def generate_genes_sunburst(gene_ids):
     
     if not labels:
         return ''
-    
-    taxon_id = get_root_id(labels, parents)
+    #taxon_id = get_root_id(labels, parents)
     maxdepth = -1
     
     colors = []
@@ -120,8 +119,7 @@ def generate_operons_sunburst(operon_ids, gene_ids):
     
     if not labels:
         return ''
-    
-    taxon_id = get_root_id(labels, parents)
+    #taxon_id = get_root_id(labels, parents)
     maxdepth = -1
     
     colors = []
@@ -335,8 +333,8 @@ def get_genomes_taxonomy(target_taxon_id, target_children = []):
 def get_genes_taxonomy(gene_ids = []):
     '''
     Returns four lists for sunburst graph generation: list of gene/genome/taxon names,
-    list of parent genome/taxon names, list of gene counts for each genome and taxon, list of 
-    HTML-formatted strings containing a link to the current element
+    list of parent genome/taxon names, list of gene counts for each genome and taxon,
+    list of HTML-formatted strings containing a link to the current element
     
     Parameters:
     gene_ids (list of int): list of numerical gene ids
@@ -490,8 +488,9 @@ def get_genes_taxonomy(gene_ids = []):
 
 def get_operons_taxonomy(operon_ids = [], gene_ids = []):
     '''
-    Returns four lists for sunburst graph generation: list of gene/operon/genome/taxon names,
-    list of parent genome/taxon names, list of gene/operon counts for each genome and taxon, list of 
+    Returns four lists for sunburst graph generation: list of 
+    gene/operon/genome/taxon names, list of parent genome/taxon names, 
+    list of gene/operon counts for each genome and taxon, list of 
     HTML-formatted strings containing a link to the current element
     
     Parameters:
@@ -559,9 +558,10 @@ def get_operons_taxonomy(operon_ids = [], gene_ids = []):
         children_nodes[operon_data[1]].add(operon_data[0])
         genome_data[operon_data[1]] += 1
         values.append(1)
-        customdata.append([reverse('operondetails', args=(operon_data[1],operon_data[0])),
-                           operon_data[0] + ' operon'
-                           ])
+        customdata.append(
+            [reverse('operondetails', args=(operon_data[1],operon_data[0])),
+             operon_data[0] + ' operon']
+        )
 
     for gene_data in genes:
         labels.append(gene_data[0])

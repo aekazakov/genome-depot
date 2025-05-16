@@ -1,7 +1,4 @@
-from collections import defaultdict
-
 from browser.models import Gene
-from browser.models import Operon
 from browser.conserved_regulon import RANKS
 from browser.treemap import generate_genes_treemap
 from browser.taxonomy import generate_operons_sunburst
@@ -13,7 +10,9 @@ def build_conserved_operon(operon_id):
     for gene in operon_members.all():
         print(gene.locus_tag)
         if gene.protein:
-            gene_ogs = {og.taxon.rank:og.id for og in gene.protein.ortholog_groups.all()}
+            gene_ogs = {og.taxon.rank:og.id for og
+                in gene.protein.ortholog_groups.all()
+                }
             print(gene_ogs)
             for rank in RANKS:
                 if rank in gene_ogs:

@@ -2,7 +2,6 @@ import io
 import parasail
 import logging
 from datetime import datetime
-from collections import defaultdict
 from subprocess import Popen, PIPE, STDOUT
 # Importing necessary libraries from BioPython
 from Bio import Phylo, AlignIO
@@ -443,4 +442,7 @@ def get_scribl(start_gene, eggnog_og, request):
                                request,
                                locus_size
                                )
-    return '\n'.join(scribl), tree_canvas, tree_newick, og_gene_count, plot_gene_count, treemap_gene_ids
+    return (
+        '\n'.join(scribl), tree_canvas, tree_newick,
+        og_gene_count, plot_gene_count, treemap_gene_ids
+    )

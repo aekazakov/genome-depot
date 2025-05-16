@@ -1,4 +1,3 @@
-import binascii
 import csv
 import logging
 import gzip
@@ -6,7 +5,6 @@ from io import BytesIO
 from collections import defaultdict
 
 from django.http import HttpResponse
-from django.core.exceptions import SuspiciousOperation
 from django.db.models import Q
 from django.shortcuts import render
 
@@ -70,7 +68,9 @@ def _export_annotations_csv(request):
     fast = request.GET.get('fast')
     # get objects
     if genome:
-        response['Content-Disposition'] = 'attachment; filename="' + str(genome) + '_exported_annotations.tab"'
+        response['Content-Disposition'] = (
+            f'attachment; filename="{str(genome)}_exported_annotations.tab"'
+        )
         if fast and fast == 'on':
             object_list = Annotation.objects.filter(
                 (
@@ -157,11 +157,10 @@ def _export_genes_csv(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/tab-separated-values')
     writer = csv.writer(response, delimiter='\t')
-    annotation_query = request.GET.get('annotation_query')
     query_type = request.GET.get('type')
     query = request.GET.get('query')
     genome = request.GET.get('genome')
-    response['Content-Disposition'] = 'attachment; filename="export_' + query_type + '.tab"'
+    response['Content-Disposition'] = f'attachment; filename="export_{query_type}.tab"'
 
     if query_type == 'gene':
         if query and query != '':
@@ -181,7 +180,9 @@ def _export_genes_csv(request):
                 ).order_by('locus_tag')
         elif genome:
             # Generate gene list with all mappings and annotations
-            response['Content-Disposition'] = 'attachment; filename="' + str(genome) + 'export_genes.tab"'
+            response['Content-Disposition'] = (
+                f'attachment; filename="{str(genome)}_export_genes.tab"'
+            )
             object_list = Gene.objects.filter(
                 genome__name=genome
             ).order_by(
@@ -240,25 +241,48 @@ def _export_genes_csv(request):
                     if gene.protein.eggnog_description:
                         description = gene.protein.eggnog_description.description
                     if gene.protein.ortholog_groups:
-                        eggnogs = ';'.join([item.eggnog_id + '[' + item.taxon.name + ']' for item in gene.protein.ortholog_groups.all()])
+                        eggnogs = ';'.join([item.eggnog_id + '[' + item.taxon.name + ']'
+                            for item in gene.protein.ortholog_groups.all()]
+                            )
                     if gene.protein.kegg_orthologs:
-                        ko = ';'.join([item.kegg_id for item in gene.protein.kegg_orthologs.all()])
-                        description = ';'.join([item.description for item in gene.protein.kegg_orthologs.all()])
+                        ko = ';'.join([item.kegg_id for item
+                            in gene.protein.kegg_orthologs.all()]
+                            )
+                        description = ';'.join([item.description for item
+                            in gene.protein.kegg_orthologs.all()]
+                            )
                     if gene.protein.kegg_pathways:
-                        kp = ';'.join([item.kegg_id for item in gene.protein.kegg_pathways.all()])
+                        kp = ';'.join([item.kegg_id for item
+                            in gene.protein.kegg_pathways.all()]
+                            )
                     if gene.protein.kegg_reactions:
-                        kr = ';'.join([item.kegg_id for item in gene.protein.kegg_reactions.all()])
+                        kr = ';'.join([item.kegg_id for item
+                            in gene.protein.kegg_reactions.all()]
+                            )
                     if gene.protein.go_terms:
-                        go = ';'.join([item.go_id for item in gene.protein.go_terms.all()])
+                        go = ';'.join([item.go_id for item
+                            in gene.protein.go_terms.all()]
+                            )
                     if gene.protein.cazy_families:
-                        cazy = ';'.join([item.cazy_id for item in gene.protein.cazy_families.all()])
+                        cazy = ';'.join([item.cazy_id for item
+                            in gene.protein.cazy_families.all()]
+                            )
                     if gene.protein.ec_numbers:
-                        ec = ';'.join([item.ec_number for item in gene.protein.ec_numbers.all()])
+                        ec = ';'.join([item.ec_number for item
+                            in gene.protein.ec_numbers.all()]
+                            )
                     if gene.protein.tc_families:
-                        tc = ';'.join([item.tc_id for item in gene.protein.tc_families.all()])
+                        tc = ';'.join([item.tc_id for item 
+                            in gene.protein.tc_families.all()]
+                            )
                     if gene.protein.cog_classes:
-                        cog = ';'.join([item.cog_id for item in gene.protein.cog_classes.all()])
-                annotations = ';'.join([item.key + '=' + item.value + '[' + item.source + ']' for item in gene.annotation_set.all()])
+                        cog = ';'.join([item.cog_id for item
+                            in gene.protein.cog_classes.all()]
+                            )
+                annotations = ';'.join(
+                    [item.key + '=' + item.value + '[' + item.source + ']'
+                    for item in gene.annotation_set.all()]
+                    )
 
                 writer.writerow([
                     gene.locus_tag,
@@ -449,8 +473,6 @@ def _export_genomes_csv(request):
     response = HttpResponse(content_type='text/tab-separated-values')
     response['Content-Disposition'] = 'attachment; filename="exported_genomes.tab"'
     writer = csv.writer(response, delimiter='\t')
-    annotation_query = request.GET.get('annotation_query')
-    query_type = request.GET.get('type')
     query = request.GET.get('query')
     if query:
         object_list = Genome.objects.filter(
@@ -510,7 +532,6 @@ def _export_genomes_bytaxon_csv(request):
     response = HttpResponse(content_type='text/tab-separated-values')
     response['Content-Disposition'] = 'attachment; filename="exported_genomes.tab"'
     writer = csv.writer(response, delimiter='\t')
-    annotation_query = request.GET.get('annotation_query')
     query_type = request.GET.get('type')
     query = request.GET.get('query')
     if query_type != 'genomebytaxon':
@@ -574,7 +595,9 @@ def _export_operons_csv(request):
         except Genome.DoesNotExist:
             writer.writerow(['Genome ' + query + ' does not exist',])
             return response
-        response['Content-Disposition'] = 'attachment; filename="' + genome.name + '_exported_operons.tab"'
+        response['Content-Disposition'] = (
+            f'attachment; filename="{genome.name}_exported_operons.tab"'
+        )
         object_list = Operon.objects.filter(genome=genome
             ).order_by(
                 'name'
@@ -601,11 +624,20 @@ def _export_operons_csv(request):
         else:
             source = 'Sample:' + operon.genome.sample.full_name
         if operon.strand == 1:
-            location = operon.contig.contig_id + ':' + str(operon.start) + '..' + str(operon.end)
+            location = (
+                f'{operon.contig.contig_id}:{str(operon.start)}' +
+                f'..{str(operon.end)}'
+            )
         elif operon.strand == -1:
-            location = operon.contig.contig_id + ':complement(' + str(operon.start) + '..' + str(operon.end) + ')'
+            location = (
+                f'{operon.contig.contig_id}:complement({str(operon.start)}' +
+                f'..{str(operon.end)})'
+            )
         else:
-            location = operon.contig.contig_id + ':' + str(operon.start) + '..' + str(operon.end) + '(unknown strand)'
+            location = (
+                f'{operon.contig.contig_id}:{str(operon.start)}' +
+                f'..{str(operon.end)}(unknown strand)'
+            )
         writer.writerow([operon.name,
                          operon.genome.name,
                          source,
@@ -638,7 +670,9 @@ def _export_sites_csv(request):
         except Genome.DoesNotExist:
             writer.writerow(['Genome ' + query + ' does not exist',])
             return response
-        response['Content-Disposition'] = 'attachment; filename="' + genome.name + '_exported_sites.tab"'
+        response['Content-Disposition'] = (
+            f'attachment; filename="{genome.name}_exported_sites.tab"'
+        )
         object_list = Site.objects.filter(genome=genome
             ).order_by(
                 'name'
@@ -668,11 +702,17 @@ def _export_sites_csv(request):
         else:
             source = 'Sample:' + site.genome.sample.full_name
         if site.strand == 1:
-            location = site.contig.contig_id + ':' + str(site.start) + '..' + str(site.end)
+            location = f'{site.contig.contig_id}:{str(site.start)}..{str(site.end)}'
         elif site.strand == -1:
-            location = site.contig.contig_id + ':complement(' + str(site.start) + '..' + str(site.end) + ')'
+            location = (
+                f'{site.contig.contig_id}:complement(' + 
+                f'{str(site.start)}..{str(site.end)})'
+            )
         else:
-            location = site.contig.contig_id + ':' + str(site.start) + '..' + str(site.end) + '(unknown strand)'
+            location = (
+                f'{site.contig.contig_id}:{str(site.start)}' +
+                f'..{str(site.end)}(unknown strand)'
+            )
         writer.writerow([site.name,
                          site.type,
                          site.genome.name,
@@ -680,7 +720,9 @@ def _export_sites_csv(request):
                          site.genome.taxon.name,
                          location,
                          site.regulon.name,
-                         ';'.join([item.locus_tag for item in site.regulon.regulators.all()]),
+                         ';'.join([item.locus_tag for item in
+                            site.regulon.regulators.all()]
+                            ),
                          ';'.join([item.locus_tag for item in site.genes.all()]),
                          ';'.join([item.name for item in site.operons.all()])
                          ])
@@ -708,7 +750,9 @@ def _export_regulons_csv(request):
         except Genome.DoesNotExist:
             writer.writerow(['Genome ' + query + ' does not exist',])
             return response
-        response['Content-Disposition'] = 'attachment; filename="' + genome.name + 'exported_regulons.tab"'
+        response['Content-Disposition'] = (
+            f'attachment; filename="{genome.name}_exported_regulons.tab"'
+        )
         object_list = Regulon.objects.filter(genome=genome
             ).order_by(
                 'name'
@@ -737,7 +781,9 @@ def _export_regulons_csv(request):
                          regulon.genome.name,
                          source,
                          regulon.genome.taxon.name,
-                         ';'.join([item.locus_tag for item in regulon.regulators.all()]),
+                         ';'.join([item.locus_tag for item in
+                            regulon.regulators.all()]
+                            ),
                          regulon.description
                          ])
     return response
@@ -787,7 +833,9 @@ def export_fasta(request):
     genome = request.GET.get('genome')
     fast = request.GET.get('fast')
     if genome:
-        response['Content-Disposition'] = 'attachment; filename="' + str(genome) + '_proteins.faa"'
+        response['Content-Disposition'] = (
+            f'attachment; filename="{genome}_proteins.faa"'
+        )
     else:
         response['Content-Disposition'] = 'attachment; filename="exported_proteins.faa"'
     annotation_query = request.GET.get('annotation_query')
@@ -1032,7 +1080,7 @@ def export_fasta(request):
 
 def export_gbk(request, name):
     response = HttpResponse(content_type='application/x-gzip')
-    response['Content-Disposition'] = 'attachment; filename=exported_' + name + '_genome.gbk'
+    response['Content-Disposition'] = f'attachment; filename=exported_{name}_genome.gbk'
     response['Content-Encoding'] = 'gzip'
     try:
         genome = Genome.objects.get(name = name)

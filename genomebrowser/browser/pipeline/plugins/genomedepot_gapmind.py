@@ -61,38 +61,44 @@ def preprocess(annotator, genomes, working_dir):
                 continue
             os.mkdir(os.path.join(output_dir, genome))
 # perl bin/buildorgs.pl -out $TEMPDIR/orgs -orgs 'file:testinput.faa:Test genome'
-            outfile.write('\n' + ' '.join(['perl',
-                                           'bin/buildorgs.pl',
-                                           '-out',
-                                           '"' + os.path.join(output_dir, genome, 'orgs') + '"',
-                                           '-orgs',
-                                           "'file:" + input_fasta_files[genome] +
-                                           ":" + genome + "'"
-                                           ]) + '\n')
+            outfile.write(
+                '\n' + ' '.join(['perl',
+                   'bin/buildorgs.pl',
+                   '-out',
+                   '"' + os.path.join(output_dir, genome, 'orgs') + '"',
+                   '-orgs',
+                   "'file:" + input_fasta_files[genome] +
+                   ":" + genome + "'"
+               ]) + '\n'
+           )
 # diamond makedb --in $TEMPDIR/orgs.faa --db $TEMPDIR/orgs.faa
-            outfile.write(' '.join(['diamond',
-                                    'makedb',
-                                    '--in',
-                                    '"' + os.path.join(output_dir, genome, 'orgs.faa') + '"',
-                                    '--db',
-                                    '"' + os.path.join(output_dir, genome, 'orgs.faa') + '"'
-                                    ]) + '\n')
+            outfile.write(
+                ' '.join(['diamond',
+                    'makedb',
+                    '--in',
+                    '"' + os.path.join(output_dir, genome, 'orgs.faa') + '"',
+                    '--db',
+                    '"' + os.path.join(output_dir, genome, 'orgs.faa') + '"'
+                ]) + '\n'
+            )
                                     
             for collection in GAPMIND_REFERENCE:
 # perl bin/gapsearch.pl -orgs $TEMPDIR/orgs -set aa -out $TEMPDIR/aa.hits -nCPU 8
-                outfile.write(' '.join(['perl',
-                                        'bin/gapsearch.pl',
-                                        '-orgs',
-                                        '"' + os.path.join(output_dir, genome, 'orgs') + '"',
-                                        '-set',
-                                        collection, 
-                                        '-out',
-                                        '"' + os.path.join(output_dir, 
-                                                     genome,
-                                                     collection + '.hits') + '"',
-                                        '-nCPU',
-                                        annotator.config['plugins.gapmind.threads']
-                                        ]) + '\n')
+                outfile.write(
+                    ' '.join(['perl',
+                        'bin/gapsearch.pl',
+                        '-orgs',
+                        '"' + os.path.join(output_dir, genome, 'orgs') + '"',
+                        '-set',
+                        collection, 
+                        '-out',
+                        '"' + os.path.join(output_dir, 
+                                     genome,
+                                     collection + '.hits') + '"',
+                        '-nCPU',
+                        annotator.config['plugins.gapmind.threads']
+                    ]) + '\n'
+                )
 # perl bin/gaprevsearch.pl -orgs $TEMPDIR/orgs -hits $TEMPDIR/aa.hits
 # -curated tmp/path.aa/curated.faa.udb.dmnd -out $TEMPDIR/aa.revhits -nCPU 8
                 outfile.write(' '.join(['perl',

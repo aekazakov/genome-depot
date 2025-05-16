@@ -3,7 +3,6 @@ import logging
 import plotly.express as px
 import pandas as pd
 from io import StringIO
-from collections import defaultdict
 from django.db.models import Count
 from browser.util import autovivify
 from browser.models import Gene
@@ -35,9 +34,15 @@ def generate_og_treemap(ortholog_group):
     )
     '''
     if not gene_ids:
-        return '<h5>Genes for ' + ortholog_group.eggnog_id + '[' + ortholog_group.taxon.name + '] not found in the database.</h5>', '', []
+        treemap = (
+            '<h5>Genes for ' + ortholog_group.eggnog_id + '[' + 
+            ortholog_group.taxon.name + '] not found in the database.</h5>'
+        )
+        return treemap, '', []
     #gene_ids = [item.id for item in genes.all()]
-    treemap, result_table = generate_annotations_treemap(gene_ids, ortholog_group=ortholog_group)
+    treemap, result_table = generate_annotations_treemap(
+        gene_ids, ortholog_group=ortholog_group
+    )
     return treemap, result_table, list(gene_ids)
 
 
@@ -68,9 +73,11 @@ def generate_annotations_treemap(gene_ids, ortholog_group=None):
     logger.debug('Filling genedata')
     genedata = autovivify(2, int)
     root_node = 'Annotations'
-    root_value = 0
-    #gene_ids = [item.id for item in genes.all()]
-    annotations = Annotation.objects.filter(gene_id__in=gene_ids).values_list('source', 'key', 'value', 'note')
+    annotations = Annotation.objects.filter(
+        gene_id__in=gene_ids
+    ).values_list(
+        'source', 'key', 'value', 'note'
+    )
     for item in annotations:
         label = item[3]
         if 'E-value' in label:
@@ -79,14 +86,13 @@ def generate_annotations_treemap(gene_ids, ortholog_group=None):
 
     for item in Gene.objects.filter(id__in=gene_ids).values_list('function', flat=True):
         genedata['Product'][(item, item)] += 1
-        #for annotation in Annotation.objects.filter(gene_id=gene):
-        #    label = annotation.note
-        #    if 'E-value' in label:
-        #        label = label.split('E-value')[0]
-        #    genedata[annotation.source][(annotation.value, annotation.key + ':' + label)] += 1
     
     if ortholog_group is not None:
-        for protein in Protein.objects.filter(ortholog_groups=ortholog_group, gene__in=gene_ids).annotate(num_genes=Count('gene')).prefetch_related(
+        for protein in Protein.objects.filter(
+            ortholog_groups=ortholog_group, gene__in=gene_ids
+        ).annotate(
+            num_genes=Count('gene')
+        ).prefetch_related(
             'kegg_orthologs',
             'kegg_pathways',
             'kegg_reactions',
@@ -96,21 +102,30 @@ def generate_annotations_treemap(gene_ids, ortholog_group=None):
             'cazy_families'
         ):
             for item in protein.kegg_orthologs.all():
-                genedata['KEGG Orthologs'][(item.kegg_id, item.description)] += protein.num_genes
+                genedata['KEGG Orthologs'][(item.kegg_id, item.description)] += \
+                    protein.num_genes
             for item in protein.kegg_pathways.all():
-                genedata['KEGG Pathways'][(item.kegg_id, item.description)] += protein.num_genes
+                genedata['KEGG Pathways'][(item.kegg_id, item.description)] += \
+                    protein.num_genes
             for item in protein.kegg_reactions.all():
-                genedata['KEGG Reactions'][(item.kegg_id, item.description)] += protein.num_genes
+                genedata['KEGG Reactions'][(item.kegg_id, item.description)] += \
+                    protein.num_genes
             for item in protein.ec_numbers.all():
-                genedata['EC'][(item.ec_number, item.description)] += protein.num_genes
+                genedata['EC'][(item.ec_number, item.description)] += \
+                    protein.num_genes
             for item in protein.tc_families.all():
-                genedata['TC'][(item.tc_id, item.description)] += protein.num_genes
+                genedata['TC'][(item.tc_id, item.description)] += \
+                    protein.num_genes
             for item in protein.cog_classes.all():
-                genedata['COG classes'][(item.cog_id, item.description)] += protein.num_genes
+                genedata['COG classes'][(item.cog_id, item.description)] += \
+                    protein.num_genes
             for item in protein.cazy_families.all():
-                genedata['CAZY'][(item.cazy_id, item.description)] += protein.num_genes
+                genedata['CAZY'][(item.cazy_id, item.description)] += \
+                    protein.num_genes
     else:
-        for gene in Gene.objects.filter(id__in=gene_ids, protein__isnull=False).prefetch_related(
+        for gene in Gene.objects.filter(
+            id__in=gene_ids, protein__isnull=False
+        ).prefetch_related(
             'protein__kegg_orthologs',
             'protein__kegg_pathways',
             'protein__kegg_reactions',
@@ -142,7 +157,6 @@ def generate_annotations_treemap(gene_ids, ortholog_group=None):
         data['labels'].append(category)
         data['parents'].append(root_node)
         data['values'].append(0)
-        category_value = 0
         for item, item_value in category_data.items():
             data['names'].append(item[0])
             data['labels'].append(item[1])
@@ -167,7 +181,9 @@ def generate_annotations_treemap(gene_ids, ortholog_group=None):
     fig.write_html(html, include_plotlyjs=False, full_html=False)
     html = html.getvalue()
     result_table = sorted(result_table, key=lambda x: x[3], reverse=True)
-    result_table = '\n'.join(['\t'.join([str(item) for item in row]) for row in result_table])
+    result_table = '\n'.join(
+        ['\t'.join([str(item) for item in row]) for row in result_table]
+    )
     result_table = 'Category\tFunction\tDescription\tGene count\n' + result_table
     return html, result_table
 

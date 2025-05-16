@@ -198,7 +198,13 @@ def update_taxonomy():
     eggnog_taxonomy_temp_file = os.path.join(tmp_dir, 'eggnog_taxonomy_rules.txt')
     with open(eggnog_taxonomy_temp_file, 'w') as outfile:
         for eggnog_id in eggnog_taxa:
-            outfile.write('\t'.join([eggnog_id, eggnog_taxa[eggnog_id][0], eggnog_taxa[eggnog_id][1]]) + '\n')
+            outfile.write(
+                '\t'.join([eggnog_id,
+                           eggnog_taxa[eggnog_id][0],
+                           eggnog_taxa[eggnog_id][1]
+                          ])
+                 + '\n'
+            )
         
     # Update Taxon entries
     logger.info('Updating taxonomy entries in the database')
@@ -257,13 +263,14 @@ def update_taxonomy():
             taxon.parent_id = taxonomy[new_id]['parent']
             taxon.save()
         else:
-            logger.error('Taxon ' +
-                  taxon.name +
-                  '(' +
-                  taxon.taxonomy_id +
-                  ') cannot be found in NCBI Taxonomy. Check the name and taxonomy ID'+
-                  ' and fix the record in the GenomeDepot database.'
-                  )
+            logger.error(
+                'Taxon ' +
+                taxon.name +
+                '(' +
+                taxon.taxonomy_id +
+                ') cannot be found in NCBI Taxonomy. Check the name and taxonomy ID'+
+                ' and fix the record in the GenomeDepot database.'
+            )
                   
     # Taxonomy consistency check:
     # All parents must exist in the database and be unique
@@ -281,11 +288,13 @@ def update_taxonomy():
                 new_taxonomy_id = taxonomy_id_lookup[old_name]
                 create_taxonomy_records(new_taxonomy_id, taxonomy, eggnog_taxa)
         else:
-            logger.error('Taxonomy ID' +
-                  taxonomy_id +
-                  'cannot be found in the downloaded NCBI Taxonomy. Check the NCBI web-site'+
-                  ' and fix the record in the GenomeDepot database.'
-                  )
+            logger.error(
+                'Taxonomy ID' +
+                taxonomy_id +
+                'cannot be found in the downloaded NCBI Taxonomy.' + 
+                ' Check the NCBI web-site'+
+                ' and fix the record in the GenomeDepot database.'
+            )
             
     os.rename(eggnog_taxonomy_temp_file, config['core.eggnog_taxonomy'])
     os.rename(out_file, config['ref.taxonomy'])
@@ -322,14 +331,18 @@ def create_taxonomy_records(taxonomy_id, taxonomy, eggnog_taxa):
     new_parent_id = new_parent_taxon.parent_id
     while new_parent_id != '1':
         if new_parent_id not in taxonomy:
-            logger.error('Cannot create record for ' + new_parent_id + ': not in NCBI taxonomy')
+            logger.error(
+                'Cannot create record for ' + new_parent_id + ': not in NCBI taxonomy'
+            )
             break
         if Taxon.objects.filter(taxonomy_id=new_parent_id).exists():
             break
         eggnog_taxid = new_parent_id
         if new_parent_id in eggnog_taxa:
             eggnog_taxid = eggnog_taxa[new_parent_id][0]
-        logger.info('Creating ' + taxonomy[new_parent_id]['name'] + '(' + new_parent_id + ')')
+        logger.info(
+            'Creating ' + taxonomy[new_parent_id]['name'] + '(' + new_parent_id + ')'
+        )
         new_parent_taxon=Taxon.objects.create(
             taxonomy_id=new_parent_id,
             eggnog_taxid=eggnog_taxid,

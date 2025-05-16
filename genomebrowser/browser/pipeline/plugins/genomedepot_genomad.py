@@ -95,7 +95,9 @@ def postprocess(annotator, genomes, working_dir):
     with open(output_file, 'w') as outfile:
         outfile.write('#Gene\tGenome\tSource\tURL\tKey\tValue\tNote\n')
         for genome in sorted(genomes.keys()):
-            genome_id = str(Genome.objects.filter(name=genome).values_list('id', flat=True)[0])
+            genome_id = str(
+                Genome.objects.filter(name=genome).values_list('id', flat=True)[0]
+            )
             proviruses = {}
             proviruses_output = os.path.join(working_dir, 'out',
                 genome,
@@ -118,7 +120,8 @@ def postprocess(annotator, genomes, working_dir):
                 infile.readline()
                 for line in infile:
                     row = line.rstrip('\n\r').split('\t')
-                    if row[8].endswith('VV') or row[8].endswith('VP') or row[8].endswith('VC'):
+                    if row[8].endswith('VV') or row[8].endswith('VP') or \
+                    row[8].endswith('VC'):
                         function = row[-1]
                         if function == 'NA':
                             function = 'Unknown function'
@@ -131,20 +134,25 @@ def postprocess(annotator, genomes, working_dir):
                             if end < 4:
                                 end = 1
                             genes = Gene.objects.filter(
-                                genome__name=genome, contig__contig_id=contig_id, start=end
+                                genome__name=genome,
+                                contig__contig_id=contig_id,
+                                start=end
                             )
                         else:
                             end = int(row[2])
                             genes = Gene.objects.filter(
-                                genome__name=genome, contig__contig_id=contig_id, end=end
+                                genome__name=genome,
+                                contig__contig_id=contig_id,
+                                end=end
                             )
                         if len(genes) == 1:
                             outfile.write('\t'.join([genes[0].locus_tag, genome,
-                                          annotator.config['plugins.genomad.display_name'],
-                                          'https://portal.nersc.gov/genomad/',
-                                          'geNomad virus-specific marker',
-                                          row[8],
-                                          function]) + '\n')
+                                annotator.config['plugins.genomad.display_name'],
+                                'https://portal.nersc.gov/genomad/',
+                                'geNomad virus-specific marker',
+                                row[8],
+                                function]) + '\n'
+                            )
     _cleanup(working_dir)
     return output_file
 

@@ -2,7 +2,6 @@
     Various utility functions
 """
 import os
-import sys
 import re
 import gzip
 import logging
@@ -152,8 +151,8 @@ def export_genome(genome, output_buffer):
             for annotation in Annotation.objects.filter(gene_id=gene):
                 genedata[contig_id][gene.locus_tag].append(
                     annotation.source + ':' +
-                    ''.join([i for i in annotation.value if ord(i)<128])  #annotation.value
-                    + ' (' + ''.join([i for i in annotation.note if ord(i)<128])  #annotation.note
+                    ''.join([i for i in annotation.value if ord(i)<128])
+                    + ' (' + ''.join([i for i in annotation.note if ord(i)<128])
                     + ') [GD/'
                     + annotation.source + ']'
                 )
@@ -320,8 +319,11 @@ def download_ncbi_assembly(assembly_id, email, upload_dir):
     if not os.path.exists(upload_dir):
         try:
             os.mkdir(upload_dir)
-        except OSError as e:
-            logger.error("Critical error: genome import pipeline can't create genome download directory (%s)!" % (upload_dir))
+        except OSError:
+            logger.error(
+                "Critical error: genome import pipeline can't create genome " +
+                "download directory (%s)!" % (upload_dir)
+            )
             raise
     Entrez.email = email
     handle = Entrez.esearch(db="assembly", term=assembly_id, retmax='200')
@@ -703,8 +705,10 @@ def update_tags(genome_file, tag_names):
         if tag_name == '':
             continue
         if not bool(re.match('[A-Za-z0-9\-\_]+$', 'tag_name')):
-            raise CommandError('Tag must contain only alphabet letters (a-z), ' +
-                                'numbers (0-9), hyphen or underscore. Correct the tag ' + tag_name)
+            raise CommandError(
+                'Tag must contain only alphabet letters (a-z), ' +
+                'numbers (0-9), hyphen or underscore. Correct the tag ' + tag_name
+            )
         try:
             tag = Tag.objects.get(name=tag_name)
             tags[tag_name] = tag

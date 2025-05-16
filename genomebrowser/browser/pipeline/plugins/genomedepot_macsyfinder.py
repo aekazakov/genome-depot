@@ -60,17 +60,19 @@ def preprocess(annotator, genomes, working_dir):
             genome_dir = os.path.join(output_dir, genome)
             os.mkdir(genome_dir)
             outfile.write(' '.join(['macsyfinder',
-                                    '--models',
-                                    annotator.config['plugins.macsyfinder.model'],
-                                    'all',
-                                    '--models-dir',
-                                    '"' + annotator.config['plugins.macsyfinder.models_dir'] + '"',
-                                    '--out-dir',
-                                    '"' + genome_dir + '"',
-                                    '--db-type',
-                                    'unordered',
-                                    '--sequence-db',
-                                    '"' + input_fasta_files[genome] + '"']) + '\n')
+                            '--models',
+                            annotator.config['plugins.macsyfinder.model'],
+                            'all',
+                            '--models-dir',
+                            '"' + annotator.config['plugins.macsyfinder.models_dir'] +
+                             '"',
+                            '--out-dir',
+                            '"' + genome_dir + '"',
+                            '--db-type',
+                            'unordered',
+                            '--sequence-db',
+                            '"' + input_fasta_files[genome] + '"']) + '\n'
+                         )
         outfile.write('\nconda deactivate\n')
     return macsyfinder_script
     

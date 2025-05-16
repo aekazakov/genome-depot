@@ -54,7 +54,8 @@ def preprocess(annotator, genomes, working_dir):
             outfile.write(' '.join(
                             [annotator.config['plugins.antismash.antismash_cmd'],
                             '"' + genomes[genome] + '"',
-                            '--output-dir', '"' + os.path.join(output_dir, genome) + '"',
+                            '--output-dir',
+                            '"' + os.path.join(output_dir, genome) + '"',
                             '--cpus',
                             annotator.config['plugins.antismash.threads'],
                             '--genefinding-tool', 'prodigal']

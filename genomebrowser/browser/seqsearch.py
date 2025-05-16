@@ -3,7 +3,7 @@ import re
 import logging
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE
 from django.core.exceptions import SuspiciousOperation
 from browser.models import Config
 

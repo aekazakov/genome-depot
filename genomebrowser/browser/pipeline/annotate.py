@@ -1,7 +1,6 @@
 import os
-import hashlib
+import re
 import openpyxl
-import requests
 import importlib
 import pkgutil
 import logging
@@ -9,15 +8,11 @@ import traceback
 from pathlib import Path
 from io import BytesIO
 from collections import defaultdict
-from Bio import SeqIO
-from subprocess import Popen, PIPE, CalledProcessError
-from django.db import connection
 from browser.models import Annotation
 from browser.models import Config
 from browser.models import Contig
 from browser.models import Gene
 from browser.models import Genome
-from browser.models import Protein
 from browser.models import Regulon
 from browser.models import Sample
 from browser.models import Sample_metadata
@@ -132,7 +127,9 @@ class Annotator(object):
                                                    batch_size=batch_size
                                                    )
                 except Exception:
-                    logger.info('An error occurred while saving annotations to the database')
+                    logger.info(
+                        'An error occurred while saving annotations to the database'
+                    )
                     self.annotations = []
                     raise
                 annotations_written += len(self.annotations)
@@ -142,7 +139,9 @@ class Annotator(object):
             try:
                 Annotation.objects.bulk_create(self.annotations, batch_size=10000)
             except Exception:
-                logger.info('An error occurred while saving annotations to the database')
+                logger.info(
+                    'An error occurred while saving annotations to the database'
+                )
                 self.annotations = []
                 raise
         annotations_written += len(self.annotations)
@@ -258,7 +257,9 @@ class Annotator(object):
                                         contig_id = site_data[2]
                                         )
                         except Contig.DoesNotExist:
-                            logging.error(site_data[2] + ' contig not found in ' + genome_name)
+                            logging.error(site_data[2] + 
+                                ' contig not found in ' + genome_name
+                                )
                             raise
                         site = Site(name = site_name,
                                     type = 'TFBS',
@@ -316,8 +317,9 @@ class Annotator(object):
 
     def update_strain_metadata(self, xlsx_path=None, xlsx_file=None):
         """ 
-            This function adds strain metadata from Excel file and
-            from isolates.genomics.lbl.gov API (if the enigma module is configured)
+            This function adds strain metadata from an Excel file.
+            If the enigma module is configured, also imports 
+            from isolates.genomics.lbl.gov API.
         """
         if xlsx_path is None and xlsx_file is None:
             logger.error('No input data')
@@ -485,7 +487,8 @@ class Annotator(object):
         ret = []
         plugins_enabled = set()
         for param in self.config:
-            if param.startswith('plugins.') and param.endswith('.enabled') and self.config[param] in ('1', 'yes', 'Yes', 'y', 'Y'):
+            if param.startswith('plugins.') and param.endswith('.enabled') and \
+            self.config[param] in ('1', 'yes', 'Yes', 'y', 'Y'):
                 tool = param.split('.')[1]
                 plugins_enabled.add(tool)
                 
@@ -493,9 +496,15 @@ class Annotator(object):
         for plugin_name in plugins_enabled:
             plugin_count += 1
             try:
-                ret.append(str(plugin_count) + ' of ' + str(len(plugins_enabled)) + ': ' + plugin_name + ' ' + self.run_external_tools(genomes, plugin_name))
-            except Exception as e:
-                ret.append(str(plugin_count) + ' of ' + str(len(plugins_enabled)) + ': ' + plugin_name + ' finished with error')
+                ret.append(
+                    str(plugin_count) + ' of ' + str(len(plugins_enabled)) +
+                    ': ' + plugin_name + ' ' +
+                    self.run_external_tools(genomes, plugin_name)
+                )
+            except Exception:
+                ret.append(str(plugin_count) + ' of ' + str(len(plugins_enabled)) +
+                    ': ' + plugin_name + ' finished with error'
+                    )
                 ret.append(traceback.format_exc())
                 continue
 

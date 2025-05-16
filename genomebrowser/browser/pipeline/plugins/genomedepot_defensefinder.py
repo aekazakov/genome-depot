@@ -65,7 +65,8 @@ def preprocess(annotator, genomes, working_dir):
             outfile.write(' '.join(['defense-finder',
             'run',
             '--models-dir',
-            '"' + annotator.config['plugins.defensefinder.defensefinder_models_dir'] + '"',
+            '"' + annotator.config['plugins.defensefinder.defensefinder_models_dir'] +
+            '"',
             '-o',
             '"' + genome_dir + '"',
             '"' + input_fasta_files[genome] + '"'])
@@ -103,11 +104,10 @@ def postprocess(annotator, genomes, working_dir):
     with open(output_file, 'w') as outfile:
         for genome in genomes:
             genome_id = Genome.objects.get(name=genome).id
-            defensefinder_outfile = os.path.join(working_dir,
-                                                 'out',
-                                                 genome,
-                                                 str(genome_id) + '_defense_finder_genes.tsv'
-                                                 )
+            defensefinder_outfile = os.path.join(
+                working_dir, 'out', genome,
+                str(genome_id) + '_defense_finder_genes.tsv'
+            )
             if not os.path.exists(defensefinder_outfile):
                 print('File does not exist:', defensefinder_outfile)
                 continue
@@ -116,12 +116,15 @@ def postprocess(annotator, genomes, working_dir):
                 for line in infile:
                     row = line.rstrip('\n\r').split('\t')
                     locus_tag = row[1]
-                    outfile.write('\t'.join([locus_tag, genome, 'DefenseFinder',
-                                  'https://github.com/mdmparis/defense-finder',
-                                  row[-1] + ' system',
-                                  row[2],
-                                  'Type: ' + row[-3] + ', subtype: ' + row[-2] + ', gene name: ' + row[2]
-                                  ]) + '\n')
+                    outfile.write(
+                        '\t'.join([locus_tag, genome, 'DefenseFinder',
+                        'https://github.com/mdmparis/defense-finder',
+                        row[-1] + ' system',
+                        row[2],
+                        'Type: ' + row[-3] + ', subtype: ' + row[-2] +
+                        ', gene name: ' + row[2]
+                        ]) + '\n'
+                    )
                         
     _cleanup(working_dir)
     return output_file

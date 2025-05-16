@@ -1,7 +1,6 @@
 # Code implementing admin tasks
 # Functions should be called from async_tasks.py
 import os
-import sys
 import gzip
 import shutil
 import uuid
@@ -21,32 +20,47 @@ def run_annotation_pipeline_impl(args):
     '''
         Implements the Run Annotation Pipeline task
     '''
-    logger.debug('Asynchronous task run_annotation_tools received. Starting the pipeline.')
-    (genomes, plugins) = args
+    logger.debug(
+        'Asynchronous task run_annotation_tools received. Starting the pipeline.'
+    )
+    (genomes, plugins, task_name) = args
     annotator = Annotator()
-    messages = []
-    subject = None
+    messages = [task_name + ' task report',]
+    subject = ''
     for plugin_ind, plugin in enumerate(plugins):
-        logger.debug('Starting tool ' + str(plugin_ind + 1) + ' of ' + str(len(plugins)) + ':' + plugin)
+        logger.debug(
+            f'Starting tool {str(plugin_ind + 1)} of {str(len(plugins))}: {plugin}'
+        )
         try:
             plugin_conf_enabled = annotator.config['plugins.' + plugin + '.enabled']
             if plugin_conf_enabled in ('1', 'yes', 'Yes', 'y', 'Y'):
                 status = annotator.run_external_tools(genomes, plugin_name=plugin)
-                messages.append('Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' plugin ' + status)
+                messages.append(
+                    'Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) +
+                    ': ' + plugin + ' plugin ' + status
+                )
             else:
-                messages.append('Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' plugin disabled')
-        except Exception as err:
-            messages.append('Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) + ': ' + plugin + ' plugin ERROR')
+                messages.append(
+                    'Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) +
+                    ': ' + plugin + ' plugin disabled'
+                )
+        except Exception:
+            messages.append(
+                'Step ' + str(plugin_ind + 1) + ' out of ' + str(len(plugins)) +
+                ': ' + plugin + ' plugin ERROR'
+            )
             messages.append(traceback.format_exc())
-            subject = 'GenomeDepot annotation pipeline error'
-            logger.exception('GenomeDeport annotation pipeline raised an unhandled exception at ' + settings.BASE_URL)
-    if subject is None:
-        subject = 'GenomeDepot annotation pipeline finished'
+            subject = f'{task_name} task finished with error'
+            logger.exception(
+                f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
+            )
+    if subject == '':
+        subject = f'{task_name} task finished successfuly'
         message = '"Run annotation tools" task finished successfuly at ' + \
         f'{settings.BASE_URL}' + '\n\n' + '\n'.join(messages)
         ret = 'Annotation pipeline finished.'
     else:
-        subject = 'GenomeDepot annotation pipeline error'
+        subject = f'{task_name} task finished with error'
         message = '"Run annotation tools" task finished with error at ' + \
         f'{settings.BASE_URL}' + '\n\n' + '\n'.join(messages)
         ret = 'Annotation pipeline error.'
@@ -58,7 +72,7 @@ def import_genomes_impl(args):
     '''
         Implements the Import Genomes task
     '''
-    lines, email = args
+    lines, email, task_name = args
     logger.debug('Asynchronous task import_genomes received. Starting import.')
     temp_dir = Config.objects.get(param='core.temp_dir').value
     result = ''
@@ -72,7 +86,9 @@ def import_genomes_impl(args):
                                                 upload_dir
                                                 )
                 if assembly_path == '':
-                    logger.warning('Genome not found for NCBI identifier ' + row[-1][5:])
+                    logger.warning(
+                        'Genome not found for NCBI identifier ' + row[-1][5:]
+                    )
                 else:
                     logger.debug('File uploaded to ' + assembly_path)
                     lines[i] = assembly_path + line
@@ -96,28 +112,35 @@ def import_genomes_impl(args):
             importer = Importer()
             result += importer.import_genomes(genome_import_batch) + '\n'
         if 'error' in result:
-            subject = 'GenomeDepot task finished with error'
+            subject = f'{task_name} task finished with error'
             message = '"Import Genomes" task finished with error at ' + \
             f'{settings.BASE_URL}\n\n' + result
         else:
-            subject = 'GenomeDepot task finished successfuly'
-            message = '"Import Genomes" task finished successfuly at ' + \
-            f'{settings.BASE_URL}\n\n' + result
-    except Exception as e:
+            subject = f'{task_name} task finished successfuly'
+            message = (
+                f'{task_name} report\n"Import Genomes" task finished successfuly ' +
+                f'at {settings.BASE_URL}\n\n{result}'
+            )
+    except Exception:
         result = 'Error!'
-        subject = 'GenomeDeport genome import pipeline raised an unhandled exception'
-        message = f'GenomeDepot "Import Genomes" task at {settings.BASE_URL} finished ' +\
-        f'with error.\n' + traceback.format_exc()
-        logger.exception('GenomeDeport import pipeline raised an unhandled exception at ' + settings.BASE_URL)
+        subject = f'{task_name} task raised an unhandled exception'
+        message = (
+            f'{task_name} report\nGenomeDepot "Import Genomes" task at ' +
+            f'{settings.BASE_URL} finished with error.\n{traceback.format_exc()}'
+        )
+        logger.exception(
+            f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
+        )
     mail_admins(subject, message)
     return result
 
 
-def update_static_files_impl(genome_names):
+def update_static_files_impl(args):
     '''
         Deletes and re-creates Jbrowse static files for an input list of
         genome IDs, then deletes and re-creates search databases.
     '''
+    genome_names, task_name = args
     importer = Importer()
     try:
         for genome_name in genome_names:
@@ -166,21 +189,28 @@ def update_static_files_impl(genome_names):
         importer.create_search_databases()
         os.remove(importer.config['core.search_db_nucl'])
         os.remove(importer.config['core.search_db_prot'])
-        subject = 'GenomeDepot task finished successfuly'
-        message = '"Update static files" task finished successfuly ' +\
-        f'at {settings.BASE_URL}'
+        subject = f'{task_name} task finished successfuly'
+        message = (
+            f'{task_name} report\n"Update static files" task finished successfuly ' +\
+            f'at {settings.BASE_URL}'
+        )
     except Exception:
-        subject = 'GenomeDepot task finished with error'
-        message = f'GenomeDepot "Update static files" task at {settings.BASE_URL} finished' +\
-        f'with error.\n' + traceback.format_exc()
-        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
+        subject = f'{task_name} task finished with error'
+        message = (
+            f'{task_name} report\n"Update static files" task at {settings.BASE_URL} ' +
+            f'finished with error.\n{traceback.format_exc()}'
+        )
+        logger.exception(
+            f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
+        )
     mail_admins(subject, message)
 
-def delete_genomes_impl(genome_names):
+def delete_genomes_impl(args):
     '''
         Deletes genomes from an input list of genomes, then 
         deletes and re-creates search databases
     '''
+    genome_names, task_name = args
     try:
         importer = Importer()
         for genome_name in genome_names:
@@ -205,105 +235,147 @@ def delete_genomes_impl(genome_names):
                 shutil.rmtree(os.path.join(importer.config['core.json_dir'], genome))
         os.remove(importer.config['core.search_db_nucl'])
         os.remove(importer.config['core.search_db_prot'])
-        subject = 'GenomeDepot task finished successfuly'
-        message = f'"Delete genomes" task finished successfuly at {settings.BASE_URL}'
+        subject = f'{task_name} task finished successfuly'
+        message = (
+            f'{task_name} report\n"Delete genomes" task finished ' +
+            f'successfuly at {settings.BASE_URL}'
+        )
     except Exception:
-        subject = 'GenomeDepot task finished with error'
-        message = f'GenomeDepot "Delete genomes" task at {settings.BASE_URL} finished ' +\
-        f'with error.\n' + traceback.format_exc()
-        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
+        subject = f'{task_name} task finished with error'
+        message = (
+            f'{task_name} report \nGenomeDepot "Delete genomes" task at ' +
+            f'{settings.BASE_URL} finished with error.\n{traceback.format_exc()}'
+        )
+        logger.exception(
+            f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
+        )
     mail_admins(subject, message)
 
     
-def import_sample_metadata_impl(lines):
+def import_sample_metadata_impl(args):
     '''
         Implements the Import Sample Metadata task
     '''
+    lines, task_name = args
     logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
         annotator.add_sample_metadata(lines)
-        subject = 'GenomeDepot task finished successfuly'
-        message = '"Import sample metadata" task finished successfuly ' +\
-        f'at {settings.BASE_URL}'
+        subject = f'{task_name} task finished successfuly'
+        message = (
+            f'{task_name} report\n"Import sample metadata" task finished ' +\
+            f'successfuly at {settings.BASE_URL}'
+        )
     except Exception:
-        subject = 'GenomeDepot task finished with error'
-        message = f'GenomeDepot "Import sample metadata" task at {settings.BASE_URL} ' +\
-        f'finished with error.\n' + traceback.format_exc()
-        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
+        subject = f'{task_name} task finished with error'
+        message = (
+            f'{task_name} report\nGenomeDepot "Import sample metadata" task ' +
+            f'at {settings.BASE_URL} finished with error.\n{traceback.format_exc()}'
+        )
+        logger.exception(
+            f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
+        )
     mail_admins(subject, message)
 
 
-def import_sample_descriptions_impl(lines):
+def import_sample_descriptions_impl(args):
     '''
         Implements the Import Sample Descriptions task
     '''
+    lines, task_name = args
     logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
         annotator.update_sample_descriptions(lines)
-        subject = 'GenomeDepot task finished successfuly'
-        message = '"Import sample descriptions" task finished successfuly ' +\
-        f'at {settings.BASE_URL}'
+        subject = f'{task_name} task finished successfuly'
+        message = (
+            f'{task_name} report\n"Import sample descriptions" task finished ' +
+            f'successfuly at {settings.BASE_URL}'
+        )
     except Exception:
-        subject = 'GenomeDepot task finished with error'
-        message = f'GenomeDepot "Import sample descriptions" task at {settings.BASE_URL} ' +\
-        f'finished with error.\n' + traceback.format_exc()
-        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
+        subject = f'{task_name} task finished with error'
+        message = (
+            f'{task_name} report\nGenomeDepot "Import sample descriptions" task at ' +
+            f'{settings.BASE_URL} finished with error.\n{traceback.format_exc()}'
+        )
+        logger.exception(
+            f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
+        )
     mail_admins(subject, message)
 
 
-def update_strain_metadata_impl(xlsx_file):
+def update_strain_metadata_impl(args):
     '''
         Implements the Update Strain Metadata task
     '''
+    xlsx_file, task_name = args
     logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
         annotator.update_strain_metadata(xlsx_path=None, xlsx_file=xlsx_file)
-        subject = 'GenomeDepot task finished successfuly'
-        message = '"Update strain metadata" task finished successfuly ' +\
-        f'at {settings.BASE_URL}'
-    except Exception as e:
-        subject = 'GenomeDepot task finished with error'
-        message = f'GenomeDepot "Update strain metadata" task at {settings.BASE_URL} ' +\
-        f'finished with error.\n' + traceback.format_exc()
-        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
+        subject = f'{task_name} task finished successfuly'
+        message = (
+            f'{task_name} report\n"Update strain metadata" task finished successfuly ' +
+            f'at {settings.BASE_URL}'
+        )
+    except Exception:
+        subject = f'{task_name} task finished with error'
+        message = (
+            f'{task_name} report\nGenomeDepot "Update strain metadata" task ' +
+            f'at {settings.BASE_URL} finished with error.\n{traceback.format_exc()}'
+        )
+        logger.exception(
+            f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
+        )
     mail_admins(subject, message)
 
     
-def import_annotations_impl(lines):
+def import_annotations_impl(args):
     '''
         Implements the Import Annotations task
     '''
+    lines, task_name = args
     logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
         annotator.import_annotations(lines)
-        subject = 'GenomeDepot task finished successfuly'
-        message = '"Import annotations" task finished successfuly ' +\
-        f'at {settings.BASE_URL}'
-    except Exception as e:
-        subject = 'GenomeDepot task finished with error'
-        message = f'GenomeDepot "Import annotations" task at {settings.BASE_URL} finished' +\
-        f' with error.\n' + traceback.format_exc()
-        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
+        subject = f'{task_name} task finished successfuly'
+        message = (
+            f'"Import annotations" task finished successfuly at {settings.BASE_URL}'
+        )
+    except Exception:
+        subject = f'{task_name} task finished with error'
+        message = (
+            f'{task_name} report\nGenomeDepot "Import annotations" task at ' +
+            f'{settings.BASE_URL} finished with error.\n{traceback.format_exc()}'
+        )
+        logger.exception(
+            f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
+        )
     mail_admins(subject, message)
 
 
-def import_regulon_impl(lines):
+def import_regulon_impl(args):
     '''
         Implements the Import Regulon task
     '''
+    lines, task_name = args
     logger.debug('Asynchronous task received. Starting import.')
     try:
         annotator = Annotator()
         annotator.add_regulons(lines)
-        subject = 'GenomeDepot task finished successfuly'
-        message = f'"Import regulon" task finished successfuly at {settings.BASE_URL}'
-    except Exception as e:
-        subject = 'GenomeDepot task finished with error'
-        message = f'GenomeDepot "Import regulon" task at {settings.BASE_URL} finished ' +\
-        f'with error.\n' + traceback.format_exc()
-        logger.exception('GenomeDeport raised an unhandled exception at ' + settings.BASE_URL)
+        subject = f'{task_name} task finished successfuly'
+        message = (
+            f'{task_name} report\n"Import regulon" task finished ' +
+            f'successfuly at {settings.BASE_URL}'
+        )
+    except Exception:
+        subject = f'{task_name} task finished with error'
+        message = (
+            f'{task_name} report\nGenomeDepot "Import regulon" task at ' + \
+            f' {settings.BASE_URL} finished  with error.\n{traceback.format_exc()}'
+        )
+        logger.exception(
+            task_name + ' raised an unhandled exception at ' + settings.BASE_URL
+        )
     mail_admins(subject, message)
