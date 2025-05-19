@@ -1,6 +1,11 @@
-Documentation pages for GenomeDepot, an open-source web-based platform for annotation, management and comparative analysis of microbial genomic sequences.
+GenomeDepot is an open-source web-based platform for annotation, management, and comparative analysis of microbial genomic data. 
+With GenomeDepot, you can create web-sites for your own genome collections.
+These web-sites have tools for interactive genome browsing, BLAST search, annotation search, comparative genomic neighborhood visualization, and sequence download. 
 
-### Navigation
+This site contains documentation pages for GenomeDepot.
+
+
+### Contents
 
 
 [About GenomeDepot](introduction)
@@ -12,6 +17,7 @@ Documentation pages for GenomeDepot, an open-source web-based platform for annot
 [Administrator guide](admin)
 
 [Developer guide](developer)
+
 
 
 ### License
