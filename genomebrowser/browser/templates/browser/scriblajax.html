@@ -5,22 +5,7 @@
 {% block script-header %}
   <script src="{% static 'assets/js/Scribl.1.1.4.min.js' %}"></script>
   <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
-  <script>
-    function toggleDiv(divid){ 
-      var div = document.getElementById(divid); 
-      if (div.style.display == 'none')
-        div.style.display = '';
-      else
-        div.style.display = 'none';
-    }
-  </script>
   <style>#treetext {display:none;}</style>
-  <script>
-    function Toggle() {
-      document.getElementById("treetext").style.display = "block";
-      document.getElementById("showtree").style.display = "none";
-    }
-  </script>
 {% endblock %}
 {% block body-tag %}
     <body>
@@ -128,12 +113,10 @@
                   </br><a id="pngexport">Export as gene plot as PNG image (right click Save As)</a>
                   <hr>
                   <div>
-                    <header class="align-center" id="showtree">
-                      <a onclick="Toggle()">Click to show phylogenetic tree in Newick format</a>
-                    </header>
-                    <div id="proteinsequence">
-                      <textarea id="treetext" name="treetext" rows="4" cols="50"></textarea>
-                    </div>
+					<div class="align-center">
+					  <button type="button" id="export-msa">Export protein MSA in FASTA format</button>
+					  <button type="button" id="export-tree">Export phylogenetic tree in Newick format</button>
+					</div>
                   </div>
                   <hr>
                   <div id="treemap" style="margin:auto">
@@ -175,6 +158,21 @@
                   tsvData.append(data["tsv_profile"]);
                   $("#export-profile").append(tsvData);
                   $("#export-profile").show();
+
+                  var newickData = document.createElement('div');
+                  newickData.setAttribute('id', 'tree_newick_data');
+                  newickData.style.display = 'none';
+                  newickData.append(data["tree_newick"]);
+                  $("#export-tree").append(newickData);
+                  $("#export-tree").show();
+
+                  var msaData = document.createElement('div');
+                  msaData.setAttribute('id', 'protein_msa_data');
+                  msaData.style.display = 'none';
+                  msaData.append(data["protein_msa"]);
+                  $("#export-msa").append(msaData);
+                  $("#export-msa").show();
+
                   draw('canvas');
                   var plotlyGraph = document.getElementsByClassName('plotly-graph-div');
                   Plotly.Plots.resize(plotlyGraph[0]);
@@ -189,6 +187,32 @@
               $('#export-profile').on('click', function () {
                 var text = document.getElementById("tsv_profile_data").textContent;
                 var filename = "{{ gene.locus_tag }}_conserved_locus_functional_profile.tab";
+                var pom = document.createElement('a');
+                pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                pom.setAttribute('download', filename);
+                pom.style.display = 'none';
+                document.body.appendChild(pom);
+                pom.click();
+                document.body.removeChild(pom);
+              });    
+            </script>
+            <script>
+              $('#export-tree').on('click', function () {
+                var text = document.getElementById("tree_newick_data").textContent;
+                var filename = "{{ gene.locus_tag }}_{{ ortholog_group.eggnog_id }}_phylogenetic_tree.newick";
+                var pom = document.createElement('a');
+                pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                pom.setAttribute('download', filename);
+                pom.style.display = 'none';
+                document.body.appendChild(pom);
+                pom.click();
+                document.body.removeChild(pom);
+              });    
+            </script>
+            <script>
+              $('#export-msa').on('click', function () {
+                var text = document.getElementById("protein_msa_data").textContent;
+                var filename = "{{ gene.locus_tag }}_{{ ortholog_group.eggnog_id }}_msa.fasta";
                 var pom = document.createElement('a');
                 pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
                 pom.setAttribute('download', filename);

@@ -2613,7 +2613,7 @@ class ComparativeView(View):
                           {'searchcontext': 'Ortholog group not found'}
                           )
         scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count, \
-        treemap_gene_ids = get_scribl(gene, og, request)
+        treemap_gene_ids, protein_msa = get_scribl(gene, og, request)
             
         treemap = ''
         if treemap_gene_ids:
@@ -2642,7 +2642,8 @@ class ComparativeView(View):
                        'plot_gene_count':plot_gene_count,
                        'time':time.time()-start_time,
                        'treemap':treemap,
-                       'tsv_profile': functional_profile
+                       'tsv_profile': functional_profile,
+                       'protein_msa': protein_msa
                        }
         return JsonResponse(context)
 

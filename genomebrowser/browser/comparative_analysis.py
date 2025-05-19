@@ -231,7 +231,7 @@ def make_protein_tree(proteins):
     canvas.style['background-color'] = 'white'
     canvas.style['padding-top'] = '60px'
     tree_canvas = toyplot.html.tostring(canvas)
-    return nodes, tree_canvas, newick.getvalue()
+    return nodes, tree_canvas, newick.getvalue(), format(align,'fasta')
 
     
 def sort_proteins(proteins, query_hash):
@@ -289,7 +289,7 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
             gene_count += 1
             if gene_count >= genelist_size:
                 break
-    tree_nodes, tree_svg, tree_newick = make_protein_tree(tree_proteins)
+    tree_nodes, tree_svg, tree_newick, protein_msa = make_protein_tree(tree_proteins)
     if tree_nodes[0] == pivot_gene.id:
         logger.debug('First gene is %s', pivot_gene.locus_tag)
     else:
@@ -301,7 +301,7 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
         if gene_id == pivot_gene.id:
             continue
         ret_genes.append(genes[int(gene_id)])
-    return ret_genes, len(genes), tree_svg, tree_newick
+    return ret_genes, len(genes), tree_svg, tree_newick, protein_msa
 
 
 def get_scribl(start_gene, eggnog_og, request):
@@ -314,7 +314,7 @@ def get_scribl(start_gene, eggnog_og, request):
     track_uid = 0
     scribl = []
     eggnog2color = {eggnog_og.eggnog_id:RED, '':DARK_GREY}
-    ordered_orthologs, og_gene_count, tree_canvas, tree_newick = get_sorted_orthologs(
+    ordered_orthologs, og_gene_count, tree_canvas, tree_newick, protein_msa = get_sorted_orthologs(
         eggnog_og, start_gene, genelist_size
         )
     if og_gene_count == 1:
@@ -444,5 +444,5 @@ def get_scribl(start_gene, eggnog_og, request):
                                )
     return (
         '\n'.join(scribl), tree_canvas, tree_newick,
-        og_gene_count, plot_gene_count, treemap_gene_ids
+        og_gene_count, plot_gene_count, treemap_gene_ids, protein_msa
     )
