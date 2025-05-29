@@ -54,6 +54,7 @@
                     <div id ="error-box2" class="error box"></div>
                     <button type="button" id="export-profile">Export functional profile as tab-separated text</button>
                     <button type="button" id="export-table">Export family members by genome as tab-separated text</button>
+                    <button type="button" id="ExportFastaLink">Export all proteins in FASTA format</button>
                 </div>
         <hr>
        
@@ -111,6 +112,7 @@
             },
             success: function (data) {
             $("#waitbox").hide();
+            $("#export-table").show();
             var a = document.createElement('a');
             const blob = new Blob([data], {type: "octet/stream"});
             var url = window.URL.createObjectURL(blob);
@@ -127,8 +129,6 @@
             }
         });
     });    
-</script>
-<script>
     $('#export-profile').on('click', function () {
         var text = document.getElementById("tsv_profile_data").textContent;
         var filename = "{{ ortholog_group.eggnog_id }}_functional_profile.tab";
@@ -139,7 +139,41 @@
         document.body.appendChild(pom);
         pom.click();
         document.body.removeChild(pom);
-    });    
+    });   
+    $('#ExportFastaLink').on('click', function () {
+      $.ajax({
+        url: "{% url 'exportfasta' %}",
+        method: 'GET',
+        data: {
+          "type": "og_id",
+          "query": "{{ ortholog_group.id }}"
+        },
+        xhrFields: {
+          responseType: 'text'
+        },
+        beforeSend: function() {
+          $("#waitbox").show();
+          $("#ExportFastaLink").show();
+        },
+        success: function (data) {
+          $("#waitbox").hide();
+          $("#ExportFastaLink").show();
+          var a = document.createElement('a');
+          const blob = new Blob([data], {type: "octet/stream"});
+          var url = window.URL.createObjectURL(blob);
+          a.href = url;
+          a.download = 'export.faa';
+          document.body.append(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown){
+          $("#waitbox").hide();
+          $("#error-box").append(textStatus + ": " + errorThrown);
+        }
+      });
+    });
 </script>
         </section>
 

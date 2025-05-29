@@ -334,7 +334,7 @@ class BrowserViewsTest(TestCase):
         '''
         # with genome keyword
         response = self.client.get('/loadinggenesearch/',
-                                   {'genome':'E_coli_BW2952', 'type':'og', 'query':102482}
+                                   {'genome':'E_coli_BW2952', 'type':'og_id', 'query':102482}
                                    )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Gene ID')
@@ -342,7 +342,7 @@ class BrowserViewsTest(TestCase):
         self.assertNotContains(response, 'C_RS00015')
         # without genome keyword
         response = self.client.get('/loadinggenesearch/',
-                                   {'type':'og', 'query':102482}
+                                   {'type':'og_id', 'query':102482}
                                    )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Gene ID')
@@ -772,9 +772,7 @@ class BrowserViewsTest(TestCase):
                                    {'annotation_query':'Pfam'}
                                    )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Search results for')
-        self.assertContains(response,
-            'data: {\'annotation_query\': "Pfam", \'genome\': "", \'page\': "", \'type\': "annotation" }')
+        self.assertContains(response, 'Search results for &quot;Pfam&quot;')
         # Annotation list without query
         response = self.client.get('/searchannotation/',
                                    {}
@@ -795,9 +793,7 @@ class BrowserViewsTest(TestCase):
                                    {'annotation_query':'Pfam', 'genome':'E_coli_BW2952'}
                                    )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Search results for')
-        self.assertContains(response,
-            'data: {\'annotation_query\': "Pfam", \'genome\': "E_coli_BW2952", \'page\': "", \'type\': "annotation" }')
+        self.assertContains(response, 'Search results for &quot;Pfam&quot;')
 
     def test_annotationlist_subpage(self):
         '''
@@ -834,7 +830,7 @@ class BrowserViewsTest(TestCase):
             path('operon/<str:genome>/<str:name>/', views.operon_detail, name='operondetails')
         '''
         genome_id = 'E_coli_BW2952'
-        operon_id = Operon.objects.values_list('name', flat=True)[0]
+        operon_id = Operon.objects.filter(genome__name=genome_id).values_list('name', flat=True)[0]
         response = self.client.get('/operon/' + genome_id + '/' + operon_id + '/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Operon information')
@@ -842,6 +838,7 @@ class BrowserViewsTest(TestCase):
         response = self.client.get('/operon/' + genome_id + '/XXXXXXXXXXXXXX/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'does not exist')
+        self.assertContains(response, 'XXXXXXXXXXXXXX')
 
     def test_conserved_operon_page(self):
         '''
@@ -1221,7 +1218,7 @@ class BrowserViewsTest(TestCase):
         '''
         response = self.client.get('/protsearchform/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Sequence search')
+        self.assertContains(response, 'BLASTP search')
 
     def test_proteinsearchresults_page(self):
         '''
@@ -1341,7 +1338,7 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
         response = self.csrf_client.post('/loadingnuclsearch/', {'sequence':sequence, 'evalue':'0.000001', 'hitstoshow': '10', 'csrfmiddlewaretoken':token})
         #print('test_loading_nuclsearch_results_page\n', response.content)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Target contig')
+        self.assertContains(response, 'Sequence_ID')
         self.assertContains(response, 'NC_004431: (+strand) 3512..4444')
 
     def test_help_page(self):
@@ -1349,7 +1346,7 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
             Testing help page view
             path('help/', views.show_help, name='help')
         '''
-        response = self.client.get('/help/')
+        response = self.client.get('/about/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'About this site')
 
@@ -1471,7 +1468,7 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
         self.assertContains(response, 'E_coli_CFT073')
         self.assertContains(response, 'C_RS00015')
 
-        response = self.client.get('/export/', {'type':'og', 'query':102482})
+        response = self.client.get('/export/', {'type':'og_id', 'query':102482})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Genome')
         self.assertContains(response, 'BWG_RS00010')
@@ -1578,7 +1575,7 @@ TACCTGCAAAATCAGGAAGGTTTTGTTCATATTTGCCGGCTGGATACGGCGGGCGCACGAGTACTGGAAAACTAA'''
         self.assertContains(response, '>C_RS00015')
         self.assertContains(response, 'MRVLKFGGTSVANAERFLRVADILESNARQ')
 
-        response = self.client.get('/exportfasta/', {'type':'og', 'query':102482})
+        response = self.client.get('/exportfasta/', {'type':'og_id', 'query':102482})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '>BWG_RS00010')
         self.assertContains(response, '>C_RS00015')

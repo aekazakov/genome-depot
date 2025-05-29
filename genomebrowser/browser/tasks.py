@@ -13,6 +13,7 @@ from browser.util import download_ncbi_assembly
 from browser.pipeline.genome_import import Importer
 from browser.pipeline.annotate import Annotator
 from browser.models import Strain, Sample, Genome, Protein, Config
+from browser.admin_utils import is_email_configured
 
 logger = logging.getLogger("GenomeDepot")
 
@@ -64,7 +65,12 @@ def run_annotation_pipeline_impl(args):
         message = '"Run annotation tools" task finished with error at ' + \
         f'{settings.BASE_URL}' + '\n\n' + '\n'.join(messages)
         ret = 'Annotation pipeline error.'
-    mail_admins(subject, message)
+    if is_email_configured():
+        mail_admins(subject, message)
+    else:
+        logger.warning('Email backend is not configured. All reports are redirected to the log file.')
+        logger.info(subject)
+        logger.info(message)
     return ret
     
 
@@ -131,7 +137,12 @@ def import_genomes_impl(args):
         logger.exception(
             f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
         )
-    mail_admins(subject, message)
+    if is_email_configured():
+        mail_admins(subject, message)
+    else:
+        logger.warning('Email backend is not configured. All reports are redirected to the log file.')
+        logger.info(subject)
+        logger.info(message)
     return result
 
 
@@ -203,7 +214,12 @@ def update_static_files_impl(args):
         logger.exception(
             f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
         )
-    mail_admins(subject, message)
+    if is_email_configured():
+        mail_admins(subject, message)
+    else:
+        logger.warning('Email backend is not configured. All reports are redirected to the log file.')
+        logger.info(subject)
+        logger.info(message)
 
 def delete_genomes_impl(args):
     '''
@@ -249,7 +265,12 @@ def delete_genomes_impl(args):
         logger.exception(
             f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
         )
-    mail_admins(subject, message)
+    if is_email_configured():
+        mail_admins(subject, message)
+    else:
+        logger.warning('Email backend is not configured. All reports are redirected to the log file.')
+        logger.info(subject)
+        logger.info(message)
 
     
 def import_sample_metadata_impl(args):
@@ -275,7 +296,12 @@ def import_sample_metadata_impl(args):
         logger.exception(
             f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
         )
-    mail_admins(subject, message)
+    if is_email_configured():
+        mail_admins(subject, message)
+    else:
+        logger.warning('Email backend is not configured. All reports are redirected to the log file.')
+        logger.info(subject)
+        logger.info(message)
 
 
 def import_sample_descriptions_impl(args):
@@ -301,7 +327,12 @@ def import_sample_descriptions_impl(args):
         logger.exception(
             f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
         )
-    mail_admins(subject, message)
+    if is_email_configured():
+        mail_admins(subject, message)
+    else:
+        logger.warning('Email backend is not configured. All reports are redirected to the log file.')
+        logger.info(subject)
+        logger.info(message)
 
 
 def update_strain_metadata_impl(args):
@@ -327,7 +358,12 @@ def update_strain_metadata_impl(args):
         logger.exception(
             f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
         )
-    mail_admins(subject, message)
+    if is_email_configured():
+        mail_admins(subject, message)
+    else:
+        logger.warning('Email backend is not configured. All reports are redirected to the log file.')
+        logger.info(subject)
+        logger.info(message)
 
     
 def import_annotations_impl(args):
@@ -352,7 +388,12 @@ def import_annotations_impl(args):
         logger.exception(
             f'{task_name} raised an unhandled exception at {settings.BASE_URL}'
         )
-    mail_admins(subject, message)
+    if is_email_configured():
+        mail_admins(subject, message)
+    else:
+        logger.warning('Email backend is not configured. All reports are redirected to the log file.')
+        logger.info(subject)
+        logger.info(message)
 
 
 def import_regulon_impl(args):
@@ -378,4 +419,9 @@ def import_regulon_impl(args):
         logger.exception(
             task_name + ' raised an unhandled exception at ' + settings.BASE_URL
         )
-    mail_admins(subject, message)
+    if is_email_configured():
+        mail_admins(subject, message)
+    else:
+        logger.warning('Email backend is not configured. All reports are redirected to the log file.')
+        logger.info(subject)
+        logger.info(message)

@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.admin.sites import AdminSite
 from django.shortcuts import reverse
 
-from genomebrowser.settings import BASE_DIR
+from genomebrowser.settings import BASE_DIR, EMAIL_HOST
 from browser.models import Config
 from browser.models import Genome
 from browser.models import Annotation
@@ -32,6 +32,7 @@ from browser.tasks import import_annotations_impl
 from browser.tasks import import_regulon_impl
 from browser.tasks import run_annotation_pipeline_impl
 
+from browser.admin_utils import is_email_configured
 
 class AdminTestCase(TestCase):
 
@@ -104,6 +105,7 @@ class AdminTestCase(TestCase):
                 '_selected_action': Genome.objects.filter(name='E_coli_BW2952').values_list('pk', flat=True),
                 'do_action': 'yes',
                 'download_email': '',
+                'choice_field': 'import',
                 'tsv_file': fp, }
             response = self.client.post('/admin/browser/genome/add/', data, follow=True)
         self.client.logout()
@@ -271,51 +273,74 @@ class AdminTestCase(TestCase):
     def test_update_static_files_impl(self):
         # Tests implementation of update_static_files task
         genomes = ['E_coli_BW2952',]
-        update_static_files_impl(genomes)
+        args = (gemomes, 'test_task.update_static_files')
+        update_static_files_impl(args)
         json_dir = os.path.join(Config.objects.get(param='core.json_dir').value, genomes[0])
         self.assertTrue(os.path.exists(json_dir))
 
     def test_delete_genomes_impl(self):
         # Tests implementation of delete_genomes task
         genome = 'E_coli_BW2952'
-        genomes = [genome,]
-        delete_genomes_impl(genomes)
+        task_name = 'test_task.delete_genomes'
+        args = ([genome,], task_name)
+        delete_genomes_impl(args)
         self.assertEqual(Genome.objects.filter(name=genome).count(), 0)
 
     def test_import_sample_metadata_impl(self):
         # Tests implementation of import_sample_metadata task
         lines = ['test_sample\ttest\ttest\ttest\ttest',]
-        import_sample_metadata_impl(lines)
+        args = (lines, 'test_task.import_sample_metadata')
+        import_sample_metadata_impl(args)
         self.assertEqual(Sample_metadata.objects.get(source='test').value, 'test')
 
     def test_import_sample_descriptions_impl(self):
         # Tests implementation of import_sample_metadata task
         lines = ['#commentline','test_sample\ttest\ttest description',]
-        import_sample_descriptions_impl(lines)
+        args = (lines, 'test_task.import_sample_descriptions')
+        import_sample_descriptions_impl(args)
         self.assertEqual(Sample.objects.get(sample_id='test_sample').description, 'test description')
 
     def test_import_annotations_impl(self):
         # Tests implementation of import_annotations task
         lines = ['BWG_RS00070\tE_coli_BW2952\ttest\ttest\ttest\ttest\ttest',]
-        import_annotations_impl(lines)
+        args = (lines, 'test_task.import_genomes')
+        import_annotations_impl(args)
         self.assertEqual(Annotation.objects.get(gene_id__locus_tag='BWG_RS00070', source='test').note, 'test')
 
     def test_import_regulon_impl(self):
         # Tests implementation of import_regulon task
         lines = ['TEST\tE_coli_BW2952\tBWG_RS00070\tBWG_RS00070\tNC_012759\t1\t3\t1\tATT',]
-        import_regulon_impl(lines)
+        args = (lines, 'test_task.import_regulon')
+        import_regulon_impl(args)
         self.assertEqual(Regulon.objects.get(name='TEST').genome.name, 'E_coli_BW2952')
 
     def test_update_strain_metadata_impl(self):
         # Tests implementation of update_strain_metadata task
         strain_id = 'BW2952'
         test_file = 'test_strain_metadata.xlsx'
+        task_name = 'test_task.update_strain_metadata'
         with open(test_file, "rb") as fp:
-            update_strain_metadata_impl(fp)
+            args = (fp, task_name)
+            update_strain_metadata_impl(args)
         saved_metadata = Strain_metadata.objects.get(key='Phylogenetic Order')
         self.assertEqual(saved_metadata.strain.strain_id, strain_id)
         self.assertEqual(saved_metadata.value, 'Enterobacterales')
+        
+        
+    def test_is_email_configured(self):
+        # Tests implementation of admin_utils.is_email_configured
+        if EMAIL_HOST == '':
+            self.assertFalse(is_email_configured())
+        else:
+            self.assertTrue(is_email_configured())
 
+    def test_logger(self):
+        # Tests logging
+        import logging
+        logger = logging.getLogger("GenomeDepot")
+        logger.info('Test info message to the GenomeDepot logger')
+        logger.warning('Test warning message to the GenomeDepot logger')
+        logger.error('Test error message to the GenomeDepot logger')
 
 class AdminTransactionTestCase(TransactionTestCase):
     '''
@@ -331,7 +356,8 @@ class AdminTransactionTestCase(TransactionTestCase):
         # Tests implementation of import_genomes task
         lines = ['../testdata/E_coli_BW2952.100000.gbk\tE_coli_BW2952.test\tBW2952\t\thttps://www.ncbi.nlm.nih.gov/assembly/GCF_000022345.1\tNCBI:GCF_000022345.1',]
         email = 'test@example.com'
-        args = (lines, email)
+        task_name = 'test_task.import_genomes_impl'
+        args = (lines, email, task_name)
         result = import_genomes_impl(args)
         self.assertTrue(result.endswith('Done!\n'))
         self.assertFalse('error' in result)
@@ -342,7 +368,8 @@ class AdminTransactionTestCase(TransactionTestCase):
         genome = Genome.objects.get(name=genome_id)
         genomes = {genome_id:genome.gbk_filepath}
         plugins = ['gapmind',]
-        args = (genomes, plugins)
+        task_name = 'test_task.run_annotation_pipeline_impl'
+        args = (genomes, plugins, task_name)
         out = run_annotation_pipeline_impl(args)
         self.assertEqual(out, 'Annotation pipeline finished.')
         # Test plugin throwing error
