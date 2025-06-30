@@ -2223,6 +2223,7 @@ class Importer(object):
         out_file = os.path.join(self.config['core.temp_dir'],
             os.path.basename(prot_db_file)
         )
+        logger.info('Writing all proteins sequences for updated BLAST database')
         export_proteins(None, out_file)
         self.staticfiles[self.config['core.search_db_dir']]\
             .append(os.path.basename(prot_db_file))
@@ -2235,6 +2236,7 @@ class Importer(object):
         """
         result = set()
         nucl_db_file = self.config['core.search_db_nucl']
+        logger.info('Writing all nucleotide sequences for updated BLAST database')
         with open(os.path.join(self.config['core.temp_dir'], 
                                os.path.basename(nucl_db_file)
                                ), 'w') as outfile:
