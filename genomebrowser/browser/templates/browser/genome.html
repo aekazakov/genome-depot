@@ -353,7 +353,7 @@
                   const blob = new Blob([data], {type: "octet/stream"});
                   var url = window.URL.createObjectURL(blob);
                   a.href = url;
-                  a.download = 'export.faa';
+                  a.download = '{{ genome.name }}.proteins.faa';
                   document.body.append(a);
                   a.click();
                   a.remove();

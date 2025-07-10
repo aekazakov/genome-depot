@@ -117,7 +117,7 @@
             const blob = new Blob([data], {type: "octet/stream"});
             var url = window.URL.createObjectURL(blob);
             a.href = url;
-            a.download = 'family.tab';
+            a.download = '{{ ortholog_group.eggnog_id }}_{{ ortholog_group.taxon.name }}.family.tab';
             document.body.append(a);
             a.click();
             a.remove();
@@ -131,7 +131,7 @@
     });    
     $('#export-profile').on('click', function () {
         var text = document.getElementById("tsv_profile_data").textContent;
-        var filename = "{{ ortholog_group.eggnog_id }}_functional_profile.tab";
+        var filename = "{{ ortholog_group.eggnog_id }}__{{ ortholog_group.taxon.name }}.functional_profile.tab";
         var pom = document.createElement('a');
         pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
         pom.setAttribute('download', filename);
@@ -162,7 +162,7 @@
           const blob = new Blob([data], {type: "octet/stream"});
           var url = window.URL.createObjectURL(blob);
           a.href = url;
-          a.download = 'export.faa';
+          a.download = '{{ ortholog_group.eggnog_id }}_{{ ortholog_group.taxon.name }}.proteins.faa';
           document.body.append(a);
           a.click();
           a.remove();
