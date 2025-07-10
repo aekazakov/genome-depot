@@ -250,7 +250,6 @@
             </header>
               <div popover id="tools-popover">The analysis tools section contains links to external sequence analysis tools for prediction of signal peptides and transmembrane segments, protein domain mapping and similarity search in sequence databases.
               </div>
-            <form method="post" action="https://www.ebi.ac.uk/Tools/hmmer/search/hmmscan" enctype="multipart/form-data" name="PfamForm" id="PfamForm"><input type="hidden" name="seq" value="&gt;{{ gene.locus_tag }}&#10;{{ protein.sequence }}"  /> <input type="hidden" name="hmmdb" value="pfam"  /> <input type="hidden" name="E" value="1"  /> <input type="hidden" name="domE" value="1"  /> <input type="submit" name=".submit" style="display: none;" id="PfamButton" /></form>
             <form method="post" action="http://microbesonline.org/cgi-bin/seqsearch.cgi" enctype="multipart/form-data" name="MoBlastForm" id="MoBlastForm"><input type="hidden" name="query" value="&gt;{{ gene.locus_tag }}&#10;{{ protein.sequence }}"  /> <input type="hidden" name="qtype" value="protein"  /> <input type="submit" name=".submit" style="display: none;" id="MoBlastButton" /></form>
             <h5>
               <a href="https://fit.genomics.lbl.gov/cgi-bin/mySeqSearch.cgi?query={{ protein.sequence }}" target="blank_">Fitness BLAST search (homologs of this protein in Fitness Browser)</a>
@@ -266,9 +265,6 @@
             </h5>
             <h5> 
               <a href="https://www.ncbi.nlm.nih.gov/Structure/cdd/wrpsb.cgi?seqinput=%3E{{ gene.locus_tag }}%0A{{ protein.sequence }}" target="blank_">Search CDD (the Conserved Domains Database, which includes COG and superfam)</a>
-            </h5>
-            <h5> 
-              <a href="javascript:document.getElementById('PfamForm').submit()">Search PFam  (including for weak hits, up to E = 1)</a>
             </h5>
             <h5> 
               <a title="Find similar proteins with known structures (PDBsum)" href="https://www.ebi.ac.uk/thornton-srv/databases/cgi-bin/pdbsum/FindSequence.pl?pasted={{ protein.sequence }}" target="blank_">
