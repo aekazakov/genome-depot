@@ -16,8 +16,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if os.path.exists(os.path.join(BASE_DIR, 'enigma', 'enigma.py')):
             from enigma.enigma import check_enigma_repository
-            message = check_enigma_repository(options['username'], options['password'])
-            mail_admins('Check ENIGMA genomes repository', message)
+            message, subject = check_enigma_repository(options['username'], options['password'])
+            mail_admins(subject, message)
         else:
             print('ENIGMA module not installed')
 
