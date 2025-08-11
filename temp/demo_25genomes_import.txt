@@ -1,0 +1,26 @@
+#gbk_file	genome	strain	sample	URL	link_text
+	G20	G20		https://www.ncbi.nlm.nih.gov/assembly/GCF_000012665.1	NCBI:GCF_000012665.1
+	M_salexigens_DSM2638	DSM2638		https://www.ncbi.nlm.nih.gov/assembly/GCF_000023445.1	NCBI:GCF_000023445.1
+	DvH	Hildenborough		https://www.ncbi.nlm.nih.gov/assembly/GCF_000195755.1	NCBI:GCF_000195755.1
+	K-12	K-12		https://www.ncbi.nlm.nih.gov/assembly/GCF_000005845.2	NCBI:GCF_000005845.2
+	LT2	LT2		https://www.ncbi.nlm.nih.gov/assembly/GCF_000006945.2	NCBI:GCF_000006945.2
+	K_pneumoniae_MGH_78578	MGH_78578		https://www.ncbi.nlm.nih.gov/assembly/GCF_000016305.1	NCBI:GCF_000016305.1
+	Y_pestis_KIM10	KIM10		https://www.ncbi.nlm.nih.gov/assembly/GCF_000006645.1	NCBI:GCF_000006645.1
+	V_cholerae_O395	O395		https://www.ncbi.nlm.nih.gov/assembly/GCF_000016245.1	NCBI:GCF_000016245.1
+	A_fischeri_ES114	ES114		https://www.ncbi.nlm.nih.gov/assembly/GCF_000011805.1	NCBI:GCF_000011805.1
+	V_vulnificus_CMCP6	CMCP6		https://www.ncbi.nlm.nih.gov/assembly/GCF_000039765.1	NCBI:GCF_000039765.1
+	V_parahaemolyticus_RIMD_2210633	RIMD_2210633		https://www.ncbi.nlm.nih.gov/assembly/GCF_000196095.1	NCBI:GCF_000196095.1
+	P_profundum_SS9	SS9		https://www.ncbi.nlm.nih.gov/assembly/GCF_000196255.1	NCBI:GCF_000196255.1
+	MR1	MR-1		https://www.ncbi.nlm.nih.gov/assembly/GCF_000146165.2	NCBI:GCF_000146165.2
+	PV4	PV-4		https://www.ncbi.nlm.nih.gov/assembly/GCF_000016065.1	NCBI:GCF_000016065.1
+	ANA3	ANA-3		https://www.ncbi.nlm.nih.gov/assembly/GCF_000203935.1	NCBI:GCF_000203935.1
+	SB2B	SB2B		https://www.ncbi.nlm.nih.gov/assembly/GCF_000015245.1	NCBI:GCF_000015245.1
+	PAO1	PAO1		https://www.ncbi.nlm.nih.gov/assembly/GCF_000006765.1	NCBI:GCF_000006765.1
+	P_protegens_Pf-5	Pf-5		https://www.ncbi.nlm.nih.gov/assembly/GCF_000012265.1	NCBI:GCF_000012265.1
+	Putida	KT2440		https://www.ncbi.nlm.nih.gov/assembly/GCF_000007565.2	NCBI:GCF_000007565.2
+	P_stutzeri_A1501	A1501		https://www.ncbi.nlm.nih.gov/assembly/GCF_000013785.1	NCBI:GCF_000013785.1
+	P_syringae_DC3000	DC3000		https://www.ncbi.nlm.nih.gov/assembly/GCF_000007805.1	NCBI:GCF_000007805.1
+	FW104-10B01	FW104-10B01		https://www.ncbi.nlm.nih.gov/assembly/GCF_021560695.1	NCBI:GCF_021560695.1
+	FW104-MT042	FW104-MT042		https://www.ncbi.nlm.nih.gov/assembly/GCF_021545865.1	NCBI:GCF_021545865.1
+	FW510-R12	FW510-R12		https://www.ncbi.nlm.nih.gov/assembly/GCF_021545845.1	NCBI:GCF_021545845.1
+	FW107-2APBS1	FW107-2APBS1		https://www.ncbi.nlm.nih.gov/assembly/GCF_021560615.1	NCBI:GCF_021560615.1
