@@ -246,7 +246,12 @@ The input file for this command is a tab-separated text file with nine columns:
 
 - site sequence
 
+# Import test dataset of RefSeq genomes
 
+You can test GenomDepot installation by importing a dataset of 25 RefSeq genome assemblies. 
+
+In the GenomeDepot administration panel, go to the Genome Import page, choose option 3 (import from NCBI).
+Click "Browse" and choose the testdata/demo_25genomes_import.txt file. Enter your email and click "Start import".
 
 
 # Image Credits
