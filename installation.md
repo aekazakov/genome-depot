@@ -30,7 +30,7 @@ In Ubuntu-based distibutions, you can install most prerequisites using the APT p
 sudo apt install apache2 mysql-server muscle hmmer ncbi-blast+-legacy build-essential zlib1g-dev libexpat1-dev python3-dev libmysqlclient-dev curl git pkg-config libapache2-mod-wsgi-py3 python3.10-venv
 ```
 
-If you don't have conda, install Miniconda [as described in the Conda user guide]( https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html).
+If Conda is not installed in the system, install Miniconda [as described in the Conda user guide]( https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html).
 
 
 ## Install dependencies
@@ -121,6 +121,7 @@ python manage.py createsuperuser
 # Enter your desired username, email and password
 python manage.py import_config -i configs.txt
 python manage.py createcachetable
+python manage.py update_taxonomy
 ```
 
 Now your new GenomeDepot portal is ready for testing. Run 
