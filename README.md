@@ -103,6 +103,8 @@ python manage.py import_config -i configs.txt
 
 python manage.py createcachetable
 
+python manage.py update_taxonomy
+
 
 9. Run python manage.py runserver 127.0.0.1:8000 and open in the browser http://127.0.0.1:8000/admin. You should be able to log in with the username you entered at the previous step.
 
