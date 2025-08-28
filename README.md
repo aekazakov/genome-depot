@@ -1,5 +1,47 @@
 # GenomeDepot
-Data management system for microbial comparative genomics.
+
+## About
+
+GenomeDepot is an open-source web-based platform for annotation, management, and comparative analysis of microbial genomic data. With GenomeDepot, you can create web-sites for your own genome collections. These web-sites have tools for interactive genome browsing, BLAST search, annotation search, comparative genomic neighborhood visualization, and sequence download.
+
+
+GenomeDepot Copyright (c) 2025, The Regents of the University of California,
+through Lawrence Berkeley National Laboratory (subject to receipt of any
+required approvals from the U.S. Dept. of Energy). All rights reserved.
+
+If you have questions about your rights to use or distribute this software,
+please contact Berkeley Lab's Intellectual Property Office at
+IPO@lbl.gov.
+
+NOTICE.  This Software was developed under funding from the U.S. Department
+of Energy and the U.S. Government consequently retains certain rights.  As
+such, the U.S. Government has been granted for itself and others acting on
+its behalf a paid-up, nonexclusive, irrevocable, worldwide license in the
+Software to reproduce, distribute copies to the public, prepare derivative 
+works, and perform publicly and display publicly, and to permit others to do so.
+
+
+### License Agreement 
+
+GPL v3 License
+
+GenomeDepot Copyright (c) 2025, The Regents of the University of California,
+through Lawrence Berkeley National Laboratory (subject to receipt of any
+required approvals from the U.S. Dept. of Energy). All rights reserved.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 
 ## Prerequisites
 
@@ -11,22 +53,18 @@ Data management system for microbial comparative genomics.
 
 4. Muscle
 
-5. HMMER
+5. NCBI-BLAST (blastp and megablast required)
 
-6. NCBI-BLAST (blastp and megablast required)
+6. Perl
 
-7. Perl
+7. zlib1g-dev package
 
-8. zlib1g-dev package
+8. curl
 
-9. curl
-
-10. pkg-config
+9. pkg-config
 
 In Ubuntu-based distibutions, you can install the dependencies using the APT package repository:
-sudo apt install apache2 mysql-server muscle hmmer ncbi-blast+-legacy build-essential zlib1g-dev libexpat1-dev curl pkg-config
-
-9. Jbrowse genome browser v. 1.16.11 (https://jbrowse.org/jbrowse1.html). You can find installation instructions here: https://jbrowse.org/docs/installation.html#download-jbrowse-minified-release
+sudo apt install apache2 mysql-server muscle ncbi-blast+-legacy build-essential zlib1g-dev libexpat1-dev curl pkg-config
 
 
 ## Installation
