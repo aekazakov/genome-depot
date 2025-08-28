@@ -9,7 +9,7 @@ CONDADIR=$(dirname "$(which conda)")
 CONDADIR=$(dirname "$CONDADIR")
 CONDA="$CONDADIR/etc/profile.d/conda.sh"
 if ! [ -f "$CONDA" ]; then
-        echo "Conda is not installed. Usage: setup.sh <conda dir>"
+        echo "Conda is not installed. Install conda and other required programs. See documentation for the full list of requirements."
         exit
 fi
 echo "Found Conda installation: $CONDADIR"
