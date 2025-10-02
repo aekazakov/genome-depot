@@ -30,7 +30,10 @@ def _sanitize_sequence(query):
     sequence = ''.join([i if ord(i) < 128 else '' for i in sequence])
     sequence = re.sub(r"[^^a-zA-Z]", '', sequence)
     return query_id, sequence
-    
+
+def validate_external_sequence(query):
+    return _sanitize_sequence(query)
+
 def validate_params(params):
     '''
         Validates search parameters received from user.

@@ -34,7 +34,7 @@ from browser.models import Strain
 from browser.models import Strain_metadata
 from browser.colors import COLORS
 from browser.treemap import generate_og_treemap, generate_genes_treemap
-from browser.seqsearch import run_protein_search, run_nucleotide_search
+from browser.seqsearch import run_protein_search, run_nucleotide_search, validate_external_sequence
 from browser.comparative_analysis import get_scribl
 from browser.conserved_regulon import build_conserved_regulon
 from browser.conserved_operon import build_conserved_operon 
@@ -1996,44 +1996,20 @@ def protein_search_external(request):
     '''
     context = {}
     if request.GET.get("sequence"):
-        result = {}
-        sequence = request.GET.get("sequence")
-        hits, searchcontext, query_len, _ = run_protein_search(sequence)
-        if searchcontext != '':
-            context['searchcontext'] = searchcontext
-        for row in hits:
-            row=row.split('\t')
-            logger.info('Search for gene %s', row[1])
-            if row[0] not in result:
-                result[row[0]] = []
-            unaligned_part =  int(row[6]) - 1 + query_len - int(row[7])
-            query_cov = (query_len - unaligned_part) * 100.0 / query_len
-            genes = Gene.objects.select_related(
-                'protein', 'genome', 'genome__taxon'
-            ).prefetch_related(
-                'genome__tags'
-            ).filter(
-                protein__protein_hash = row[1]
-            )
-            for target in genes:
-                hit = [target.genome.name,
-                       target.locus_tag,
-                       target.genome.taxon.name,
-                       target.function,
-                       '{:.1f}'.format(float(row[2])),
-                       row[3],
-                       '{:.1f}'.format(query_cov),
-                       row[10],
-                       row[11]
-                       ]
-                result[row[0]].append(hit)
-        context['searchresult'] = result
+        seq_id, sequence = validate_external_sequence(request.GET.get("sequence"))
+        if sequence == '':
+            return render(request,
+                          '404.html',
+                          {'searchcontext': 'Provide protein sequence in FASTA format'}
+                          )
+
+        context['query'] = '>' + seq_id + '\n' + sequence
     else:
         return render(request,
                       '404.html',
                       {'searchcontext': 'Provide protein sequence in FASTA format'}
                       )
-    return render(request, 'browser/proteinsearch.html', context)
+    return render(request, 'browser/proteinsearchform.html', context)
 
 
 class NsearchResultView(View):
@@ -2373,7 +2349,8 @@ def proteinsearchform(request):
     '''
         Displays protein sequence search form
     '''
-    return render(request,'browser/proteinsearchform.html')
+    context = {'query':''}
+    return render(request,'browser/proteinsearchform.html', context)
 
 def cregulon_view(request):
     '''

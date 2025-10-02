@@ -15,7 +15,7 @@
                 {% csrf_token %}
                 <div>
                   <div class="row uniform">
-                    <textarea name="sequence" id="sequence" placeholder="Enter one protein sequence in FASTA format..." rows="8"></textarea>
+                    <textarea name="sequence" id="sequence" placeholder="Enter one protein sequence in FASTA format..." rows="8">{{ query }}</textarea>
                   </div>
                   <div class="row uniform">
                     <div class="4u 12u$(small)">
