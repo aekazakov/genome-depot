@@ -103,7 +103,16 @@
                   {% for ortholog_group in protein.ortholog_groups.all %}
                     <tr>
                       <td><a href="{% url 'ogdetails' og_id=ortholog_group.id %}">{{ ortholog_group.eggnog_id }}[{{ ortholog_group.taxon.name }}]</a></td>
-                      <td><a href="{% url 'comparative' %}?genome={{ gene.genome.name }}&locus_tag={{ gene.locus_tag }}&og={{ ortholog_group.id }}&size=10&lines=50">Show genome neighborhood conservation</a></td>
+                      <td><form method="post" action="{% url 'comparative' %}" class="inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="genome" value="{{ gene.genome.name }}">
+                          <input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}">
+                          <input type="hidden" name="og" value="{{ ortholog_group.id }}">
+                          <input type="hidden" name="size" value="10">
+                          <input type="hidden" name="lines" value="50">
+                          <button type="submit" name="submit_param" value="submit_value" class="link-button">Show genome neighborhood conservation</button>
+                        </form>
+                      </td> 
                     </tr>
                   {% endfor %}
                   </table>

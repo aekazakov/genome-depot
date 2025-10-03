@@ -2071,6 +2071,10 @@
 		margin: 0 0 2rem 0;
 	}
 
+	.inline {
+		margin: 0 0 0 0;
+	}
+
 	label {
 		display: block;
 		font-size: 0.9rem;

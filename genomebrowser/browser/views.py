@@ -2504,18 +2504,17 @@ class ComparativeView(View):
                 
         except Exception as e:
             raise SuspiciousOperation(str(e))
-        
-    def get(self,request):
+    def post(self,request):
         '''
-            Displays a page that will send AJAX request
+            Displays a page that sends AJAX request
         '''
-        locus_tag = request.GET.get('locus_tag')
-        genome = request.GET.get('genome')
-        og_id = request.GET.get('og')
+        locus_tag = request.POST.get('locus_tag')
+        genome = request.POST.get('genome')
+        og_id = request.POST.get('og')
 
         try:
-            ComparativeView.verify_parameters(request.GET.get('size'),
-                                              request.GET.get('lines')
+            ComparativeView.verify_parameters(request.POST.get('size'),
+                                              request.POST.get('lines')
                                               )
         except SuspiciousOperation as e:
             return render(request, '404.html', {'searchcontext': str(e)})
@@ -2523,10 +2522,10 @@ class ComparativeView(View):
         logger.debug('REQUEST1')
         logger.debug(
             'Request parameters: %s %s %s %s %s', og_id, genome,
-            locus_tag, request.GET.get('size'), request.GET.get('lines')
+            locus_tag, request.POST.get('size'), request.POST.get('lines')
         )
         context = {}
-        for key, val in request.GET.items():
+        for key, val in request.POST.items():
             context[key] = val
         try:
             gene = Gene.objects.select_related(
@@ -2546,10 +2545,11 @@ class ComparativeView(View):
                           {'searchcontext': 'Ortholog group not found'}
                           )
         context['gene'] = gene
-        context['size' + request.GET.get('size')] = '1'
-        context['lines' + request.GET.get('lines')] = '1'
+        context['size' + request.POST.get('size')] = '1'
+        context['lines' + request.POST.get('lines')] = '1'
         context['ortholog_group'] = og
         return render(request,'browser/scriblajax.html', context)
+
 
     @staticmethod
     def ajax_view(request):

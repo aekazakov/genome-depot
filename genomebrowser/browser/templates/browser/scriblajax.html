@@ -65,7 +65,8 @@
             </header>
 			<div popover id="plot-popover">This plot displays a region around a selected gene and several orthologs from a selected eggNOG family. Members of the selected family are always marked red. Other genes are colored by COGs, and genes that have no eggNOG mappings are marked grey.
 			</div>
-            <form action="{% url 'comparative' %}" method="get">
+            <form action="{% url 'comparative' %}" method="post">
+              {% csrf_token %}
               <div class="row uniform">
                 <div class="2u 12u$(xsmall)">
                   <div class="select-wrapper">
