@@ -13,6 +13,7 @@
             <header class="align-center">
               <form action="{% url 'searchsample' %}" method="get">
                 <input name="query" type="text" placeholder="Search samples by name...">
+				<input name="order" type="hidden" id="order" value="id">
               </form>
               {% if searchcontext %}
                 <h4>{{ searchcontext }}</h4>
@@ -23,9 +24,9 @@
                 <table>
                   <thead>
                     <tr>
-                      <th>Sample ID</th>
-                      <th>Name</th>
-                      <th>Description</th>
+                      <th>{% if order != 'id' %}<a href="{% url 'searchsample' %}?order=id{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Sample ID</th>
+                      <th>{% if order != 'name' %}<a href="{% url 'searchsample' %}?order=name{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Name</th>
+                      <th>{% if order != 'desc' %}<a href="{% url 'searchsample' %}?order=desc{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Description</th>
                     </tr>
                   </thead>
                   <tbody>

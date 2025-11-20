@@ -23,9 +23,9 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Operon ID</th>
-                    <th>Location</th>
-                    <th>Genes</th>
+                    <th>{% if order != 'name' %}<a href="{% url 'operonlist' genome=genome.name%}?order=name{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Operon ID</th>
+                    <th>{% if order != 'location' %}<a href="{% url 'operonlist' genome=genome.name%}?order=location{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Location</th>
+                    <th>{% if order != 'genes' %}<a href="{% url 'operonlist' genome=genome.name%}?order=genes{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Genes</th>
                   </tr>
                 </thead>
                 <tbody>

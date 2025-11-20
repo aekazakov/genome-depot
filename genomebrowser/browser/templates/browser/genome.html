@@ -54,12 +54,12 @@
             Size: {{ genome.size }} bp<br>
             Contigs: {{ genome.contigs }}<br>
             Genes: <a href="{% url 'searchgene' %}?genome={{ genome.name }}&type=gene&order=locus_tag">{{ genome.genes }} (click to open list)</a><br>
-            Operons: <a href="{% url 'operonlist' genome=genome.name %}">{{ operons }} (click to open list)</a><br>
+            Operons: <a href="{% url 'operonlist' genome=genome.name %}?order=name">{{ operons }} (click to open list)</a><br>
             {%if sites %}
-              Sites: <a href="{% url 'sitelist' genome=genome.name %}">{{ sites }} (click to open list)</a><br>
+              Sites: <a href="{% url 'sitelist' genome=genome.name %}?order=name">{{ sites }} (click to open list)</a><br>
             {% endif %}
             {%if regulons %}
-              Regulons: <a href="{% url 'regulonlist' genome=genome.name %}">{{ regulons }} (click to open list)</a><br>
+              Regulons: <a href="{% url 'regulonlist' genome=genome.name %}?order=name">{{ regulons }} (click to open list)</a><br>
             {% endif %}
             <br>
             Sequence source: <a href="{{ genome.external_url }}">{{ genome.external_id }}</a><br>

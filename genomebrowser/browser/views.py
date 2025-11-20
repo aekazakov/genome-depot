@@ -6,6 +6,7 @@ from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.views import View, generic
 from django.db.models import Q
+from django.db.models import Count
 from django.core.exceptions import SuspiciousOperation
 from django.urls import reverse
 from genomebrowser.settings import TITLE
@@ -304,7 +305,18 @@ class SampleListView(generic.ListView):
         return context
     
     def get_queryset(self):
-        return Sample.objects.order_by('sample_id')
+        order_by = self.request.GET.get('order')
+        if not order_by:
+            order_by = 'sample_id'
+        elif order_by == 'name':
+            order_by = 'full_name'
+        elif order_by == 'id':
+            order_by = 'sample_id'
+        elif order_by == 'desc':
+            order_by = 'description'
+        else:
+            order_by = 'sample_id'
+        return Sample.objects.order_by(order_by,'sample_id')
 
 
 class GenomeListView(generic.ListView):
@@ -372,31 +384,89 @@ class OperonListView(generic.ListView):
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
             self.request.GET.get('query') + '" in ' + genome.name + ' operons'
+            context['query'] = self.request.GET.get('query')
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self):
         genome = self.kwargs['genome']
+        order_by = self.request.GET.get('order')
+        if not order_by:
+            order_by = 'name'
+        elif order_by in ('name', 'location', 'genes'):
+            pass
+        else:
+            order_by = 'name'
+        
         if self.request.GET.get('query'):
             query = self.request.GET.get('query')
-            object_list = Operon.objects.filter(genome__name=genome).filter(
-                Q(genes__name__icontains=query) | 
-                Q(genes__locus_tag__icontains=query) |
-                Q(name__icontains=query)
-            ).order_by(
-                'name'
-            ).select_related(
-                'genome', 'contig'
-            ).prefetch_related(
-                'genes', 'genome__tags'
-            ).distinct()
+            if order_by == 'location':
+                object_list = Operon.objects.filter(genome__name=genome).filter(
+                    Q(genes__name__icontains=query) | 
+                    Q(genes__locus_tag__icontains=query) |
+                    Q(name__icontains=query)
+                ).order_by(
+                    'genome__name', 'contig__contig_id', 'start'
+                ).select_related(
+                    'genome', 'contig'
+                ).prefetch_related(
+                    'genes', 'genome__tags'
+                ).distinct()
+            elif order_by == 'genes':
+                object_list = Operon.objects.filter(genome__name=genome).filter(
+                    Q(genes__name__icontains=query) | 
+                    Q(genes__locus_tag__icontains=query) |
+                    Q(name__icontains=query)
+                ).annotate(
+                    gene_count = Count('genes')
+                ).order_by(
+                    'gene_count'
+                ).select_related(
+                    'genome', 'contig'
+                ).prefetch_related(
+                    'genes', 'genome__tags'
+                ).distinct()
+            
+            else:
+                object_list = Operon.objects.filter(genome__name=genome).filter(
+                    Q(genes__name__icontains=query) | 
+                    Q(genes__locus_tag__icontains=query) |
+                    Q(name__icontains=query)
+                ).order_by(
+                    order_by,'name'
+                ).select_related(
+                    'genome', 'contig'
+                ).prefetch_related(
+                    'genes', 'genome__tags'
+                ).distinct()
         else:
-            object_list = Operon.objects.filter(genome__name=genome).order_by(
-                'name'
-            ).select_related(
-                'genome', 'contig'
-            ).prefetch_related(
-                'genes', 'genome__tags'
-            ).distinct()
+            if order_by == 'location':
+                object_list = Operon.objects.filter(genome__name=genome).order_by(
+                    'genome__name', 'contig__contig_id', 'start'
+                ).select_related(
+                    'genome', 'contig'
+                ).prefetch_related(
+                    'genes', 'genome__tags'
+                ).distinct()
+            elif order_by == 'genes':
+                object_list = Operon.objects.filter(genome__name=genome).annotate(
+                    gene_count = Count('genes')
+                ).order_by(
+                    'gene_count'
+                ).select_related(
+                    'genome', 'contig'
+                ).prefetch_related(
+                    'genes', 'genome__tags'
+                ).distinct()
+            else:
+                object_list = Operon.objects.filter(genome__name=genome).order_by(
+                    order_by,'name'
+                ).select_related(
+                    'genome', 'contig'
+                ).prefetch_related(
+                    'genes', 'genome__tags'
+                ).distinct()
         return object_list
 
         
@@ -1250,19 +1320,33 @@ class SampleSearchResultsView(generic.ListView):
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
                                        self.request.GET.get('query') + '"'
+            context['query'] = self.request.GET.get('query')
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
+        order_by = self.request.GET.get('order')
+        if not order_by:
+            order_by = 'sample_id'
+        elif order_by == 'name':
+            order_by = 'full_name'
+        elif order_by == 'id':
+            order_by = 'sample_id'
+        elif order_by == 'desc':
+            order_by = 'description'
+        else:
+            order_by = 'sample_id'
         if query:
             object_list = Sample.objects.filter(
                 Q(sample_id__icontains=query) |
                 Q(full_name__icontains=query) |
                 Q(description__icontains=query)|
                 Q(sample_metadata__value__icontains=query)
-            ).distinct().order_by('sample_id')
+            ).distinct().order_by(order_by,'sample_id')
         else:
-            object_list = Sample.objects.none()
+            object_list = Sample.objects.distinct().order_by(order_by,'sample_id')
         return object_list
 
 
