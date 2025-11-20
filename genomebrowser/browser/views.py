@@ -63,8 +63,14 @@ class AnnotationSearchResultsSubView(generic.ListView):
         if self.request.GET.get('annotation_query'):
             context['searchcontext'] = 'Search results for "' + \
             self.request.GET.get('annotation_query') + '"'
+            context['annotation_query'] = self.request.GET.get('annotation_query')
         else:
             context['searchcontext'] = 'Query string is empty'
+            
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
+        if self.request.GET.get('genome'):
+            context['genome'] = self.request.GET.get('genome')
         return context
 
     def get_queryset(self):
@@ -74,6 +80,22 @@ class AnnotationSearchResultsSubView(generic.ListView):
         annotation_query = self.request.GET.get('annotation_query')
         genome = self.request.GET.get('genome')
         fast = self.request.GET.get('fast')
+        order_by = self.request.GET.get('order')
+        logger.debug(', '.join([annotation_query, genome, fast, order_by]))
+        if not order_by:
+            order_by = 'gene_id__locus_tag'
+        elif order_by == 'gene':
+            order_by = 'gene_id__locus_tag'
+        elif order_by == 'genome':
+            order_by = 'gene_id__genome__name'
+        elif order_by == 'annotation':
+            order_by = 'value'
+        elif order_by == 'source':
+            order_by = 'source'
+        else:
+            order_by = 'gene_id__locus_tag'
+        
+        
         if not annotation_query:
             object_list = Annotation.objects.none()
         elif genome:
@@ -83,7 +105,7 @@ class AnnotationSearchResultsSubView(generic.ListView):
                      Q(value__icontains=annotation_query)) & 
                      Q(gene_id__genome__name=genome)
                 ).order_by(
-                    'gene_id__locus_tag'
+                    order_by, 'gene_id__locus_tag'
                 ).select_related(
                     'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
                 ).prefetch_related('gene_id__genome__tags').distinct()
@@ -94,7 +116,7 @@ class AnnotationSearchResultsSubView(generic.ListView):
                      Q(note__icontains=annotation_query)) & 
                      Q(gene_id__genome__name=genome)
                 ).order_by(
-                    'gene_id__locus_tag'
+                    order_by, 'gene_id__locus_tag'
                 ).select_related(
                     'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
                 ).prefetch_related('gene_id__genome__tags').distinct()
@@ -113,7 +135,7 @@ class AnnotationSearchResultsSubView(generic.ListView):
                     Q(value__icontains=annotation_query) |
                     Q(note__icontains=annotation_query)
                 ).order_by(
-                    'gene_id__locus_tag'
+                    order_by, 'gene_id__locus_tag'
                 ).select_related(
                     'gene_id', 'gene_id__genome', 'gene_id__genome__taxon'
                 ).prefetch_related('gene_id__genome__tags').distinct()
@@ -133,10 +155,15 @@ class AnnotationSearchResultsAjaxView(View):
         if self.request.GET.get('annotation_query'):
             context['searchcontext'] = 'Search results for "' + \
             self.request.GET.get('annotation_query') + '"'
+            context['annotation_query'] = self.request.GET.get('annotation_query')
         else:
             context['searchcontext'] = 'Query string is empty'
         for key, val in self.request.GET.items():
             context[key] = val
+        if request.GET.get('order'):
+            context['order'] = request.GET.get('order')
+        if request.GET.get('genome'):
+            context['order'] = request.GET.get('genome')
         return render(request,'browser/annotation_list_ajax.html', context)
 
     @staticmethod
@@ -237,9 +264,35 @@ class GenomeListView(generic.ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        return Genome.objects.order_by('name').select_related(
+        if self.request.GET.get('order'):
+            order_by = self.request.GET.get('order')
+        else:
+            order_by = 'name'
+
+        if not order_by:
+            order_by = 'name'
+        elif order_by == 'source':
+            order_by = 'source'
+        elif order_by == 'taxon':
+            order_by = 'taxon__name'
+        elif order_by == 'size':
+            order_by = 'size'
+        elif order_by == 'contigs':
+            order_by = 'contigs'
+        elif order_by == 'genes':
+            order_by = 'genes'
+        else:
+            order_by = 'name'
+        
+        if order_by == 'source':
+            query_set = Genome.objects.order_by('strain__full_name','sample__full_name','name').select_related(
             'strain', 'sample', 'taxon'
             ).prefetch_related('tags')
+        else:
+            query_set = Genome.objects.order_by(order_by,'name').select_related(
+            'strain', 'sample', 'taxon'
+            ).prefetch_related('tags')
+        return query_set
 
     def get_context_data(self,**kwargs):
         context = super(GenomeListView,self).get_context_data(**kwargs)
@@ -250,6 +303,8 @@ class GenomeListView(generic.ListView):
             if sunburst:
                 context['sunburst'] = sunburst
             context["genome_count"] = Genome.objects.all().count()
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
         
         
@@ -425,12 +480,19 @@ class GeneSearchResultsSubView(generic.ListView):
                 self.request.GET.get('type'),
                 genome
             )
+            context['genome'] = genome
         else:
             searchcontext = generate_gene_search_context(
                 self.request.GET.get('query'),
                 self.request.GET.get('type')
             )
         context['searchcontext'] = searchcontext
+        if self.request.GET.get('query'):
+            context['query'] = self.request.GET.get('query')
+        context['type'] = self.request.GET.get('type')
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
+        
         return context
 
     def get_queryset(self):
@@ -441,7 +503,21 @@ class GeneSearchResultsSubView(generic.ListView):
         query = query.strip()
         genome = self.request.GET.get('genome')
         query_type = self.request.GET.get('type')
-        #logger.debug(', '.join([query, genome, query_type]))
+        order_by = self.request.GET.get('order')
+        if order_by is None:
+            order_by = 'locus_tag'
+        elif order_by == 'name':
+            order_by = 'name'
+        elif order_by == 'genome':
+            order_by = 'genome__name'
+        elif order_by == 'product':
+            order_by = 'function'
+        else:
+            order_by = 'locus_tag'
+
+        
+        
+        logger.debug(', '.join([query, genome, query_type, order_by]))
         if query_type == 'gene':
             if genome:
                 object_list = Gene.objects.filter(
@@ -449,7 +525,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 ).filter(
                     genome__name=genome
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -464,7 +540,7 @@ class GeneSearchResultsSubView(generic.ListView):
                         Q(function__icontains=query) |
                         Q(contig__contig_id__icontains=query)
                     ).order_by(
-                        'locus_tag'
+                        order_by, 'locus_tag'
                     ).select_related(
                         'genome', 'genome__taxon'
                     ).prefetch_related(
@@ -476,7 +552,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(
                     locus_tag__exact=query
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -490,7 +566,7 @@ class GeneSearchResultsSubView(generic.ListView):
                         Q(genome__name__icontains=query) |
                         Q(contig__contig_id__icontains=query)
                     ).order_by(
-                        'locus_tag'
+                        order_by, 'locus_tag'
                     ).select_related(
                         'genome', 'genome__taxon'
                     ).prefetch_related(
@@ -502,7 +578,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     genome__name=genome, protein__in=Protein.objects.filter(
                             ortholog_groups__id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -513,7 +589,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     protein__in=Protein.objects.filter(
                             ortholog_groups__id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -525,7 +601,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     genome__name=genome,protein__in=Protein.objects.filter(
                         kegg_orthologs__kegg_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -536,7 +612,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     protein__in=Protein.objects.filter(
                         kegg_orthologs__kegg_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -548,7 +624,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     genome__name=genome,protein__in=Protein.objects.filter(
                     kegg_pathways__kegg_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -559,7 +635,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     protein__in=Protein.objects.filter(
                             kegg_pathways__kegg_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -571,7 +647,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     genome__name=genome, protein__in=Protein.objects.filter(
                         kegg_reactions__kegg_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -582,7 +658,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     protein__in=Protein.objects.filter(
                         kegg_reactions__kegg_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -594,7 +670,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     genome__name=genome, protein__in=Protein.objects.filter(
                         ec_numbers__ec_number=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -605,7 +681,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     protein__in=Protein.objects.filter(
                         ec_numbers__ec_number=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -617,7 +693,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     genome__name=genome, protein__in=Protein.objects.filter(
                         tc_families__tc_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -628,7 +704,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     protein__in=Protein.objects.filter(
                         tc_families__tc_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -640,7 +716,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     genome__name=genome, protein__in=Protein.objects.filter(
                         cazy_families__cazy_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -651,7 +727,7 @@ class GeneSearchResultsSubView(generic.ListView):
                     protein__in=Protein.objects.filter(
                         cazy_families__cazy_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -663,7 +739,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 genome__name=genome, protein__in=Protein.objects.filter(
                         cog_classes__cog_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -674,7 +750,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 protein__in=Protein.objects.filter(
                         cog_classes__cog_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -686,7 +762,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 genome__name=genome, protein__in=Protein.objects.filter(
                         go_terms__go_id=query)
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -697,7 +773,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 protein__in=Protein.objects.filter(
                         go_terms__go_id=query)
                 ).order_by(
-                'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                 'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -717,7 +793,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(
                     genome__name=genome, protein__protein_hash__in=proteins
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -736,7 +812,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(
                     genome__name=genome, protein__protein_hash__in=proteins
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon', 'protein'
                 ).prefetch_related(
@@ -755,7 +831,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(
                     genome__name=genome, protein__protein_hash__in=proteins
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -774,7 +850,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(
                 genome__name=genome, protein__protein_hash__in=proteins
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -793,7 +869,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(
                 genome__name=genome, protein__protein_hash__in=proteins
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -812,7 +888,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(
                 genome__name=genome, protein__protein_hash__in=proteins
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -831,7 +907,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(
                     genome__name=genome, protein__protein_hash__in=proteins
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -850,7 +926,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(
                 genome__name=genome, protein__protein_hash__in=proteins
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -860,7 +936,7 @@ class GeneSearchResultsSubView(generic.ListView):
                 object_list = Gene.objects.filter(
                     genome__name=genome
                 ).order_by(
-                    'locus_tag'
+                    order_by, 'locus_tag'
                 ).select_related(
                     'genome', 'genome__taxon'
                 ).prefetch_related(
@@ -960,40 +1036,106 @@ class GenomeSearchResultsView(generic.ListView):
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
                                        self.request.GET.get('query') + '"'
+            context['query'] = self.request.GET.get('query')
         elif self.request.GET.get('taxon'):
             taxon = Taxon.objects.get(taxonomy_id = self.request.GET.get('taxon'))
             context['exporttype'] = 'genomebytaxon'
             context['exportquery'] = self.request.GET.get('taxon')
             context['searchcontext'] = 'Search results for ' + \
                                        taxon.name + ' [' + taxon.rank + ']'
+            context['taxon'] = self.request.GET.get('taxon')
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
+        if 'page_obj' not in context or context['page_obj'].number == 1:
+            # Call generate_sunburst without parameters to let it
+            # choose the root node
+            if not self.request.GET.get('query') and not self.request.GET.get('taxon'):
+                sunburst = generate_genome_sunburst()
+                if sunburst:
+                    context['sunburst'] = sunburst
+                context["genome_count"] = Genome.objects.all().count()
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         taxon = self.request.GET.get('taxon')
+        order_by = self.request.GET.get('order')
+        if not order_by:
+            order_by = 'name'
+        elif order_by == 'source':
+            order_by = 'source'
+        elif order_by == 'taxon':
+            order_by = 'taxon__name'
+        elif order_by == 'size':
+            order_by = 'size'
+        elif order_by == 'contigs':
+            order_by = 'contigs'
+        elif order_by == 'genes':
+            order_by = 'genes'
+        else:
+            order_by = 'name'
+        
         if query:
-            object_list = Genome.objects.filter(
-                name__icontains=query
-            ).distinct().order_by(
-                'name'
-            ).select_related(
-                'strain', 'sample', 'taxon'
-            ).prefetch_related(
-                'tags'
-            )
+            if order_by == 'source':
+                object_list = Genome.objects.filter(
+                    name__icontains=query
+                ).distinct().order_by(
+                    'strain__full_name', 'sample__full_name', 'name'
+                ).select_related(
+                    'strain', 'sample', 'taxon'
+                ).prefetch_related(
+                    'tags'
+                )
+
+            else:
+                object_list = Genome.objects.filter(
+                    name__icontains=query
+                ).distinct().order_by(
+                    order_by, 'name'
+                ).select_related(
+                    'strain', 'sample', 'taxon'
+                ).prefetch_related(
+                    'tags'
+                )
         elif taxon:
             children = get_taxon_children(taxon)
-            object_list = Genome.objects.filter(
-                taxon__taxonomy_id__in=children
-            ).distinct().order_by(
-                'name'
-            ).select_related(
-                'strain', 'sample', 'taxon'
-            ).prefetch_related(
-                'tags'
-            )
+            if order_by == 'source':
+                object_list = Genome.objects.filter(
+                    taxon__taxonomy_id__in=children
+                ).distinct().order_by(
+                    'strain__full_name', 'sample__full_name', 'name'
+                ).select_related(
+                    'strain', 'sample', 'taxon'
+                ).prefetch_related(
+                    'tags'
+                )
+            else:
+                object_list = Genome.objects.filter(
+                    taxon__taxonomy_id__in=children
+                ).distinct().order_by(
+                    order_by, 'name'
+                ).select_related(
+                    'strain', 'sample', 'taxon'
+                ).prefetch_related(
+                    'tags'
+                )
         else:
-            object_list = Genome.objects.none()
+            if order_by == 'source':
+                object_list = Genome.objects.distinct().order_by(
+                        'strain__full_name', 'sample__full_name', 'name'
+                    ).select_related(
+                        'strain', 'sample', 'taxon'
+                    ).prefetch_related(
+                        'tags'
+                    )
+            else:
+                object_list = Genome.objects.distinct().order_by(
+                        order_by, 'name'
+                    ).select_related(
+                        'strain', 'sample', 'taxon'
+                    ).prefetch_related(
+                        'tags'
+                    )
         return object_list
 
 

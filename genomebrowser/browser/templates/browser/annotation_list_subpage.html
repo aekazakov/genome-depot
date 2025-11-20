@@ -4,12 +4,12 @@
   <div class="table-wrapper">
     <table>
       <thead>
-        <tr>
-          <th>Gene ID</th>
-          <th>Genome</th>
-          <th>Annotation</th>
-          <th>Source</th>
-        </tr>
+		  <tr>
+			<th><a href="{% url 'searchannotation' %}?order=gene{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Gene ID</th>
+			<th><a href="{% url 'searchannotation' %}?order=genome{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Genome</th>
+			<th><a href="{% url 'searchannotation' %}?order=annotation{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Annotation</th>
+			<th><a href="{% url 'searchannotation' %}?order=source{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Source</th>
+		  </tr>
       </thead>
       <tbody>
         {% for item in annotationlist %}

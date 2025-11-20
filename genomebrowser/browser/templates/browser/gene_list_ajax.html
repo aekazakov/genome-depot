@@ -32,7 +32,7 @@
                 url: "{% url 'loadinggenesearch' %}",
                 type: "GET",
                 datatype: 'json',
-                data: {'query': "{{ query }}", 'type': "{{ type }}", 'genome': "{{ genome }}", 'page': "{{ page }}" }
+                data: {'query': "{{ query }}", 'type': "{{ type }}", 'genome': "{{ genome }}", 'order': "{{ order }}", 'page': "{{ page }}" }
               }).done(function(data){
                 $('#loading-bar-area').remove();
                 $('#run-time').append(data["time"].toFixed(2) + ' seconds')

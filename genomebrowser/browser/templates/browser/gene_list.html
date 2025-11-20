@@ -26,10 +26,10 @@
           <table>
             <thead>
               <tr>
-                <th>Gene ID</th>
-                <th>Name</th>
-                <th>Genome</th>
-                <th>Product</th>
+                <th><a href="{% url 'searchgene' %}?type=gene{% if genome %}&genome={{ genome }}{% endif %}{% if query %}&query={{ query  }}{% endif %}&order=locus_tag" class="icon fa-sort-asc"></a>&nbsp;Gene ID</th>
+                <th><a href="{% url 'searchgene' %}?type=gene{% if genome %}&genome={{ genome }}{% endif %}{% if query %}&query={{ query  }}{% endif %}&order=name" class="icon fa-sort-asc"></a>&nbsp;Name</th>
+                <th><a href="{% url 'searchgene' %}?type=gene{% if genome %}&genome={{ genome }}{% endif %}{% if query %}&query={{ query  }}{% endif %}&order=genome" class="icon fa-sort-asc"></a>&nbsp;Genome</th>
+                <th><a href="{% url 'searchgene' %}?type=gene{% if genome %}&genome={{ genome }}{% endif %}{% if query %}&query={{ query  }}{% endif %}&order=product" class="icon fa-sort-asc"></a>&nbsp;Product</th>
               </tr>
             </thead>
             <tbody>
