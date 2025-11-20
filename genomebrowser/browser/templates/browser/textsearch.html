@@ -20,7 +20,8 @@
                 <div class="search left 12u">
                 <form action="{% url 'searchgene' %}" method="get">
                   <input name="query" id="gene-query" type="text" placeholder="Enter gene name, locus tag, genome, contig name or product ...">
-                  <input name="type" type="hidden" id="type" value = "gene">
+                  <input name="type" type="hidden" id="type" value="gene">
+				  <input name="order" type="hidden" id="order" value="locus_tag">
                 </form>
                 </div>
               </div>
@@ -35,6 +36,7 @@
                   <input name="annotation_query" id="annotation-query" type="text" placeholder="Search by function, domain name or tool name...">
                   <input name="fast" id="fast" type="checkbox"><label for="fast">Fast search (skip search in text notes, do not sort search results)</label>
                   <input name="type" type="hidden" id="type" value = "annotation">
+				  <input name="order" type="hidden" id="order" value="gene">
                 </form>
                 </div>
               </div>
@@ -133,6 +135,7 @@
             <p>
               <form action="{% url 'searchtaxon' %}" method="get">
                 <input name="query" type="text" placeholder="Enter taxon name or taxonomy ID...">
+				<input name="order" type="hidden" id="order" value="name">
               </form>
             </p>
             <header class="align-center">

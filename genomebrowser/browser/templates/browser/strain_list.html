@@ -13,6 +13,7 @@
             <header class="align-center">
               <form action="{% url 'searchstrain' %}" method="get">
                 <input name="query" type="text" placeholder="Search strains by name or order...">
+				<input name="order" type="hidden" id="order" value="id">
               </form>
               {% if searchcontext %}
                 <h4>{{ searchcontext }}</h4>
@@ -23,9 +24,9 @@
                 <table>
                   <thead>
                     <tr>
-                      <th>Strain ID</th>
-                      <th>Order</th>
-                      <th>Name</th>
+                      <th>{% if order != 'id' %}<a href="{% url 'searchstrain' %}?order=id{% if query %}&query={{ query  }}{% endif %}{% if taxon %}&taxon={{ taxon  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Strain ID</th>
+                      <th>{% if order != 'order' %}<a href="{% url 'searchstrain' %}?order=order{% if query %}&query={{ query  }}{% endif %}{% if taxon %}&taxon={{ taxon  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Order</th>
+                      <th>{% if order != 'name' %}<a href="{% url 'searchstrain' %}?order=name{% if query %}&query={{ query  }}{% endif %}{% if taxon %}&taxon={{ taxon  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Name</th>
                     </tr>
                   </thead>
                   <tbody>

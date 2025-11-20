@@ -163,7 +163,7 @@ class AnnotationSearchResultsAjaxView(View):
         if request.GET.get('order'):
             context['order'] = request.GET.get('order')
         if request.GET.get('genome'):
-            context['order'] = request.GET.get('genome')
+            context['genome'] = request.GET.get('genome')
         return render(request,'browser/annotation_list_ajax.html', context)
 
     @staticmethod
@@ -198,9 +198,25 @@ class TaxonListView(generic.ListView):
     model = Taxon
     context_object_name = 'taxalist'
     paginate_by = 50
+    
+    def get_context_data(self,**kwargs):
+        context = super(TaxonListView,self).get_context_data(**kwargs)
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
+        return context
 
     def get_queryset(self):
-        return Taxon.objects.order_by('name')
+        order_by = self.request.GET.get('order')
+        if not order_by:
+            order_by = 'name'
+        elif order_by == 'rank':
+            order_by = 'rank'
+        elif order_by == 'taxid':
+            order_by = 'taxonomy_id'
+        else:
+            order_by = 'name'
+        
+        return Taxon.objects.order_by(order_by, 'name')
 
 
 class TaxonSearchResultsView(generic.ListView):
@@ -216,16 +232,29 @@ class TaxonSearchResultsView(generic.ListView):
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
             self.request.GET.get('query') + '"'
+            context['query'] = self.request.GET.get('query')
         else:
             context['searchcontext'] = 'Query string is empty'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
+        order_by = self.request.GET.get('order')
+        if not order_by:
+            order_by = 'name'
+        elif order_by == 'rank':
+            pass
+        elif order_by == 'taxid':
+            order_by = 'taxonomy_id'
+        else:
+            order_by = 'name'
+        
         if query:
             object_list = Taxon.objects.filter(
                 Q(name__icontains=query) | Q(taxonomy_id__exact=query)
-            ).order_by('name')
+            ).order_by(order_by, 'name')
         else:
             object_list = Taxon.objects.none()
         return object_list
@@ -238,9 +267,26 @@ class StrainListView(generic.ListView):
     model = Strain
     context_object_name = 'strainlist'
     paginate_by = 50
+    
+    def get_context_data(self,**kwargs):
+        context = super(StrainListView,self).get_context_data(**kwargs)
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
+        return context
 
     def get_queryset(self):
-        return Strain.objects.order_by('strain_id')
+        order_by = self.request.GET.get('order')
+        if not order_by:
+            order_by = 'strain_id'
+        elif order_by == 'name':
+            order_by = 'full_name'
+        elif order_by == 'id':
+            order_by = 'strain_id'
+        elif order_by == 'order':
+            pass
+        else:
+            order_by = 'strain_id'
+        return Strain.objects.order_by(order_by, 'strain_id')
 
 
 class SampleListView(generic.ListView):
@@ -251,6 +297,12 @@ class SampleListView(generic.ListView):
     context_object_name = 'samplelist'
     paginate_by = 50
 
+    def get_context_data(self,**kwargs):
+        context = super(SampleListView,self).get_context_data(**kwargs)
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
+        return context
+    
     def get_queryset(self):
         return Sample.objects.order_by('sample_id')
 
@@ -264,23 +316,13 @@ class GenomeListView(generic.ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        if self.request.GET.get('order'):
-            order_by = self.request.GET.get('order')
-        else:
-            order_by = 'name'
-
+        order_by = self.request.GET.get('order')
         if not order_by:
             order_by = 'name'
-        elif order_by == 'source':
-            order_by = 'source'
         elif order_by == 'taxon':
             order_by = 'taxon__name'
-        elif order_by == 'size':
-            order_by = 'size'
-        elif order_by == 'contigs':
-            order_by = 'contigs'
-        elif order_by == 'genes':
-            order_by = 'genes'
+        elif order_by in ('source','size','contigs','genes'):
+            pass
         else:
             order_by = 'name'
         
@@ -1152,27 +1194,44 @@ class StrainSearchResultsView(generic.ListView):
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
                                        self.request.GET.get('query') + '"'
+            context['query'] = self.request.GET.get('query')
         elif self.request.GET.get('taxon'):
             taxon = Taxon.objects.get(taxonomy_id = self.request.GET.get('taxon'))
             context['searchcontext'] = 'Search results for ' + \
                                        taxon.name + ' [' + taxon.rank + ']'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
+        if self.request.GET.get('taxon'):
+            context['taxon'] = self.request.GET.get('taxon')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         taxon = self.request.GET.get('taxon')
+        order_by = self.request.GET.get('order')
+        if not order_by:
+            order_by = 'strain_id'
+        elif order_by == 'name':
+            order_by = 'full_name'
+        elif order_by == 'id':
+            order_by = 'strain_id'
+        elif order_by == 'order':
+            pass
+        else:
+            order_by = 'strain_id'
+        
         if query:
             object_list = Strain.objects.filter(
                 Q(strain_id__icontains=query) |
                 Q(full_name__icontains=query) |
                 Q(order__icontains=query)|
                 Q(strain_metadata__value__icontains=query)
-            ).distinct().order_by('strain_id')
+            ).distinct().order_by(order_by, 'strain_id')
         elif taxon:
             children = get_taxon_children(taxon)
             object_list = Strain.objects.filter(
                 taxon__taxonomy_id__in=children
-            ).distinct().order_by('strain_id')
+            ).distinct().order_by(order_by, 'strain_id')
         else:
             object_list = Strain.objects.none()
         return object_list

@@ -27,10 +27,10 @@
           <table>
             <thead>
               <tr>
-				<th><a href="{% url 'searchannotation' %}?order=gene{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Gene ID</th>
-				<th><a href="{% url 'searchannotation' %}?order=genome{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Genome</th>
-				<th><a href="{% url 'searchannotation' %}?order=annotation{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Annotation</th>
-				<th><a href="{% url 'searchannotation' %}?order=source{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Source</th>
+				<th>{% if order != 'gene' %}<a href="{% url 'searchannotation' %}?order=gene{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Gene ID</th>
+				<th>{% if order != 'genome' %}<a href="{% url 'searchannotation' %}?order=genome{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Genome</th>
+				<th>{% if order != 'annotation' %}<a href="{% url 'searchannotation' %}?order=annotation{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Annotation</th>
+				<th>{% if order != 'source' %}<a href="{% url 'searchannotation' %}?order=source{% if genome %}&genome={{ genome }}{% endif %}{% if annotation_query %}&annotation_query={{ annotation_query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Source</th>
               </tr>
             </thead>
             <tbody>

@@ -11,9 +11,9 @@
             </header>
             <br/>
             <div class="inner align-center">
-              <a class="button 2u 12u$(medium) align-center icon fa-bullseye" href="{% url 'genome_list' %}">Genomes</a>&nbsp;
-              <a class="button 2u 12u$(medium) align-center icon fa-bug" href="{% url 'strain_list' %}">Strains</a>&nbsp;
-              <a class="button 2u 12u$(medium) align-center icon fa-flask" href="{% url 'sample_list' %}">Samples</a>&nbsp;
+              <a class="button 2u 12u$(medium) align-center icon fa-bullseye" href="{% url 'genome_list' %}?order=name">Genomes</a>&nbsp;
+              <a class="button 2u 12u$(medium) align-center icon fa-bug" href="{% url 'strain_list' %}?order=id">Strains</a>&nbsp;
+              <a class="button 2u 12u$(medium) align-center icon fa-flask" href="{% url 'sample_list' %}?order=id">Samples</a>&nbsp;
               <a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'textsearch' %}">Text search</a>
             </div>
               <br/>

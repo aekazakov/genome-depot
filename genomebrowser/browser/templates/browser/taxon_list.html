@@ -23,9 +23,9 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Rank</th>
-                    <th>Taxonomy ID</th>
+                    <th>{% if order != 'name' %}<a href="{% url 'searchtaxon' %}?order=name{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Name</th>
+                    <th>{% if order != 'rank' %}<a href="{% url 'searchtaxon' %}?order=rank{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Rank</th>
+                    <th>{% if order != 'taxid' %}<a href="{% url 'searchtaxon' %}?order=taxid{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Taxonomy ID</th>
                   </tr>
                 </thead>
                 <tbody>

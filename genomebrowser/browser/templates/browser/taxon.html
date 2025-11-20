@@ -56,8 +56,8 @@
                   <p>Strains and genomes </p>
                 </header>
                 <h5 class="align-center">
-                  <a href="{% url 'searchgenome'%}?taxon={{ taxon.taxonomy_id }}">Find all genomes for {{ taxon.name }}</a><br/>
-                  <a href="{% url 'searchstrain'%}?taxon={{ taxon.taxonomy_id }}">Find all strains for {{ taxon.name }}</a>
+                  <a href="{% url 'searchgenome'%}?order=name&taxon={{ taxon.taxonomy_id }}">Find all genomes for {{ taxon.name }}</a><br/>
+                  <a href="{% url 'searchstrain'%}?order=id&taxon={{ taxon.taxonomy_id }}">Find all strains for {{ taxon.name }}</a>
                 </h5>
               </div>
             </div>

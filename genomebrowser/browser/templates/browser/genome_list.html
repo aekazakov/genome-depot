@@ -37,13 +37,13 @@
                 <table>
                   <thead>
                     <tr>
-                      <th><a href="{% url 'searchgenome' %}?order=name{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Name</th>
+                      <th>{% if order != 'name' %}<a href="{% url 'searchgenome' %}?order=name{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Name</th>
                       <th>Tags</th>
-                      <th><a href="{% url 'searchgenome' %}?order=source{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Source</th>
-                      <th><a href="{% url 'searchgenome' %}?order=taxon{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Taxonomy</th>
-                      <th><a href="{% url 'searchgenome' %}?order=size{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Size</th>
-                      <th><a href="{% url 'searchgenome' %}?order=contigs{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Contigs</th>
-                      <th><a href="{% url 'searchgenome' %}?order=genes{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;Genes</th>
+                      <th>{% if order != 'source' %}<a href="{% url 'searchgenome' %}?order=source{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Source</th>
+                      <th>{% if order != 'taxon' %}<a href="{% url 'searchgenome' %}?order=taxon{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Taxonomy</th>
+                      <th>{% if order != 'size' %}<a href="{% url 'searchgenome' %}?order=size{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Size</th>
+                      <th>{% if order != 'contigs' %}<a href="{% url 'searchgenome' %}?order=contigs{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Contigs</th>
+                      <th>{% if order != 'genes' %}<a href="{% url 'searchgenome' %}?order=genes{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Genes</th>
                     </tr>
                   </thead>
                   <tbody>
