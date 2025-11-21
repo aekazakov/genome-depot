@@ -18,6 +18,7 @@
                 {% else %}
                   <input name="query" type="text" placeholder="Search GO terms by name or ID...">
                 {% endif %}
+                <input name="order" type="hidden" id="order" value="name">
               </form>
               {% if searchcontext %}
                 <h4>{{ searchcontext }}</h4>
@@ -28,9 +29,9 @@
                 <table>
                   <thead>
                     <tr>
-                      <th>GO term</th>
-                      <th>Namespace</th>
-                      <th>Description</th>
+                      <th>{% if order != 'name' %}<a href="{% url 'gos' %}?order=name{% if query %}&query={{ query  }}{% endif %}{% if genome %}&genome={{ genome }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}GO&nbsp;term</th>
+                      <th>{% if order != 'namespace' %}<a href="{% url 'gos' %}?order=namespace{% if query %}&query={{ query  }}{% endif %}{% if genome %}&genome={{ genome }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Namespace</th>
+                      <th>{% if order != 'desc' %}<a href="{% url 'gos' %}?order=desc{% if query %}&query={{ query  }}{% endif %}{% if genome %}&genome={{ genome }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Description</th>
                     </tr>
                   </thead>
                   <tbody>

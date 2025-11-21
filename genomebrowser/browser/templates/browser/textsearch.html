@@ -50,80 +50,88 @@
               <div class="search left 6u">
                 <form action="{% url 'kos' %}" method="get">
                   <input name="query" id="ko-query" type="text" placeholder="Search KEGG orthologs by name or KO ID...">
+                  <input name="order" type="hidden" id="order" value="name">
                 </form>
               </div>
               <div class="search right 6u">
-                <p>OR <a href="{% url 'kos' %}">Browse KEGG Ortholog groups</a></p>
+                <p>OR <a href="{% url 'kos' %}?order=name">Browse KEGG Ortholog groups</a></p>
               </div>
             </div>
             <div class="row 200%">
               <div class="search left 6u">
                 <form action="{% url 'kps' %}" method="get">
                   <input name="query" id="kp-query" type="text" placeholder="Search KEGG pathways by name or KEGG ID...">
+                  <input name="order" type="hidden" id="order" value="name">
                 </form>
               </div>
               <div class="search right 6u">
-                <p>OR <a href="{% url 'kps' %}">Browse KEGG pathways</a></p>
+                <p>OR <a href="{% url 'kps' %}?order=name">Browse KEGG pathways</a></p>
               </div>
             </div>
             <div class="row 200%">
               <div class="search left 6u">
                 <form action="{% url 'krs' %}" method="get">
                   <input name="query" id="kr-query" type="text" placeholder="Search KEGG reactions by name or KEGG ID...">
+                  <input name="order" type="hidden" id="order" value="name">
                 </form>
               </div>
               <div class="search right 6u">
-                <p>OR <a href="{% url 'krs' %}">Browse KEGG reactions</a></p>
+                <p>OR <a href="{% url 'krs' %}?order=name">Browse KEGG reactions</a></p>
               </div>
             </div>
             <div class="row 200%">
               <div class="search left 6u">
                 <form action="{% url 'enzymes' %}" method="get">
                   <input name="query" id="ec-query" type="text" placeholder="Search enzymes by name or EC number...">
+                  <input name="order" type="hidden" id="order" value="name">
                 </form>
               </div>
               <div class="search right 6u">
-                <p>OR <a href="{% url 'enzymes' %}">Browse enzymes</a></p>
+                <p>OR <a href="{% url 'enzymes' %}?order=name">Browse enzymes</a></p>
               </div>
             </div>
             <div class="row 200%">
               <div class="search left 6u">
                 <form action="{% url 'transporters' %}" method="get">
                   <input name="query" id="tc-query" type="text" placeholder="Search transporters by name or TCDB family...">
+                  <input name="order" type="hidden" id="order" value="name">
                 </form>
               </div>
               <div class="search right 6u">
-                <p>OR <a href="{% url 'transporters' %}">Browse TCDB families</a></p>
+                <p>OR <a href="{% url 'transporters' %}?order=name">Browse TCDB families</a></p>
               </div>
             </div>
             <div class="row 200%">
               <div class="search left 6u">
                 <form action="{% url 'cazy' %}" method="get">
                   <input name="query" id="cazy-query" type="text" placeholder="Search CAZymes by name or CAZYfam ID...">
+                  <input name="order" type="hidden" id="order" value="name">
                 </form>
               </div>
               <div class="search right 6u">
-                <p>OR <a href="{% url 'cazy' %}">Browse CAZy families</a></p>
+                <p>OR <a href="{% url 'cazy' %}?order=name">Browse CAZy families</a></p>
               </div>
             </div>
             <div class="row 200%">
               <div class="search left 6u">
                 <form action="{% url 'cogs' %}" method="get">
                   <input name="query" id="cog-query" type="text" placeholder="Search COG classes by name...">
+                  <input name="order" type="hidden" id="order" value="name">
                 </form>
               </div>
               <div class="search right 6u">
-                <p>OR <a href="{% url 'cogs' %}">Browse COG classes</a></p>
+                <p>OR <a href="{% url 'cogs' %}?order=name">Browse COG classes</a></p>
               </div>
             </div>
             <div class="row 200%">
               <div class="search left 6u">
                 <form action="{% url 'gos' %}" method="get">
                   <input name="query" id="go-query" type="text" placeholder="Search GO terms by name...">
+                  <input name="order" type="hidden" id="order" value="name">
                 </form>
               </div>
               <div class="search right 6u">
-                <p>OR <a href="{% url 'gos' %}">Browse GO terms</a></p>
+                <p>OR <a href="{% url 'gos' %}?order=name">Browse GO terms</a></p>
               </div>
             </div>
             <br/>
@@ -135,7 +143,7 @@
             <p>
               <form action="{% url 'searchtaxon' %}" method="get">
                 <input name="query" type="text" placeholder="Enter taxon name or taxonomy ID...">
-				<input name="order" type="hidden" id="order" value="name">
+                <input name="order" type="hidden" id="order" value="name">
               </form>
             </p>
             <header class="align-center">
@@ -146,6 +154,7 @@
             <p>
               <form action="{% url 'ogs' %}" method="get">
                 <input name="query" type="text" placeholder="Enter eggNOG ID or taxon name...">
+                <input name="order" type="hidden" id="order" value="name">
               </form>
             </p>
           </div>

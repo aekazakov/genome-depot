@@ -23,9 +23,9 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Regulon</th>
-                    <th>Regulators</th>
-                    <th>Description</th>
+                    <th>{% if order != 'name' %}<a href="{% url 'regulonlist' genome=genome.name%}?order=name{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Regulon</th>
+                    <th>{% if order != 'regulators' %}<a href="{% url 'regulonlist' genome=genome.name%}?order=regulators{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Regulators</th>
+                    <th>{% if order != 'desc' %}<a href="{% url 'regulonlist' genome=genome.name%}?order=desc{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Description</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -18,6 +18,7 @@
       {% else %}
         <input name="query" type="text" placeholder="Search CAZymes by name or CAZYfam ID...">
       {% endif %}
+        <input name="order" type="hidden" id="order" value="name">
        </form>
       {% if searchcontext %}
         <h4>{{ searchcontext }}</h4>
@@ -28,8 +29,8 @@
       <table>
         <thead>
           <tr>
-            <th>CAZy family</th>
-            <th>Description</th>
+            <th>{% if order != 'name' %}<a href="{% url 'cazy' %}?order=name{% if query %}&query={{ query  }}{% endif %}{% if genome %}&genome={{ genome }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}CAZy&nbsp;family</th>
+            <th>{% if order != 'desc' %}<a href="{% url 'cazy' %}?order=desc{% if query %}&query={{ query  }}{% endif %}{% if genome %}&genome={{ genome }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Description</th>
           </tr>
         </thead>
         <tbody>

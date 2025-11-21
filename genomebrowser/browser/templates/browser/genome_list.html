@@ -14,6 +14,7 @@
             <header class="align-center">
               <form action="{% url 'searchgenome' %}" method="get">
                   <input name="query" type="text" placeholder="Search genomes by name...">
+                  <input name="order" type="hidden" id="order" value="name">
               </form>
               {% if searchcontext %}
                 <h4>{{ searchcontext }}</h4>
@@ -38,7 +39,7 @@
                   <thead>
                     <tr>
                       <th>{% if order != 'name' %}<a href="{% url 'searchgenome' %}?order=name{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Name</th>
-                      <th>Tags</th>
+                      <th>{% if order != 'tags' %}<a href="{% url 'searchgenome' %}?order=tags{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Tags</th>
                       <th>{% if order != 'source' %}<a href="{% url 'searchgenome' %}?order=source{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Source</th>
                       <th>{% if order != 'taxon' %}<a href="{% url 'searchgenome' %}?order=taxon{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Taxonomy</th>
                       <th>{% if order != 'size' %}<a href="{% url 'searchgenome' %}?order=size{% if query %}&query={{ query  }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Size</th>

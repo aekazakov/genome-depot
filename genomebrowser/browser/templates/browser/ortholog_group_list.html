@@ -17,6 +17,7 @@
         {% else %}
           <input name="query" type="text" placeholder="Search eggNOG families by name or taxon...">
         {% endif %}
+        <input name="order" type="hidden" id="order" value="name">
         </form>
         {% if searchcontext %}
           <h4>{{ searchcontext }}</h4>
@@ -27,8 +28,8 @@
         <table>
           <thead>
             <tr>
-              <th>eggNOG family</th>
-              <th>Taxon</th>
+              <th>{% if order != 'name' %}<a href="{% url 'ogs' %}?order=name{% if query %}&query={{ query  }}{% endif %}{% if genome %}&genome={{ genome }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}eggNOG&nbsp;family</th>
+              <th>{% if order != 'taxon' %}<a href="{% url 'ogs' %}?order=taxon{% if query %}&query={{ query  }}{% endif %}{% if genome %}&genome={{ genome }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Taxon</th>
             {% if genome %}
               <th>&nbsp;</th>
             {% endif %}

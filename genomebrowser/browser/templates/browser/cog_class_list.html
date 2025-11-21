@@ -17,6 +17,7 @@
         {% else %}
             <input name="query" type="text" placeholder="Search COG classes by name...">
         {% endif %}
+        <input name="order" type="hidden" id="order" value="name">
         </form>
         {% if searchcontext %}
           <h4>{{ searchcontext }}</h4>
@@ -27,8 +28,8 @@
         <table>
           <thead>
             <tr>
-              <th>COG class</th>
-              <th>Description</th>
+              <th>{% if order != 'name' %}<a href="{% url 'cogs' %}?order=name{% if query %}&query={{ query  }}{% endif %}{% if genome %}&genome={{ genome }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}COG&nbsp;class</th>
+              <th>{% if order != 'desc' %}<a href="{% url 'cogs' %}?order=desc{% if query %}&query={{ query  }}{% endif %}{% if genome %}&genome={{ genome }}{% endif %}" class="icon fa-sort-asc"></a>&nbsp;{% endif %}Description</th>
             </tr>
           </thead>
           <tbody>

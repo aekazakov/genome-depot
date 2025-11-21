@@ -41,6 +41,8 @@ from browser.conserved_regulon import build_conserved_regulon
 from browser.conserved_operon import build_conserved_operon 
 from browser.taxonomy import generate_genome_sunburst
 from browser.taxonomy import get_taxon_children, generate_genes_sunburst
+
+from django.db.models import Min
 # Create your views here.
 logger = logging.getLogger("GenomeDepot")
 
@@ -333,7 +335,7 @@ class GenomeListView(generic.ListView):
             order_by = 'name'
         elif order_by == 'taxon':
             order_by = 'taxon__name'
-        elif order_by in ('source','size','contigs','genes'):
+        elif order_by in ('tags','source','size','contigs','genes'):
             pass
         else:
             order_by = 'name'
@@ -341,6 +343,14 @@ class GenomeListView(generic.ListView):
         if order_by == 'source':
             query_set = Genome.objects.order_by('strain__full_name','sample__full_name','name').select_related(
             'strain', 'sample', 'taxon'
+            ).prefetch_related('tags')
+        elif order_by == 'tags':
+            query_set = Genome.objects.annotate(
+                min_tag=Min('regulators__locus_tag')
+            ).order_by(
+                'min_tag','name'
+            ).select_related(
+                'strain', 'sample', 'taxon'
             ).prefetch_related('tags')
         else:
             query_set = Genome.objects.order_by(order_by,'name').select_related(
@@ -407,7 +417,7 @@ class OperonListView(generic.ListView):
                     Q(genes__locus_tag__icontains=query) |
                     Q(name__icontains=query)
                 ).order_by(
-                    'genome__name', 'contig__contig_id', 'start'
+                    'genome__name', 'contig__contig_id', 'start', 'name'
                 ).select_related(
                     'genome', 'contig'
                 ).prefetch_related(
@@ -443,7 +453,7 @@ class OperonListView(generic.ListView):
         else:
             if order_by == 'location':
                 object_list = Operon.objects.filter(genome__name=genome).order_by(
-                    'genome__name', 'contig__contig_id', 'start'
+                    'genome__name', 'contig__contig_id', 'start', 'name'
                 ).select_related(
                     'genome', 'contig'
                 ).prefetch_related(
@@ -490,30 +500,66 @@ class SiteListView(generic.ListView):
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
             self.request.GET.get('query') + '" in ' + genome.name + ' sites'
+            context['query'] = self.request.GET.get('query')
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self):
         genome = self.kwargs['genome']
+        
+        order_by = self.request.GET.get('order')
+        if not order_by:
+            order_by = 'name'
+        elif order_by == 'location':
+            pass
+        elif order_by == 'regulon':
+            order_by = 'regulon__name'
+        else:
+            order_by = 'name'
+        
         if self.request.GET.get('query'):
             query = self.request.GET.get('query')
-            object_list = Site.objects.filter(genome__name=genome).filter(
-                Q(name__icontains=query) |
-                Q(regulon__name__icontains=query)
-            ).order_by(
-                'name'
-            ).select_related(
-                'genome', 'contig'
-            ).prefetch_related(
-                'genome__tags'
-            ).distinct()
+            if order_by == 'location':
+                object_list = Site.objects.filter(genome__name=genome).filter(
+                    Q(name__icontains=query) |
+                    Q(regulon__name__icontains=query)
+                ).order_by(
+                    'genome__name', 'contig__contig_id', 'start', 'name'
+                ).select_related(
+                    'genome', 'contig'
+                ).prefetch_related(
+                    'genome__tags'
+                ).distinct()
+            else:
+                object_list = Site.objects.filter(genome__name=genome).filter(
+                    Q(name__icontains=query) |
+                    Q(regulon__name__icontains=query)
+                ).order_by(
+                    order_by,'name'
+                ).select_related(
+                    'genome', 'contig'
+                ).prefetch_related(
+                    'genome__tags'
+                ).distinct()
         else:
-            object_list = Site.objects.filter(genome__name=genome).order_by(
-                'name'
-            ).select_related(
-                'genome', 'contig'
-            ).prefetch_related(
-                'genome__tags'
-            ).distinct()
+            if order_by == 'location':
+                object_list = Site.objects.filter(genome__name=genome).order_by(
+                    'genome__name', 'contig__contig_id', 'start', 'name'
+                ).select_related(
+                    'genome', 'contig'
+                ).prefetch_related(
+                    'genome__tags'
+                ).distinct()
+            else:
+                object_list = Site.objects.filter(genome__name=genome).order_by(
+                    order_by,'name'
+                ).select_related(
+                    'genome', 'contig'
+                ).prefetch_related(
+                    'genome__tags'
+                ).distinct()
+                
         return object_list
 
 
@@ -537,36 +583,82 @@ class RegulonListView(generic.ListView):
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
             self.request.GET.get('query') + '" in ' + genome.name + ' regulons'
+            context['query'] = self.request.GET.get('query')
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self):
         genome = self.kwargs['genome']
+
+        order_by = self.request.GET.get('order')
+        if not order_by:
+            order_by = 'name'
+        elif order_by == 'regulators':
+            order_by = 'regulators'
+        elif order_by == 'desc':
+            order_by = 'description'
+        else:
+            order_by = 'name'
+
+
         if self.request.GET.get('query'):
             query = self.request.GET.get('query')
-            object_list = Regulon.objects.filter(
-                genome__name=genome
-            ).filter(
-                Q(name__icontains=query) |
-                Q(description__icontains=query) |
-                Q(regulators__locus_tag__icontains=query) |
-                Q(regulators__name__icontains=query)
-            ).order_by(
-                'name'
-            ).select_related(
-                'genome'
-            ).prefetch_related(
-                'genome__tags'
-            ).distinct()
+            if order_by == 'regulators':
+                object_list = Regulon.objects.filter(
+                    genome__name=genome
+                ).filter(
+                    Q(name__icontains=query) |
+                    Q(description__icontains=query) |
+                    Q(regulators__locus_tag__icontains=query) |
+                    Q(regulators__name__icontains=query)
+                ).annotate(
+                    regulators_listed=Min('regulators__locus_tag')
+                ).order_by(
+                    'regulators_listed'
+                ).select_related(
+                    'genome'
+                ).prefetch_related(
+                    'genome__tags'
+                ).distinct()
+            else:
+                object_list = Regulon.objects.filter(
+                    genome__name=genome
+                ).filter(
+                    Q(name__icontains=query) |
+                    Q(description__icontains=query) |
+                    Q(regulators__locus_tag__icontains=query) |
+                    Q(regulators__name__icontains=query)
+                ).order_by(
+                    order_by,'name'
+                ).select_related(
+                    'genome'
+                ).prefetch_related(
+                    'genome__tags'
+                ).distinct()
         else:
-            object_list = Regulon.objects.filter(
-                genome__name=genome
-            ).order_by(
-                'name'
-            ).select_related(
-                'genome'
-            ).prefetch_related(
-                'genome__tags'
-            ).distinct()
+            if order_by == 'regulators':
+                object_list = Regulon.objects.filter(
+                    genome__name=genome
+                ).annotate(
+                    regulators_listed=Min('regulators__locus_tag')
+                ).order_by(
+                    'regulators_listed'
+                ).select_related(
+                    'genome'
+                ).prefetch_related(
+                    'genome__tags'
+                ).distinct()
+            else:
+                object_list = Regulon.objects.filter(
+                    genome__name=genome
+                ).order_by(
+                    order_by, 'name'
+                ).select_related(
+                    'genome'
+                ).prefetch_related(
+                    'genome__tags'
+                ).distinct()
         return object_list
 
 
@@ -1174,16 +1266,10 @@ class GenomeSearchResultsView(generic.ListView):
         order_by = self.request.GET.get('order')
         if not order_by:
             order_by = 'name'
-        elif order_by == 'source':
-            order_by = 'source'
+        elif order_by in ('source','size','contigs','genes'):
+            pass
         elif order_by == 'taxon':
             order_by = 'taxon__name'
-        elif order_by == 'size':
-            order_by = 'size'
-        elif order_by == 'contigs':
-            order_by = 'contigs'
-        elif order_by == 'genes':
-            order_by = 'genes'
         else:
             order_by = 'name'
         
@@ -1198,7 +1284,18 @@ class GenomeSearchResultsView(generic.ListView):
                 ).prefetch_related(
                     'tags'
                 )
-
+            elif order_by == 'tags':
+                object_list = Genome.objects.filter(
+                    name__icontains=query
+                ).distinct().annotate(
+                    min_tag=Min('regulators__locus_tag')
+                ).order_by(
+                    'min_tag','name'
+                ).select_related(
+                    'strain', 'sample', 'taxon'
+                ).prefetch_related(
+                    'tags'
+                )
             else:
                 object_list = Genome.objects.filter(
                     name__icontains=query
@@ -1221,6 +1318,18 @@ class GenomeSearchResultsView(generic.ListView):
                 ).prefetch_related(
                     'tags'
                 )
+            elif order_by == 'tags':
+                object_list = Genome.objects.filter(
+                    taxon__taxonomy_id__in=children
+                ).distinct().annotate(
+                    min_tag=Min('regulators__locus_tag')
+                ).order_by(
+                    'min_tag','name'
+                ).select_related(
+                    'strain', 'sample', 'taxon'
+                ).prefetch_related(
+                    'tags'
+                )
             else:
                 object_list = Genome.objects.filter(
                     taxon__taxonomy_id__in=children
@@ -1235,6 +1344,16 @@ class GenomeSearchResultsView(generic.ListView):
             if order_by == 'source':
                 object_list = Genome.objects.distinct().order_by(
                         'strain__full_name', 'sample__full_name', 'name'
+                    ).select_related(
+                        'strain', 'sample', 'taxon'
+                    ).prefetch_related(
+                        'tags'
+                    )
+            elif order_by == 'tags':
+                object_list = Genome.objects.distinct().annotate(
+                        min_tag=Min('regulators__locus_tag')
+                    ).order_by(
+                        'min_tag','name'
                     ).select_related(
                         'strain', 'sample', 'taxon'
                     ).prefetch_related(
@@ -1303,7 +1422,7 @@ class StrainSearchResultsView(generic.ListView):
                 taxon__taxonomy_id__in=children
             ).distinct().order_by(order_by, 'strain_id')
         else:
-            object_list = Strain.objects.none()
+            object_list = Strain.objects.distinct().order_by(order_by, 'strain_id')
         return object_list
 
 
@@ -1365,6 +1484,7 @@ class KoSearchResultsView(generic.ListView):
             context['searchcontext'] = 'Search results for ' \
                                        + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
+            context['query'] = self.request.GET.get('query')
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
                                            + self.request.GET.get('query') + '" in ' \
@@ -1372,11 +1492,20 @@ class KoSearchResultsView(generic.ListView):
             else:
                 context['searchcontext'] = 'Search results for "' + \
                                            self.request.GET.get('query') + '"'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
+            
         return context
 
     def get_queryset(self):
         query = self.request.GET.get('query')
         genome = self.request.GET.get('genome')
+        order_by = self.request.GET.get('order')
+        if order_by == 'desc':
+            order_by = 'description'
+        else:
+            order_by = 'kegg_id'
+
         if genome:
             proteins = Gene.objects.filter(
                 genome__name = genome
@@ -1386,18 +1515,18 @@ class KoSearchResultsView(generic.ListView):
                     (Q(kegg_id__icontains=query) |
                     Q(description__icontains=query)) &
                     Q(protein__in = proteins)
-                ).order_by('kegg_id').distinct()
+                ).order_by(order_by).distinct()
             else:
                 object_list = Kegg_ortholog.objects.filter(
                     protein__in = proteins
-                ).order_by('kegg_id').distinct()
+                ).order_by(order_by).distinct()
         elif query:
             object_list = Kegg_ortholog.objects.filter(
                 Q(kegg_id__icontains=query) |
                 Q(description__icontains=query)
-            ).order_by('kegg_id').distinct()
+            ).order_by(order_by).distinct()
         else:
-            object_list = Kegg_ortholog.objects.order_by('kegg_id')
+            object_list = Kegg_ortholog.objects.order_by(order_by)
         return object_list
 
 
@@ -1416,6 +1545,7 @@ class KpSearchResultsView(generic.ListView):
             context['searchcontext'] = 'Search results for ' \
                                        + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
+            context['query'] = self.request.GET.get('query')
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
                                            + self.request.GET.get('query') + '" in ' \
@@ -1423,11 +1553,18 @@ class KpSearchResultsView(generic.ListView):
             else:
                 context['searchcontext'] = 'Search results for "' + \
                                            self.request.GET.get('query') + '"'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         genome = self.request.GET.get('genome')
+        order_by = self.request.GET.get('order')
+        if order_by == 'desc':
+            order_by = 'description'
+        else:
+            order_by = 'kegg_id'
         if genome:
             proteins = Gene.objects.filter(
                 genome__name = genome
@@ -1437,17 +1574,17 @@ class KpSearchResultsView(generic.ListView):
                     (Q(kegg_id__icontains=query) |
                     Q(description__icontains=query)) &
                     Q(protein__in = proteins)
-                ).order_by('kegg_id').distinct()
+                ).order_by(order_by).distinct()
             else:
                 object_list = Kegg_pathway.objects.filter(
                     protein__in = proteins
-                ).order_by('kegg_id').distinct()
+                ).order_by(order_by).distinct()
         elif query:
             object_list = Kegg_pathway.objects.filter(
                 Q(kegg_id__icontains=query) | Q(description__icontains=query)
-            ).order_by('kegg_id').distinct()
+            ).order_by(order_by).distinct()
         else:
-            object_list = Kegg_pathway.objects.order_by('kegg_id')
+            object_list = Kegg_pathway.objects.order_by(order_by)
         return object_list
 
 
@@ -1466,6 +1603,7 @@ class KrSearchResultsView(generic.ListView):
             context['searchcontext'] = 'Search results for ' \
                                        + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
+            context['query'] = self.request.GET.get('query')
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
                                            + self.request.GET.get('query') + '" in ' \
@@ -1473,11 +1611,18 @@ class KrSearchResultsView(generic.ListView):
             else:
                 context['searchcontext'] = 'Search results for "' + \
                                            self.request.GET.get('query') + '"'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         genome = self.request.GET.get('genome')
+        order_by = self.request.GET.get('order')
+        if order_by == 'desc':
+            order_by = 'description'
+        else:
+            order_by = 'kegg_id'
         if genome:
             proteins = Gene.objects.filter(
                 genome__name = genome
@@ -1487,18 +1632,18 @@ class KrSearchResultsView(generic.ListView):
                     (Q(kegg_id__icontains=query) |
                     Q(description__icontains=query)) &
                     Q(protein__in = proteins)
-                ).order_by('kegg_id').distinct()
+                ).order_by(order_by).distinct()
             else:
                 object_list = Kegg_reaction.objects.filter(
                     protein__in = proteins
-                ).order_by('kegg_id').distinct()
+                ).order_by(order_by).distinct()
         elif query:
             object_list = Kegg_reaction.objects.filter(
                 Q(kegg_id__icontains=query) |
                 Q(description__icontains=query)
-            ).order_by('kegg_id').distinct()
+            ).order_by(order_by).distinct()
         else:
-            object_list = Kegg_reaction.objects.order_by('kegg_id')
+            object_list = Kegg_reaction.objects.order_by(order_by)
         return object_list
 
 
@@ -1517,6 +1662,7 @@ class EcSearchResultsView(generic.ListView):
             context['searchcontext'] = 'Search results for ' \
                                        + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
+            context['query'] = self.request.GET.get('query')
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
                                            + self.request.GET.get('query') + '" in ' \
@@ -1524,11 +1670,18 @@ class EcSearchResultsView(generic.ListView):
             else:
                 context['searchcontext'] = 'Search results for "' + \
                                            self.request.GET.get('query') + '"'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         genome = self.request.GET.get('genome')
+        order_by = self.request.GET.get('order')
+        if order_by == 'desc':
+            order_by = 'description'
+        else:
+            order_by = 'ec_number'
         if genome:
             proteins = Gene.objects.filter(
                 genome__name = genome
@@ -1538,18 +1691,18 @@ class EcSearchResultsView(generic.ListView):
                     (Q(ec_number__icontains=query) |
                     Q(description__icontains=query)) &
                     Q(protein__in = proteins)
-                ).order_by('ec_number').distinct()
+                ).order_by(order_by).distinct()
             else:
                 object_list = Ec_number.objects.filter(
                     protein__in = proteins
-                ).order_by('ec_number').distinct()
+                ).order_by(order_by).distinct()
         elif query:
             object_list = Ec_number.objects.filter(
                 Q(ec_number__icontains=query) |
                 Q(description__icontains=query)
-                ).order_by('ec_number').distinct()
+                ).order_by(order_by).distinct()
         else:
-            object_list = Ec_number.objects.order_by('ec_number')
+            object_list = Ec_number.objects.order_by(order_by)
         return object_list
 
 
@@ -1568,6 +1721,7 @@ class TcSearchResultsView(generic.ListView):
             context['searchcontext'] = 'Search results for ' \
                                        + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
+            context['query'] = self.request.GET.get('query')
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
                                            + self.request.GET.get('query') + '" in ' \
@@ -1575,11 +1729,18 @@ class TcSearchResultsView(generic.ListView):
             else:
                 context['searchcontext'] = 'Search results for "' + \
                                            self.request.GET.get('query') + '"'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         genome = self.request.GET.get('genome')
+        order_by = self.request.GET.get('order')
+        if order_by == 'desc':
+            order_by = 'description'
+        else:
+            order_by = 'tc_id'
         if genome:
             proteins = Gene.objects.filter(
                 genome__name = genome
@@ -1589,17 +1750,17 @@ class TcSearchResultsView(generic.ListView):
                     (Q(tc_id__icontains=query) |
                     Q(description__icontains=query)) &
                     Q(protein__in = proteins)
-                ).order_by('tc_id').distinct()
+                ).order_by(order_by).distinct()
             else:
                 object_list = Tc_family.objects.filter(
                     protein__in = proteins
-                ).order_by('tc_id').distinct()
+                ).order_by(order_by).distinct()
         elif query:
             object_list = Tc_family.objects.filter(
                 Q(tc_id__icontains=query) | Q(description__icontains=query)
-            ).order_by('tc_id').distinct()
+            ).order_by(order_by).distinct()
         else:
-            object_list = Tc_family.objects.order_by('tc_id')
+            object_list = Tc_family.objects.order_by(order_by)
         return object_list
 
 
@@ -1618,6 +1779,7 @@ class CazySearchResultsView(generic.ListView):
             context['searchcontext'] = 'Search results for ' \
                                        + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
+            context['query'] = self.request.GET.get('query')
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
                                            + self.request.GET.get('query') + '" in ' \
@@ -1625,11 +1787,18 @@ class CazySearchResultsView(generic.ListView):
             else:
                 context['searchcontext'] = 'Search results for "' + \
                                            self.request.GET.get('query') + '"'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         genome = self.request.GET.get('genome')
+        order_by = self.request.GET.get('order')
+        if order_by == 'desc':
+            order_by = 'description'
+        else:
+            order_by = 'cazy_id'
         if genome:
             proteins = Gene.objects.filter(
                 genome__name = genome
@@ -1639,18 +1808,18 @@ class CazySearchResultsView(generic.ListView):
                     (Q(cazy_id__icontains=query) |
                     Q(description__icontains=query)) &
                     Q(protein__in = proteins)
-                ).order_by('cazy_id').distinct()
+                ).order_by(order_by).distinct()
             else:
                 object_list = Cazy_family.objects.filter(
                     protein__in = proteins
-                ).order_by('cazy_id').distinct()
+                ).order_by(order_by).distinct()
         elif query:
             object_list = Cazy_family.objects.filter(
                 Q(cazy_id__icontains=query) |
                 Q(description__icontains=query)
-            ).order_by('cazy_id').distinct()
+            ).order_by(order_by).distinct()
         else:
-            object_list = Cazy_family.objects.order_by('cazy_id')
+            object_list = Cazy_family.objects.order_by(order_by)
         return object_list
 
 
@@ -1669,6 +1838,7 @@ class GoSearchResultsView(generic.ListView):
             context['searchcontext'] = 'Search results for ' \
                                        + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
+            context['query'] = self.request.GET.get('query')
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
                                            + self.request.GET.get('query') + '" in ' \
@@ -1676,11 +1846,20 @@ class GoSearchResultsView(generic.ListView):
             else:
                 context['searchcontext'] = 'Search results for "' + \
                                            self.request.GET.get('query') + '"'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         genome = self.request.GET.get('genome')
+        order_by = self.request.GET.get('order')
+        if order_by == 'desc':
+            order_by = 'description'
+        elif order_by == 'namespace':
+            order_by = 'go_namespace'
+        else:
+            order_by = 'go_id'
         if genome:
             proteins = Gene.objects.filter(
                 genome__name = genome
@@ -1690,18 +1869,18 @@ class GoSearchResultsView(generic.ListView):
                     (Q(go_id__icontains=query) |
                     Q(description__icontains=query)) &
                     Q(protein__in = proteins)
-                ).order_by('go_id').distinct()
+                ).order_by(order_by,'go_id').distinct()
             else:
                 object_list = Go_term.objects.filter(
                     protein__in = proteins
-                ).order_by('go_id').distinct()
+                ).order_by(order_by,'go_id').distinct()
         elif query:
             object_list = Go_term.objects.filter(
                 Q(go_id__icontains=query) |
                 Q(description__icontains=query)
-            ).order_by('go_id').distinct()
+            ).order_by(order_by,'go_id').distinct()
         else:
-            object_list = Go_term.objects.order_by('go_id')
+            object_list = Go_term.objects.order_by(order_by,'go_id')
         return object_list
 
 
@@ -1720,6 +1899,7 @@ class CogSearchResultsView(generic.ListView):
             context['searchcontext'] = 'Search results for ' \
                                        + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
+            context['query'] = self.request.GET.get('query')
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
                                            + self.request.GET.get('query') + '" in ' \
@@ -1727,11 +1907,18 @@ class CogSearchResultsView(generic.ListView):
             else:
                 context['searchcontext'] = 'Search results for "' + \
                                            self.request.GET.get('query') + '"'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         genome = self.request.GET.get('genome')
+        order_by = self.request.GET.get('order')
+        if order_by == 'desc':
+            order_by = 'description'
+        else:
+            order_by = 'cog_id'
         if genome:
             proteins = Gene.objects.filter(
                 genome__name = genome
@@ -1741,18 +1928,18 @@ class CogSearchResultsView(generic.ListView):
                     (Q(cog_id__icontains=query) |
                     Q(description__icontains=query)) &
                     Q(protein__in = proteins)
-                ).order_by('cog_id').distinct()
+                ).order_by(order_by).distinct()
             else:
                 object_list = Cog_class.objects.filter(
                     protein__in = proteins
-                ).order_by('cog_id').distinct()
+                ).order_by(order_by).distinct()
         elif query:
             object_list = Cog_class.objects.filter(
                 Q(cog_id__icontains=query) |
                 Q(description__icontains=query)
-            ).order_by('cog_id').distinct()
+            ).order_by(order_by).distinct()
         else:
-            object_list = Cog_class.objects.order_by('cog_id')
+            object_list = Cog_class.objects.order_by(order_by)
         return object_list
 
 
@@ -1771,6 +1958,7 @@ class OgSearchResultsView(generic.ListView):
             context['searchcontext'] = 'Search results for ' \
                                        + self.request.GET.get('genome') + ' genome'
         if self.request.GET.get('query'):
+            context['query'] = self.request.GET.get('query')
             if self.request.GET.get('genome'):
                 context['searchcontext'] = 'Search results for "' \
                                            + self.request.GET.get('query') + '" in ' \
@@ -1778,11 +1966,18 @@ class OgSearchResultsView(generic.ListView):
             else:
                 context['searchcontext'] = 'Search results for "' + \
                                            self.request.GET.get('query') + '"'
+        if self.request.GET.get('order'):
+            context['order'] = self.request.GET.get('order')
         return context
 
     def get_queryset(self): # new
         query = self.request.GET.get('query')
         genome = self.request.GET.get('genome')
+        order_by = self.request.GET.get('order')
+        if order_by == 'taxon':
+            order_by = 'taxon__name'
+        else:
+            order_by = 'eggnog_id'
         if genome:
             proteins = Gene.objects.filter(
                 genome__name = genome
@@ -1792,16 +1987,16 @@ class OgSearchResultsView(generic.ListView):
                     (Q(eggnog_id__icontains=query) |
                     Q(taxon__name__icontains=query)) &
                     Q(protein__in = proteins)
-                ).order_by('eggnog_id').distinct()
+                ).order_by(order_by).distinct()
             else:
                 object_list = Ortholog_group.objects.filter(
                     protein__in = proteins
-                ).order_by('eggnog_id').distinct()
+                ).order_by(order_by).distinct()
         elif query:
             object_list = Ortholog_group.objects.filter(
                 Q(eggnog_id__icontains=query) |
                 Q(taxon__name__icontains=query)
-            ).order_by('eggnog_id').distinct()
+            ).order_by(order_by).distinct()
         else:
             object_list = Ortholog_group.objects.none()
         return object_list
