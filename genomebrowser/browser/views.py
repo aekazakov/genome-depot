@@ -1,5 +1,6 @@
 import time
 import logging
+import json
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, JsonResponse
@@ -2947,7 +2948,7 @@ class ComparativeView(View):
         AJAX-based view for comparative gene plot page
     '''
     @staticmethod
-    def verify_parameters(size, lines):
+    def verify_parameters(size, lines, shift):
         '''
             Parameters validation
         '''
@@ -2959,10 +2960,10 @@ class ComparativeView(View):
                 size = int(size)
             except TypeError:
                 raise SuspiciousOperation(
-                    "Unacceptable value '%s' for size parameter." % size
+                    "Unacceptable value '%s' for the size parameter." % size
                     )
                 
-            if int(size) not in [5, 10, 20, 40, 60, 80, 100]:
+            if int(size) not in (5, 10, 20, 40, 60, 80, 100):
                 raise SuspiciousOperation(
                     "Unacceptable value for locus size: '%s'" % size
                     )
@@ -2974,14 +2975,29 @@ class ComparativeView(View):
                 lines = int(lines)
             except TypeError:
                 raise SuspiciousOperation(
-                    "Unacceptable value '%s' for lines number." % lines
+                    "Unacceptable value '%s' for the lines number." % lines
                     )
                 
-            if int(lines) not in [10, 25, 50, 75, 100, 200]:
+            if int(lines) not in (10, 25, 50, 75, 100, 200):
                 raise SuspiciousOperation(
                     "Unacceptable value for lines number: '%s'" % lines
                     )
+
+            if shift is None:
+                raise SuspiciousOperation('"shift" parameter is missing')
                 
+            try:
+                lines = int(shift)
+            except TypeError:
+                raise SuspiciousOperation(
+                    "Unacceptable value '%s' for the shift parameter." % shift
+                    )
+                
+            if int(shift) not in (-2, -1, 0, 1, 2):
+                raise SuspiciousOperation(
+                    "Unacceptable value for the shift parameter: '%s'" % shift
+                    )
+                    
         except Exception as e:
             raise SuspiciousOperation(str(e))
     def post(self,request):
@@ -2994,15 +3010,16 @@ class ComparativeView(View):
 
         try:
             ComparativeView.verify_parameters(request.POST.get('size'),
-                                              request.POST.get('lines')
+                                              request.POST.get('lines'),
+                                              request.POST.get('shift'),
                                               )
         except SuspiciousOperation as e:
             return render(request, '404.html', {'searchcontext': str(e)})
         
         logger.debug('REQUEST1')
         logger.debug(
-            'Request parameters: %s %s %s %s %s', og_id, genome,
-            locus_tag, request.POST.get('size'), request.POST.get('lines')
+            'Request parameters: %s %s %s %s %s %s %s', og_id, genome,
+            locus_tag, request.POST.get('size'), request.POST.get('lines'), request.POST.get('shift'), request.POST.get('colors')
         )
         context = {}
         for key, val in request.POST.items():
@@ -3028,6 +3045,14 @@ class ComparativeView(View):
         context['size' + request.POST.get('size')] = '1'
         context['lines' + request.POST.get('lines')] = '1'
         context['ortholog_group'] = og
+        if request.POST.get('shift'):
+            context['shift'] = request.POST.get('shift')
+        else:
+            context['shift'] = '0'
+        if request.POST.get('colors'):
+            context['colors'] = request.POST.get('colors')
+        else:
+            context['colors'] = json.dumps({})
         return render(request,'browser/scriblajax.html', context)
 
 
@@ -3036,8 +3061,9 @@ class ComparativeView(View):
         start_time = time.time()
 
         try:
-            ComparativeView.verify_parameters(request.GET.get('size'),
-                                              request.GET.get('lines')
+            ComparativeView.verify_parameters(request.POST.get('size'),
+                                              request.POST.get('lines'),
+                                              request.POST.get('shift')
                                               )
         except SuspiciousOperation as e:
             return render(request, '404.html', {'searchcontext': str(e)})
@@ -3046,11 +3072,18 @@ class ComparativeView(View):
         #sleep_timer = 0
         #logger.debug('DELAY FOR ' + str(sleep_timer) + ' SECONDS')
         #time.sleep(sleep_timer)
-
         context = {}
-        locus_tag = request.GET.get('locus_tag')
-        genome = request.GET.get('genome')
-        og_id = request.GET.get('og')
+        locus_tag = request.POST.get('locus_tag')
+        genome = request.POST.get('genome')
+        og_id = request.POST.get('og')
+        if request.POST.get('shift'):
+            shift = request.POST.get('shift')
+        else:
+            shift = '0'
+
+        colors = {}
+        if request.POST.get('colors'):
+            colors = json.loads(request.POST.get('colors'))
 
         try:
             gene = Gene.objects.select_related(
@@ -3070,9 +3103,9 @@ class ComparativeView(View):
                           {'searchcontext': 'Ortholog group not found'}
                           )
         scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count, \
-        treemap_gene_ids, protein_msa = get_scribl(gene, og, request)
-            
+        treemap_gene_ids, protein_msa, colors = get_scribl(gene, og, colors, request)
         treemap = ''
+        #logger.debug("Colors: " + str(colors))
         if treemap_gene_ids:
             treemap, functional_profile = generate_genes_treemap(treemap_gene_ids)
 
@@ -3082,7 +3115,10 @@ class ComparativeView(View):
             context = {'scribl':scribl,
                        'og_gene_count':og_gene_count,
                        'plot_gene_count':plot_gene_count,
-                       "time":time.time()-start_time
+                       'time':time.time()-start_time,
+                       'shift': request.POST.get('shift'),
+                       'colors': "{}",
+                       'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')
                        }
         else:
             scribl='<script type="text/javascript">\nfunction draw(canvasName) ' +\
@@ -3100,8 +3136,12 @@ class ComparativeView(View):
                        'time':time.time()-start_time,
                        'treemap':treemap,
                        'tsv_profile': functional_profile,
-                       'protein_msa': protein_msa
+                       'protein_msa': protein_msa,
+                       'shift': request.GET.get('shift'),
+                       'colors': json.dumps(colors),
+                       'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')
                        }
+        #logger.debug('Colors from context: ' + context['colors'])
         return JsonResponse(context)
 
     

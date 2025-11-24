@@ -29,7 +29,7 @@
             <div class="grid-style">
               <div class="content">
                 <header class="align-center">
-                  <p class="align-center">Gene information</p>
+                  <p class="align-center">Gene information {{ colors }}</p>
                 </header>
                 <span>Genome</span>
                 <h5><a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.name }}</a> 
@@ -101,12 +101,106 @@
                   <input type="hidden" name="genome" value="{{ gene.genome.name }}" /> 
                   <input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}" /> 
                   <input type="hidden" name="og" value="{{ ortholog_group.id }}" /> 
+                  <input type="hidden" name="shift" value="{{ shift }}" /> 
+				  <input type="hidden" name="colors" value="{{ colors }}" /> 
                 </div>
                 <div class="2u 12u$(xsmall)">
                     <input type="submit" value="Refresh">
                 </div>
               </div>
             </form>
+			<hr>
+			
+			
+			<div id="6u$ 12u$(medium)">
+			  <ul class="actions fit small">
+				<li>
+				{% if shift == '-2' %}<form><button class="button fit disabled icon fa-angle-double-left">Pan left 40%</button></form>
+				{% else %}
+				<form action="{% url 'comparative' %}" method="post">
+				  {% csrf_token %}
+						<input type="hidden" name="genome" value="{{ gene.genome.name }}" /> 
+						<input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}" /> 
+						<input type="hidden" name="og" value="{{ ortholog_group.id }}" /> 
+						<input type="hidden" name="shift" value="-2" /> 
+						<input type="hidden" name="lines" value="{{ lines }}" /> 
+						<input type="hidden" name="size" value="{{ size }}" /> 
+						<input type="hidden" name="colors" value="{{ colors }}" /> 
+						<button type="submit" class="button fit icon fa-angle-double-left">Pan left 40%</button>
+				</form>
+				{% endif %}
+				</li>
+				<li>
+				{% if shift == '-1' %}<form><button class="button fit disabled icon fa-angle-left">Pan left 20%</button></form>
+				{% else %}
+				<form action="{% url 'comparative' %}" method="post">
+				  {% csrf_token %}
+						<input type="hidden" name="genome" value="{{ gene.genome.name }}" />
+						<input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}" />
+						<input type="hidden" name="og" value="{{ ortholog_group.id }}" />
+						<input type="hidden" name="shift" value="-1" />
+						<input type="hidden" name="lines" value="{{ lines }}" />
+						<input type="hidden" name="size" value="{{ size }}" />
+						<input type="hidden" name="colors" value="{{ colors }}" />
+						<button type="submit" class="button fit icon fa-angle-left">Pan left 20%</button>
+				</form>
+				{% endif %}
+				</li>
+				<li>
+				{% if shift == '0' %}<form><button class="button fit icon disabled fa-circle">Center on the gene</button></form>
+				{% else %}
+				<form action="{% url 'comparative' %}" method="post">
+				  {% csrf_token %}
+						<input type="hidden" name="genome" value="{{ gene.genome.name }}" /> 
+						<input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}" /> 
+						<input type="hidden" name="og" value="{{ ortholog_group.id }}" /> 
+						<input type="hidden" name="shift" value="0" /> 
+						<input type="hidden" name="lines" value="{{ lines }}" /> 
+						<input type="hidden" name="size" value="{{ size }}" /> 
+						<input type="hidden" name="colors" value="{{ colors }}" />
+						<button type="submit" class="button fit icon fa-circle">Center on the gene</button>
+				</form>
+				{% endif %}
+				</li>
+				<li>
+				{% if shift == '1' %}<form><button class="button fit disabled icon fa-angle-right">Pan right 20%</button></form>
+				{% else %}
+				<form action="{% url 'comparative' %}" method="post">
+				  {% csrf_token %}
+						<input type="hidden" name="genome" value="{{ gene.genome.name }}" /> 
+						<input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}" /> 
+						<input type="hidden" name="og" value="{{ ortholog_group.id }}" /> 
+						<input type="hidden" name="shift" value="1" /> 
+						<input type="hidden" name="lines" value="{{ lines }}" /> 
+						<input type="hidden" name="size" value="{{ size }}" /> 
+						<input type="hidden" name="colors" value="{{ colors }}" />
+						<button type="submit" class="button fit icon fa-angle-right">Pan right 20%</button>
+				</form>
+				{% endif %}
+				</li>
+				<li>
+				{% if shift == '2' %}<form><button class="button fit disabled icon fa-angle-double-right">Pan right 40%</button></form>
+				{% else %}
+				<form action="{% url 'comparative' %}" method="post">
+				  {% csrf_token %}
+						<input type="hidden" name="genome" value="{{ gene.genome.name }}" /> 
+						<input type="hidden" name="locus_tag" value="{{ gene.locus_tag }}" /> 
+						<input type="hidden" name="og" value="{{ ortholog_group.id }}" /> 
+						<input type="hidden" name="shift" value="2" /> 
+						<input type="hidden" name="lines" value="{{ lines }}" /> 
+						<input type="hidden" name="size" value="{{ size }}" /> 
+						<input type="hidden" name="colors" value="{{ colors }}" />
+						<button type="submit" class="button fit icon fa-angle-double-right">Pan right 40%</button>
+				</form>
+				{% endif %}
+				</li>
+			  </ul>
+			</div>
+
+			
+			
+			
+			
             <div id="comparative" class="align-center">
               <div id="treecanvas"></div>
                 <div id="scribl-container" class="content">
@@ -140,9 +234,9 @@
               $(document).ready(function(){
                 $.ajax({
                   url: "{% url 'loadingscribl' %}",
-                  method: 'GET',
+                  method: 'POST',
                   datatype: 'json',
-                  data: {"locus_tag": "{{ locus_tag }}", "genome": "{{ genome }}", "og": "{{ og }}", "size": "{{ size }}", "lines": "{{ lines }}" },
+                  data: {"csrfmiddlewaretoken": "{{ csrfmiddlewaretoken }}", "locus_tag": "{{ locus_tag }}", "genome": "{{ genome }}", "og": "{{ og }}", "size": "{{ size }}", "lines": "{{ lines }}", "shift": "{{ shift }}", "colors": "{{ colors }}" },
                 }).done(function(data){
                   $('#loading-bar-area').remove();
                   $('#run-time').append(data["time"].toFixed(2) + ' seconds')

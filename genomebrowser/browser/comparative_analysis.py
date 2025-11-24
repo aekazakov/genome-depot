@@ -304,16 +304,20 @@ def get_sorted_orthologs(eggnog_og, pivot_gene, genelist_size=50):
     return ret_genes, len(genes), tree_svg, tree_newick, protein_msa
 
 
-def get_scribl(start_gene, eggnog_og, request):
+def get_scribl(start_gene, eggnog_og, colors, request):
     """
         Returns Scribl plot of a conserved genome neighborhood
     """
-    locus_size = int(request.GET.get('size')) * 1000 #10000
-    genelist_size = int(request.GET.get('lines'))  #10
+    locus_size = int(request.POST.get('size')) * 1000 #10000
+    genelist_size = int(request.POST.get('lines'))  #10
+    shift = int(request.POST.get('shift'))
     gene_uid = 0
     track_uid = 0
     scribl = []
     eggnog2color = {eggnog_og.eggnog_id:RED, '':DARK_GREY}
+    # register OG colors
+    for group in colors:
+        eggnog2color[group] = colors[group]
     ordered_orthologs, og_gene_count, tree_canvas, tree_newick, protein_msa = get_sorted_orthologs(
         eggnog_og, start_gene, genelist_size
         )
@@ -358,8 +362,12 @@ def get_scribl(start_gene, eggnog_og, request):
                       ' = track' + str(track_uid) +
                       '.addLane();'
                       )
-        middle_point = (gene.end + gene.start) / 2
+        if reverse:
+            middle_point = (gene.end + gene.start) / 2 - locus_size * shift * 0.2
+        else:
+            middle_point = (gene.end + gene.start) / 2 + locus_size * shift * 0.2
         offset = int(middle_point - locus_size / 2)
+        #logger.debug(gene.locus_tag + ': start %d end %d locus size %d middle point %d offset %d', gene.end, gene.start, locus_size, middle_point, offset)
         taxon_name = gene.genome.taxon.name
         taxon_name = taxon_name.replace("'", "")
         if reverse:
@@ -398,8 +406,6 @@ def get_scribl(start_gene, eggnog_og, request):
                           '.getPixelPositionY() - 8);'
                           )
         # Create a track for gene glyphs
-        middle_point = (gene.end + gene.start) / 2
-        offset = int(middle_point - locus_size / 2)
         range_start = int(middle_point - locus_size / 2)
         range_end = int(middle_point + locus_size / 2)
         neigbor_genes = Gene.objects.filter(
@@ -442,7 +448,10 @@ def get_scribl(start_gene, eggnog_og, request):
                                request,
                                locus_size
                                )
+    # update OG colors 
+    for group in eggnog2color:
+        colors[group] = eggnog2color[group]
     return (
         '\n'.join(scribl), tree_canvas, tree_newick,
-        og_gene_count, plot_gene_count, treemap_gene_ids, protein_msa
+        og_gene_count, plot_gene_count, treemap_gene_ids, protein_msa, colors
     )
