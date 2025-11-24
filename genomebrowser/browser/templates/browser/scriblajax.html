@@ -29,8 +29,9 @@
             <div class="grid-style">
               <div class="content">
                 <header class="align-center">
-                  <p class="align-center">Gene information {{ colors }}</p>
+                  <p class="align-center">Gene information</p>
                 </header>
+				<h5><a href="{% url 'genedetails' genome=gene.genome.name locus_tag=gene.locus_tag %}">{{ gene.locus_tag }}{%if gene.name %} ({{ gene.name }}){% endif %}</a>, {{ gene.contig.contig_id }}: {% if gene.strand == -1 %} complement({{ gene.start }}..{{ gene.end }}){% else %}{{ gene.start }}..{{ gene.end }}{% endif %}</h5>
                 <span>Genome</span>
                 <h5><a href="{% url 'genomedetails' name=gene.genome.name %}">{{ gene.genome.name }}</a> 
                   {%if gene.genome.strain %}
