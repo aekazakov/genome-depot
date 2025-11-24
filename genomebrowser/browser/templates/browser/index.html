@@ -1,6 +1,10 @@
 {% extends "base_generic.html" %}
+{% load my_tags %}
 {% load static %}
 {% block page-title %}<title>{%if site_title %}{{ site_title }}{% else %}GenomeDepot start page{% endif %}</title>{% endblock %}
+{% block script-header %}
+{% endblock %}
+
 {% block title %} <div class="logo">GenomeDepot</div>{% endblock %}
 
 {% block content %}
@@ -14,7 +18,7 @@
               <a class="button 2u 12u$(medium) align-center icon fa-bullseye" href="{% url 'genome_list' %}?order=name">Genomes</a>&nbsp;
               <a class="button 2u 12u$(medium) align-center icon fa-bug" href="{% url 'strain_list' %}?order=id">Strains</a>&nbsp;
               <a class="button 2u 12u$(medium) align-center icon fa-flask" href="{% url 'sample_list' %}?order=id">Samples</a>&nbsp;
-              <a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'textsearch' %}">Text search</a>
+              <a class="button 2u 12u$(medium) align-center icon fa-search" href="{% url 'textsearch' %}">Advanced search</a>
             </div>
               <br/>
             <div class="inner align-center">
@@ -23,6 +27,40 @@
               <a class="button 2u 12u$(medium) align-center icon fa-info-circle" href="{% url 'about' %}">About this site</a>&nbsp;
               <a class="button 2u 12u$(medium) align-center icon fa-book" href="https://aekazakov.github.io/genome-depot/">Documentation</a>
             </div>
-          </div>
+			<div class="wrapper style2" style="background-color:rgba(0,0,0,0.0)">
+			  <div class="inner">
+			    <div class="12u">
+				  <form action="{% url 'searchgenome' %}" method="get">
+					<h4 style="color:#f2f2f2">Find genome by name</h4>
+				    <div class="box">
+				      <input name="query" type="text" placeholder="Search in genomes...">
+					</div>
+					<input name="order" type="hidden" id="order" value="name">
+				  </form>
+			    </div>
+			    <div class="12u">
+				  <form action="{% url 'searchgene' %}" method="get">
+					<h4 style="color:#f2f2f2">Find genes by gene, contig, genome identifier or product</h4>
+				  <div class="box">
+					<input name="query" id="gene-query" type="text" placeholder="Enter gene name, locus tag, genome, contig name or product ...">
+				  </div>
+					<input name="type" type="hidden" id="type" value="gene">
+					<input name="order" type="hidden" id="order" value="locus_tag">
+					
+				  </form>
+                </div>
+			    <div class="12u">
+                <form action="{% url 'searchannotation' %}" method="get">
+				  <h4 style="color:#f2f2f2">Search in gene function annotations</h4>
+				  <div class="box">
+                  <input name="annotation_query" class="box" id="annotation-query" type="text" placeholder="Search by function, domain name or tool name...">
+				  </div>
+                  <input name="fast" type="hidden" id="fast" value = "">
+                  <input name="type" type="hidden" id="type" value = "annotation">
+				  <input name="order" type="hidden" id="order" value="gene">
+                </form>
+                </div>
+              </div>
+			</div>
         </div>
 {% endblock %}
