@@ -1956,22 +1956,22 @@ class Importer(object):
         try:
             self.read_genome_list(lines)
         except Exception:
-            ret.append('Critical error: read_genome_list failed')
+            ret.append(str(timezone.now()) + ': Critical error: read_genome_list failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
         else:
-            ret.append('Reading genome list: OK')
+            ret.append(str(timezone.now()) + ': Reading genome list: OK')
             
         logger.info('Checking genome names')
         # check if any genomes already exist in the database
         try:
             self.check_genomes()
         except Exception:
-            ret.append('Critical error: check_genomes failed')
+            ret.append(str(timezone.now()) + ': Critical error: check_genomes failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
         else:
-            ret.append('Checking genome names: OK')
+            ret.append(str(timezone.now()) + ': Checking genome names: OK')
         
         # generate a tag for this batch of genomes
         self.create_tag()
@@ -1981,11 +1981,11 @@ class Importer(object):
         try:
             self.prepare_strain_data()
         except Exception:
-            ret.append('Critical error: prepare_strain_data failed')
+            ret.append(str(timezone.now()) + ': Critical error: prepare_strain_data failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
         else:
-            ret.append('Preparing strain data: OK')
+            ret.append(str(timezone.now()) + ': Preparing strain data: OK')
         
         
         logger.info('Preparing sample data')
@@ -1993,43 +1993,43 @@ class Importer(object):
         try:
             self.prepare_sample_data()
         except Exception:
-            ret.append('Critical error: prepare_sample_data failed')
+            ret.append(str(timezone.now()) + ': Critical error: prepare_sample_data failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
         else:
-            ret.append('Preparing sample data: OK')
+            ret.append(str(timezone.now()) + ': Preparing sample data: OK')
         
         logger.info('Preparing taxonomy data')
         # make taxonomy data file for upload
         try:
             self.prepare_taxonomy_data()
         except Exception:
-            ret.append('Critical error: prepare_taxonomy_data failed')
+            ret.append(str(timezone.now()) + ': Critical error: prepare_taxonomy_data failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
         else:
-            ret.append('Preparing taxonomy data: OK')
+            ret.append(str(timezone.now()) + ': Preparing taxonomy data: OK')
         
         logger.info('Processing GBK files')
         # make genome, contigs, genes data files
         try:
             self.process_gbk()
         except Exception:
-            ret.append('Critical error: process_gbk failed')
+            ret.append(str(timezone.now()) + ': Critical error: process_gbk failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
         else:
-            ret.append('Processing input files: OK')
+            ret.append(str(timezone.now()) + ': Processing input files: OK')
         
         logger.info('Writing eggnog-mapper input file')
         try:
             new_proteins = self.make_eggnog_input()
         except Exception:
-            ret.append('Critical error: make_eggnog_input failed')
+            ret.append(str(timezone.now()) + ': Critical error: make_eggnog_input failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
         else:
-            ret.append('Writing eggnog-mapper input file: OK')
+            ret.append(str(timezone.now()) + ': Writing eggnog-mapper input file: OK')
 
         if new_proteins == 0:
             logger.info('No new proteins; skipping eggnog-mapper run')
@@ -2047,66 +2047,66 @@ class Importer(object):
                 # eggnog_outfile = os.path.join(self.config['core.temp_dir'], 
                 #'eggnog_mapper_output.emapper.annotations')
             except Exception:
-                ret.append('Critical error: run_eggnog_mapper failed')
+                ret.append(str(timezone.now()) + ': Critical error: run_eggnog_mapper failed')
                 ret.append(traceback.format_exc())
                 return '\n'.join(ret)
             else:
-                ret.append('Running eggnog-mapper: OK')
+                ret.append(str(timezone.now()) + ': Running eggnog-mapper: OK')
             
             logger.info('Reading eggnog-mapper output')
             # separate eggnog-mapper output by genome?
             try:
                 self.parse_eggnog_output(eggnog_outfile)
             except Exception:
-                ret.append('Critical error: parse_eggnog_output failed')
+                ret.append(str(timezone.now()) + ': Critical error: parse_eggnog_output failed')
                 ret.append(traceback.format_exc())
                 return '\n'.join(ret)
             else:
-                ret.append('Reading eggnog-mapper output: OK')
+                ret.append(str(timezone.now()) + ': Reading eggnog-mapper output: OK')
             
             logger.info('Preparing eggNOG mappings')
             # make mappings and relations data
             try:
                 self.make_mappings()
             except Exception:
-                ret.append('Critical error: make_mappings failed')
+                ret.append(str(timezone.now()) + ': Critical error: make_mappings failed')
                 ret.append(traceback.format_exc())
                 return '\n'.join(ret)
             else:
-                ret.append('Prepare eggNOG mappings: OK')
+                ret.append(str(timezone.now()) + ': Prepare eggNOG mappings: OK')
 
             logger.info('Preparing eggnog ortholog mappings')
             # make og data file for upload
             try:
                 self.prepare_og_data()
             except Exception:
-                ret.append('Critical error: prepare_og_data failed')
+                ret.append(str(timezone.now()) + ': Critical error: prepare_og_data failed')
                 ret.append(traceback.format_exc())
                 return '\n'.join(ret)
             else:
-                ret.append('Preparing eggnog ortholog mappings: OK')
+                ret.append(str(timezone.now()) + ': Preparing eggnog ortholog mappings: OK')
             
             logger.info('Prepare eggnog descriptions')
             # make eggnog description data file for upload
             try:
                 self.prepare_eggnog_description_data()
             except Exception:
-                ret.append('Critical error: prepare_eggnog_description_data failed')
+                ret.append(str(timezone.now()) + ': Critical error: prepare_eggnog_description_data failed')
                 ret.append(traceback.format_exc())
                 return '\n'.join(ret)
             else:
-                ret.append('Prepare eggnog descriptions: OK')
+                ret.append(str(timezone.now()) + ': Prepare eggnog descriptions: OK')
             
         logger.info('Populating mysql database')
         # At this point, genes and annotations are actually written to the database
         try:
             self.write_data()
         except Exception:
-            ret.append('Critical error: write_data failed')
+            ret.append(str(timezone.now()) + ': Critical error: write_data failed')
             ret.append(traceback.format_exc())
             return '\n'.join(ret)
         else:
-            ret.append('Populate mysql database: OK')
+            ret.append(str(timezone.now()) + ': Populate mysql database: OK')
         
         # From this point, exceptions and errors do not interrupt pipeline run
         logger.info('All genomes successfully imported into the database')
@@ -2117,10 +2117,10 @@ class Importer(object):
             operons_data = self.predict_operons()
         except Exception:
             operons_data = {}
-            ret.append('Non-critical error: predict_operons failed')
+            ret.append(str(timezone.now()) + ': Non-critical error: predict_operons failed')
             ret.append(traceback.format_exc())
         else:
-            ret.append('Predict operons: OK')
+            ret.append(str(timezone.now()) + ': Predict operons: OK')
         if not operons_data:
             ret.append(
                 'Warning: no operons found. Check if POEM_py3k ' +
@@ -2131,69 +2131,69 @@ class Importer(object):
         try:
             self.create_operons(operons_data)
         except Exception:
-            ret.append('Non-critical error: create_operons failed')
+            ret.append(str(timezone.now()) + ': Non-critical error: create_operons failed')
             ret.append(traceback.format_exc())
         else:
-            ret.append('Import operons: OK')
+            ret.append(str(timezone.now()) + ': Import operons: OK')
         
-        logger.info('Creating Jbrowser files')
+        logger.info('Creating Jbrowse files')
         #export JBrowse data
         try:
             self.export_jbrowse_data()
         except Exception:
-            ret.append('Non-critical error: export_jbrowse_data failed')
+            ret.append(str(timezone.now()) + ': Non-critical error: export_jbrowse_data failed')
             ret.append(traceback.format_exc())
         else:
-            ret.append('Create Jbrowser files: OK')
+            ret.append(str(timezone.now()) + ': Create Jbrowse files: OK')
 
         logger.info('Exporting protein sequences')
         #export proteins for BLAST db
         try:
             self.export_proteins()
         except Exception:
-            ret.append('Non-critical error: export_proteins failed')
+            ret.append(str(timezone.now()) + ': Non-critical error: export_proteins failed')
             ret.append(traceback.format_exc())
         else:
-            ret.append('Export protein sequences: OK')
+            ret.append(str(timezone.now()) + ': Export protein sequences: OK')
         
         logger.info('Deleting existing BLAST databases')
         try:
             self.delete_search_databases()
         except Exception:
-            ret.append('Non-critical error: delete_search_databases failed')
+            ret.append(str(timezone.now()) + ': Non-critical error: delete_search_databases failed')
             ret.append(traceback.format_exc())
         else:
-            ret.append('Delete existing BLAST databases: OK')
+            ret.append(str(timezone.now()) + ': Delete existing BLAST databases: OK')
         
         logger.info('Copying static files')
         # copy static files
         try:
             self.copy_static_files()
         except Exception:
-            ret.append('Non-critical error: copy_static_files failed')
+            ret.append(str(timezone.now()) + ': Non-critical error: copy_static_files failed')
             ret.append(traceback.format_exc())
         else:
-            ret.append('Copy static files: OK')
+            ret.append(str(timezone.now()) + ': Copy static files: OK')
         
         logger.info('Generating search databases')
         # make BLAST databases
         try:
             self.create_search_databases()
         except Exception:
-            ret.append('Non-critical error: create_search_databases failed')
+            ret.append(str(timezone.now()) + ': Non-critical error: create_search_databases failed')
             ret.append(traceback.format_exc())
         else:
-            ret.append('Generate search databases: OK')
+            ret.append(str(timezone.now()) + ': Generate search databases: OK')
 
         logger.info('Removing temporary files')
         # delete temp files
         try:
             self.cleanup()
         except Exception:
-            ret.append('Non-critical error: cleanup failed')
+            ret.append(str(timezone.now()) + ': Non-critical error: cleanup failed')
             ret.append(traceback.format_exc())
         else:
-            ret.append('Remove temporary files: OK')
+            ret.append(str(timezone.now()) + ': Remove temporary files: OK')
 
         logger.info('Running annotation pipeline')
         # Run annotation pipeline for new genomes
@@ -2205,13 +2205,13 @@ class Importer(object):
                                     ).values('name','gbk_filepath')
                                 }
             pipeline_output = annotator.run_annotation_pipeline(new_genome_files)
-            ret.append(pipeline_output)
+            ret.append(str(timezone.now()) + ': ' + pipeline_output)
         except Exception:
-            ret.append('Non-critical error: annotator.run_annotation_pipeline')
+            ret.append(str(timezone.now()) + ': Non-critical error: annotator.run_annotation_pipeline')
             ret.append(traceback.format_exc())
         else:
-            ret.append('Run annotation pipeline: OK')
-        ret.append('Done!')
+            ret.append(str(timezone.now()) + ': Run annotation pipeline: OK')
+        ret.append(str(timezone.now()) + ': Done!')
         return '\n'.join(ret)
 
     def export_proteins(self):

@@ -216,7 +216,7 @@ def update_taxonomy():
                 new_name = taxonomy[taxon.taxonomy_id]['name']
                 new_id = taxonomy_id_lookup[new_name]
                 logger.info('Changing ' + taxon.name + ':' + taxon.taxonomy_id +
-                'to' + new_name + ':' + new_id)
+                ' to ' + new_name + ':' + new_id)
                 # Check if new_id already exists in the database
                 try:
                     new_taxon = Taxon.objects.get(taxonomy_id=new_id)
