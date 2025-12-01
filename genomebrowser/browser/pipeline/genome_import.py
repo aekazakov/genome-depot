@@ -1947,7 +1947,7 @@ class Importer(object):
             Returns:
                 run status, with a list of errors, if any
         '''
-        ret = []
+        ret = [str(timezone.now()) + ': Starting genome import',]
         logger.info('Cleaning up the temporary directory')
         self.cleanup()
         logger.info('Trying to create directories for static files')
@@ -2194,7 +2194,7 @@ class Importer(object):
             ret.append(traceback.format_exc())
         else:
             ret.append(str(timezone.now()) + ': Remove temporary files: OK')
-
+        ret.append(str(timezone.now()) + ': Genome import finished. Starting annotation pipeline.')
         logger.info('Running annotation pipeline')
         # Run annotation pipeline for new genomes
         try:
@@ -2205,12 +2205,13 @@ class Importer(object):
                                     ).values('name','gbk_filepath')
                                 }
             pipeline_output = annotator.run_annotation_pipeline(new_genome_files)
-            ret.append(str(timezone.now()) + ': ' + pipeline_output)
+            ret.append(pipeline_output)
+            ret.append(str(timezone.now()) + ': Run annotation pipeline: OK')
         except Exception:
             ret.append(str(timezone.now()) + ': Non-critical error: annotator.run_annotation_pipeline')
             ret.append(traceback.format_exc())
-        else:
-            ret.append(str(timezone.now()) + ': Run annotation pipeline: OK')
+            ret.append(str(timezone.now()) + ': Run annotation pipeline: Errors reported')
+            
         ret.append(str(timezone.now()) + ': Done!')
         return '\n'.join(ret)
 

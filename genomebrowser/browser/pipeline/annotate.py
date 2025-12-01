@@ -8,6 +8,7 @@ import traceback
 from pathlib import Path
 from io import BytesIO
 from collections import defaultdict
+from django.utils import timezone
 from browser.models import Annotation
 from browser.models import Config
 from browser.models import Contig
@@ -497,6 +498,7 @@ class Annotator(object):
             plugin_count += 1
             try:
                 ret.append(
+                    str(timezone.now()) + ' ' + 
                     str(plugin_count) + ' of ' + str(len(plugins_enabled)) +
                     ': ' + plugin_name + ' ' +
                     self.run_external_tools(genomes, plugin_name)
