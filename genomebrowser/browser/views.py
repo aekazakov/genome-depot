@@ -2399,8 +2399,9 @@ def regulon_detail(request, genome, name):
     context['operons'] = operons
     ortholog_groups = set()
     for regulator in regulon.regulators.all():
-        for og in regulator.protein.ortholog_groups.all():
-            ortholog_groups.add(og.id)
+        if regulator.protein is not None:
+            for og in regulator.protein.ortholog_groups.all():
+                ortholog_groups.add(og.id)
     context['ortholog_groups'] = Ortholog_group.objects.filter(
         id__in=list(ortholog_groups)
         )
