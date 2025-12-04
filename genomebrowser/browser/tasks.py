@@ -85,6 +85,8 @@ def import_genomes_impl(args):
     try:
         upload_dir = os.path.join(temp_dir, str(uuid.uuid4()))
         for i, line in enumerate(lines):
+            if line.startswith('#'):
+                continue
             row = line.split('\t')
             if row[0] == '' and row[-1].startswith('NCBI:'):
                 assembly_path = download_ncbi_assembly(row[-1][5:].rstrip('\n\r'),
