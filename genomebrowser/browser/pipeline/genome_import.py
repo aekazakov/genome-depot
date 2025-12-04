@@ -599,7 +599,12 @@ class Importer(object):
                 self.gene_data[feature_uid]['name'] = name
         else:
             if locus_tag in locus_tags:
-                return '','' # no duplicated locus tags for different locations allowed
+                feature_uid = locus_tags[locus_tag]
+                if feature.key == 'gene':
+                    logger.warn('There are two or more features with locus tag %s in genome %s, and they have different locations. GenomeDepot requires only one location in a genome for each locus tag. This feature will be ignored because %s features supersede %s features.', locus_tag, genome_id, self.gene_data[feature_uid]['type'], feature.key)
+                    return '',''
+                else:
+                    logger.warn('There are two or more features with locus tag %s in genome %s, and they have different locations. GenomeDepot requires only one location in a genome for each locus tag. The %s feature supersedes the %s feature.', locus_tag, genome_id, feature.key, self.gene_data[feature_uid]['type'])
             self.gene_data[feature_uid] = {}
             self.gene_data[feature_uid]['name'] = name
             self.gene_data[feature_uid]['locus_tag'] = locus_tag
@@ -668,7 +673,7 @@ class Importer(object):
             genome_fasta = os.path.join(self.config['core.temp_dir'],
                                         genome_id + '.fna'
                                         )
-            locus_tags = set()
+            locus_tags = {}
             with open(genome_fasta, 'w') as outfile:
                 for gbk_record in parser:
                     contig_sequence = gbk_record.sequence
@@ -703,7 +708,7 @@ class Importer(object):
                                                  locus_tags,
                                                  contig_size
                                                  )
-                        locus_tags.add(locus_tag)
+                        locus_tags[locus_tag] = feature_location
                         if feature_location != '':
                             features[feature_location] = ''
                     genome_size += contig_size

@@ -3104,7 +3104,7 @@ class ComparativeView(View):
                           {'searchcontext': 'Ortholog group not found'}
                           )
         scribl, tree_canvas, tree_newick, og_gene_count, plot_gene_count, \
-        treemap_gene_ids, protein_msa, colors = get_scribl(gene, og, colors, request)
+        treemap_gene_ids, protein_msa, colors, export_gene_list = get_scribl(gene, og, colors, request)
         treemap = ''
         #logger.debug("Colors: " + str(colors))
         if treemap_gene_ids:
@@ -3140,6 +3140,7 @@ class ComparativeView(View):
                        'protein_msa': protein_msa,
                        'shift': request.GET.get('shift'),
                        'colors': json.dumps(colors),
+                       'export_gene_list':export_gene_list,
                        'csrfmiddlewaretoken': request.POST.get('csrfmiddlewaretoken')
                        }
         #logger.debug('Colors from context: ' + context['colors'])

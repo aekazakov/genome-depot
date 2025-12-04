@@ -209,10 +209,10 @@
                   </br><a id="pngexport">Export as gene plot as PNG image (right click Save As)</a>
                   <hr>
                   <div>
-					<div class="align-center">
-					  <button type="button" id="export-msa">Export protein MSA in FASTA format</button>
-					  <button type="button" id="export-tree">Export phylogenetic tree in Newick format</button>
-					</div>
+                    <div class="align-center">
+                      <button type="button" id="export-msa">Export protein MSA in FASTA format</button>
+                      <button type="button" id="export-tree">Export phylogenetic tree in Newick format</button>
+                    </div>
                   </div>
                   <hr>
                   <div id="treemap" style="margin:auto">
@@ -223,6 +223,7 @@
                   <hr>
                   <div class="align-center">
                     <button type="button" id="export-profile">Export functional profile as tab-separated text</button>
+                    <button type="button" id="export-genes">Export list of all genes as tab-separated text</button>
                   </div>
                 </div>
               </div>
@@ -255,6 +256,13 @@
                   $("#export-profile").append(tsvData);
                   $("#export-profile").show();
 
+                  var genesTsvData = document.createElement('div');
+                  genesTsvData.setAttribute('id', 'gene_list_data');
+                  genesTsvData.style.display = 'none';
+                  genesTsvData.append(data["export_gene_list"]);
+                  $("#export-genes").append(genesTsvData);
+                  $("#export-genes").show();
+
                   var newickData = document.createElement('div');
                   newickData.setAttribute('id', 'tree_newick_data');
                   newickData.style.display = 'none';
@@ -283,6 +291,19 @@
               $('#export-profile').on('click', function () {
                 var text = document.getElementById("tsv_profile_data").textContent;
                 var filename = "{{ gene.locus_tag }}_conserved_locus_functional_profile.tab";
+                var pom = document.createElement('a');
+                pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                pom.setAttribute('download', filename);
+                pom.style.display = 'none';
+                document.body.appendChild(pom);
+                pom.click();
+                document.body.removeChild(pom);
+              });    
+            </script>
+            <script>
+              $('#export-genes').on('click', function () {
+                var text = document.getElementById("gene_list_data").textContent;
+                var filename = "{{ gene.locus_tag }}_conserved_locus_genes.tab";
                 var pom = document.createElement('a');
                 pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
                 pom.setAttribute('download', filename);

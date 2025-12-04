@@ -348,6 +348,19 @@ def get_scribl(start_gene, eggnog_og, colors, request):
     scribl.append('\t\ttrack' + str(track_uid) + ' = chart.addTrack();')
     
     treemap_gene_ids = []
+    export_gene_list = []
+    export_gene_list.append('\t'.join([
+                'Locus tag',
+                'Name',
+                'Organism',
+                'Genome',
+                'Contig',
+                'Start',
+                'End',
+                'Strand',
+                'Type',
+                'Function',
+        ]))
     for gene in ordered_orthologs:
         # Create first track
         # Crete track for organism name
@@ -362,6 +375,20 @@ def get_scribl(start_gene, eggnog_og, colors, request):
                       ' = track' + str(track_uid) +
                       '.addLane();'
                       )
+        '''
+        export_gene_list.append('\t'.join([
+                    gene.locus_tag,
+                    gene.name,
+                    gene.genome.taxon.name,
+                    gene.genome.name,
+                    gene.contig.contig_id,
+                    str(gene.start),
+                    str(gene.end),
+                    str(gene.strand),
+                    gene.type,
+                    gene.function,
+            ]))
+        '''
         if reverse:
             middle_point = (gene.end + gene.start) / 2 - locus_size * shift * 0.2
         else:
@@ -448,10 +475,23 @@ def get_scribl(start_gene, eggnog_og, colors, request):
                                request,
                                locus_size
                                )
+            export_gene_list.append('\t'.join([
+                    locus_member.locus_tag,
+                    locus_member.name,
+                    locus_member.genome.taxon.name,
+                    locus_member.genome.name,
+                    locus_member.contig.contig_id,
+                    str(locus_member.start),
+                    str(locus_member.end),
+                    str(locus_member.strand),
+                    locus_member.type,
+                    locus_member.function,
+                ]))
+                               
     # update OG colors 
     for group in eggnog2color:
         colors[group] = eggnog2color[group]
     return (
         '\n'.join(scribl), tree_canvas, tree_newick,
-        og_gene_count, plot_gene_count, treemap_gene_ids, protein_msa, colors
+        og_gene_count, plot_gene_count, treemap_gene_ids, protein_msa, colors, '\n'.join(export_gene_list)
     )
