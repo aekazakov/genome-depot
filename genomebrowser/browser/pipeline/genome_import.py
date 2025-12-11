@@ -2512,8 +2512,8 @@ class Importer(object):
             contigs = {item.contig_id:item for item
                        in Contig.objects.filter(genome__name=genome_id)
                        }
-            logger.info('Contigs:')
-            logger.info(contigs.keys())
+            logger.debug('Contigs:')
+            logger.debug(contigs.keys())
             for operon in operons_data[genome_id]:
                 operon_instance = Operon(name = operon[0],
                                          start = operon[1],

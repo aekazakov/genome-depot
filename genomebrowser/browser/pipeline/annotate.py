@@ -113,7 +113,7 @@ class Annotator(object):
                         value=value,
                         note=note
                         ))
-                    logger.info(' '.join(['Annotation added',
+                    logger.debug(' '.join(['Annotation added',
                                           locus_tag,
                                           genome_name,
                                           source,
