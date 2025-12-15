@@ -336,7 +336,7 @@ class GenomeListView(generic.ListView):
             order_by = 'name'
         elif order_by == 'taxon':
             order_by = 'taxon__name'
-        elif order_by in ('tags','source','size','contigs','genes'):
+        elif order_by in ('tags','source','size','contigs','genes','tags'):
             pass
         else:
             order_by = 'name'
@@ -347,7 +347,7 @@ class GenomeListView(generic.ListView):
             ).prefetch_related('tags')
         elif order_by == 'tags':
             query_set = Genome.objects.annotate(
-                min_tag=Min('regulators__locus_tag')
+                min_tag=Min('tags__name')
             ).order_by(
                 'min_tag','name'
             ).select_related(
@@ -1267,7 +1267,7 @@ class GenomeSearchResultsView(generic.ListView):
         order_by = self.request.GET.get('order')
         if not order_by:
             order_by = 'name'
-        elif order_by in ('source','size','contigs','genes'):
+        elif order_by in ('source','size','contigs','genes', 'tags'):
             pass
         elif order_by == 'taxon':
             order_by = 'taxon__name'
@@ -1289,7 +1289,7 @@ class GenomeSearchResultsView(generic.ListView):
                 object_list = Genome.objects.filter(
                     name__icontains=query
                 ).distinct().annotate(
-                    min_tag=Min('regulators__locus_tag')
+                    min_tag=Min('tags__name')
                 ).order_by(
                     'min_tag','name'
                 ).select_related(
@@ -1323,7 +1323,7 @@ class GenomeSearchResultsView(generic.ListView):
                 object_list = Genome.objects.filter(
                     taxon__taxonomy_id__in=children
                 ).distinct().annotate(
-                    min_tag=Min('regulators__locus_tag')
+                    min_tag=Min('tags__name')
                 ).order_by(
                     'min_tag','name'
                 ).select_related(
@@ -1352,7 +1352,7 @@ class GenomeSearchResultsView(generic.ListView):
                     )
             elif order_by == 'tags':
                 object_list = Genome.objects.distinct().annotate(
-                        min_tag=Min('regulators__locus_tag')
+                        min_tag=Min('tags__name')
                     ).order_by(
                         'min_tag','name'
                     ).select_related(
