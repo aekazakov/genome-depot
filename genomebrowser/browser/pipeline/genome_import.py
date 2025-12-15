@@ -601,10 +601,10 @@ class Importer(object):
             if locus_tag in locus_tags:
                 feature_uid = locus_tags[locus_tag]
                 if feature.key == 'gene':
-                    logger.warn('There are two or more features with locus tag %s in genome %s, and they have different locations. GenomeDepot requires only one location in a genome for each locus tag. This feature will be ignored because %s features supersede %s features.', locus_tag, genome_id, self.gene_data[feature_uid]['type'], feature.key)
+                    logger.warn('There are two or more features with locus tag %s in genome %s, and they have different locations. GenomeDepot allows only one location in a genome for each locus tag. This feature will be ignored because %s features supersede %s features.', locus_tag, genome_id, self.gene_data[feature_uid]['type'], feature.key)
                     return '',''
                 else:
-                    logger.warn('There are two or more features with locus tag %s in genome %s, and they have different locations. GenomeDepot requires only one location in a genome for each locus tag. The %s feature supersedes the %s feature.', locus_tag, genome_id, feature.key, self.gene_data[feature_uid]['type'])
+                    logger.warn('There are two or more features with locus tag %s in genome %s, and they have different locations. GenomeDepot allows only one location in a genome for each locus tag. The %s feature supersedes the %s feature.', locus_tag, genome_id, feature.key, self.gene_data[feature_uid]['type'])
             self.gene_data[feature_uid] = {}
             self.gene_data[feature_uid]['name'] = name
             self.gene_data[feature_uid]['locus_tag'] = locus_tag

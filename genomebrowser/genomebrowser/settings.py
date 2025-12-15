@@ -304,3 +304,4 @@ ADMIN_SHORTCUTS_SETTINGS = {
     'open_new_window': False,
 }
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 # required for actions involving up to 10000 genomes or other objects in Administration Panel (default value in django is 1000)
