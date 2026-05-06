@@ -66,6 +66,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 In Ubuntu-based distibutions, you can install the dependencies using the APT package repository:
 sudo apt install apache2 mysql-server muscle ncbi-blast+-legacy build-essential zlib1g-dev libexpat1-dev curl pkg-config
 
+Note: GenomeDeoot requires muscle version 3. If APT installs muscle version 5, remove or rename the muscle binary and install version 3 from <https://drive5.com/muscle/downloads_v3.htm>
+
 
 ## Installation
 
@@ -128,6 +130,11 @@ path to strain metadata file.
 source genomedepot/genomedepot-venv/bin/activate
 
 cd genomedepot/app/mygenomes/genome-depot/genomebrowser
+
+Note: If you encounter the "No module named 'pkg_resources'" error, install setuptools in the virtual environment:
+
+`pip install setuptools==81.0.0`
+
 
 python manage.py collectstatic
 

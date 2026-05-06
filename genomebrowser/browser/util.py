@@ -704,7 +704,7 @@ def update_tags(genome_file, tag_names):
         tag_name = tag_name.strip()
         if tag_name == '':
             continue
-        if not bool(re.match('[A-Za-z0-9\-\_]+$', 'tag_name')):
+        if not bool(re.match(r"[A-Za-z0-9\-\_]+$", 'tag_name')):
             raise CommandError(
                 'Tag must contain only alphabet letters (a-z), ' +
                 'numbers (0-9), hyphen or underscore. Correct the tag ' + tag_name

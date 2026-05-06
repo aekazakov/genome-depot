@@ -2361,22 +2361,22 @@ class Importer(object):
                           self.config['core.poem.conda_env'] +
                           '\n'
                           )
-            '''
-            List of coomands for POEM should be like that:
-            fasta=$temp/input.fsa
-            $python $SCRIPTPATH/../lib/prod2gmk.py $fasta\_prod_aa.fsa > \
-            $fasta\_gmk_aa.fsa
-            $python $SCRIPTPATH/../lib/reid.py $fasta\_gmk_aa.fsa > $fasta\_aa.fsa
-            $python $SCRIPTPATH/../lib/to_list.py $fasta\_aa.fsa > $fasta\.locus
-            $python $SCRIPTPATH/../lib/predict_operon.py predict $fasta $fasta\.locus \
-            $SCRIPTPATH/../config/Operon_Predictor/model.hdf5 > $fasta\.adjacency
-
-            outfile.write('bash ' + 
-                          self.config['core.poem_command'] +
-                          ' -f ' + working_dir +
-                          ' -a n -p pro >>poem.log\n'
-                          )
-            '''
+            
+            #List of coomands for POEM should be like that:
+            #fasta=$temp/input.fsa
+            #$python $SCRIPTPATH/../lib/prod2gmk.py $fasta\_prod_aa.fsa > \
+            #$fasta\_gmk_aa.fsa
+            #$python $SCRIPTPATH/../lib/reid.py $fasta\_gmk_aa.fsa > $fasta\_aa.fsa
+            #$python $SCRIPTPATH/../lib/to_list.py $fasta\_aa.fsa > $fasta\.locus
+            #$python $SCRIPTPATH/../lib/predict_operon.py predict $fasta $fasta\.locus \
+            #$SCRIPTPATH/../config/Operon_Predictor/model.hdf5 > $fasta\.adjacency
+            
+	    #outfile.write('bash ' + 
+            #              self.config['core.poem_command'] +
+            #              ' -f ' + working_dir +
+            #              ' -a n -p pro >>poem.log\n'
+            #              )
+            
             outfile.write('python ' + 
                 os.path.join(self.config['core.poem_dir'], 'lib', 'prod2gmk.py') +
                 ' ' + os.path.join(working_dir, 'input.fsa_prod_aa.fsa') +
