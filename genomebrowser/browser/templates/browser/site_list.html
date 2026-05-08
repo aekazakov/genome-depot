@@ -10,7 +10,9 @@
         <section id="two" class="wrapper style3">
           <div class="inner">
             <header class="align-center">
-              {% if searchcontext %}
+			  {% if error %}
+			    <div id ="error-box" class="error box">{{ error }}</div>
+              {% elif searchcontext %}
                 <h4>{{ searchcontext }}</h4>
               {% else %}
                 <h4>Sites in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }}</a> [{{ genome.taxon.name }}]</h4>
@@ -19,6 +21,7 @@
                   </form>
               {% endif %}
             </header>
+		    {% if not error %}
             <div class="table-wrapper">
               <table>
                 <thead>
@@ -47,6 +50,7 @@
                 </tbody>
               </table>
             </div>
+
             {% if is_paginated %}
               <div>
                 <span>
@@ -108,6 +112,7 @@
                 });
               });    
             </script>
+			{% endif %}
           </div>
         </section>
 {% endblock %}

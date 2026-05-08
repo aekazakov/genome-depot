@@ -258,20 +258,17 @@ ADMIN_SHORTCUTS = [
         'shortcuts': [
             {
                 'title': 'GenomeDepot Tools',
-                'icon': 'wrench',
                 'url': BASE_URL + '/admin/tools/',
                 'count': 'All tools in one place',
             },
             {
                 'title': 'Task queue',
-                'icon': 'tasks',
                 'url_name': 'admin:django_q_ormq_changelist',
                 'count_new': 'browser.admin.count_tasks',
                 'count': 'Check active tasks',
             },
             {
                 'title': 'Pipeline',
-                'icon': 'server',
                 'url': BASE_URL + '/admin/clusters/',
                 'count_new': 'browser.admin.pipeline_status',
                 'count':'View pipeline status',
@@ -279,13 +276,11 @@ ADMIN_SHORTCUTS = [
             {
                 'title': 'Pipeline log',
                 'url': BASE_URL + '/admin/logviewer/logs/',
-                'icon': 'scroll',
                 'count': 'View users',
             },
             {
                 'title': 'Users',
                 'url_name': 'admin:auth_user_changelist',
-                'icon': 'user',
                 'count': 'View users',
             },
             {
@@ -293,7 +288,6 @@ ADMIN_SHORTCUTS = [
                 'url_name': 'admin:auth_user_add',
                 'test_func': 'browser.admin_utils.has_perms_to_users',
                 'has_perms': ['browser.admin_utils.has_perms_to_users',],
-                'icon': 'user-plus',
             },
         ]
     },
@@ -302,6 +296,19 @@ ADMIN_SHORTCUTS_SETTINGS = {
     'show_on_all_pages': True,
     'hide_app_list': False,
     'open_new_window': False,
+}
+
+ADMIN_SHORTCUTS_ICON_MAPPINGS =  {
+    '🛠️': ['tools', 'repair', 'settings', 'maintenance'],
+    '🏠': ['home', 'main', 'dashboard', 'start'],
+    '➕': ['add', 'plus', 'create', 'new'],
+    '🔒': ['logout', 'login', 'lock', 'secure', 'authentication'],
+    '👤': ['user', 'account', 'profile', 'person'],
+    '👥': ['group', 'team', 'users', 'community'],
+    '🔧': ['fix', 'maintenance', 'repair', 'wrench'],
+    '📃': ['pipeline log',],
+    '🚥': ['pipeline',],
+    '🖥': ['desktop', 'computer', 'monitor', 'screen'],
 }
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 # required for actions involving up to 10000 genomes or other objects in Administration Panel (default value in django is 1000)

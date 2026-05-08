@@ -24,7 +24,7 @@ fi
 #Installing dependencies in the virtual environment
 echo "Installing python dependencies in genomedepot-venv virtual environment"
 source "$TOPDIR/genomedepot-venv/bin/activate"
-pip install cryptography urllib3 PyMySQL "pandas==2.2.1" "python-decouple==3.8" "django==3.2.6" "django_admin_shortcuts==2.1.1" "django-cors-headers==4.3.1" "django-q==1.3.9" "django-debug-toolbar==4.3.0" "openpyxl==3.1.2" "parasail==1.2.4" "biopython==1.83" "toytree==2.0.1" "plotly==5.19.0" "django-admin-logviewer==0.1.5" --no-cache-dir
+pip install cryptography urllib3 PyMySQL "pandas==3.0.2" "python-decouple==3.8" "django==6.0.5" "django_admin_shortcuts==3.0.1" "django-cors-headers==4.9.0" "django-q2==1.10.0" "django-debug-toolbar==6.3.0" "openpyxl==3.1.5" "parasail==1.2.4" "biopython==1.87" "toytree==2.0.1" "plotly==6.7.0" "django-admin-logviewer==0.1.5" "setuptools==82.0.1" --no-cache-dir
 deactivate
 
 source $CONDA
@@ -70,7 +70,7 @@ if conda env list | grep "genomedepot-jbrowse" >/dev/null 2>&1; then
     if ! { samtools version | grep samtools; }>/dev/null 2>&1; then
         echo "Conda environment genomedepot-jbrowse exists but samtools was not properly installed. Remove the environment and restart the GenomeDepot installation script."
         echo "To remove the environment, run:"
-        echo "   conda remove -n genomedepot-jbrowse --all"
+        echo "conda remove -n genomedepot-jbrowse --all"
         conda deactivate
         exit 1
     else

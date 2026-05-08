@@ -39,7 +39,8 @@ class ImporterTestCase(TestCase):
     fixtures = ['minigenomes.testdata.json']
     
     @classmethod
-    def setUpTestData(cls):
+    def setUpClass(cls):
+        super().setUpClass()
         cls.importer = Importer()
         cls.annotator= Annotator()
 
@@ -153,7 +154,7 @@ class ImporterTestCase(TestCase):
         print('Testing prepare_sample_data function')
         in_file = '../testdata/import_minigenomes.txt'
         # Prepare the data
-        self.importer.inputgenomes['Test']['sample'] = 'Test'
+        self.importer.inputgenomes['Test_genome']['sample'] = 'Test'
         self.importer.prepare_sample_data()
         self.assertEqual(self.importer.sample_instances['Test'].sample_id, 'Test')
         

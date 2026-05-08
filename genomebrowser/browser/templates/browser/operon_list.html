@@ -10,7 +10,9 @@
         <section id="two" class="wrapper style3">
           <div class="inner">
             <header class="align-center">
-              {% if searchcontext %}
+			  {% if error %}
+			    <div id ="error-box" class="error box">{{ error }}</div>
+              {% elif searchcontext %}
                 <h4>{{ searchcontext }}</h4>
               {% else %}
                 <h4>Operons in <a href="{% url 'genomedetails' name=genome.name %}">{{ genome.name }} [{{ genome.taxon.name }}]</a>{% for tag in genome.tags.all %}<span class="genometag" style="background-color:{{tag.color}}"><a href="{% url 'tagdetails' name=tag.name %}" style="color:{{tag.textcolor}}" title="{{tag.description}}">{{tag.name}}</a></span>&nbsp;{% endfor %}</h4>
@@ -19,6 +21,7 @@
                 </form>
               {% endif %}
             </header>
+			{% if not error %}
             <div class="table-wrapper">
               <table>
                 <thead>
@@ -109,6 +112,7 @@
                 });
               });    
             </script>
+			{% endif %}
           </div>
         </section>
 {% endblock %}

@@ -158,11 +158,10 @@ def make_muscle_alignment(infasta):
         str: proteins in FASTA format
     """
     result = None
-    muscle_cline = 'muscle'
+    muscle_cline = ['muscle', '-quiet']
     logger.debug(str(muscle_cline))
-    
     logger.debug('Running MUSCLE')
-    with Popen(str(muscle_cline),
+    with Popen(muscle_cline,
                stdin=PIPE,
                stdout=PIPE,
                stderr=STDOUT,
@@ -219,7 +218,9 @@ def make_protein_tree(proteins):
     newick = io.StringIO()
     Phylo.write(NJTree, newick, 'newick')
     tree = toytree.mtree(newick.getvalue(), tree_format=1)
+    #tree = toytree.mtree(newick.getvalue())
     tip_labels = [item.split('|')[0] for item in tree.treelist[0].get_tip_labels()]
+    #tip_labels = [item.split('|')[0] for item in tree.get_tip_labels()]
     nodes.reverse()
     logger.debug('Node IDs %s', str(node_ids))
     canvas, axes, marks = tree.draw(width=200,

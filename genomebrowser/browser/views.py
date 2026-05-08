@@ -85,7 +85,7 @@ class AnnotationSearchResultsSubView(generic.ListView):
         genome = self.request.GET.get('genome')
         fast = self.request.GET.get('fast')
         order_by = self.request.GET.get('order')
-        logger.debug(', '.join([annotation_query, genome, fast, order_by]))
+        #logger.debug(', '.join([str(annotation_query), str(genome), str(fast), str(order_by)]))
         if not order_by:
             order_by = 'gene_id__locus_tag'
         elif order_by == 'gene':
@@ -386,11 +386,9 @@ class OperonListView(generic.ListView):
         context = super().get_context_data(**kwargs)
         genome_name = self.kwargs['genome']
         try:
-            genome = Genome.objects.prefetch_related('tags').get(
-                name=genome_name
-                )
+            genome = Genome.objects.get(name=genome_name)
         except Genome.DoesNotExist:
-            return {'searchcontext': 'Genome ' + genome_name + ' does not exist'}
+            return {'error': 'Genome ' + genome_name + ' does not exist'}
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
@@ -471,6 +469,8 @@ class OperonListView(generic.ListView):
                     'genes', 'genome__tags'
                 ).distinct()
             else:
+                print(genome)
+                print(order_by)
                 object_list = Operon.objects.filter(genome__name=genome).order_by(
                     order_by,'name'
                 ).select_related(
@@ -496,7 +496,7 @@ class SiteListView(generic.ListView):
         try:
             genome = Genome.objects.prefetch_related('tags').get(name = genome_name)
         except Genome.DoesNotExist:
-            return {'searchcontext': 'Genome ' + genome_name + ' does not exist'}
+            return {'error': 'Genome ' + genome_name + ' does not exist'}
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
@@ -579,7 +579,7 @@ class RegulonListView(generic.ListView):
         try:
             genome = Genome.objects.prefetch_related('tags').get(name = genome_name)
         except Genome.DoesNotExist:
-            return {'searchcontext': 'Genome ' + genome_name + ' does not exist'}
+            return {'error': 'Genome ' + genome_name + ' does not exist'}
         context['genome'] = genome
         if self.request.GET.get('query'):
             context['searchcontext'] = 'Search results for "' + \
@@ -719,10 +719,7 @@ class GeneSearchResultsSubView(generic.ListView):
             order_by = 'function'
         else:
             order_by = 'locus_tag'
-
-        
-        
-        logger.debug(', '.join([query, genome, query_type, order_by]))
+        #logger.debug(', '.join([str(query), str(genome), str(query_type), str(order_by)]))
         if query_type == 'gene':
             if genome:
                 object_list = Gene.objects.filter(

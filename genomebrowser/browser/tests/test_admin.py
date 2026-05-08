@@ -273,7 +273,7 @@ class AdminTestCase(TestCase):
     def test_update_static_files_impl(self):
         # Tests implementation of update_static_files task
         genomes = ['E_coli_BW2952',]
-        args = (gemomes, 'test_task.update_static_files')
+        args = (genomes, 'test_task.update_static_files')
         update_static_files_impl(args)
         json_dir = os.path.join(Config.objects.get(param='core.json_dir').value, genomes[0])
         self.assertTrue(os.path.exists(json_dir))

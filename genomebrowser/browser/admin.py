@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django_q.models import OrmQ
-from django_q.monitor import Stat
+from django_q.status import Stat
 # Import your models here
 from browser.models import Strain
 from browser.models import Sample

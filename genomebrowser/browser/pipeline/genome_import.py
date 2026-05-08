@@ -381,6 +381,8 @@ class Importer(object):
                          in Strain.objects.values('strain_id', 'taxon__taxonomy_id')
                          }
         for genome_id in self.inputgenomes:
+            if 'strain' not in self.inputgenomes[genome_id]:
+                continue
             strain_id = self.inputgenomes[genome_id]['strain']
             if strain_id == '':
                 continue

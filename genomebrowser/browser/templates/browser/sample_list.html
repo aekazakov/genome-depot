@@ -64,6 +64,11 @@
                   <span>&nbsp;Entries {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ paginator.count }}</span>
                 </span>
               </div>
+            {% else %}
+              {% if samplelist %}
+                  <strong>{{ samplelist | length}} samples found</strong>
+                </br>
+              {% endif %}
             {% endif %}
           </div>
         </section>
